@@ -25,8 +25,8 @@ STD_TRAIN_FEATURES = torch.tensor([5.00045545, 5.19493982, 6.30814192, 6.7281327
 class NN_FUNCTIONAL:
 
     def __init__(self, name):
-        path_to_mlruns = '/'.join(dir_path.split('/')[:-3])+'/mlruns/'
-        path_to_model_state_dict = path_to_mlruns + relative_path_to_model_state_dict[name]
+#        path_to_mlruns = '/'.join(dir_path.split('/')[:-1])
+        path_to_model_state_dict = dir_path + '/' + relative_path_to_model_state_dict[name]
         model = nn_model[name]()
         state_dict = mlflow.pytorch.load_state_dict(path_to_model_state_dict)
         model.load_state_dict(state_dict)

@@ -40,8 +40,7 @@ h2.build()
 energies = []
 times = []
 
-print('NN_PBE')
-for mol in [hydrogen]:
+for mol in [methane, carbon, hydrogen]:
     mf = dft.UKS(mol)
     mf._numint = dm21.NeuralNumInt(dm21.Functional.NN_PBE)
     mf.conv_tol = 1E-6
@@ -49,70 +48,8 @@ for mol in [hydrogen]:
 
 
     # Run the DFT calculation.
-    ts = time()
     energy = mf.kernel()
-    te = time()
-    times.append(te-ts)
     energies.append(energy)
 
 print({'CH4': energies[0], 'C': energies[1], 'H': energies[2]})
-print({'CH4': times[0], 'C': times[1], 'H': times[2]})
-print('Reaction energy:', (energies[1]+4*energies[2]-energies[0]+1.2/627.509)*627.509)
 
-energies = []
-times = []
-
-print('NN_XAlpha')
-for mol in [methane, carbon, hydrogen]:
-    mf = dft.UKS(mol)
-    mf._numint = dm21.NeuralNumInt(dm21.Functional.NN_XALPHA)
-    mf.conv_tol = 1E-6
-    mf.conv_tol_grad = 1E-3
-
-
-    # Run the DFT calculation.
-    ts = time()
-    energy = mf.kernel()
-    te = time()
-    times.append(te-ts)
-    energies.append(energy)
-
-print({'CH4': energies[0], 'C': energies[1], 'H': energies[2]})
-print({'CH4': times[0], 'C': times[1], 'H': times[2]})
-print('Reaction energy:', (energies[1]+4*energies[2]-energies[0]+1.2/627.509)*627.509)
-
-energies = []
-times = []
-print('PBE')
-for mol in [methane, carbon, hydrogen]:
-    mf = dft.UKS(mol)
-    mf.xc = 'PBE'
-
-    # Run the DFT calculation.
-    ts = time()
-    energy = mf.kernel()
-    te = time()
-    times.append(te-ts)
-    energies.append(energy)
-
-print({'CH4': energies[0], 'C': energies[1], 'H': energies[2]})
-print({'CH4': times[0], 'C': times[1], 'H': times[2]})
-print('Reaction energy:', (energies[1]+4*energies[2]-energies[0]+1.2/627.509)*627.509)
-
-energies = []
-times = []
-print('PBE0')
-for mol in [methane, carbon, hydrogen]:
-    mf = dft.UKS(mol)
-    mf.xc = 'PBE0'
-
-    # Run the DFT calculation.
-    ts = time()
-    energy = mf.kernel()
-    te = time()
-    times.append(te-ts)
-    energies.append(energy)
-
-print({'CH4': energies[0], 'C': energies[1], 'H': energies[2]})
-print({'CH4': times[0], 'C': times[1], 'H': times[2]})
-print('Reaction energy:', (energies[1]+4*energies[2]-energies[0]+1.2/627.509)*627.509)
