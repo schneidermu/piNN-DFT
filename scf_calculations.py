@@ -1,8 +1,8 @@
 import density_functional_approximation_dm21 as dm21
 from pyscf import gto
 from pyscf import dft
+import dftd3.pyscf as disp
 
-from time import time
 
 # Create the molecule of interest and select the basis set.
 methane = gto.Mole()
@@ -51,5 +51,10 @@ for mol in [methane, carbon, hydrogen]:
     energy = mf.kernel()
     energies.append(energy)
 
-print({'CH4': energies[0], 'C': energies[1], 'H': energies[2]})
+#print({'CH4': energies[0], 'C': energies[1], 'H': energies[2]})
+print(energies)
+
+d3 = disp.DFTD3Dispersion(methane, xc="PBE0", version="d3bj")
+print('Reaction energy:', (energies[1]+4*energies[2]-energies[0]-d3.kernel()[0])*627.509)
+
 
