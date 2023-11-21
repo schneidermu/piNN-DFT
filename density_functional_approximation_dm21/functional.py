@@ -106,5 +106,4 @@ class NN_FUNCTIONAL:
 
         local_xc = vxc*(feature_dict['rho_a']+feature_dict['rho_b'])
 
-
         return local_xc, vxc, feature_dict
