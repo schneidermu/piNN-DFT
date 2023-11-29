@@ -30,7 +30,7 @@ from density_functional_approximation_dm21.functional import NN_FUNCTIONAL
 
 # TODO(b/196260242): avoid depending upon private function
 _dot_ao_ao = numint._dot_ao_ao  # pylint: disable=protected-access
-device = torch.device('cuda:0') if torch.cuda.is_available else torch.device('cpu')
+device = torch.device('cpu')
 np.random.seed(42)
 
 
@@ -48,7 +48,6 @@ class Functional(enum.Enum):
   # Break pylint's preferred naming pattern to match the functional names used
   # in the paper.
   # pylint: disable=invalid-name
-  DM21 = enum.auto()
   NN_PBE = enum.auto()
   NN_XALPHA = enum.auto()
   # pylint: enable=invalid-name
@@ -150,6 +149,7 @@ class NeuralNumInt(numint.NumInt):
 
   def _xc_type(self, *args, **kwargs):
     return 'MGGA'
+  
 
   def torch_grad(self, outputs, inputs):
     grads = torch.autograd.grad(outputs, inputs,
@@ -175,6 +175,8 @@ class NeuralNumInt(numint.NumInt):
     self._vrho = vrho
     self._vsigma = vsigma
     self._vtau = vtau
+
+
     # Standard meta-GGAs do not have a dependency on local HF, so we need to
     # compute the contribution to the Fock matrix ourselves. Just use the
     # weighted XC energy to avoid having to weight this later.
@@ -212,6 +214,7 @@ class NeuralNumInt(numint.NumInt):
         ])
     self._vtau = self.torch_grad(
         unweighted_xc, [input_features['tau_a'], input_features['tau_b']])
+    
 
     # Standard meta-GGAs do not have a dependency on local HF, so we need to
     # compute the contribution to the Fock matrix ourselves. Just use the

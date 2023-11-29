@@ -4,7 +4,7 @@ import os
 
 from .PBE import F_PBE
 from .SVWN3 import F_XALPHA
-from .NN_models import NN_XALPHA_model, NN_PBE_model
+from .NN_models import NN_XALPHA_model, NN_PBE_model, true_constants_PBE
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -28,7 +28,7 @@ class NN_FUNCTIONAL:
 #        path_to_mlruns = '/'.join(dir_path.split('/')[:-1])
         path_to_model_state_dict = dir_path + '/' + relative_path_to_model_state_dict[name]
         model = nn_model[name]()
-        state_dict = mlflow.pytorch.load_state_dict(path_to_model_state_dict)
+        state_dict = mlflow.pytorch.load_state_dict(path_to_model_state_dict, map_location=torch.device('cpu'))
         model.load_state_dict(state_dict)
         model.eval()
         self.name = name
@@ -73,7 +73,7 @@ class NN_FUNCTIONAL:
         self.model = self.model.to(device)
 
 
-        # Get features for nn and functional
+        # Get features for NN and functional
         feature_dict = self.create_features_from_rhos(features, device)
 
         keys = ['rho_a', 'rho_b', 'norm_grad_a', 'norm_grad', 'norm_grad_b', 'tau_a', 'tau_b', 'norm_grad_ab']
@@ -105,5 +105,6 @@ class NN_FUNCTIONAL:
             raise NameError(f'Invalid functional name: {self.name}')
 
         local_xc = vxc*(feature_dict['rho_a']+feature_dict['rho_b'])
+#        print(torch.isnan(vxc).sum())
 
         return local_xc, vxc, feature_dict

@@ -2,7 +2,7 @@ from torch import nn
 import torch
 
 
-device = torch.device('cuda:0') if torch.cuda.is_available else torch.device('cpu')	
+device = torch.device('cpu')
 true_constants_PBE = torch.Tensor([[0.06672455,
                                     (1 - torch.log(torch.Tensor([2])))/(torch.pi**2),
                                     1.709921,
@@ -68,6 +68,7 @@ class MLOptimizer(nn.Module):
 
     def forward(self, x):
         x = self.hidden_layers(x)
+
         
         if self.DFT == 'SVWN': # constraint for VWN3's Q_vwn function to 4*c - b**2 > 0
             constants = []
@@ -78,9 +79,6 @@ class MLOptimizer(nn.Module):
         if self.DFT == 'PBE':
             ''' Use sigmoid on predictions and multiply by known constants for easier predictions '''
             x = self.custom_sigmoid(x)
-            # 4,5
-            if x.shape[1]==2:
-                x = torch.cat([torch.ones(x.shape[0], 4).to(device), x, torch.ones(x.shape[0],18).to(device)], dim=1)
             x = x * true_constants_PBE
         if self.DFT == 'XALPHA':
             x = x * 1.05

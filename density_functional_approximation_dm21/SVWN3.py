@@ -99,7 +99,8 @@ def f_vwn(rs, z, c_arr):
 
 
 def rs_z_calc(rho):
-    eps = 1e-29
+#    eps = 1e-29
+    eps = 1e-20
     rs = (3/((rho[:,0] + rho[:,1] + eps) * (4 * torch.pi))) ** (1/3)
     z = (rho[:,0] - rho[:,1]) / (rho[:,0] + rho[:,1] + eps)
 #    catch_nan(rs=rs, z=z)

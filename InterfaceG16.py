@@ -1,12 +1,25 @@
 import yaml
 from optparse import OptionParser
+import os
 
 parser = OptionParser()
 parser.add_option('--NFinal', type=int, default=30,
                   help="Number systems to select")
 parser.add_option('--Mode', type='string', default='Analyse',
-                  help="Number systems to select")
+                  help="Mode")
+parser.add_option('--Functional', type='string', default='NN',
+                  help="Functional to evaluate")
+
 (Opts, args) = parser.parse_args()
+
+Functional = Opts.Functional
+
+script_template ='''#! /bin/bash
+#SBATCH --job-name="NN Functionals Benchmark"
+#SBATCH --ntasks=4
+#SBATCH --output="/home/xray/schneiderm/log_files/benchmark_log_"%j.out
+# Executable
+python -m script --System '''
 
 
 def WriteSystems(NFinal = 150, Suff = ""):
@@ -75,7 +88,7 @@ def ReadSystems(NFinal=30, InputFile=None):
     Y=yaml.safe_load(open("GIF/ComboList_%d.txt"%(NFinal)))
 
     if InputFile is None:
-        InputFile = "Results\EnergyList_B3LYP_%d.txt"%(NFinal)
+        InputFile = f"Results/EnergyList_30_{Functional}.txt"
 
     G16Energy = G16ExtractEnergies(InputFile)
 
@@ -126,6 +139,31 @@ def ReadSystems(NFinal=30, InputFile=None):
 Mode = Opts.Mode.upper()[:2]
 if Mode=="GE": # Generation mode - makes the .gif_ files
     WriteSystems(NFinal = Opts.NFinal)
+    filenames = sorted(list(os.walk('GIF'))[0][2:][0])
+    filenames = [name for name in filenames if name.endswith('.gif_')]
+    for name in filenames:
+        system_name = name[:-5]
+        dir = f'GIF/{system_name}'
+        old_dir = f'GIF/{system_name}.gif_'
+        new_dir = f'{dir}/{system_name}.gif_'
+        os.mkdir(dir)
+        os.rename(old_dir, new_dir)
+        with open(f'GIF/{system_name}/calculate_system_energy.slurm', 'w') as file:
+            file.write(script_template + system_name)
+        for non_nn in ['PBE', 'XAlpha']:
+            with open(f'GIF/{system_name}/calculate_system_energy_{non_nn}.slurm', 'w') as file:
+                file.write(script_template + system_name + f' --Functional {non_nn}')
+elif Mode=='CE':
+    filenames = list(os.walk('GIF'))[1:]
+    for name in sorted(filenames):
+        current_path = name[0].replace('\\', '/')
+        if Functional[:2] == 'NN':
+            slurm_path = f'{current_path}/calculate_system_energy.slurm'
+            os.system(f'sbatch {slurm_path}')
+        else:
+            for non_nn in ['PBE', 'XAlpha']:
+                slurm_path = f'{current_path}/calculate_system_energy_{non_nn}.slurm'
+                os.system(f'sbatch {slurm_path}')
 else:
     MAE, Errors = ReadSystems(Opts.NFinal)
     print("NFinal = %3d, NActual = %3d, WTMAD2 = %.3f"\
