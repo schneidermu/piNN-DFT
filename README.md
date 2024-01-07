@@ -40,3 +40,4 @@ python -m InterfaceG16 --Functional NN_XALPHA
 python -m InterfaceG16 --Functional PBE_D3BJ
 python -m InterfaceG16 --Functional XAlpha
 ```
+9) Calculate enhancement factors for argon dimer
