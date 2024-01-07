@@ -10,7 +10,11 @@ parser.add_option('--System', type=str,
                   help="System to calculate")
 parser.add_option('--Functional', type=str,
                   default='NN',
-                  help="Non-NN functional")
+                  help="Functional for calculation")
+parser.add_option('--Dispersion', type=str,
+                  default=False,
+                  help="D3 Dispersion calculation")
+
 
 (Opts, args) = parser.parse_args()
 
@@ -26,10 +30,9 @@ non_nn_functional_dict = {
 
 system_name = Opts.System
 functional = Opts.Functional
+dispersion = Opts.Dispersion
 
 non_nn_functional = non_nn_functional_dict.get(functional)
-
-
 
 def get_coords_charge_spin(system_name):
     with open(f'GIF/{system_name}/{system_name}.gif_', 'r') as file:
@@ -47,12 +50,17 @@ def get_coords_charge_spin(system_name):
 
 
 def initialize_molecule(coords, charge, spin):
+    ecp_atoms = []
     molecule = gto.Mole()
     molecule.atom = coords
     if "I" in coords:
-        molecule.ecp = {"I": 'def2-qzvp'}
+        ecp_atoms.append("I")
     if "Sb" in coords:
-        molecule.ecp = {"Sb": 'def2-qzvp'}
+        ecp_atoms.append("Sb")
+    if "Bi" in coords:
+        ecp_atoms.append("Bi")
+    
+    molecule.ecp = {atom:'def2-qzvp' for atom in ecp_atoms}
     molecule.basis = 'def2-qzvp'
     molecule.verbose = 4
     molecule.spin = spin
@@ -88,7 +96,6 @@ def calculate_non_nn_functional_energy(mf, functional_name):
     return energy
 
 
-
 def main():
     print('Number of threads:', lib.num_threads())
     print('\n\n', system_name, '\n\n')
@@ -111,8 +118,9 @@ def main():
             corrected_energy = 'ERROR'
 
         finally:
-            with open(f'Results/EnergyList_30_{functional_name}.txt', 'a') as file:
+            with open(f'Results/EnergyList_50_{functional_name}.txt', 'a') as file:
                 file.write(f'{system_name}.gif_ {corrected_energy}\n')
+
 
 def test_non_nn_functional():
     print('Number of threads:', lib.num_threads())
@@ -123,12 +131,29 @@ def test_non_nn_functional():
 
     energy = calculate_non_nn_functional_energy(mf, non_nn_functional)
 
-    with open(f'Results/EnergyList_30_{functional}.txt', 'a') as file:
+    with open(f'Results/EnergyList_50_{functional}.txt', 'a') as file:
         file.write(f'{system_name}.gif_ {energy}\n')
 
 
+def calculate_dispersions():
+    print('Number of threads:', lib.num_threads())
+    print('\n\n', system_name, '\n\n')
+    coords, charge, spin = get_coords_charge_spin(system_name)
+    molecule, mf = initialize_molecule(coords, charge, spin)
+    d3_PBE0 = disp.DFTD3Dispersion(molecule, xc="PBE0", version="d3bj")
+    d3_PBE = disp.DFTD3Dispersion(molecule, xc="PBE", version="d3bj")
+    d3_PBE0_energy = d3_PBE0.kernel()[0]
+    d3_PBE_energy = d3_PBE.kernel()[0]
+    with open(f'Results/DispersionList_PBE0.txt', 'a') as file:
+        file.write(f'{system_name}.gif_ {d3_PBE0_energy}\n')
+    with open(f'Results/DispersionList_PBE.txt', 'a') as file:
+        file.write(f'{system_name}.gif_ {d3_PBE_energy}\n')
+
+
 if __name__ == '__main__':
-    if functional == 'NN':
+    if dispersion:
+        calculate_dispersions()
+    elif functional == 'NN':
         main()
     else:
         test_non_nn_functional()

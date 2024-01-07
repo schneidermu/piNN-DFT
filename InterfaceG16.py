@@ -3,7 +3,7 @@ from optparse import OptionParser
 import os
 
 parser = OptionParser()
-parser.add_option('--NFinal', type=int, default=30,
+parser.add_option('--NFinal', type=int, default=50,
                   help="Number systems to select")
 parser.add_option('--Mode', type='string', default='Analyse',
                   help="Mode")
@@ -17,9 +17,15 @@ Functional = Opts.Functional
 script_template ='''#! /bin/bash
 #SBATCH --job-name="NN Functionals Benchmark"
 #SBATCH --ntasks=4
-#SBATCH --output="/home/xray/schneiderm/log_files/benchmark_log_"%j.out
+#SBATCH --output="/home/xray/schneiderm/log_files/{system_name}_"%j.out
 # Executable
-python -m script --System '''
+python -m script --System {system_name}'''
+dispersion_script_template = '''#! /bin/bash
+#SBATCH --job-name="NN Functionals Benchmark"
+#SBATCH --ntasks=4
+#SBATCH --output="/home/xray/schneiderm/log_files/D3(BJ)_{system_name}_"%j.out
+# Executable
+python -m script --Dispersion True --System {system_name}'''
 
 
 def WriteSystems(NFinal = 150, Suff = ""):
@@ -84,11 +90,11 @@ def G16ExtractEnergies(FileName):
             print("Warning! %s not defined"%(T[0]))
     return E
 
-def ReadSystems(NFinal=30, InputFile=None):
+def ReadSystems(NFinal=50, InputFile=None):
     Y=yaml.safe_load(open("GIF/ComboList_%d.txt"%(NFinal)))
 
     if InputFile is None:
-        InputFile = f"Results/EnergyList_30_{Functional}.txt"
+        InputFile = f"Results/EnergyList_{NFinal}_{Functional}.txt"
 
     G16Energy = G16ExtractEnergies(InputFile)
 
@@ -149,10 +155,12 @@ if Mode=="GE": # Generation mode - makes the .gif_ files
         os.mkdir(dir)
         os.rename(old_dir, new_dir)
         with open(f'GIF/{system_name}/calculate_system_energy.slurm', 'w') as file:
-            file.write(script_template + system_name)
+            file.write(script_template.format(system_name=system_name))
+        with open(f'GIF/{system_name}/calculate_system_dispersion.slurm', 'w') as file:
+            file.write(dispersion_script_template.format(system_name=system_name))
         for non_nn in ['PBE', 'XAlpha']:
             with open(f'GIF/{system_name}/calculate_system_energy_{non_nn}.slurm', 'w') as file:
-                file.write(script_template + system_name + f' --Functional {non_nn}')
+                file.write(script_template.format(system_name=system_name) + f' --Functional {non_nn}')
 elif Mode=='CE':
     filenames = list(os.walk('GIF'))[1:]
     for name in sorted(filenames):
@@ -164,6 +172,12 @@ elif Mode=='CE':
             for non_nn in ['PBE', 'XAlpha']:
                 slurm_path = f'{current_path}/calculate_system_energy_{non_nn}.slurm'
                 os.system(f'sbatch {slurm_path}')
+elif Mode=='D3':
+    filenames = list(os.walk('GIF'))[1:]
+    for name in sorted(filenames):
+        current_path = name[0].replace('\\', '/')
+        slurm_path = f'{current_path}/calculate_system_dispersion.slurm'
+        os.system(f'sbatch {slurm_path}')
 else:
     MAE, Errors = ReadSystems(Opts.NFinal)
     print("NFinal = %3d, NActual = %3d, WTMAD2 = %.3f"\
