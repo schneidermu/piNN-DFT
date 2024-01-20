@@ -35,9 +35,9 @@ python -m add_d3_corrections
 
 8) Calculate WTMAD-2:
 ```
-python -m InterfaceG16 --Functional NN_PBE
-python -m InterfaceG16 --Functional NN_XALPHA
-python -m InterfaceG16 --Functional PBE_D3BJ
-python -m InterfaceG16 --Functional XAlpha
+python -m InterfaceG16 --Functional NN_PBE > NN_PBE.txt
+python -m InterfaceG16 --Functional NN_XALPHA > NN_XAlpha.txt
+python -m InterfaceG16 --Functional PBE_D3BJ > PBE-D3(BJ).txt
+python -m InterfaceG16 --Functional XAlpha > XAlpha.txt
 ```
 9) Calculate enhancement factors for argon dimer
