@@ -39,6 +39,7 @@ python -m InterfaceG16 --Functional NN_PBE > Results/NN_PBE.txt
 python -m InterfaceG16 --Functional NN_XALPHA > Results/NN_XAlpha.txt
 python -m InterfaceG16 --Functional PBE_D3BJ > Results/PBE-D3BJ.txt
 python -m InterfaceG16 --Functional XAlpha > Results/XAlpha.txt
-python -m Results/txt_to_csv
+cd Results/
+python -m txt_to_csv
 ```
 9) Calculate enhancement factors for argon dimer
