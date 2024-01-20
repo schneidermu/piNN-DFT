@@ -37,7 +37,7 @@ python -m add_d3_corrections
 ```
 python -m InterfaceG16 --Functional NN_PBE > Results/NN_PBE.txt
 python -m InterfaceG16 --Functional NN_XALPHA > Results/NN_XAlpha.txt
-python -m InterfaceG16 --Functional PBE_D3BJ > Results/PBE-D3(BJ).txt
+python -m InterfaceG16 --Functional PBE_D3BJ > Results/PBE-D3BJ.txt
 python -m InterfaceG16 --Functional XAlpha > Results/XAlpha.txt
 ```
 9) Calculate enhancement factors for argon dimer
