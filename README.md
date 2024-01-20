@@ -33,11 +33,12 @@ python -m InterfaceG16 --Mode D3
 python -m add_d3_corrections
 ```
 
-8) Calculate WTMAD-2:
+8) Calculate WTMAD-2 and create a .csv table in the Results folder for comparison:
 ```
 python -m InterfaceG16 --Functional NN_PBE > Results/NN_PBE.txt
 python -m InterfaceG16 --Functional NN_XALPHA > Results/NN_XAlpha.txt
 python -m InterfaceG16 --Functional PBE_D3BJ > Results/PBE-D3BJ.txt
 python -m InterfaceG16 --Functional XAlpha > Results/XAlpha.txt
+python -m Results/txt_to_csv
 ```
 9) Calculate enhancement factors for argon dimer
