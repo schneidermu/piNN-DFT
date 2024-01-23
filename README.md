@@ -1,6 +1,6 @@
 # SCF Calculations for NN-parametrized PBE and XAlpha
 
-## Benchmark on diet GMTKN55 (50 reactions), enhancement factor for Argon dimer calculation
+## Benchmark on diet GMTKN55 (30 and 50 reactions), enhancement factor for Argon dimer calculation
 
 
 ### Reproducing the experiment:
