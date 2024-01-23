@@ -42,4 +42,4 @@ python -m InterfaceG16 --Functional XAlpha > Results/XAlpha.txt
 cd Results/
 python -m txt_to_csv
 ```
-9) Calculate enhancement factors for argon dimer
+9) To calculate WTMAD-2 for 30 reactions as in Table ., use --NFinal 30 argument for steps 3-8
