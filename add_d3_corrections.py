@@ -1,4 +1,16 @@
-paths = {'PBE':('Results/EnergyList_50_PBE.txt', 'Results/DispersionList_PBE.txt'), 'XAlpha':('Results/EnergyList_50_XAlpha.txt', 'Results/DispersionList_PBE0.txt')}
+from optparse import OptionParser
+
+
+parser = OptionParser()
+parser.add_option('--NFinal', type=int, default=50,
+                  help="Number systems to select")
+
+(Opts, args) = parser.parse_args()
+
+NFinal = Opts.NFinal
+
+
+paths = {'PBE':('Results/EnergyList_{NFinal}_PBE.txt', 'Results/DispersionList_PBE.txt'), 'XAlpha':('Results/EnergyList_{NFinal}_XAlpha.txt', 'Results/DispersionList_PBE0.txt')}
 
 for functional in ['PBE', 'XAlpha']:
     energy_dict = dict()
@@ -13,6 +25,6 @@ for functional in ['PBE', 'XAlpha']:
                     energy_dict[system_name] = [energy,]
                 else:
                     energy_dict[system_name].append(energy)
-    with open(f'Results/EnergyList_50_{functional}_D3BJ.txt', 'w') as file:
+    with open(f'Results/EnergyList_{NFinal}_{functional}_D3BJ.txt', 'w') as file:
         for system in energy_dict:
             file.write(f'{system}.gif_ {sum(energy_dict[system])}\n')

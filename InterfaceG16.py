@@ -9,23 +9,27 @@ parser.add_option('--Mode', type='string', default='Analyse',
                   help="Mode")
 parser.add_option('--Functional', type='string', default='NN',
                   help="Functional to evaluate")
+parser.add_option('--NFinal', type=int, default=50,
+                  help="Number systems to select")
+
 
 (Opts, args) = parser.parse_args()
 
 Functional = Opts.Functional
+NFinal = Opts.NFinal
 
 script_template ='''#! /bin/bash
 #SBATCH --job-name="NN Functionals Benchmark"
 #SBATCH --ntasks=4
 #SBATCH --output="/home/xray/schneiderm/log_files/{system_name}_"%j.out
 # Executable
-python -m script --System {system_name}'''
+python -m script --System {system_name} --NFinal {NFinal}'''
 dispersion_script_template = '''#! /bin/bash
 #SBATCH --job-name="NN Functionals Benchmark"
 #SBATCH --ntasks=4
 #SBATCH --output="/home/xray/schneiderm/log_files/D3(BJ)_{system_name}_"%j.out
 # Executable
-python -m script --Dispersion True --System {system_name}'''
+python -m script --Dispersion True --System {system_name} --NFinal {NFinal}'''
 
 
 def WriteSystems(NFinal = 150, Suff = ""):

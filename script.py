@@ -14,6 +14,8 @@ parser.add_option('--Functional', type=str,
 parser.add_option('--Dispersion', type=str,
                   default=False,
                   help="D3 Dispersion calculation")
+parser.add_option('--NFinal', type=int, default=50,
+                  help="Number systems to select")
 
 
 (Opts, args) = parser.parse_args()
@@ -31,6 +33,7 @@ non_nn_functional_dict = {
 system_name = Opts.System
 functional = Opts.Functional
 dispersion = Opts.Dispersion
+NFinal = Opts.NFinal
 
 non_nn_functional = non_nn_functional_dict.get(functional)
 
@@ -118,7 +121,7 @@ def main():
             corrected_energy = 'ERROR'
 
         finally:
-            with open(f'Results/EnergyList_50_{functional_name}.txt', 'a') as file:
+            with open(f'Results/EnergyList_{NFinal}_{functional_name}.txt', 'a') as file:
                 file.write(f'{system_name}.gif_ {corrected_energy}\n')
 
 
@@ -131,7 +134,7 @@ def test_non_nn_functional():
 
     energy = calculate_non_nn_functional_energy(mf, non_nn_functional)
 
-    with open(f'Results/EnergyList_50_{functional}.txt', 'a') as file:
+    with open(f'Results/EnergyList_{NFinal}_{functional}.txt', 'a') as file:
         file.write(f'{system_name}.gif_ {energy}\n')
 
 

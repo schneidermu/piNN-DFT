@@ -25,7 +25,6 @@ STD_TRAIN_FEATURES = torch.tensor([5.00045545, 5.19493982, 6.30814192, 6.7281327
 class NN_FUNCTIONAL:
 
     def __init__(self, name):
-#        path_to_mlruns = '/'.join(dir_path.split('/')[:-1])
         path_to_model_state_dict = dir_path + '/' + relative_path_to_model_state_dict[name]
         model = nn_model[name]()
         state_dict = mlflow.pytorch.load_state_dict(path_to_model_state_dict, map_location=torch.device('cpu'))
@@ -33,6 +32,7 @@ class NN_FUNCTIONAL:
         model.eval()
         self.name = name
         self.model = model
+
 
     def create_features_from_rhos(self, features, device):
         rho_only_a, grad_a_x, grad_a_y, grad_a_z, _, tau_a = torch.unsqueeze(
@@ -63,9 +63,30 @@ class NN_FUNCTIONAL:
         feature_dict['norm_grad_ab'] = (feature_dict['norm_grad']-feature_dict['norm_grad_a']-feature_dict['norm_grad_b'])/2
 
         return feature_dict
+    
+
+    def create_features_from_libxc(self, features):
+        rho = features['rho']
+        sigma = features['sigma']
+        tau = features['tau']
+
+        feature_dict = dict()
+
+        feature_dict['rho_a'] = torch.tensor(rho/2,  dtype=torch.float32).view(1,-1)
+        feature_dict['rho_b'] = torch.tensor(rho/2,  dtype=torch.float32).view(1,-1)
+        feature_dict['tau_a'] = torch.tensor(tau/2,  dtype=torch.float32).view(1,-1)
+        feature_dict['tau_b'] = torch.tensor(tau/2,  dtype=torch.float32).view(1,-1)
+        feature_dict['norm_grad'] = torch.tensor(sigma,  dtype=torch.float32).view(1,-1)
+        feature_dict['norm_grad_a'] = torch.tensor(sigma/4,  dtype=torch.float32).view(1,-1)
+        feature_dict['norm_grad_b'] = torch.tensor(sigma/4,  dtype=torch.float32).view(1,-1)
+        feature_dict['norm_grad_ab'] = (feature_dict['norm_grad']-feature_dict['norm_grad_a']-feature_dict['norm_grad_b'])/2
+
+        return feature_dict
 
 
-    def __call__(self, features, device):
+
+
+    def __call__(self, features, device, mode=None):
 
         torch.autograd.set_detect_anomaly(True)
 
@@ -74,7 +95,10 @@ class NN_FUNCTIONAL:
 
 
         # Get features for NN and functional
-        feature_dict = self.create_features_from_rhos(features, device)
+        if mode:
+            feature_dict = self.create_features_from_libxc(features)
+        else:
+            feature_dict = self.create_features_from_rhos(features, device)
 
         keys = ['rho_a', 'rho_b', 'norm_grad_a', 'norm_grad', 'norm_grad_b', 'tau_a', 'tau_b', 'norm_grad_ab']
 
