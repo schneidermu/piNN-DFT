@@ -55,4 +55,4 @@ python -m something.py
 
 11) To reproduce Figures 5-7, run the visualize.ipynb notebook in Results folder, the .csv and .npy files are generated during steps 8-10
 
-12) To calculate WTMAD-2 for 30 reactions as in Table ., use --NFinal 30 argument for steps 3-8
+12) To calculate WTMAD-2 for 30 reactions as in Table 1, use --NFinal 30 argument for steps 3-8
