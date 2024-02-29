@@ -42,5 +42,17 @@ python -m InterfaceG16 --Functional XAlpha > Results/XAlpha.txt
 cd Results/
 python -m txt_to_csv
 ```
-9) To reproduce Fig. , run R script
-10) To calculate WTMAD-2 for 30 reactions as in Table ., use --NFinal 30 argument for steps 3-8
+
+9) To calculate the dependency of the enhancement factors on normed gradient, run:
+'''
+python -m something.py
+'''
+
+10) To calculate the enhancement factor in the molecule of Argon dimer, run:
+'''
+python -m something.py
+'''
+
+11) To reproduce Figures 5-7, run the visualize.ipynb notebook in Results folder, the .csv and .npy files are generated during steps 8-10
+
+12) To calculate WTMAD-2 for 30 reactions as in Table ., use --NFinal 30 argument for steps 3-8
