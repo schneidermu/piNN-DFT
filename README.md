@@ -1,39 +1,38 @@
-# SCF Calculations for NN-parametrized PBE and XAlpha
-
-## Benchmark on diet GMTKN55 (30 and 50 reactions), enhancement factor for Argon dimer calculation
+# Benchmarking of the functionals on diet GMTKN55 (30 and 50 reactions), enhancement factor calculations
 
 
-### Reproducing the experiment:
+## Preparing data
 
 1) Clone the repository
 2) Create and activate virtual environment, install packages from requirements.txt
-3) Go to SCF-calculation folder and generate GIF-files:
+3) Generate GIF-files:
 ```
-cd SCF-calculations/
 python -m InterfaceG16 --Mode GE
 ```
-4) Calculate NN functionals' energies:
+
+## Calculating system energies
+1) Calculate NN functionals' energies:
 ```
 python -m InterfaceG16 --Mode CE
 ```
 
-5) Calculate PBE and XAlpha energies:
+2) Calculate PBE and XAlpha energies:
 
 ```
 python -m InterfaceG16 --Mode CE --Functional Non-NN
 ```
-6) Calculate PBE0 and PBE D3BJ energies:
+3) Calculate PBE0 and energies and D3(BJ) corrections:
 ```
 python -m InterfaceG16 --Mode D3
 ```
 
-7) Add the D3BJ corrections to PBE and XAlpha energies (for NN functionals they are added during step 4 calculations):
+4) Add the D3BJ corrections to PBE and XAlpha energies (for NN functionals they are added during step 4 calculations):
 
 ```
 python -m add_d3_corrections
 ```
 
-8) Calculate WTMAD-2 and create a .csv table in the Results folder for comparison:
+5) Calculate WTMAD-2 and create a .csv table in the Results folder for comparison:
 ```
 python -m InterfaceG16 --Functional NN_PBE > Results/NN_PBE.txt
 python -m InterfaceG16 --Functional NN_XALPHA > Results/NN_XAlpha.txt
@@ -43,16 +42,19 @@ cd Results/
 python -m txt_to_csv
 ```
 
-9) To calculate the dependency of the enhancement factors on normed gradient, run:
-'''
-python -m something.py
-'''
+## Enhancement factor calculations
+To calculate the dependency of the enhancement factors on normed gradient, run:
+```
+python -m plot_exc
+```
 
-10) To calculate the enhancement factor in the molecule of Argon dimer, run:
-'''
-python -m something.py
-'''
+To calculate the enhancement factor in the molecule of Argon dimer, run:
+```
+python -m gen_cubgrid_Ar2
+```
 
-11) To reproduce Figures 5-7, run the visualize.ipynb notebook in Results folder, the .csv and .npy files are generated during steps 8-10
+## Visualize the results
+To reproduce Figures 5-7, run the `Fxc_Ar2_visualization.ipynb` notebook in Results folder, the .csv and .npy files are already generated in the precious steps
 
-12) To calculate WTMAD-2 for 30 reactions as in Table 1, use --NFinal 30 argument for steps 3-8
+## Calculate reaction energies for 30 systems
+To calculate WTMAD-2 for 30 reactions as in Table 1, use *--NFinal* 30 argument when generating GIF files and calculating reaction energies
