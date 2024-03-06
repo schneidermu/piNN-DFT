@@ -15,7 +15,7 @@ parser.add_option('--Dispersion', type=str,
                   default=False,
                   help="D3 Dispersion calculation")
 parser.add_option('--NFinal', type=int, default=50,
-                  help="Number systems to select")
+                  help="Number of systems to select")
 
 
 (Opts, args) = parser.parse_args()

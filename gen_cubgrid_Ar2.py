@@ -56,27 +56,12 @@ dm = mf.make_rdm1()
 
 rho = ni.eval_rho(mol, ao, dm, xctype = "mGGA")
 
-
 pdat = {}
 
-
-### Если хочестся посмотреть как выглядят различные свойства плотности
-# pdat["rho"] = rho[0]
-# pdat["lapl"] = rho[4]
-# pdat["tau"] = rho[5]
-
 sigma = rho[1]**2 + rho[2]**2 + rho[3]**2
-# pdat["sigma"] = sigma
-
-# s = (sigma ** 0.5) / (2 * ((3 * (np.pi ** 2)) ** (1 / 3)) * (rho[0] ** (4 / 3)))
-# pdat["s"] = s
 
 alpha = 5.0 / 9.0 * ((rho[5] * 2.0 ** (2/3)) * (0.1e1 / (rho[0] ** (5/3))) - (sigma * 2.0 ** (2/3) * (1.0 / (rho[0] ** (8/3)))) / 8.0) * 6.0 ** (1/3) * (1.0 / (np.pi ** (4/3)))
 pdat["alpha"] = alpha
-
-# rs = (3 / (rho[0] *  4 * np.pi)) ** (1/3)
-# pdat["rs"] = rs
-###
 
 inp = {}
 inp["rho"] = rho[0]
