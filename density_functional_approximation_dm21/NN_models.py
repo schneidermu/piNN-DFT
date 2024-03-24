@@ -1,6 +1,5 @@
-from torch import nn
 import torch
-
+from torch import nn
 
 device = torch.device('cpu')
 true_constants_PBE = torch.Tensor([[0.06672455,
@@ -31,13 +30,12 @@ class ResBlock(nn.Module):
             nn.Linear(h_dim, h_dim, bias=False),
             nn.BatchNorm1d(h_dim),
             nn.LeakyReLU(),
-            nn.Dropout(p=dropout)) # default value was 0.2, trying 0.4 and 0.6
+            nn.Dropout(p=dropout))
         
     def forward(self, x):
         residue = x
 
         return self.fc(self.fc(x)) + residue # skip connection 
-#        return self.fc(self.fc(x))
 
 
 class MLOptimizer(nn.Module):
@@ -63,7 +61,6 @@ class MLOptimizer(nn.Module):
         # Custom sigmoid translates from [-inf, +inf] to [0, 4]
         # from 0 to 1
         result = (1+torch.e+(torch.e-3)/3)/(1 + (torch.e-3)/3 + torch.e**(-0.5*x+1))
-        # result = torch.sigmoid(x) * 2
         return result
 
     def forward(self, x):
@@ -73,7 +70,7 @@ class MLOptimizer(nn.Module):
         if self.DFT == 'SVWN': # constraint for VWN3's Q_vwn function to 4*c - b**2 > 0
             constants = []
             for b_ind, c_ind in zip((2, 3, 11, 12, 13),(4, 5, 14, 15, 16)):
-                 constants.append(torch.abs(x[:, c_ind]) + (x[:, b_ind]**2)/4 + 1e-5) # torch.abs or nn.ReLU()?
+                 constants.append(torch.abs(x[:, c_ind]) + (x[:, b_ind]**2)/4 + 1e-5)
             x = torch.cat([x[:,0:4], torch.stack(constants[0:2], dim=1), x[:,6:14], torch.stack(constants[2:], dim=1), x[:,17:]], dim=1)
             del constants
         if self.DFT == 'PBE':
@@ -88,5 +85,5 @@ class MLOptimizer(nn.Module):
 def NN_XALPHA_model(num_layers=32, h_dim=32, nconstants=1, dropout=0.4, DFT='XALPHA'):
     return MLOptimizer(num_layers, h_dim, nconstants, dropout, DFT)
 
-def NN_PBE_model(num_layers=8, h_dim=32, nconstants=24, dropout=0.4,DFT='PBE'):
+def NN_PBE_model(num_layers=8, h_dim=32, nconstants=24, dropout=0.4, DFT='PBE'):
     return MLOptimizer(num_layers, h_dim, nconstants, dropout, DFT)

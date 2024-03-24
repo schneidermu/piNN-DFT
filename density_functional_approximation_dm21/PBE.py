@@ -46,7 +46,6 @@ def xs_xt_calc(rho, sigmas):     # sigma 1 is alpha beta contracted gradient
     eps_add = 1e-22
     DIMENSIONS = 3
     xs0 = torch.sqrt(sigmas[:,0] + eps_add**2)/(rho[:,0] + eps_add)**(1 + 1/DIMENSIONS)
-    # xs1 = torch.sqrt(sigmas[:,2])/(rho[:,1]+eps)**(1 + 1/DIMENSIONS)
     xs1 = torch.where((sigmas[:,2] < eps) & (rho[:,1] < eps), # last sigma and last rho equal 0
                       torch.sqrt(sigmas[:,0] + eps_add**2)/(rho[:,0] + eps_add)**(1 + 1/DIMENSIONS), 
                       torch.sqrt(sigmas[:,2] + eps_add**2)/(rho[:,1] + eps_add)**(1 + 1/DIMENSIONS))
@@ -63,7 +62,6 @@ def f_zeta(z): # - power threshold
 
 
 def mphi(z):
-    # eps added, was -15 the best
     eps = 1e-15
     res_mphi = ((1 + z)**(2/3) + (1 - z + eps)**(2/3))/2
     catch_nan(res_mphi=res_mphi)
@@ -71,9 +69,6 @@ def mphi(z):
                                     
                                     
 def tt(rs, z, xt):
-    # rs is okay
-    # mphi is okay
-    # xt is big!
     res_tt = xt/(4*2**(1/3)*mphi(z)*torch.sqrt(rs))
     catch_nan(res_tt=res_tt)
     return res_tt
@@ -91,20 +86,17 @@ def g(k, rs, c_arr):
     log = torch.log1p(1/(2*c_arr[:, 15:18][:, k]*g_aux_)) + eps
     res_g = -2*c_arr[:, 15:18][:, k]*(1 + c_arr[:, 18:21][:, k]*rs) * log
     catch_nan(res_g=res_g, log=log, g_aux_=g_aux_)
-    # save_tensors(res_g=res_g, log=log, g_aux_=g_aux_)
     return res_g
 
 
 def f_pw(rs, z, c_arr):
     res_f_pw = g(0, rs, c_arr) + z**4*f_zeta(z)*(g(1, rs, c_arr) - g(0, rs, c_arr) + g(2, rs, c_arr)/c_arr[:, 2]) - f_zeta(z)*g(2, rs, c_arr)/c_arr[:, 2]
     
-    # save_tensors(g0=g(0, rs, c_arr), z_tensor=z**4*f_zeta(z), g1=g(1, rs, c_arr), g2=g(2, rs, c_arr))
     catch_nan(res_f_pw=res_f_pw)
     return res_f_pw
     
 
 def A(rs, z, t, c_arr, device):
-    # eps = 1e-10
     f_pw_ = f_pw(rs, z, c_arr)
     mphi_ = c_arr[:, 1]*mphi(z)**3
     const_87 = torch.Tensor([87]).to(device) # exp(87) = 10**38 - near infinity
@@ -202,7 +194,6 @@ def PBE_X(rs, z, xt, xs0, xs1, c_arr):
     return res_PBE_X
 
 
-# @torch.compile
 def F_PBE(rho, sigmas, c_arr, device):
     catch_nan(rho=rho, sigmas=sigmas, c_arr=c_arr)
     rs, z = rs_z_calc(rho)
