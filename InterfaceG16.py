@@ -8,7 +8,6 @@ parser.add_option("--Mode", type="string", default="Analyse", help="Mode")
 parser.add_option(
     "--Functional", type="string", default="NN", help="Functional to evaluate"
 )
-parser.add_option("--NFinal", type=int, default=50, help="Number systems to select")
 
 
 (Opts, args) = parser.parse_args()
@@ -93,7 +92,7 @@ def G16ExtractEnergies(FileName):
     return E
 
 
-def ReadSystems(NFinal=50, InputFile=None):
+def ReadSystems(NFinal=NFinal, InputFile=None):
     Y = yaml.safe_load(open("GIF/ComboList_%d.txt" % (NFinal)))
 
     if InputFile is None:
