@@ -21,12 +21,12 @@ python -m InterfaceG16 --Mode CE
 ```
 python -m InterfaceG16 --Mode CE --Functional Non-NN
 ```
-3) Calculate PBE0 and energies and D3(BJ) corrections:
+3) Calculate PBE0 energies and D3(BJ) corrections:
 ```
 python -m InterfaceG16 --Mode D3
 ```
 
-4) Add the D3BJ corrections to PBE and XAlpha energies (for NN functionals they are added during step 4 calculations):
+4) Add the D3BJ corrections to PBE and XAlpha energies (for NN functionals they are added during step 1):
 
 ```
 python -m add_d3_corrections
