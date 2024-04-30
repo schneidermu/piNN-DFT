@@ -82,8 +82,130 @@ class MLOptimizer(nn.Module):
         return x
 
 
+class pcPBEMLOptimizer(nn.Module):
+    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=21, dropout=0.4, DFT=None):
+        super().__init__()
+
+        self.DFT = DFT
+
+        modules_x = []
+        modules_c = []
+        modules_x.extend(
+            [
+                nn.Linear(5, h_dim, bias=False),
+                nn.BatchNorm1d(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=0.0),
+            ]
+        )
+
+        modules_c.extend(
+            [
+                nn.Linear(7, h_dim, bias=False),
+                nn.BatchNorm1d(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=0.0),
+            ]
+        )
+
+        for _ in range(num_layers // 2 - 1):
+            modules_x.append(ResBlock(h_dim, dropout))
+            modules_c.append(ResBlock(h_dim, dropout))
+
+        modules_x.append(nn.Linear(h_dim, nconstants_x, bias=True))
+        modules_c.append(nn.Linear(h_dim, nconstants_c, bias=True))
+
+        self.hidden_layers_x = nn.Sequential(*modules_x)
+        self.hidden_layers_c = nn.Sequential(*modules_c)
+
+    
+    def nonzero_custom_sigmoid(self, x):
+        a = 47/300
+        exp = torch.e**(0.5*x)
+        # Custom sigmoid translates from [-inf, +inf] to [0.05, 4]
+        result = (4*exp+a)/(3+a+exp)
+        return result
+    
+    def kappa_activation(self, x):
+        # Translates from [-inf, +inf] to [0, 1]
+        return hardtanh(x+1)
+
+    def kappa_sigmoid(self, x):
+        a = 0.0526
+        exp = torch.e**(0.5*x)
+        # Custom sigmoid translates from [-inf, +inf] to [0.05, 1]
+        result = (exp+a)/(1+a+exp)
+        return result
+
+    
+    def infinite_activation(self, x):
+        log2 = torch.log(torch.Tensor([2]))
+        exponent = 1 + torch.e**(2*x*log2)
+
+        return 1/log2*(torch.log(1+exponent))
+    
+    # 0,1 - rho alpha beta
+    # 2,3,4 sigma aa ab bb
+    # 5,6 tau a tau b
+    def get_exchange_constants(self, x):
+
+        x_x = x[:, 2:]
+
+        x_x = self.hidden_layers_x(x_x)
+
+        mu = x_x[:, 1]
+        kappa = self.kappa_activation(x_x[:, 0])
+
+        return mu, kappa
+
+
+    def get_correlation_constants(self, x):
+
+        x_c = self.hidden_layers_c(x)
+
+        beta = x_c[:, 0] 
+        gamma = x_c[:, 1]
+        lda_c_params = x_c[:, 2:]
+
+        return beta, gamma, lda_c_params
+
+    
+    @staticmethod
+    def all_sigma_zero(x):
+        # For betta
+        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 5]).to(device)])
+    
+    @staticmethod
+    def all_sigma_inf(x):
+        # For lda_c
+        return torch.hstack([x[:, :2], torch.ones([x.shape[0], 5]).to(device)])
+    
+    @staticmethod
+    def all_rho_inf(x):
+        # For gamma
+        return torch.hstack([torch.ones([x.shape[0], 2]).to(device), x[:, 2:]])
+
+
+    def forward(self, x):
+        mu, kappa = self.get_exchange_constants(x)
+        beta, gamma, lda_c_params = self.get_correlation_constants(x)
+
+        beta = self.nonzero_custom_sigmoid((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
+        gamma = self.nonzero_custom_sigmoid((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
+        lda_c_params = self.nonzero_custom_sigmoid(lda_c_params-self.get_correlation_constants(self.all_sigma_inf(x))[2])
+
+        mu = self.nonzero_custom_sigmoid((mu - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
+
+        kappa = kappa.view(-1,1)
+
+        c_arr = torch.hstack([beta, gamma, lda_c_params, torch.ones([x.shape[0], 1]).to(device), kappa, mu])*true_constants_PBE
+
+        return c_arr
+
+
+
 def NN_XALPHA_model(num_layers=32, h_dim=32, nconstants=1, dropout=0.4, DFT='XALPHA'):
     return MLOptimizer(num_layers, h_dim, nconstants, dropout, DFT)
 
-def NN_PBE_model(num_layers=8, h_dim=32, nconstants=24, dropout=0.4, DFT='PBE'):
-    return MLOptimizer(num_layers, h_dim, nconstants, dropout, DFT)
+def NN_PBE_model(num_layers=8, h_dim=32, dropout=0.4, DFT='PBE'):
+    return pcPBEMLOptimizer(num_layers, h_dim, dropout, DFT)
