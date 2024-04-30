@@ -18,22 +18,6 @@ nn_model = {
     "NN_XALPHA": NN_XALPHA_model,
 }
 
-MEAN_TRAIN_FEATURES = torch.tensor(
-    [
-        -6.33887041,
-        -6.68211794,
-        -8.682011,
-        -7.72950894,
-        -8.96326543,
-        -6.54985721,
-        -6.87318032,
-    ]
-)
-STD_TRAIN_FEATURES = torch.tensor(
-    [5.00045545, 5.19493982, 6.30814192, 6.72813273, 6.34910604, 5.24995811, 5.41875425]
-)
-
-
 class NN_FUNCTIONAL:
 
     def __init__(self, name):
@@ -154,17 +138,10 @@ class NN_FUNCTIONAL:
         # Concatenate features to get input for NN
         nn_inputs = torch.cat([feature_dict[key] for key in keys[:7]], dim=0).T
 
-        # Logarithmize and add small constant
-        eps = 10e-8
-        nn_features = torch.log(nn_inputs + eps)
-
-        # Scale, substract mean and divide by std of train set
-        nn_features_scaled = (
-            nn_features - MEAN_TRAIN_FEATURES.to(device)
-        ) / STD_TRAIN_FEATURES.to(device)
+        nn_features = torch.tanh(nn_inputs)
 
         # Get the NN output
-        constants = self.model(nn_features_scaled)
+        constants = self.model(nn_features)
 
         # Get densities for functional input
         functional_densities = torch.cat(
