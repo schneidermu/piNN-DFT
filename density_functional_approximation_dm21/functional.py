@@ -9,8 +9,8 @@ from .SVWN3 import F_XALPHA
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 relative_path_to_model_state_dict = {
-    "NN_PBE": "checkpoints/NN_PBE",
-    "NN_XALPHA": "checkpoints/NN_XALPHA",
+    "NN_PBE": "checkpoints/NN_PBE/state_dict.pth",
+    "NN_XALPHA": "checkpoints/NN_XALPHA/state_dict.pth",
 }
 
 nn_model = {
@@ -25,10 +25,10 @@ class NN_FUNCTIONAL:
             dir_path + "/" + relative_path_to_model_state_dict[name]
         )
         model = nn_model[name]()
-        state_dict = mlflow.pytorch.load_state_dict(
-            path_to_model_state_dict, map_location=torch.device("cpu")
+        model.load_state_dict(
+            torch.load(path_to_model_state_dict, map_location=torch.device("cpu"))
         )
-        model.load_state_dict(state_dict)
+#       model.load_state_dict(state_dict)
         model.eval()
         self.name = name
         self.model = model

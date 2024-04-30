@@ -25,7 +25,7 @@ def get_tr(rs, s, alpha, func, color, dash):
 
     rho = 3 / (rs**3 * 4 * np.pi)
 
-    sa = np.linspace(0, s, 5000)
+    sa = np.linspace(0, s, 15000)
 
     sigma = (sa * (2 * ((3 * (np.pi**2)) ** (1 / 3)) * (rho ** (4 / 3)))) ** 2
     tau = (
@@ -34,7 +34,7 @@ def get_tr(rs, s, alpha, func, color, dash):
     ) / (1.0 / ((rho ** (5 / 3))) * (2.0 ** (2 / 3)))
 
     inp = {}
-    inp["rho"] = np.array([rho] * 5000)
+    inp["rho"] = np.array([rho] * 15000)
     inp["sigma"] = sigma
     inp["tau"] = tau
 
@@ -65,7 +65,7 @@ def get_tr_NN(rs, s, alpha, func, color, dash):
 
     rho = 3 / (rs**3 * 4 * np.pi)
 
-    sa = np.linspace(0, s, 5000)
+    sa = np.linspace(0, s, 15000)
 
     sigma = (sa * (2 * ((3 * (np.pi**2)) ** (1 / 3)) * (rho ** (4 / 3)))) ** 2
     tau = (
@@ -74,7 +74,7 @@ def get_tr_NN(rs, s, alpha, func, color, dash):
     ) / (1.0 / ((rho ** (5 / 3))) * (2.0 ** (2 / 3)))
 
     inp = {}
-    inp["rho"] = np.array([rho] * 5000)
+    inp["rho"] = np.array([rho] * 15000)
     inp["sigma"] = sigma
     inp["tau"] = tau
 

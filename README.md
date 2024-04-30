@@ -56,5 +56,4 @@ python -m gen_cubgrid_Ar2
 ## Visualize the results
 To reproduce figures with enhancement factor, run the `Fxc_Ar2_visualization.ipynb` notebook in Results folder, the .csv and .npy files are already generated in the precious steps
 
-## Calculate reaction energies for 30 systems
-To calculate WTMAD-2 for 30 reactions, use *--NFinal* 30 argument when generating GIF files and calculating reaction energies
+

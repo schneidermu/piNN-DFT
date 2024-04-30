@@ -3,7 +3,7 @@ from optparse import OptionParser
 import yaml
 
 parser = OptionParser()
-parser.add_option("--NFinal", type=int, default=50, help="Number systems to select")
+parser.add_option("--NFinal", type=int, default=30, help="Number systems to select")
 parser.add_option("--Mode", type="string", default="Analyse", help="Mode")
 parser.add_option(
     "--Functional", type="string", default="NN", help="Functional to evaluate"
@@ -29,7 +29,7 @@ dispersion_script_template = """#! /bin/bash
 python -m script --Dispersion True --System {system_name} --NFinal {NFinal}"""
 
 
-def WriteSystems(NFinal=150, Suff=""):
+def WriteSystems(NFinal=30, Suff=""):
     Y = yaml.safe_load(open("GoodSamples/AllElements_%03d%s.yaml" % (NFinal, Suff)))
     IDs = []
     FC = open("GIF/ComboList_%d.txt" % (NFinal), "w")
@@ -150,7 +150,7 @@ def ReadSystems(NFinal=NFinal, InputFile=None):
 
 Mode = Opts.Mode.upper()[:2]
 if Mode == "GE":  # Generation mode - makes the .gif_ files
-    WriteSystems(NFinal=Opts.NFinal)
+    WriteSystems(NFinal=NFinal)
     filenames = sorted(list(os.walk("GIF"))[0][2:][0])
     filenames = [name for name in filenames if name.endswith(".gif_")]
     for name in filenames:
@@ -161,15 +161,15 @@ if Mode == "GE":  # Generation mode - makes the .gif_ files
         os.mkdir(dir)
         os.rename(old_dir, new_dir)
         with open(f"GIF/{system_name}/calculate_system_energy.slurm", "w") as file:
-            file.write(script_template.format(system_name=system_name))
+            file.write(script_template.format(system_name=system_name, NFinal=NFinal))
         with open(f"GIF/{system_name}/calculate_system_dispersion.slurm", "w") as file:
-            file.write(dispersion_script_template.format(system_name=system_name))
+            file.write(dispersion_script_template.format(system_name=system_name, NFinal=NFinal))
         for non_nn in ["PBE", "XAlpha"]:
             with open(
                 f"GIF/{system_name}/calculate_system_energy_{non_nn}.slurm", "w"
             ) as file:
                 file.write(
-                    script_template.format(system_name=system_name)
+                    script_template.format(system_name=system_name, NFinal=NFinal)
                     + f" --Functional {non_nn}"
                 )
 elif Mode == "CE":
@@ -190,8 +190,8 @@ elif Mode == "D3":
         slurm_path = f"{current_path}/calculate_system_dispersion.slurm"
         os.system(f"sbatch {slurm_path}")
 else:
-    MAE, Errors = ReadSystems(Opts.NFinal)
+    MAE, Errors = ReadSystems(NFinal)
     print(
         "NFinal = %3d, NActual = %3d, WTMAD2 = %.3f"
-        % (Opts.NFinal, len(list(Errors)), MAE)
+        % (NFinal, len(list(Errors)), MAE)
     )

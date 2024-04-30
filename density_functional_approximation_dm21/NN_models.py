@@ -39,45 +39,44 @@ class ResBlock(nn.Module):
 
 
 class MLOptimizer(nn.Module):
-    def __init__(self, num_layers, h_dim, nconstants, dropout, DFT=None):
+    def __init__(self, num_layers, h_dim, nconstants, dropout, DFT=None, constants=[]):
         super().__init__()
 
         self.DFT = DFT
-        
+        self.constants = constants
+        if self.constants:
+            nconstants = len(constants)
+
         modules = []
-        modules.extend([nn.Linear(7, h_dim, bias=False),
-                        nn.BatchNorm1d(h_dim),
-                        nn.LeakyReLU(),
-                        nn.Dropout(p=0.0)])
-        
+        modules.extend(
+            [
+                nn.Linear(7, h_dim, bias=False),
+                nn.BatchNorm1d(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=0.0),
+            ]
+        )
+
         for _ in range(num_layers // 2 - 1):
             modules.append(ResBlock(h_dim, dropout))
-            
+
         modules.append(nn.Linear(h_dim, nconstants, bias=True))
 
         self.hidden_layers = nn.Sequential(*modules)
-    
-    def custom_sigmoid(self, x):
-        # Custom sigmoid translates from [-inf, +inf] to [0, 4]
-        # from 0 to 1
-        result = (1+torch.e+(torch.e-3)/3)/(1 + (torch.e-3)/3 + torch.e**(-0.5*x+1))
+
+    def nonzero_custom_sigmoid(self, x):
+        a = 47/300
+        exp = torch.e**(0.5*x)
+        # Custom sigmoid translates from [-inf, +inf] to [0.05, 4]
+        result = (4*exp+a)/(3+a+exp)
         return result
+
 
     def forward(self, x):
         x = self.hidden_layers(x)
 
-        
-        if self.DFT == 'SVWN': # constraint for VWN3's Q_vwn function to 4*c - b**2 > 0
-            constants = []
-            for b_ind, c_ind in zip((2, 3, 11, 12, 13),(4, 5, 14, 15, 16)):
-                 constants.append(torch.abs(x[:, c_ind]) + (x[:, b_ind]**2)/4 + 1e-5)
-            x = torch.cat([x[:,0:4], torch.stack(constants[0:2], dim=1), x[:,6:14], torch.stack(constants[2:], dim=1), x[:,17:]], dim=1)
-            del constants
-        if self.DFT == 'PBE':
-            ''' Use sigmoid on predictions and multiply by known constants for easier predictions '''
-            x = self.custom_sigmoid(x)
-            x = x * true_constants_PBE
-        if self.DFT == 'XALPHA':
+        if self.DFT == "XALPHA":
+            x = self.nonzero_custom_sigmoid(x)
             x = x * 1.05
         return x
 
@@ -128,6 +127,8 @@ class pcPBEMLOptimizer(nn.Module):
     
     def kappa_activation(self, x):
         # Translates from [-inf, +inf] to [0, 1]
+        hardtanh = torch.nn.Hardtanh(min_val=0.05, max_val=1)
+
         return hardtanh(x+1)
 
     def kappa_sigmoid(self, x):
@@ -137,13 +138,6 @@ class pcPBEMLOptimizer(nn.Module):
         result = (exp+a)/(1+a+exp)
         return result
 
-    
-    def infinite_activation(self, x):
-        log2 = torch.log(torch.Tensor([2]))
-        exponent = 1 + torch.e**(2*x*log2)
-
-        return 1/log2*(torch.log(1+exponent))
-    
     # 0,1 - rho alpha beta
     # 2,3,4 sigma aa ab bb
     # 5,6 tau a tau b
@@ -204,8 +198,8 @@ class pcPBEMLOptimizer(nn.Module):
 
 
 
-def NN_XALPHA_model(num_layers=32, h_dim=32, nconstants=1, dropout=0.4, DFT='XALPHA'):
-    return MLOptimizer(num_layers, h_dim, nconstants, dropout, DFT)
+def NN_XALPHA_model(num_layers=8, h_dim=32, nconstants=1, dropout=0.4, DFT='XALPHA'):
+    return MLOptimizer(num_layers=num_layers, h_dim=h_dim, nconstants=nconstants, dropout=dropout, DFT=DFT)
 
 def NN_PBE_model(num_layers=8, h_dim=32, dropout=0.4, DFT='PBE'):
-    return pcPBEMLOptimizer(num_layers, h_dim, dropout, DFT)
+    return pcPBEMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT)
