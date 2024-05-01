@@ -34,24 +34,33 @@ def z_thr(zeta):
 
 
 def rs_z_calc(rho):
-    rs = (3/((rho[:,0] + rho[:,1]) * (4 * torch.pi))) ** (1/3)
-    z = z_thr((rho[:,0] - rho[:,1]) / (rho[:,0] + rho[:,1]))
+    eps_add = 1e-20
+    rs = (3/((rho[:,0] + rho[:,1] + eps_add) * (4 * torch.pi))) ** (1/3)
+    z = z_thr((rho[:,0] - rho[:,1]) / (rho[:,0] + rho[:,1] + eps_add))
     catch_nan(rs=rs, z=z)
     return rs, z
 
 
-def xs_xt_calc(rho, sigmas):     # sigma 1 is alpha beta contracted gradient
+def xs_xt_calc(rho, sigmas, t=True):     # sigma 1 is alpha beta contracted gradient
+    eps_add = 1e-22
     eps = 1e-29
     DIMENSIONS = 3
-    xs0 = torch.sqrt(sigmas[:,0])/rho[:,0]**(1 + 1/DIMENSIONS)
-    # xs1 = torch.sqrt(sigmas[:,2])/(rho[:,1]+eps)**(1 + 1/DIMENSIONS)
+    xs0 = torch.sqrt(sigmas[:,0]+eps_add**2)/(rho[:,0] + eps_add)**(1 + 1/DIMENSIONS)
     xs1 = torch.where((sigmas[:,2] < eps) & (rho[:,1] < eps), # last sigma and last rho equal 0
-                      torch.sqrt(sigmas[:,0])/rho[:,0]**(1 + 1/DIMENSIONS), 
-                      torch.sqrt(sigmas[:,2])/rho[:,1]**(1 + 1/DIMENSIONS))
-    xt  = torch.sqrt(sigmas[:,0] + 2*sigmas[:,1] + sigmas[:,2])/(rho[:,0] + rho[:,1])**(1 + 1/DIMENSIONS)
+                      torch.sqrt(sigmas[:,0] + eps_add**2)/(rho[:,0] + eps_add)**(1 + 1/DIMENSIONS), 
+                      torch.sqrt(sigmas[:,2] + eps_add**2)/(rho[:,1] + eps_add)**(1 + 1/DIMENSIONS))
 
-    catch_nan(rho=rho, sigmas=sigmas, xs0=xs0, xs1=xs1, xt=xt)
-    return xs0, xs1, xt
+    if t:
+        xt  = torch.sqrt(sigmas[:,0] + 2*sigmas[:,1] + sigmas[:,2]+eps_add**2)/(rho[:,0] + rho[:,1] + eps_add)**(1 + 1/DIMENSIONS)
+
+
+    catch_nan(rho=rho, sigmas=sigmas, xs0=xs0, xs1=xs1)
+
+    if t:
+        catch_nan(xt=xt)
+        return xs0, xs1, xt
+
+    return xs0, xs1
 
 
 def f_zeta(z): # - power threshold
@@ -61,7 +70,8 @@ def f_zeta(z): # - power threshold
 
 
 def mphi(z):
-    res_mphi = ((1 + z)**(2/3) + (1 - z)**(2/3))/2
+    eps = 1e-15
+    res_mphi = ((1 + z)**(2/3) + (1 - z + eps)**(2/3))/2
     catch_nan(res_mphi=res_mphi)
     return res_mphi
                                     
@@ -79,9 +89,9 @@ def g_aux(k, rs, c_arr):
 
 
 def g(k, rs, c_arr):
-    eps = 1e-6
+    eps = 1e-10
     g_aux_ = g_aux(k, rs, c_arr)
-    log = torch.log1p(1/(2*c_arr[:, 15:18][:, k]*g_aux_ + eps))
+    log = torch.log1p(torch.nn.functional.relu(1/(2*c_arr[:, 15:18][:, k]*g_aux_))+eps)
     res_g = -2*c_arr[:, 15:18][:, k]*(1 + c_arr[:, 18:21][:, k]*rs) * log
     catch_nan(res_g=res_g, log=log, g_aux_=g_aux_)
     # save_tensors(res_g=res_g, log=log, g_aux_=g_aux_)
@@ -97,11 +107,12 @@ def f_pw(rs, z, c_arr):
     
 
 def A(rs, z, t, c_arr, device):
-    eps = 1e-30
+    eps = 1e-10
     f_pw_ = f_pw(rs, z, c_arr)
     mphi_ = c_arr[:, 1]*mphi(z)**3
     # exp(87) = 10**38 - near infinity
     expm1 = torch.expm1(torch.where(-f_pw_/mphi_ < 87, -f_pw_/mphi_, -f_pw_/mphi_ + f_pw_/mphi_ + 87))
+
     res_A = (c_arr[:, 0]/(c_arr[:, 1] * expm1 + eps))
     catch_nan(res_A=res_A, f_pw_=f_pw_, mphi_=mphi_, expm1=expm1, rs=rs, z=z, c_arr=c_arr)
     return res_A
@@ -116,18 +127,20 @@ def f1(rs, z, t, A_, c_arr):
 
 
 def f2(rs, z, t, c_arr, device):
-    eps = 1e-10
+    eps = 1e-7
     A_ = A(rs, z, t, c_arr, device)
     f1_ = f1(rs, z, t, A_, c_arr)
+
     res_f2 = c_arr[:, 0]*f1_/(c_arr[:, 1]*(A_*f1_+1) + eps)
+
     catch_nan(res_f2=res_f2, f1_=f1_, A_=A_)
     return res_f2
 
 
 def fH(rs, z, t, c_arr, device):
-    eps = 10e-6
+    eps = 10e-8
     f2_ = f2(rs, z, t, c_arr, device)
-    log = torch.where(f2_ <= -1, torch.log1p(f2_ - f2_ - 1 + eps), torch.log1p(f2_)) # weird infinity
+    log = torch.where(f2_ <= -1, torch.log1p(f2_ + eps), torch.log1p(f2_)) # weird infinity
     res_fH = c_arr[:, 1]*mphi(z)**3*log
     catch_nan(res_fH=res_fH, log=log, f2_=f2_)
     return res_fH

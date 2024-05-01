@@ -41,7 +41,7 @@ def load_ref_energies(path):
         "DBH76": ref(251, 288, path) + ref(291, 328, path),
         "NCCE31": ref(331, 361, path),
         "ABDE4": ref(206, 209, path),
-        # "AE17":ref(375, 391),
+        "AE17":ref(375, 391, path),
         "pTC13": ref(232, 234, path) + ref(237, 241, path) + ref(244, 248, path),
     }
     return ref_e
@@ -177,9 +177,8 @@ def add_reaction_info_from_h5(reaction, path):
     X = np.copy(X)
     X[:, 3] = X[:, 2] + X[:, 4] + 2 * X[:, 3]
 
-    # log grid data
-    eps = 10e-8
-    X = np.log(X + eps)
+    # tanh grid data
+    X = np.tanh(X)
 
     backsplit_ind = np.array(backsplit_ind)
 
@@ -224,8 +223,10 @@ def collate_fn(data):
         energies.append(energy)
         reaction.pop("Energy", None)
         reactions.append(reaction)
-        torch_tensor_energy = torch.tensor(energies)
-        reactions_stacked = stack_reactions(reactions)
+
+    torch_tensor_energy = torch.tensor(energies)
+    reactions_stacked = stack_reactions(reactions)
+
     del energies, reactions, data
     return reactions_stacked, torch_tensor_energy
 
@@ -238,6 +239,6 @@ def collate_fn_predopt(data):
     reactions = []
     for reaction, constant in data:
         reactions.append(reaction)
-        reactions_stacked = stack_reactions(reactions)
+    reactions_stacked = stack_reactions(reactions)
     del reactions, data
     return reactions_stacked, constant

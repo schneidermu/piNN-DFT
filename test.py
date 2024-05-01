@@ -2,37 +2,37 @@ import gc
 import pickle
 from optparse import OptionParser
 
-import mlflow
 import numpy as np
 import torch
 from torch import nn
 from tqdm.notebook import tqdm
 
 from dataset import collate_fn, collate_fn_predopt
-from NN_models import MLOptimizer
+from NN_models import MLOptimizer, pcPBEMLOptimizer
 from predopt import DatasetPredopt, true_constants_PBE
 from prepare_data import load_chk
 from reaction_energy_calculation import (calculate_reaction_energy,
                                          get_local_energies)
-from utils import log_params, set_random_seed
+from utils import set_random_seed
 
 set_random_seed(41)
 
 
-MEAN_TRAIN_FEATURES = torch.tensor(
-    [
-        -6.33887041,
-        -6.68211794,
-        -8.682011,
-        -7.72950894,
-        -8.96326543,
-        -6.54985721,
-        -6.87318032,
-    ]
-)
-STD_TRAIN_FEATURES = torch.tensor(
-    [5.00045545, 5.19493982, 6.30814192, 6.72813273, 6.34910604, 5.24995811, 5.41875425]
-)
+FCHEM_FACTORS = {
+    "MGAE109": 1/4.73394495412844,
+    "NCCE31": 10
+}
+
+
+def Fchem(total_database_errors):
+    Fchem_ = 0
+    for db in total_database_errors:
+        error = np.sqrt(np.mean((np.array(total_database_errors[db]))**2))
+        if db in FCHEM_FACTORS:
+            error *= FCHEM_FACTORS[db]
+        Fchem_ += error
+
+    return Fchem_
 
 
 data, data_train, data_test = load_chk(path="checkpoints")
@@ -42,52 +42,68 @@ parser.add_option('--Name', type=str,
                   help="Name of the functional",
                   default="PBE_8_32")
 parser.add_option('--N_preopt', type=int,
-                  default=50,
+                  default=3,
                   help="Number of pre-optimization epochs")
 parser.add_option('--N_train', type=int,
-                  default=184,
+                  default=1000,
                   help="Number of training epochs")
 parser.add_option('--Batch_size', type=int,
-                  default=8,
+                  default=3,
                   help="Number of reactions in a batch")
 parser.add_option('--Dropout', type=float,
                   default=0.4,
                   help="Dropout rate during training")
 parser.add_option('--Omega', type=float,
-                  default=0.0412,
+                  default=0.0,
+                  help="Omega value in the loss function")
+parser.add_option('--LR_train', type=float,
+                  default=1e-4,
+                  help="Omega value in the loss function")
+parser.add_option('--LR_predopt', type=float,
+                  default=2e-2,
                   help="Omega value in the loss function")
 
 (Opts, args) = parser.parse_args()
 
-name, n_predopt, n_train, batch_size, dropout, omega = (
+name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt = (
     Opts.Name,
     Opts.N_preopt,
     Opts.N_train,
     Opts.Batch_size,
     Opts.Dropout,
     Opts.Omega,
+    Opts.LR_train,
+    Opts.LR_predopt
 )
 
+print('name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt')
+print(name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt)
+
+#2e-2 for predopt was the best by far (0.00088730), but can be bigger
+# train lr 1e-4 seems to be fine, maybe lower?
 if "PBE" in name:
     rung = "GGA"
     dft = "PBE"
-    nconstants = 24
-    lr_predopt = 3e-3
-    lr_train = 3e-4
+
 elif "XALPHA" in name:
     rung = "LDA"
     dft = "XALPHA"
     nconstants = 1
-    lr_predopt = 6e-3
-    lr_train = 2e-3
+
+
 
 num_layers, h_dim = map(int, name.split("_")[1:])
 device = torch.device("cuda:0") if torch.cuda.is_available else torch.device("cpu")
-constants = [0,1,22,23]
-#constants = []
-model = MLOptimizer(
-    num_layers=num_layers, h_dim=h_dim, nconstants=nconstants, dropout=dropout, DFT=dft, constants=constants
-).to(device)
+
+
+if dft == "PBE":
+    model = pcPBEMLOptimizer(
+        num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft
+    ).to(device)
+elif dft == "XALPHA":
+    model = MLOptimizer(
+        num_layers, h_dim, nconstants, dropout, dft
+    ).to(device)
 
 # Load dispersion corrections.
 with open("./dispersions/dispersions.pickle", "rb") as handle:
@@ -99,7 +115,7 @@ class Dataset(torch.utils.data.Dataset):
         self.data = data
 
     def __getitem__(self, i):
-        self.data[i].pop("Database", None)
+#        self.data[i].pop("Database", None)
         return self.data[i], self.data[i]["Energy"]
 
     def __len__(self):
@@ -130,13 +146,13 @@ train_predopt_dataloader = torch.utils.data.DataLoader(
     batch_size=batch_size,
     num_workers=4,
     pin_memory=True,
-    shuffle=True,
+    shuffle=False,
     collate_fn=collate_fn_predopt,
 )
 
 criterion = nn.MSELoss()
 
-mlflow.set_experiment(name)
+
 name += "_" + str(dropout)
 
 optimizer = torch.optim.Adam(
@@ -167,11 +183,10 @@ train_loss_mse, train_loss_mae = predopt(
     n_epochs=n_predopt,
     accum_iter=1,
 )
-log_params(model, train_loss_mse, train_loss_mae, name=f"{name}_predopt", predopt=True)
+
 
 torch.cuda.empty_cache()
 
-import os
 
 from tqdm.notebook import tqdm
 
@@ -179,6 +194,7 @@ mae = nn.L1Loss()
 
 
 def exc_loss(reaction, pred_constants, dft="PBE", true_constants=true_constants_PBE):
+
     HARTREE2KCAL = 627.5095
 
     # Turn backsplit indices into slices.
@@ -217,7 +233,7 @@ def exc_loss(reaction, pred_constants, dft="PBE", true_constants=true_constants_
         loss += (
             1
             / len(predicted_local_energies[i])
-            * torch.sqrt(
+            * (
                 torch.sum((predicted_local_energies[i] - true_local_energies[i]) ** 2)
             )
         )
@@ -255,8 +271,24 @@ def train(
         train_mse_losses_per_epoch = []
         train_exc_losses_per_epoch = []
         optimizer.zero_grad()
+
+
+        pred_energies = []
+        ref_energies = []
+        bases = []
+        errors = []
+        total_database_errors = {}
+
+
         for batch_idx, (X_batch, y_batch) in enumerate(progress_bar_train):
             X_batch_grid, y_batch = X_batch["Grid"].to(device), y_batch.to(device)
+
+            if len(X_batch["Database"]) == 1:
+                current_bases = [X_batch["Database"], ]
+            else:
+                current_bases = [x for x in X_batch["Database"]]
+
+            bases += current_bases
 
             predictions = model(X_batch_grid)
             reaction_energy = calculate_reaction_energy(
@@ -268,30 +300,43 @@ def train(
                 dispersions=dispersions,
             ).to(device)
 
+            if len(pred_energies): 
+                pred_energies = torch.hstack([pred_energies, reaction_energy])
+                ref_energies = torch.hstack([ref_energies, y_batch])
+                errors = torch.hstack([errors, pred_energies-ref_energies])
+            else:
+                pred_energies = reaction_energy
+                ref_energies = y_batch
+                errors = reaction_energy-y_batch
+            
+            for base, error in zip(bases, errors):
+                total_database_errors[base] = total_database_errors.get(base, [])
+                total_database_errors[base].append(abs(error.item()))
+
             local_loss = exc_loss(X_batch, predictions, dft=dft)
+
+            MAE = mae(reaction_energy, y_batch).item()
+
+            for i, db in enumerate(current_bases):
+                factor = FCHEM_FACTORS.get(db, 1)
+                try:
+                    reaction_energy[i] *= factor
+                    y_batch[i] *= factor
+                except:
+                    reaction_energy *= factor
+                    y_batch *= factor
+
             reaction_mse_loss = criterion(reaction_energy, y_batch)
 
             # Calculate total loss function
-            loss = (1 - omega) / 5 * torch.sqrt(
-                reaction_mse_loss
-            ) + omega * local_loss * 100
+            loss = (1 - omega) / 4 * torch.sqrt(reaction_mse_loss) + omega * local_loss * 10
+
             MSE = reaction_mse_loss.item()
-            MAE = mae(reaction_energy, y_batch).item()
 
             train_mse_losses_per_epoch.append(MSE)
             train_mae_losses_per_epoch.append(MAE)
-            train_exc_losses_per_epoch.append(local_loss.item())
+            train_exc_losses_per_epoch.append(torch.sqrt(local_loss).item())
             progress_bar_train.set_postfix(MSE=MSE, MAE=MAE)
-
-#            if verbose and epoch>1:
-#                if MAE/train_loss_mae[-1]>0.2:
-#                    print('TRAIN error significantly increased:\n')
-#                    print(
-#                        X_batch['Components']
-#                    )
-#                    print('Pred    True    Error')
-#                    for pred, true in zip(reaction_energy, y_batch):
-#                        print(f'{pred:7.2f} {true:7.2f} {abs(pred-true):7.2f}')
 
             loss.backward()
             if ((batch_idx + 1) % accum_iter == 0) or (
@@ -300,7 +345,7 @@ def train(
                 optimizer.step()
                 optimizer.zero_grad()
 
-            del X_batch, X_batch_grid, y_batch, predictions, reaction_energy
+            del X_batch, X_batch_grid, y_batch, reaction_energy
             gc.collect()
             torch.cuda.empty_cache()
 
@@ -308,9 +353,19 @@ def train(
         train_loss_mae.append(np.mean(train_mae_losses_per_epoch))
         train_loss_exc.append(np.mean(train_exc_losses_per_epoch))
         print(
-            f"train MSE Loss = {train_loss_mse[epoch]:.8f} MAE Loss = {train_loss_mae[epoch]:.8f}"
+            f"train Weighted MSE Loss = {train_loss_mse[epoch]:.8f} MAE Loss = {train_loss_mae[epoch]:.8f}"
         )
         print(f"train Local Energy Loss = {train_loss_exc[epoch]:.8f}")
+
+        errors = []
+        for db in sorted(total_database_errors):
+            errors.append(np.mean(np.array(total_database_errors[db])))
+            print(f'{db}: {np.mean(np.array(total_database_errors[db])):.3f}')
+
+        print()
+        print("Train Fchem", Fchem(total_database_errors))
+        print()
+
 
         # test
         model.eval()
@@ -318,14 +373,24 @@ def train(
         test_mae_losses_per_epoch = []
         test_mse_losses_per_epoch = []
         test_exc_losses_per_epoch = []
+
+        pred_energies = []
+        ref_energies = []
+        bases = []
+        errors = []
+        total_database_errors = {}
+
+
         with torch.no_grad():
             for X_batch, y_batch in progress_bar_test:
                 X_batch_grid, y_batch = X_batch["Grid"].to(device), y_batch.to(device)
 
-                X_batch_grid = torch.tanh(torch.exp(X_batch_grid*STD_TRAIN_FEATURES+MEAN_TRAIN_FEATURES)-1e-8)
+                if len(X_batch["Database"]) == 1:
+                    bases += [X_batch["Database"], ]
+                else:
+                    bases += [x for x in X_batch["Database"]]
 
                 predictions = model(X_batch_grid)
-                local_loss = exc_loss(X_batch, predictions, dft=dft)
                 reaction_energy = calculate_reaction_energy(
                     X_batch,
                     predictions,
@@ -335,28 +400,33 @@ def train(
                     dispersions=dispersions,
                 ).to(device)
 
+                if len(pred_energies): 
+                    pred_energies = torch.hstack([pred_energies, reaction_energy])
+                    ref_energies = torch.hstack([ref_energies, y_batch])
+                    errors = torch.hstack([errors, pred_energies-ref_energies])
+                else:
+                    pred_energies = reaction_energy
+                    ref_energies = y_batch
+                    errors = reaction_energy-y_batch
+            
+                for base, error in zip(bases, errors):
+                    total_database_errors[base] = total_database_errors.get(base, [])
+                    total_database_errors[base].append(abs(error.item()))
+
+                local_loss = exc_loss(X_batch, predictions, dft=dft)
+
                 loss = criterion(reaction_energy, y_batch)
                 MSE = loss.item()
                 MAE = mae(reaction_energy, y_batch).item()
                 test_mse_losses_per_epoch.append(MSE)
                 test_mae_losses_per_epoch.append(MAE)
-                test_exc_losses_per_epoch.append(local_loss.item())
+                test_exc_losses_per_epoch.append(torch.sqrt(local_loss).item())
 
-                if verbose and epoch>1:
-                    if MAE/test_loss_mae[-1]>1.2:
-                        print('VALIDATION error significantly increased:\n')
-                        print(
-                            X_batch['Components']
-                        )
-                        print('Pred    True    Error')
-                        for pred, true in zip(reaction_energy, y_batch):
-                            print(f'{pred:7.2f} {true:7.2f} {abs(pred-true):7.2f}')
                 progress_bar_test.set_postfix(MSE=MSE, MAE=MAE)
                 del (
                     X_batch,
                     X_batch_grid,
                     y_batch,
-                    predictions,
                     reaction_energy,
                     loss,
                     MAE,
@@ -370,18 +440,18 @@ def train(
         test_loss_exc.append(np.mean(test_exc_losses_per_epoch))
 
         print(
-            f"test MSE Loss = {test_loss_mse[epoch]:.8f} MAE Loss = {test_loss_mae[epoch]:.8f}"
+            f"test Unweighted MSE Loss = {test_loss_mse[epoch]:.8f} MAE Loss = {test_loss_mae[epoch]:.8f}"
         )
         print(f"test Local Energy Loss = {test_loss_exc[epoch]:.8f}")
 
-        # Save the model every 10 epochs.
-        if (epoch + 1) % 10 == 0:
-            log_params(
-                model,
-                train_loss_mae,
-                test_loss_mae,
-                name=f"{name}_train_epoch_{epoch+1}",
-            )
+        errors = []
+        for db in sorted(total_database_errors):
+            errors.append(np.mean(np.array(total_database_errors[db])))
+            print(f'{db}: {np.mean(np.array(total_database_errors[db])):.3f}')
+
+        print()
+        print("Validation Fchem", Fchem(total_database_errors))
+        print()
 
     return train_loss_mae, test_loss_mae
 
@@ -398,11 +468,13 @@ reload(utils)
 reload(reaction_energy_calculation)
 reload(PBE)
 
-optimizer = torch.optim.RMSprop(model.parameters(), lr=lr_train)
+optimizer = torch.optim.Adam(
+    model.parameters(), lr=lr_train, betas=(0.9, 0.999), weight_decay=0.01
+)
 
 N_EPOCHS = n_train
 ACCUM_ITER = 1
-VERBOSE = True
+VERBOSE = False
 train_loss_mae, test_loss_mae = train(
     model,
     criterion,
@@ -414,6 +486,4 @@ train_loss_mae, test_loss_mae = train(
     omega=omega,
     verbose=VERBOSE
 )
-
-# Log the final model.
-log_params(model, train_loss_mae, test_loss_mae, name=f"{name}_final")
+torch.save(model.state_dict(), f'best_models/{name}.pth')
