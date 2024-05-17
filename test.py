@@ -20,16 +20,43 @@ set_random_seed(41)
 
 FCHEM_FACTORS = {
     "MGAE109": 1/4.73394495412844,
-    "NCCE31": 10
+    "NCCE31": 10,
+    "DBH76": 10,
 }
+
+
+WTMAD_LIKE_FACTORS = {
+    'ABDE4': 1/4/93.42,
+    'AE17': 1/17,
+    'DBH76': 1/76/18.40,
+    'EA13': 1/13/38.31,
+    'IP13': 1/13/253.83,
+    'MGAE109': 1/109/498.53,
+    'NCCE31': 1/31/3.63,
+    'PA8': 1/8/163.33,
+    'pTC13': 1/13/168.79,
+}
+
+SIMPLE_FACTORS = {
+    'ABDE4': 1/4,
+    'AE17': 1/17,
+    'DBH76': 10/76,
+    'EA13': 1/13,
+    'IP13': 1/13,
+    'MGAE109': 1/109/4.73394495412844,
+    'NCCE31': 10/31,
+    'PA8': 1/8,
+    'pTC13': 1/13,
+}
+
 
 
 def Fchem(total_database_errors):
     Fchem_ = 0
     for db in total_database_errors:
         error = np.sqrt(np.mean((np.array(total_database_errors[db]))**2))
-        if db in FCHEM_FACTORS:
-            error *= FCHEM_FACTORS[db]
+#        if db in FCHEM_FACTORS:
+#            error *= FCHEM_FACTORS[db]
         Fchem_ += error
 
     return Fchem_
@@ -260,6 +287,7 @@ def train(
     test_loss_mae = []
     test_loss_mse = []
     test_loss_exc = []
+    test_fchem = []
 
     for epoch in range(n_epochs):
         torch.autograd.set_detect_anomaly(True)
@@ -283,10 +311,10 @@ def train(
         for batch_idx, (X_batch, y_batch) in enumerate(progress_bar_train):
             X_batch_grid, y_batch = X_batch["Grid"].to(device), y_batch.to(device)
 
-            if len(X_batch["Database"]) == 1:
-                current_bases = [X_batch["Database"], ]
+            if len(X_batch["Database"][0]) == 1:
+                current_bases = [X_batch["Database"],]
             else:
-                current_bases = [x for x in X_batch["Database"]]
+                current_bases = list(X_batch["Database"])
 
             bases += current_bases
 
@@ -318,7 +346,7 @@ def train(
             MAE = mae(reaction_energy, y_batch).item()
 
             for i, db in enumerate(current_bases):
-                factor = FCHEM_FACTORS.get(db, 1)
+                factor = SIMPLE_FACTORS.get(db, 1)/0.1245 # Divide by mean coefficient
                 try:
                     reaction_energy[i] *= factor
                     y_batch[i] *= factor
@@ -329,7 +357,7 @@ def train(
             reaction_mse_loss = criterion(reaction_energy, y_batch)
 
             # Calculate total loss function
-            loss = (1 - omega) / 4 * torch.sqrt(reaction_mse_loss) + omega * local_loss * 10
+            loss = (1 - omega) / 15 * reaction_mse_loss + omega * local_loss * 10
 
             MSE = reaction_mse_loss.item()
 
@@ -362,8 +390,9 @@ def train(
             errors.append(np.mean(np.array(total_database_errors[db])))
             print(f'{db}: {np.mean(np.array(total_database_errors[db])):.3f}')
 
+        train_fchem = Fchem(total_database_errors)
         print()
-        print("Train Fchem", Fchem(total_database_errors))
+        print("Train Fchem", train_fchem)
         print()
 
 
@@ -385,10 +414,12 @@ def train(
             for X_batch, y_batch in progress_bar_test:
                 X_batch_grid, y_batch = X_batch["Grid"].to(device), y_batch.to(device)
 
-                if len(X_batch["Database"]) == 1:
-                    bases += [X_batch["Database"], ]
+                if len(X_batch["Database"][0]) == 1:
+                    current_bases = [X_batch["Database"],]
                 else:
-                    bases += [x for x in X_batch["Database"]]
+                    current_bases = list(X_batch["Database"])
+
+                bases += current_bases
 
                 predictions = model(X_batch_grid)
                 reaction_energy = calculate_reaction_energy(
@@ -449,8 +480,17 @@ def train(
             errors.append(np.mean(np.array(total_database_errors[db])))
             print(f'{db}: {np.mean(np.array(total_database_errors[db])):.3f}')
 
+        val_fchem = Fchem(total_database_errors)
+        test_fchem.append(val_fchem)
+
+        if val_fchem == min(test_fchem) and train_fchem/val_fchem < 1.3:
+            torch.save(
+                model.state_dict(), f'best_models/{dft}/New Fchem/Symmetric/{name}_{omega}_epoch_{epoch}_loss_{val_fchem:.2f}.pth'
+            )
+        else:
+            test_fchem.pop()
         print()
-        print("Validation Fchem", Fchem(total_database_errors))
+        print("Validation Fchem", val_fchem)
         print()
 
     return train_loss_mae, test_loss_mae
@@ -486,4 +526,3 @@ train_loss_mae, test_loss_mae = train(
     omega=omega,
     verbose=VERBOSE
 )
-torch.save(model.state_dict(), f'best_models/{name}.pth')

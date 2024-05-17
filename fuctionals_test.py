@@ -26,8 +26,8 @@ def Fchem(total_database_errors):
     Fchem_ = 0
     for db in total_database_errors:
         error = np.sqrt(np.mean((np.array(total_database_errors[db]))**2))
-        if db in FCHEM_FACTORS:
-            error *= FCHEM_FACTORS[db]
+#        if db in FCHEM_FACTORS:
+#            error *= FCHEM_FACTORS[db]
         Fchem_ += error
 
     return Fchem_
@@ -172,7 +172,7 @@ with torch.no_grad():
         print(f"XAlpha {names[index]} MAE =", mae(pred_energies, ref_energies).item())
         print(f"XAlpha {names[index]} Local Loss =", np.mean(np.array(local_lst)))
 
-# XAlpha-D3(BJ) Train Fchem = 1872.929456894179
+# XAlpha-D3(BJ) Train Fchem = 792.4750547841372
 # XAlpha-D3(BJ) Train Local Loss = 1.2104060273421438
 #ABDE4: 21.062885645816202
 #AE17: 52.69695062864395
@@ -184,7 +184,7 @@ with torch.no_grad():
 #PA8: 16.822658454315572
 #pTC13: 62.54664613336206
 
-# XAlpha-D3(BJ) Test Fchem = 419.8149967106304
+# XAlpha-D3(BJ) Test Fchem = 211.41702118178105
 # XAlpha-D3(BJ) Test Local Loss = 1.230004608631134
 #ABDE4: 5.036346435546875
 #AE17: 22.092093331473215
@@ -243,7 +243,7 @@ with torch.no_grad():
         print(f"PBE {names[index]} MAE =", mae(pred_energies, ref_energies).item())
 
 
-# PBE-D3(BJ) Train Fchem = 250.4203551603435
+# PBE-D3(BJ) Train Fchem = 131.88553919047612
 #ABDE4: 15.637174465439536
 #AE17: 8.534409250807666
 #DBH76: 10.061235319210004
@@ -254,7 +254,7 @@ with torch.no_grad():
 #PA8: 10.91599115618953
 #pTC13: 9.69357694120712
 
-# PBE-D3(BJ) Test Fchem = 278.2540321043255
+# PBE-D3(BJ) Test Fchem = 121.97746813422154
 #ABDE4: 11.834625244140625
 #AE17: 18.253914969308035
 #DBH76: 13.595369743578361

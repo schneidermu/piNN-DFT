@@ -1,6 +1,8 @@
 import torch
 from torch import nn
-from dft_functionals.PBE import rs_z_calc, xs_xt_calc, PBE_X, PBE_C
+import random
+
+random.seed(42)
 
 device = torch.device("cuda:0") if torch.cuda.is_available else torch.device("cpu")
 true_constants_PBE = torch.Tensor(
@@ -88,20 +90,19 @@ class MLOptimizer(nn.Module):
 
         self.hidden_layers = nn.Sequential(*modules)
 
-    def nonzero_custom_sigmoid(self, x):
-        a = 47/300
+
+    def dm21_like_sigmoid(self, x):
         exp = torch.e**(0.5*x)
-        # Custom sigmoid translates from [-inf, +inf] to [0.05, 4]
-        result = (4*exp+a)/(3+a+exp)
-        return result
+        # Custom sigmoid translates from [-inf, +inf] to [0, 2] as in DM21 paper
+        return 2*exp/(1+exp)
 
 
     def forward(self, x):
+        if self.training:
+            x = random.choice([x, x[:, [1, 0, 4, 3, 2, 6, 5]]]) # Randomly flip spin
         x = self.hidden_layers(x)
+        x = 1.05*self.dm21_like_sigmoid(x)
 
-        if self.DFT == "XALPHA":
-            x = self.nonzero_custom_sigmoid(x)
-            x = x * 1.05
         return x
 
 
@@ -111,8 +112,8 @@ class pcPBEMLOptimizer(nn.Module):
 
         self.DFT = DFT
 
-        modules_x = []
-        modules_c = []
+        modules_x = [] # NN part for exchange
+        modules_c = [] # NN part for correlation
         modules_x.extend(
             [
                 nn.Linear(5, h_dim, bias=False),
@@ -142,25 +143,10 @@ class pcPBEMLOptimizer(nn.Module):
         self.hidden_layers_c = nn.Sequential(*modules_c)
 
     
-    def nonzero_custom_sigmoid(self, x):
-        a = 47/300
-        exp = torch.e**(0.5*x)
-        # Custom sigmoid translates from [-inf, +inf] to [0.05, 4]
-        result = (4*exp+a)/(3+a+exp)
-        return result
-    
     def kappa_activation(self, x):
 
         # Translates from [-inf, +inf] to [0, 1]
-
         return hardtanh(x+1)
-
-    def kappa_sigmoid(self, x):
-        a = 0.0526
-        exp = torch.e**(0.5*x)
-        # Custom sigmoid translates from [-inf, +inf] to [0.05, 1]
-        result = (exp+a)/(1+a+exp)
-        return result
 
     # 0,1 - rho alpha beta
     # 2,3,4 sigma aa ab bb
@@ -203,16 +189,22 @@ class pcPBEMLOptimizer(nn.Module):
         # For gamma
         return torch.hstack([torch.ones([x.shape[0], 2]).to(device), x[:, 2:]])
 
+    @staticmethod
+    def custom_relu(x):
+        return torch.nn.functional.relu(x+0.95)+0.05
+
 
     def forward(self, x):
+        if self.training:
+            x = random.choice([x, x[:, [1, 0, 4, 3, 2, 6, 5]]]) # Randomly flip spin
         mu, kappa = self.get_exchange_constants(x)
         beta, gamma, lda_c_params = self.get_correlation_constants(x)
 
-        beta = self.nonzero_custom_sigmoid((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
-        gamma = self.nonzero_custom_sigmoid((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
-        lda_c_params = self.nonzero_custom_sigmoid(lda_c_params-self.get_correlation_constants(self.all_sigma_inf(x))[2])
+        beta = self.custom_relu((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
+        gamma = self.custom_relu((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
+        lda_c_params = self.custom_relu(lda_c_params-self.get_correlation_constants(self.all_sigma_inf(x))[2])
 
-        mu = self.nonzero_custom_sigmoid((mu - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
+        mu = self.custom_relu((mu - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
 
         kappa = kappa.view(-1,1)
 
