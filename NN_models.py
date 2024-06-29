@@ -148,9 +148,9 @@ class pcPBEMLOptimizer(nn.Module):
         # Translates from [-inf, +inf] to [0, 1]
         return hardtanh(x+1)
 
-    # 0,1 - rho alpha beta
-    # 2,3,4 sigma aa ab bb
-    # 5,6 tau a tau b
+    # 0,1 rho alpha beta
+    # 2,3 s_alpha, s_beta
+    # 4,5 tau a tau b
     def get_exchange_constants(self, x):
 
         x_x = x[:, 2:]
@@ -187,7 +187,8 @@ class pcPBEMLOptimizer(nn.Module):
     @staticmethod
     def all_rho_inf(x):
         # For gamma
-        return torch.hstack([torch.ones([x.shape[0], 2]).to(device), x[:, 2:]])
+        # Then rs is zero
+        return torch.hstack([torch.zeros([x.shape[0], 2]).to(device), x[:, 2:]])
 
     @staticmethod
     def custom_relu(x):
