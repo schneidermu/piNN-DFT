@@ -6,6 +6,7 @@ import torch
 from .NN_models import NN_PBE_model, NN_XALPHA_model
 from .PBE import F_PBE
 from .SVWN3 import F_XALPHA
+import numpy as np
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 relative_path_to_model_state_dict = {
@@ -28,7 +29,6 @@ class NN_FUNCTIONAL:
         model.load_state_dict(
             torch.load(path_to_model_state_dict, map_location=torch.device("cpu"))
         )
-#       model.load_state_dict(state_dict)
         model.eval()
         self.name = name
         self.model = model
@@ -40,10 +40,6 @@ class NN_FUNCTIONAL:
         rho_only_b, grad_b_x, grad_b_y, grad_b_z, _, tau_b = torch.unsqueeze(
             features["rho_b"], dim=1
         )
-
-        eps = 1e-27
-        rho_only_a = torch.where(rho_only_a > eps, rho_only_a, 0.0)
-        rho_only_b = torch.where(rho_only_b > eps, rho_only_b, 0.0)
 
         norm_grad_a = grad_a_x**2 + grad_a_y**2 + grad_a_z**2
         norm_grad_b = grad_b_x**2 + grad_b_y**2 + grad_b_z**2
@@ -74,7 +70,7 @@ class NN_FUNCTIONAL:
 
         feature_dict = dict()
         for key, value in zip(keys, values):
-            feature_dict[key] = value.to(device)
+            feature_dict[key] = value
             feature_dict[key].requires_grad = True
 
         feature_dict["norm_grad_ab"] = (
@@ -115,9 +111,6 @@ class NN_FUNCTIONAL:
 
         torch.autograd.set_detect_anomaly(True)
 
-        # Transfer model to device
-        self.model = self.model.to(device)
-
         # Get features for NN and functional
         if mode:
             feature_dict = self.create_features_from_libxc(features)
@@ -138,6 +131,20 @@ class NN_FUNCTIONAL:
         # Concatenate features to get input for NN
         nn_inputs = torch.cat([feature_dict[key] for key in keys[:7]], dim=0).T
 
+        eps = 1e-21
+
+        nn_inputs[:, 0] = 1/(feature_dict["rho_a"] + eps)**(1/3)
+        nn_inputs[:, 1] = 1/(feature_dict["rho_b"] + eps)**(1/3)
+        nn_inputs[:, 2] = torch.sqrt(feature_dict["norm_grad_a"] + eps**2)/(feature_dict["rho_a"] + eps)**(4/3)
+        nn_inputs[:, 3] = torch.sqrt(feature_dict["norm_grad"] + eps**2)/(feature_dict["rho_a"] + feature_dict["rho_b"] + eps)**(4/3)
+        nn_inputs[:, 4] = torch.sqrt(feature_dict["norm_grad_b"] + eps**2)/(feature_dict["rho_b"] + eps)**(4/3)
+
+        tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * (feature_dict["rho_a"] + eps)**(5/3)
+        tau_tf_beta = 3/10 * (3*np.pi**2)**(2/3) * (feature_dict["rho_b"] + eps)**(5/3)
+
+        nn_inputs[:, 5] = (feature_dict["tau_a"] - tau_tf_alpha)/tau_tf_alpha
+        nn_inputs[:, 6] = (feature_dict["tau_b"] - tau_tf_beta)/tau_tf_beta
+
         nn_features = torch.tanh(nn_inputs)
 
         # Get the NN output
@@ -150,7 +157,7 @@ class NN_FUNCTIONAL:
 
         # Get gradients for functional input
         functional_gradients = torch.cat(
-            [feature_dict[key] for key in [keys[2], keys[7], keys[4]]], dim=0
+            [feature_dict["norm_grad_a"], feature_dict["norm_grad_ab"], feature_dict["norm_grad_b"]], dim=0
         ).T
 
         if self.name == "NN_PBE":

@@ -21,7 +21,7 @@ parser.add_option("--NFinal", type=int, default=50, help="Number of systems to s
 
 numint_dict = {
     "NN_PBE": dm21.NeuralNumInt(dm21.Functional.NN_PBE),
-    "NN_XALPHA": dm21.NeuralNumInt(dm21.Functional.NN_XALPHA),
+#    "NN_XALPHA": dm21.NeuralNumInt(dm21.Functional.NN_XALPHA),
 }
 non_nn_functional_dict = {"PBE": "PBE", "XAlpha": "1.05*lda,"}
 
@@ -66,7 +66,10 @@ def initialize_molecule(coords, charge, spin):
     molecule.charge = charge
     molecule.build()
 
-    mf = dft.UKS(molecule)
+    if spin == 0:
+        mf = dft.RKS(molecule)
+    else:
+        mf = dft.UKS(molecule)
 
     return molecule, mf
 
@@ -103,7 +106,15 @@ def main():
     molecule, mf = initialize_molecule(coords, charge, spin)
 
     print("\n\nInitial PBE0 calculation\n\n")
-    mf, dm0 = get_PBE0_density(mf)
+    checkpoint = f'checkpoints/{system_name}.chk'
+    mf.chkfile = checkpoint
+    try:
+        dm0 = mf.from_chk(checkpoint)
+    except:
+        mf, dm0 = get_PBE0_density(mf)
+
+    mf.chkfile = None
+    
 
     d3 = disp.DFTD3Dispersion(molecule, xc="PBE0", version="d3bj")
     d3_energy = d3.kernel()[0]
@@ -114,8 +125,8 @@ def main():
             corrected_energy = calculate_functional_energy(
                 mf, functional_name, d3_energy, dm0
             )
-
-        except Exception:
+        except Exception as E:
+            print(E)
             corrected_energy = "ERROR"
 
         finally:

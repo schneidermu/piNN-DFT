@@ -13,8 +13,6 @@
 # limitations under the License.
 
 
-"""An interface to DM21 family of exchange-correlation functionals for PySCF."""
-
 import enum
 from typing import Generator, Optional, Sequence, Tuple, Union
 
@@ -34,15 +32,7 @@ np.random.seed(42)
 
 @enum.unique
 class Functional(enum.Enum):
-    """Enum for exchange-correlation functionals in the DM21 family.
-
-    Attributes:
-      DM21: trained on molecules dataset, and fractional charge, and fractional
-        spin constraints.
-      DM21m: trained on molecules dataset.
-      DM21mc: trained on molecules dataset, and fractional charge constraints.
-      DM21mu: trained on molecules dataset, and electron gas constraints.
-    """
+    """Enum for exchange-correlation functionals."""
 
     # Break pylint's preferred naming pattern to match the functional names used
     # in the paper.
@@ -102,44 +92,19 @@ def _get_number_of_density_matrices(dms):
 
 
 class NeuralNumInt(numint.NumInt):
-    """A wrapper around pyscf.dft.numint.NumInt for the DM21 functionals.
-
-    In order to supply the local Hartree-Fock features required for the DM21
-    functionals, we lightly wrap the NumInt class. The actual evaluation of the
-    exchange-correlation functional is performed in NeuralNumInt.eval_xc.
-
-    Usage:
-      mf = dft.RKS(...)  # dft.ROKS and dft.UKS are also supported.
-      # Specify the functional by monkey-patching mf._numint rather than using
-      # mf._xc or mf._define_xc_.
-      mf._numint = NeuralNumInt(Functional.DM21)
-      mf.kernel()
-    """
+    """A wrapper around pyscf.dft.numint.NumInt."""
 
     def __init__(self, functional):
-        """Constructs a NeuralNumInt object.
-
-        Args:
-          model_class = class of NN torch model
-          model_path = path to model's state_dict
-        """
-        # change this
+        """Constructs a NeuralNumInt object."""
+    
         self._functional_name = functional.name
         self._model = NN_FUNCTIONAL(self._functional_name)
-        # to our NN models
 
-        # All DM21 functionals use local Hartree-Fock features with a non-range
-        # separated 1/r kernel and a range-seperated kernel with \omega = 0.4.
-        # Note an omega of 0.0 is interpreted by PySCF and libcint to indicate no
-        # range-separation.
 
         self._grid_state = None
         self._system_state = None
         super().__init__()
 
-    # DM21* functionals include the hybrid term directly, so set the
-    # range-separated and hybrid parameters expected by PySCF to 0 so PySCF
-    # doesn't also add these contributions in separately.
     def rsh_coeff(self, *args):
         """Returns the range separated parameters, omega, alpha, beta."""
         return [0.0, 0.0, 0.0]
@@ -195,8 +160,6 @@ class NeuralNumInt(numint.NumInt):
         local_xc, vxc, input_features = self._model(features, device)
         unweighted_xc = torch.sum(local_xc, dim=1)
 
-        # The potential is the local exchange correlation divided by the
-        # total density. Add a small constant to deal with zero density.
         self._vxc = vxc
 
         # The derivatives of the exchange-correlation (XC) energy with respect to
@@ -206,6 +169,7 @@ class NeuralNumInt(numint.NumInt):
         self._vrho = self.torch_grad(
             unweighted_xc, [input_features["rho_a"], input_features["rho_b"]]
         )
+
         self._vsigma = self.torch_grad(
             unweighted_xc,
             [
@@ -218,9 +182,12 @@ class NeuralNumInt(numint.NumInt):
             unweighted_xc, [input_features["tau_a"], input_features["tau_b"]]
         )
 
-        # Standard meta-GGAs do not have a dependency on local HF, so we need to
-        # compute the contribution to the Fock matrix ourselves. Just use the
-        # weighted XC energy to avoid having to weight this later.
+#        if self._vrho.isnan().any() or self._vrho.isinf().any():
+#            print('VRHO NAN')
+#        if self._vsigma.isnan().any() or self._vsigma.isinf().any():
+#          print('VSIGMA NAN')
+#        if self._vtau.isnan().any() or self._vtau.isinf().any():
+#          print('VSIGMA NAN')
 
         outputs = {
             "vxc": self._vxc.detach().cpu().numpy(),
@@ -303,6 +270,71 @@ class NeuralNumInt(numint.NumInt):
         self._system_state = None
         self._grid_state = None
         return nelec, excsum, vmat
+    
+    def nr_rks(self,
+      mol: gto.Mole,
+      grids: dft.Grids,
+      xc_code: str,
+      dms: Union[np.ndarray, Sequence[np.ndarray]],
+      relativity: int = 0,
+      hermi: int = 0,
+      max_memory: float = 20000,
+      verbose=None
+    ) -> Tuple[float, float, np.ndarray]:
+      """Calculates RKS XC functional and potential matrix on a given grid.
+  
+      Args:
+        mol: PySCF molecule.
+        grids: grid on which to evaluate the functional.
+        xc_code: XC code. Unused. NeuralNumInt hard codes the XC functional
+          based upon the functional argument given to the constructor.
+        dms: the density matrix or sequence of density matrices. Multiple density
+          matrices are not currently supported. Shape (nao, nao), where nao is the
+          number of atomic orbitals.
+        relativity: Unused. (pyscf.numint.NumInt.nr_rks does not currently use
+          this argument.)
+        hermi: 0 if the density matrix is Hermitian, 1 if the density matrix is
+          non-Hermitian.
+        max_memory: the maximum cache to use, in MB.
+        verbose: verbosity level. Unused. (PySCF currently does not handle the
+          verbosity level passed in here.)
+  
+      Returns:
+        nelec, excsum, vmat, where
+          nelec is the number of electrons obtained by numerical integration of
+          the density matrix.
+          excsum is the functional's XC energy.
+          vmat is the functional's XC potential matrix, shape (nao, nao).
+  
+      Raises:
+        NotImplementedError: if multiple density matrices are supplied.
+      """
+      # Wrap nr_rks so we can store internal variables required to evaluate the
+      # contribution to the XC potential from local Hartree-Fock features.
+      # See pyscf.dft.numint.nr_rks for more details.
+      ndms = _get_number_of_density_matrices(dms)
+      if ndms > 1:
+        raise NotImplementedError(
+            'NeuralNumInt does not support multiple density matrices. '
+            'Only ground state DFT calculations are currently implemented.')
+      nao = mol.nao_nr()
+      self._vmat_hf = np.zeros((nao, nao))
+      self._system_state = _SystemState(mol=mol, dms=dms)
+      nelec, excsum, vmat = super().nr_rks(
+          mol=mol,
+          grids=grids,
+          xc_code=xc_code,
+          dms=dms,
+          relativity=relativity,
+          hermi=hermi,
+          max_memory=max_memory,
+          verbose=verbose)
+      vmat += self._vmat_hf + self._vmat_hf.T
+  
+      # Clear internal state to prevent accidental re-use.
+      self._system_state = None
+      self._grid_state = None
+      return nelec, excsum, vmat
 
     def block_loop(
         self,
@@ -489,6 +521,10 @@ class NeuralNumInt(numint.NumInt):
             grads["vtau"],
         )
 
+
+        #print('SHAPES', exc.shape, vrho.shape, vsigma.shape, vtau.shape)
+        #SHAPES (7000,) (2, 1, 7000) (3, 1, 7000) (2, 1, 7000)
+
         mol = self._system_state.mol
         shls_slice = (0, mol.nbas)
         ao_loc_nr = mol.ao_loc_nr()
@@ -504,7 +540,7 @@ class NeuralNumInt(numint.NumInt):
             # The functional uses the first and last as inputs, but then has
             # grad_(rho_a + rho_b) . grad_(rho_a + rho_b)
             # as input. The following computes the correct total derivatives.
-            vxc_1 = vsigma[0][0, :] / 4.0 + vsigma[1][0, :] / 4.0 + vsigma[2][:, 0]
+            vxc_1 = vsigma[0][0, :] / 4.0 + vsigma[1][0, :] / 4.0 + vsigma[2][0, :]
             vxc_3 = (vtau[0][0, :] + vtau[1][0, :]) / 2.0
             vxc_2 = np.zeros_like(vxc_3)
 
@@ -518,18 +554,21 @@ class NeuralNumInt(numint.NumInt):
             # grad_(rho_a + rho_b) . grad_(rho_a + rho_b)
             # as input. The following computes the correct total derivatives.
             vxc_1 = np.stack(
-                [
-                    vsigma[0][0, :] + vsigma[2][0, :],
-                    2.0 * vsigma[2][0, :],
-                    vsigma[1][0, :] + vsigma[2][0, :],
-                ],
-                axis=1,
+              [
+                vsigma[0][0, :] + vsigma[2][0, :],
+                2.0 * vsigma[2][0, :],
+                vsigma[1][0, :] + vsigma[2][0, :],
+              ],
+              axis=1,
             )
             vxc_3 = np.stack([vtau[0][0, :], vtau[1][0, :]], axis=1)
             vxc_2 = np.zeros_like(vxc_3)
 
         fxc = None  # Second derivative not implemented
         kxc = None  # Second derivative not implemented
+#        exc = exc.astype(np.float64)
+#        vxc = tuple(v.astype(np.float64) for v in (vxc_0, vxc_1, vxc_2, vxc_3))
         exc = exc.astype(np.float64)
         vxc = tuple(v.astype(np.float64) for v in (vxc_0, vxc_1, vxc_2, vxc_3))
-        return exc, vxc, fxc, kxc
+        return exc, (vxc_0.astype(np.float64), vxc_1.astype(np.float64), vxc_2.astype(np.float64), vxc_3.astype(np.float64)), fxc, kxc
+        # vxc_1 problem
