@@ -1,6 +1,8 @@
 import torch
 from torch import nn
 import random
+import numpy as np
+import gc
 
 random.seed(42)
 
@@ -114,22 +116,26 @@ class pcPBEMLOptimizer(nn.Module):
 
         modules_x = [] # NN part for exchange
         modules_c = [] # NN part for correlation
-        modules_x.extend(
-            [
-                nn.Linear(5, h_dim, bias=False),
-                nn.BatchNorm1d(h_dim),
-                nn.LeakyReLU(),
-                nn.Dropout(p=0.0),
-            ]
-        )
 
-        modules_c.extend(
-            [
+        input_layer_c = [
                 nn.Linear(7, h_dim, bias=False),
                 nn.BatchNorm1d(h_dim),
                 nn.LeakyReLU(),
                 nn.Dropout(p=0.0),
             ]
+        
+        input_layer_x = [
+                nn.Linear(5, h_dim, bias=False),
+                nn.BatchNorm1d(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=0.0),
+            ]
+
+        modules_x.extend(
+            input_layer_x
+        )
+        modules_c.extend(
+            input_layer_c
         )
 
         for _ in range(num_layers // 2 - 1):
@@ -151,14 +157,17 @@ class pcPBEMLOptimizer(nn.Module):
     # 0,1 rho alpha beta
     # 2,3 s_alpha, s_beta
     # 4,5 tau a tau b
+
     def get_exchange_constants(self, x):
 
-        x_x = x[:, 2:]
-
-        x_x = self.hidden_layers_x(x_x)
+        x_x = self.hidden_layers_x(x[:, 2:])
 
         mu = x_x[:, 1]
         kappa = self.kappa_activation(x_x[:, 0])
+
+        del x_x
+        gc.collect()
+        torch.cuda.empty_cache()
 
         return mu, kappa
 
@@ -171,6 +180,10 @@ class pcPBEMLOptimizer(nn.Module):
         gamma = x_c[:, 1]
         lda_c_params = x_c[:, 2:]
 
+        del x_c
+        gc.collect()
+        torch.cuda.empty_cache()
+        
         return beta, gamma, lda_c_params
 
     
@@ -194,10 +207,10 @@ class pcPBEMLOptimizer(nn.Module):
     def custom_relu(x):
         return torch.nn.functional.relu(x+0.95)+0.05
 
-
     def forward(self, x):
         if self.training:
-            x = random.choice([x, x[:, [1, 0, 4, 3, 2, 6, 5]]]) # Randomly flip spin
+            x = random.choice([x, x[:, [1, 0, 4, 3, 2, 6, 5]]])
+
         mu, kappa = self.get_exchange_constants(x)
         beta, gamma, lda_c_params = self.get_correlation_constants(x)
 
@@ -210,5 +223,9 @@ class pcPBEMLOptimizer(nn.Module):
         kappa = kappa.view(-1,1)
 
         c_arr = torch.hstack([beta, gamma, lda_c_params, torch.ones([x.shape[0], 1]).to(device), kappa, mu])*true_constants_PBE
+
+        del mu, beta, gamma, kappa, lda_c_params
+        gc.collect()
+        torch.cuda.empty_cache()
 
         return c_arr

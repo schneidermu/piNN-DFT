@@ -89,8 +89,8 @@ def calculate_reaction_energy(
     splitted_calc_reaction_data = backsplit(reaction, local_energies)
     molecule_energies = integration(reaction, splitted_calc_reaction_data, dispersions)
     reaction_energy_kcal = get_energy_reaction(reaction, molecule_energies)
-    del molecule_energies, splitted_calc_reaction_data, local_energies
-    return reaction_energy_kcal
+    del molecule_energies, splitted_calc_reaction_data
+    return reaction_energy_kcal, local_energies["Local_energies"]
 
 
 def test_energy_PBE(test_grid, constants):

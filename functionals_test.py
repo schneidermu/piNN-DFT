@@ -16,6 +16,45 @@ rung = "LDA"
 dft = "XALPHA"
 
 
+def loss_function(factor_dictionary, total_database_errors):
+    fchem = 0
+
+    for db in sorted(total_database_errors):
+        factor = factor_dictionary.get(db, 1)
+        error = np.sqrt((np.mean(np.array(total_database_errors[db])**2)))
+        fchem += error*factor
+        print(f'{db}: {error*factor:.3f}')
+
+    return fchem
+
+
+def make_total_db_errors(pred_energies, reaction_energy, errors, ref_energies, y_batch, total_database_errors, current_bases):
+    if len(pred_energies): 
+        pred_energies = torch.hstack([pred_energies, reaction_energy])
+        ref_energies = torch.hstack([ref_energies, y_batch])
+        errors = torch.hstack([errors, reaction_energy-y_batch])
+    else:
+        pred_energies = reaction_energy
+        ref_energies = y_batch
+        errors = reaction_energy-y_batch
+
+    for base, error in zip(current_bases, reaction_energy-y_batch):
+        total_database_errors[base] = total_database_errors.get(base, [])
+        total_database_errors[base].append((torch.abs(error).item()))
+
+    return pred_energies, ref_energies, errors, total_database_errors
+
+
+def extend_bases(X_batch, bases):
+    if len(X_batch["Database"][0]) == 1:
+        current_bases = [X_batch["Database"],]
+    else:
+        current_bases = list(X_batch["Database"])
+    bases += current_bases
+
+    return current_bases, bases
+
+
 FCHEM_FACTORS = {
     "MGAE109": 1/4.73394495412844,
     "NCCE31": 10
@@ -78,29 +117,12 @@ def set_random_seed(seed):
 
 criterion = nn.MSELoss()
 
-def exc_loss(reaction, pred_constants, dft="PBE", true_constants=true_constants_PBE, val=False):
+def exc_loss(
+    reaction, pred_constants, dft="PBE", true_constants=true_constants_PBE,
+    val=False
+):
 
     HARTREE2KCAL = 627.5095
-
-    reaction_indices = reaction["reaction_indices"]
-    database_indices = []
-    weight_indices = []
-    for i in range(1, len(reaction_indices)):
-        database_indices.append(reaction_indices[i]-reaction_indices[i-1])
-
-    if len(reaction["Database"][0]) == 1:
-        current_bases = [reaction["Database"],]
-    else:
-        current_bases = list(reaction["Database"])
-
-    for i, base in enumerate(current_bases):
-        number_of_bases = database_indices[i]
-        if val:
-            weight = 1/PBE_VAL_FACTORS.get(base)/1180.5
-        else:
-            weight = 1/PBE_TRAIN_FACTORS.get(base)/407.01
-        weight_indices.extend([weight]*number_of_bases)
-
 
     # Turn backsplit indices into slices.
     backsplit_ind = reaction["backsplit_ind"].to(torch.int32)
@@ -112,10 +134,8 @@ def exc_loss(reaction, pred_constants, dft="PBE", true_constants=true_constants_
     )
     n_molecules = len(indices)
 
-    # Initialize loss.
     loss = torch.tensor(0.0, requires_grad=True).to(device)
 
-    # Calculate predicted local energies.
     predicted_local_energies = get_local_energies(
         reaction, pred_constants, device, rung=rung, dft=dft
     )["Local_energies"]
@@ -131,12 +151,13 @@ def exc_loss(reaction, pred_constants, dft="PBE", true_constants=true_constants_
     )["Local_energies"]
 
     # Split them into systems.
-    true_local_energies = [true_local_energies[start:stop] for start, stop in indices]
+    true_local_energies = [
+        true_local_energies[start:stop] for start, stop in indices
+    ]
 
-    # Calculate local energy loss.
     for i in range(n_molecules):
         loss += (
-            criterion(predicted_local_energies[i], true_local_energies[i]) * weight_indices[i]**2
+            criterion(predicted_local_energies[i], true_local_energies[i])
         )
 
     return loss * HARTREE2KCAL**2 / n_molecules
@@ -218,8 +239,7 @@ with torch.no_grad():
 
         for batch_idx, (X_batch, y_batch) in enumerate(dataset):
 
-            current_bases = [x for x in X_batch["Database"]]
-            bases += current_bases
+            current_bases, bases = extend_bases(X_batch, bases)
             grid_size = len(X_batch["Grid"])
             constants = (torch.ones(grid_size) * 1.05).view(grid_size, 1)
             if index == 1:
@@ -228,36 +248,15 @@ with torch.no_grad():
                 val=False
             local_loss = exc_loss(X_batch, constants, dft="XALPHA", val=val)
 
-            energies = calculate_reaction_energy(
+            energies, local_energies = calculate_reaction_energy(
                 X_batch, constants, device, rung="LDA", dft="XALPHA", dispersions=dispersions
             )
-            if len(pred_energies): 
-                pred_energies = torch.hstack([pred_energies, energies])
-                ref_energies = torch.hstack([ref_energies, y_batch])
-                errors = torch.hstack([errors, energies-y_batch])
-            else:
-                pred_energies = energies
-                ref_energies = y_batch
-                errors = energies-y_batch
-            
-            for base, error in zip(current_bases, energies-y_batch):
-                total_database_errors[base] = total_database_errors.get(base, [])
-                total_database_errors[base].append((torch.abs(error).item()))
+            pred_energies, ref_energies, errors, total_database_errors = make_total_db_errors(pred_energies, energies, errors, ref_energies, y_batch, total_database_errors, current_bases)
             
 
             local_lst.append(torch.sqrt(local_loss).item())
 
-        fchem = 0
-        for db in sorted(total_database_errors):
-            if index==0:
-                factor = PBE_TRAIN_ENERGY_FACTORS.get(db,  1)/0.365
-            elif index==1:
-                factor = PBE_VAL_ENERGY_FACTORS.get(db, 1)/0.59
-            else:
-                factor = 1
-            error = ((np.mean(np.array(total_database_errors[db]))))
-            fchem += error*factor
-            print(f'{db}: {error*factor:.3f}')
+        fchem = loss_function(FCHEM_FACTORS, total_database_errors)
 
         print("Fchem =", fchem)
 
@@ -299,7 +298,6 @@ with torch.no_grad():
 # NCCE31: 2.936
 # PA8: 6.171
 # pTC13: 5.391
-        
 
 
 with torch.no_grad():
@@ -314,38 +312,16 @@ with torch.no_grad():
         for batch_idx, (X_batch, y_batch) in enumerate(dataset):
 
             grid_size = len(X_batch["Grid"])
-            current_bases = [x for x in X_batch["Database"]]
-            bases += current_bases
+            current_bases, bases = extend_bases(X_batch, bases)
             constants = (torch.ones(grid_size * 24)).view(
                 grid_size, 24
             ) * true_constants_PBE
-            energies = calculate_reaction_energy(
+            energies, local_energies = calculate_reaction_energy(
                 X_batch, constants, device, rung="GGA", dft="PBE", dispersions=dispersions
             )
-            if len(pred_energies): 
-                pred_energies = torch.hstack([pred_energies, energies])
-                ref_energies = torch.hstack([ref_energies, y_batch])
-                errors = torch.hstack([errors, energies-y_batch])
-            else:
-                pred_energies = energies
-                ref_energies = y_batch
-                errors = energies-y_batch
-            
-            for base, error in zip(current_bases, energies-y_batch):
-                total_database_errors[base] = total_database_errors.get(base, [])
-                total_database_errors[base].append((torch.abs(error).item()))
-            
-        fchem = 0
-        for db in sorted(total_database_errors):
-            if index==0:
-                factor = PBE_TRAIN_ENERGY_FACTORS.get(db,  1)/0.365
-            elif index==1:
-                factor = PBE_VAL_ENERGY_FACTORS.get(db, 1)/0.59
-            else:
-                factor = 1
-            error = ((np.mean(np.array(total_database_errors[db]))))
-            fchem += error*factor
-            print(f'{db}: {error*factor:.3f}')
+            pred_energies, ref_energies, errors, total_database_errors = make_total_db_errors(pred_energies, energies, errors, ref_energies, y_batch, total_database_errors, current_bases)
+
+        fchem = loss_function(FCHEM_FACTORS, total_database_errors)
 
         print("Fchem =", fchem)
 

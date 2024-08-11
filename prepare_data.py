@@ -2,9 +2,7 @@ import copy
 import pickle
 import random
 
-import numpy as np
 import torch
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold
 
 from dataset import make_reactions_dict
@@ -28,7 +26,7 @@ def train_split(data, test_size, shuffle=False, random_state=42):
     for key in data:
         X.append(key)
         y.append(data[key]["Database"])
-    skf = StratifiedKFold(n_splits=int(1/test_size), shuffle=shuffle, random_state=random_state)
+    skf = StratifiedKFold(n_splits=5, shuffle=shuffle, random_state=random_state)
 
     train_index, test_index = next(skf.split(X, y))
 
@@ -42,26 +40,13 @@ def train_split(data, test_size, shuffle=False, random_state=42):
     return rename_keys(train), rename_keys(test)
 
 
-def prepare(path="data", test_size=0.2, random_state=42):
+def prepare(path="data", test_size=0.2, random_state=41):
     # Make a single dictionary from the whole dataset.
     data = make_reactions_dict(path=path)
 
     # Train-test split.
     data_train, data_test = train_split(copy.deepcopy(data), test_size, shuffle=True, random_state=random_state)
 
-#    # Stdscaler fit.
-#    lst = []
-#    for i in range(len(data_train)):
-#        lst.append(data_train[i]["Grid"])
-#
-#    train_grid_data = torch.cat(lst)
-#    stdscaler = StandardScaler()
-#    stdscaler.fit(np.array(train_grid_data))
-#
-#    # Check mean and var for later SCF calculations
-#    print("mean:", stdscaler.mean_)
-#    print("std:", np.sqrt(stdscaler.var_))
-#    # Stdscaler transform.
     for data_t in (data_train, data_test):
         for i in range(len(data_t)):
             data_t[i]["Grid"] = torch.Tensor(data_t[i]["Grid"])

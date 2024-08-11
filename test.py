@@ -19,33 +19,84 @@ import matplotlib.pyplot as plt
 set_random_seed(41)
 
 
-def sum_of_weights(dictionary):
-    return np.sum(np.array(list(dictionary.values())))
+FCHEM_VALIDATION = {
+    'MGAE109': 1/4.73394495412844,
+    'NCCE31': 10,
+#    'AE17': 1/100
+}
+
+TRAIN_WEIGHTS = {
+    "ABDE4": 1/93.42/4,
+#    "AE17": 1/93753.82/17,
+    "DBH76": 1/18.40/76,
+    "EA13": 1/38.31/13,
+    "IP13": 1/253.83/13,
+    "MGAE109": 1/498.53/109,
+    "NCCE31": 1/3.63/31,
+    "PA8": 1/163.33/8,
+    "pTC13": 1/168.79/13,
+}
+
+mean_train_weight = np.mean(np.array(list(TRAIN_WEIGHTS.values())))
+
+PBE_TRAIN_ERRORS = {
+    "ABDE4": 2.347,
+#    "AE17": 54.272,
+    "DBH76": 10.120,
+    "EA13": 3.112,
+    "IP13": 4.964,
+    "MGAE109": 4.041,
+    "NCCE31": 16.937,
+    "PA8": 1.688,
+    "pTC13": 5.784,
+}
+
+PBE_VALIDATION_ERRORS = {
+    "ABDE4": 5.689,
+#    "AE17": 66.095,
+    "DBH76": 8.904,
+    "EA13": 2.451,
+    "IP13": 3.358,
+    "MGAE109": 3.974,
+    "NCCE31": 15.767,
+    "PA8": 1.789,
+    "pTC13": 10.985,
+}
 
 
-def loss_function(factor_dictionary, total_database_errors):
+def loss_function(factor_dictionary, total_database_errors, val=False):
     fchem = 0
 
     for db in sorted(total_database_errors):
         factor = factor_dictionary.get(db, 1)
         error = np.sqrt((np.mean(np.array(total_database_errors[db])**2)))
         fchem += error*factor
-        print(f'{db}: {error*factor:.3f}')
+        if val:
+            err_dict = PBE_VALIDATION_ERRORS
+        else:
+            err_dict = PBE_TRAIN_ERRORS
+        print(f'{db}: {error*factor:6.3f}, {100*(error*factor-err_dict.get(db))/err_dict.get(db):6.3f}%')
 
     return fchem
 
 
-def modify_training(current_bases, factor_dictionary, y_batch, reaction_energy):
-    for i, db in enumerate(current_bases):
-        factor = factor_dictionary.get(db, 1)
-        try:
-            reaction_energy[i] *= factor
-            y_batch[i] *= factor
-        except:
-            reaction_energy *= factor
-            y_batch *= factor
+def batch_fchem(current_bases, reaction_energy, y_batch):
+    mse = nn.MSELoss()
+    err_dict = dict()
+    errors = []
 
-    return reaction_energy, y_batch
+
+    for database, pred, ref in zip(current_bases, reaction_energy, y_batch):
+        err_dict[database] = err_dict.get(database, [[], []])
+        err_dict[database][0].append(pred)
+        err_dict[database][1].append(ref)
+    for database in err_dict:
+        factor = TRAIN_WEIGHTS.get(database, 1)/mean_train_weight
+        errors.append(factor*mse(torch.stack(err_dict[database][0]), torch.stack(err_dict[database][1])))
+
+    fchem = torch.sqrt(1e-20 + torch.sum(torch.stack(errors)))/len(err_dict)
+    return fchem
+    
 
 
 def extend_bases(X_batch, bases):
@@ -74,85 +125,6 @@ def make_total_db_errors(pred_energies, reaction_energy, errors, ref_energies, y
 
     return pred_energies, ref_energies, errors, total_database_errors
 
-
-PBE_TRAIN_ENERGY_FACTORS = {
-    "ABDE4": 1/92.10,
-    "AE17": 0.00196/10,
-    "DBH76": 1/17.54,
-    "EA13": 1/34.96,
-    "IP13": 1/257.31,
-    "MGAE109": 1/508.07,
-    "NCCE31": 1/4.02,
-    "PA8": 1/159.48,
-    "pTC13": 1/162.83,
-}
-PBE_VAL_ENERGY_FACTORS = {
-    "ABDE4": 1/97.39,
-    "AE17": 0.00217/10,
-    "AE17": 0,
-    "DBH76": 1/21.88,
-    "EA13": 1/56.72,
-    "IP13": 1/253.83,
-    "MGAE109": 1/460.79,
-    "NCCE31": 1/2.01,
-    "PA8": 1/174.85,
-    "pTC13": 1/201.57,
-}
-
-#PBE_TRAIN_FACTORS = {
-#    "ABDE4": 3.681/92.10,
-#    "AE17": 0.118/10,
-#    "DBH76": 8.504/17.54,
-#    "EA13": 2.671/34.96,
-#    "IP13": 3.521/257.31,
-#    "MGAE109": 15.631/508.07,
-#    "NCCE31": 1.020/4.02,
-#    "PA8": 1.091/159.48,
-#    "pTC13": 6.169/162.83,
-#}
-#
-#PBE_VAL_FACTORS = {
-#    "ABDE4": 0.117/97.39,
-#    "AE17": 0.130/10,
-#    "DBH76": 9.051/21.88,
-#    "EA13": 1.432/56.72,
-#    "IP13": 3.291/253.83,
-#    "MGAE109": 13.709/460.79,
-#    "NCCE31": 1.048/2.01,
-#    "PA8": 2.612/174.85,
-#    "pTC13": 4.068/201.57,
-#}
-
-
-
-FCHEM_FACTORS = {
-    'ABDE4': 1/4,
-    'AE17': 1/17,
-    'DBH76': 1/76,
-    'EA13': 1/13,
-    'IP13': 1/13,
-    'MGAE109': 1/109/(4.73394495412844)**2,
-    'NCCE31': 10**2/31,
-    'PA8': 1/8,
-    'pTC13': 1/13,
-}
-#
-FCHEM_VALIDATION = {
-    'MGAE109': 1/4.73394495412844,
-    'NCCE31': 10,
-}
-
-
-
-#def Fchem(total_database_errors):
-#    Fchem_ = 0
-#    for db in total_database_errors:
-#        error = np.sqrt(np.mean((np.array(total_database_errors[db]))**2))
-##        if db in FCHEM_FACTORS:
-##            error *= FCHEM_FACTORS[db]
-#        Fchem_ += error
-#
-#    return Fchem_
 
 
 data, data_train, data_test = load_chk(path="checkpoints")
@@ -311,7 +283,7 @@ mae = nn.L1Loss()
 
 
 def exc_loss(
-    reaction, pred_constants, dft="PBE", true_constants=true_constants_PBE,
+    reaction, pred_constants, predicted_local_energies,  dft="PBE", true_constants=true_constants_PBE,
     val=False
 ):
 
@@ -327,11 +299,7 @@ def exc_loss(
     )
     n_molecules = len(indices)
 
-    loss = torch.tensor(0.0, requires_grad=True).to(device)
-
-    predicted_local_energies = get_local_energies(
-        reaction, pred_constants, device, rung=rung, dft=dft
-    )["Local_energies"]
+    loss = torch.zeros(1, requires_grad=True).to(device)
 
     # Split them into systems.
     predicted_local_energies = [
@@ -350,10 +318,14 @@ def exc_loss(
 
     for i in range(n_molecules):
         loss += (
-            criterion(predicted_local_energies[i], true_local_energies[i])
+            torch.sqrt(criterion(predicted_local_energies[i], true_local_energies[i]) + 1e-20)/np.sqrt(len(predicted_local_energies[i]))
         )
 
-    return loss * HARTREE2KCAL**2 / n_molecules
+    del (
+        true_local_energies,
+        predicted_local_energies
+    )
+    return loss * HARTREE2KCAL / n_molecules
 
 
 true_constants_PBE = true_constants_PBE.to(device)
@@ -380,9 +352,10 @@ def train(
     train_full_loss = []
     val_full_loss = []
     test_fchem = []
+    train_fchem_loss = []
 
     for epoch in range(n_epochs):
-        torch.autograd.set_detect_anomaly(True)
+        torch.autograd.set_detect_anomaly(False)
         print(f"Epoch {epoch + 1}")
         # train
         model.train()
@@ -405,49 +378,46 @@ def train(
             current_bases, bases = extend_bases(X_batch=X_batch, bases=bases)
 
             predictions = model(X_batch_grid)
-            reaction_energy = calculate_reaction_energy(
+            reaction_energy, local_energies = calculate_reaction_energy(
                 X_batch,
                 predictions,
                 device,
                 rung=rung,
                 dft=dft,
                 dispersions=dispersions,
-            ).to(device)
+            )
+            reaction_energy.to(device)
+            local_energies.to(device)
 
             pred_energies, ref_energies, errors, total_database_errors = make_total_db_errors(
                 pred_energies, reaction_energy, errors, ref_energies, y_batch, total_database_errors, current_bases
             )
 
-            local_loss = exc_loss(X_batch, predictions, dft=dft)
+            local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
 
             MAE = mae(reaction_energy, y_batch).item()
 
-            reaction_energy, y_batch = modify_training(
-                current_bases=current_bases, factor_dictionary=FCHEM_FACTORS, y_batch=y_batch, reaction_energy=reaction_energy
-            )
-
-            reaction_mse_loss = criterion(reaction_energy, y_batch)
+            batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
 
             # Calculate total loss function
-            loss = (1 - omega) / 3 * reaction_mse_loss + omega * local_loss / 16
+            loss = (1 - omega) / 2  * batch_fchem_loss + omega * local_loss * 50
+            loss.backward()
 
-            MSE = reaction_mse_loss.item()
-
+            MSE = criterion(reaction_energy, y_batch).item()
             train_mse_losses_per_epoch.append(MSE)
             train_mae_losses_per_epoch.append(MAE)
-            train_exc_losses_per_epoch.append(torch.sqrt(local_loss).item())
+            train_exc_losses_per_epoch.append(local_loss.item())
             train_full_loss_per_epoch.append(loss.item())
             
             progress_bar_train.set_postfix(MSE=MSE, MAE=MAE)
 
-            loss.backward()
             if ((batch_idx + 1) % accum_iter == 0) or (
                 batch_idx + 1 == len(train_loader)
             ):
                 optimizer.step()
                 optimizer.zero_grad()
 
-            del X_batch, X_batch_grid, y_batch, reaction_energy
+            del X_batch, X_batch_grid, y_batch, reaction_energy, local_energies, local_loss, MSE, MAE, loss, predictions
             gc.collect()
             torch.cuda.empty_cache()
 
@@ -462,10 +432,9 @@ def train(
             f"train Local Energy Loss = {train_loss_exc[epoch]:.8f}"
         )
 
-        plt.plot(range(1, len(train_full_loss)+1), train_full_loss, label='train')
-
         train_fchem = loss_function(factor_dictionary=FCHEM_VALIDATION, total_database_errors=total_database_errors)
         print("\nTrain Fchem", train_fchem, '\n')
+        train_fchem_loss.append(train_fchem)
 
 
         # test
@@ -490,37 +459,36 @@ def train(
                 current_bases, bases = extend_bases(X_batch=X_batch, bases=bases)
 
                 predictions = model(X_batch_grid)
-                reaction_energy = calculate_reaction_energy(
+                reaction_energy, local_energies = calculate_reaction_energy(
                     X_batch,
                     predictions,
                     device,
                     rung=rung,
                     dft=dft,
                     dispersions=dispersions,
-                ).to(device)
+                )
+                reaction_energy.to(device)
+                local_energies.to(device)
 
 
                 pred_energies, ref_energies, errors, total_database_errors = make_total_db_errors(
                     pred_energies, reaction_energy, errors, ref_energies, y_batch, total_database_errors, current_bases
                 )
 
-                local_loss = exc_loss(X_batch, predictions, dft=dft)
+                local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
 
                 MAE = mae(reaction_energy, y_batch).item()
 
-                reaction_energy, y_batch = modify_training(
-                    current_bases=current_bases, factor_dictionary=FCHEM_FACTORS, y_batch=y_batch, reaction_energy=reaction_energy
-                )
-
                 reaction_mse_loss = criterion(reaction_energy, y_batch)
+                batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
 
                 MSE = reaction_mse_loss.item()
 
-                loss = (1 - omega) / 3 * reaction_mse_loss + omega * local_loss / 4
+                loss = (1 - omega) / 2 * batch_fchem_loss + omega * local_loss * 50
 
                 test_mse_losses_per_epoch.append(MSE)
                 test_mae_losses_per_epoch.append(MAE)
-                test_exc_losses_per_epoch.append(torch.sqrt(local_loss).item())
+                test_exc_losses_per_epoch.append(local_loss.item())
                 val_full_loss_per_epoch.append(loss.item())
 
                 progress_bar_test.set_postfix(MSE=MSE, MAE=MAE)
@@ -532,6 +500,9 @@ def train(
                     loss,
                     MAE,
                     MSE,
+                    local_energies,
+                    local_loss,
+                    predictions
                 )
                 gc.collect()
                 torch.cuda.empty_cache()
@@ -544,22 +515,36 @@ def train(
         print(
             f"test MSE Loss = {test_loss_mse[epoch]:.8f} MAE Loss = {test_loss_mae[epoch]:.8f}"
         )
-        plt.plot(range(1, len(val_full_loss)+1), val_full_loss, label='validation')
-        plt.legend()
-        plt.savefig(f"training_{omega}.png")
-        plt.clf()
+        fig, ax = plt.subplots(nrows=2, ncols=1, figsize=[3, 6], sharex=True)
+        ax[0].plot(range(1, len(train_full_loss)+1), train_full_loss, label='Train Loss')
+        ax[0].plot(range(1, len(val_full_loss)+1), val_full_loss, label='Validation Loss')
         print(f"test Local Energy Loss = {test_loss_exc[epoch]:.8f}")
 
-        val_fchem = loss_function(factor_dictionary=FCHEM_VALIDATION, total_database_errors=total_database_errors)
+        val_fchem = loss_function(factor_dictionary=FCHEM_VALIDATION, total_database_errors=total_database_errors, val=True)
         test_fchem.append(val_fchem)
 
-        if val_full_loss[-1] == min(val_full_loss):
+        if val_fchem <= min(test_fchem) and train_fchem < 1.3*val_fchem:
             torch.save(
-                model.state_dict(), f'best_models/29 june/{name}_{omega}_epoch_{epoch}_loss_{val_fchem:.2f}.pth'
+                model.state_dict(), f'best_models/batch_fchem/bs_{batch_size}_no_ae17_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_loss_{val_fchem:.2f}_{test_loss_exc[-1]:.4f}.pth'
             )
-#        else:
-#            test_fchem.pop()
         print("\nValidation Fchem", val_fchem, '\n')
+        ax[1].plot(range(1, len(val_full_loss)+1), train_fchem_loss, label='Train Fchem')
+        ax[1].plot(range(1, len(val_full_loss)+1), test_fchem, label='Validation Fchem')
+        ax[0].legend()
+        ax[1].legend()
+        plt.savefig(f"./batch_fchem/bs_{batch_size}_no_ae17_lr_{lr_train}_{name}_{omega}.png")
+        plt.clf()
+        plt.close()
+
+        del (
+            val_fchem,
+            train_fchem,
+            test_mse_losses_per_epoch,
+            test_mae_losses_per_epoch,
+            val_full_loss_per_epoch
+        )
+        gc.collect()
+        torch.cuda.empty_cache()
 
     return train_loss_mae, test_loss_mae
 
