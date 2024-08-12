@@ -14,7 +14,7 @@ script_template = '''#! /bin/bash
 #SBATCH --ntasks=4
 #SBATCH --output="/home/xray/schneiderm/log_files/molden/{functional}_{molecule}_"%j.out
 # Executable
-python -m get_molden_molecules --Functional {functional} --Filename {filename}'''
+python -m get_molden --Functional {functional} --Molecule {molecule_name}'''
 
 molecules = ['BH3', 'CO', 'F2', 'H2', 'H2O', 'HF', 'Li2', 'LiF', 'LiH', 'N2']
 
@@ -22,5 +22,5 @@ for molecule in molecules:
     filename = f"./molden/{molecule}.xyz"
     slurm_file = f"get_molden_{molecule}.slurm"
     with open(slurm_file, "w") as file:
-        file.write(script_template.format(functional=functional, filename=filename, molecule=molecule))
+        file.write(script_template.format(functional=functional, molecule=molecule))
     os.system(f"sbatch {slurm_file}")

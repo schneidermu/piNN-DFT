@@ -1,6 +1,5 @@
 import os
 
-import mlflow
 import torch
 
 from .NN_models import NN_PBE_model, NN_XALPHA_model
