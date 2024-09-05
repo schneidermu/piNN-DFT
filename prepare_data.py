@@ -28,7 +28,8 @@ def train_split(data, test_size, shuffle=False, random_state=42):
         y.append(data[key]["Database"])
     skf = StratifiedKFold(n_splits=5, shuffle=shuffle, random_state=random_state)
 
-    train_index, test_index = next(skf.split(X, y))
+    it = skf.split(X, y)
+    train_index, test_index = next(it)
 
     train, test = dict(), dict()
 

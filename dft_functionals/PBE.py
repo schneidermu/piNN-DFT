@@ -1,5 +1,6 @@
 import torch
 from utils import catch_nan
+import numpy as np
 
 # PBE C
 
@@ -35,7 +36,7 @@ def z_thr(zeta):
 
 def rs_z_calc(rho):
     eps_add = 1e-20
-    rs = (3/((rho[:,0] + rho[:,1] + eps_add) * (4 * torch.pi))) ** (1/3)
+    rs = (3/((rho[:,0] + rho[:,1] + eps_add) * (4 * np.pi))) ** (1/3)
     z = z_thr((rho[:,0] - rho[:,1]) / (rho[:,0] + rho[:,1] + eps_add))
     catch_nan(rs=rs, z=z)
     return rs, z
@@ -160,7 +161,7 @@ def PBE_C(rs, z, xt, c_arr, device):
 
 
 def lda_x_spin(rs, z, c_arr):
-    RS_FACTOR = (3/(4*torch.pi))**(1/3)
+    RS_FACTOR = (3/(4*np.pi))**(1/3)
     DIMENSIONS = 3
     rs_f_rs = (RS_FACTOR/rs)
     res_lda_x_spin = c_arr[:, 21]*(z+1)**(1 + 1/DIMENSIONS)*2**(-1-1/DIMENSIONS)*rs_f_rs
@@ -188,7 +189,7 @@ def pbe_f0(s, c_arr):
 
 
 def pbe_f(x, c_arr):
-    X2S = 1/(2*(6*torch.pi**2)**(1/3))
+    X2S = 1/(2*(6*np.pi**2)**(1/3))
     res_pbe_f = pbe_f0(X2S*x, c_arr)
     catch_nan(res_pbe_f=res_pbe_f)
     return res_pbe_f

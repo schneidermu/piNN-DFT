@@ -41,7 +41,7 @@ def load_ref_energies(path):
         "DBH76": ref(251, 288, path) + ref(291, 328, path),
         "NCCE31": ref(331, 361, path),
         "ABDE4": ref(206, 209, path),
-#        "AE17":ref(375, 391, path),
+        "AE17":ref(375, 391, path),
         "pTC13": ref(232, 234, path) + ref(237, 241, path) + ref(244, 248, path),
     }
     return ref_e
@@ -93,7 +93,7 @@ def get_compounds_coefs_energy(reactions, energies):
                     {'Components': [...], 'Coefficients: [...]', 'Energy: float', Database: str
                                 }
                             }
-    which is a dictionaty from load_component_names with Energy information added
+    which is a dictionary from load_component_names with Energy information added
     """
     data_final = dict()
     i = 0

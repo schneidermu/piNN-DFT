@@ -11,7 +11,7 @@ true_constants_PBE = torch.Tensor(
     [
         [
             0.06672455,
-            (1 - torch.log(torch.Tensor([2]))) / (torch.pi**2),
+            (1 - torch.log(torch.Tensor([2]))) / (np.pi**2),
             1.709921,
             7.5957,
             14.1189,
@@ -32,7 +32,7 @@ true_constants_PBE = torch.Tensor(
             0.21370,
             0.20548,
             0.11125,
-            -3 / 8 * (3 / torch.pi) ** (1 / 3) * 4 ** (2 / 3),
+            -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3),
             0.8040,
             0.2195149727645171,
         ]
@@ -94,9 +94,9 @@ class MLOptimizer(nn.Module):
 
 
     def dm21_like_sigmoid(self, x):
-        exp = torch.e**(0.5*x)
-        # Custom sigmoid translates from [-inf, +inf] to [0, 2] as in DM21 paper
-        return 2*exp/(1+exp)
+        exp = torch.exp(-0.5*x)
+        # Custom sigmoid translates from [-inf, +inf] to [0, 4]
+        return 4/(1+3*exp)
 
 
     def forward(self, x):
@@ -166,8 +166,8 @@ class pcPBEMLOptimizer(nn.Module):
         kappa = self.kappa_activation(x_x[:, 0])
 
         del x_x
-        gc.collect()
-        torch.cuda.empty_cache()
+#        gc.collect()
+#        torch.cuda.empty_cache()
 
         return mu, kappa
 
@@ -181,8 +181,8 @@ class pcPBEMLOptimizer(nn.Module):
         lda_c_params = x_c[:, 2:]
 
         del x_c
-        gc.collect()
-        torch.cuda.empty_cache()
+#        gc.collect()
+#        torch.cuda.empty_cache()
         
         return beta, gamma, lda_c_params
 
@@ -225,7 +225,7 @@ class pcPBEMLOptimizer(nn.Module):
         c_arr = torch.hstack([beta, gamma, lda_c_params, torch.ones([x.shape[0], 1]).to(device), kappa, mu])*true_constants_PBE
 
         del mu, beta, gamma, kappa, lda_c_params
-        gc.collect()
-        torch.cuda.empty_cache()
+#        gc.collect()
+#        torch.cuda.empty_cache()
 
         return c_arr
