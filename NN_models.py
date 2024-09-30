@@ -7,6 +7,7 @@ import gc
 random.seed(42)
 
 device = torch.device("cuda:0") if torch.cuda.is_available else torch.device("cpu")
+
 true_constants_PBE = torch.Tensor(
     [
         [
@@ -64,7 +65,7 @@ class ResBlock(nn.Module):
         residue = x
 
         return self.fc(self.fc(x)) + residue  # skip connection
-
+    
       
 class MLOptimizer(nn.Module):
     def __init__(self, num_layers, h_dim, nconstants, dropout, DFT=None, constants=[]):
@@ -94,18 +95,30 @@ class MLOptimizer(nn.Module):
 
 
     def dm21_like_sigmoid(self, x):
+        '''
+        Custom sigmoid translates from [-inf, +inf] to [0, 2]
+        '''
+
         exp = torch.exp(-0.5*x)
-        # Custom sigmoid translates from [-inf, +inf] to [0, 4]
-        return 4/(1+3*exp)
+        return 2/(1+exp)
 
 
-    def forward(self, x):
-        if self.training:
-            x = random.choice([x, x[:, [1, 0, 4, 3, 2, 6, 5]]]) # Randomly flip spin
+    def unsymm_forward(self, x):
+
         x = self.hidden_layers(x)
         x = 1.05*self.dm21_like_sigmoid(x)
 
         return x
+
+    def forward(self, x):
+        '''
+        Returns:
+            spin-symmetrized enhancement factor for LDA exhange energy
+        '''
+        
+        result = (self.unsymm_forward(x)+self.unsymm_forward(x[:, [1, 0, 4, 3, 2, 6, 5]]))/2
+
+        return result
 
 
 class pcPBEMLOptimizer(nn.Module):
@@ -150,24 +163,21 @@ class pcPBEMLOptimizer(nn.Module):
 
     
     def kappa_activation(self, x):
+        '''
+        Translates values from [-inf, +inf] to [0.05, 1]
+        '''
 
-        # Translates from [-inf, +inf] to [0, 1]
         return hardtanh(x+1)
 
-    # 0,1 rho alpha beta
-    # 2,3 s_alpha, s_beta
-    # 4,5 tau a tau b
 
     def get_exchange_constants(self, x):
 
-        x_x = self.hidden_layers_x(x[:, 2:])
+        x_x = self.hidden_layers_x(x[:, 2:]) # Slice out density descriptors
 
         mu = x_x[:, 1]
         kappa = self.kappa_activation(x_x[:, 0])
 
         del x_x
-#        gc.collect()
-#        torch.cuda.empty_cache()
 
         return mu, kappa
 
@@ -181,26 +191,29 @@ class pcPBEMLOptimizer(nn.Module):
         lda_c_params = x_c[:, 2:]
 
         del x_c
-#        gc.collect()
-#        torch.cuda.empty_cache()
         
         return beta, gamma, lda_c_params
 
     
     @staticmethod
     def all_sigma_zero(x):
-        # For betta
+        '''
+        Function for parameter beta constraint
+        '''
         return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 5]).to(device)])
     
     @staticmethod
     def all_sigma_inf(x):
-        # For lda_c
+        '''
+        Function for PW91 correlation perameters constraint
+        '''
         return torch.hstack([x[:, :2], torch.ones([x.shape[0], 5]).to(device)])
     
     @staticmethod
     def all_rho_inf(x):
-        # For gamma
-        # Then rs is zero
+        '''
+        Function for parameter gamma constraint
+        '''
         return torch.hstack([torch.zeros([x.shape[0], 2]).to(device), x[:, 2:]])
 
     @staticmethod
@@ -225,7 +238,5 @@ class pcPBEMLOptimizer(nn.Module):
         c_arr = torch.hstack([beta, gamma, lda_c_params, torch.ones([x.shape[0], 1]).to(device), kappa, mu])*true_constants_PBE
 
         del mu, beta, gamma, kappa, lda_c_params
-#        gc.collect()
-#        torch.cuda.empty_cache()
 
         return c_arr

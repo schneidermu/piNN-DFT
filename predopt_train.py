@@ -21,11 +21,15 @@ from torch.optim.lr_scheduler import StepLR
 
 set_random_seed(41)
 
+if __name__ == '__main__':
+    device = torch.device("cuda:0") if torch.cuda.is_available else torch.device("cpu")
+else:
+    device = torch.device("cpu")
+
 
 FCHEM_VALIDATION = {
     'MGAE109': 1/4.73394495412844,
     'NCCE31': 10,
-#    'AE17': 1/100
 }
 
 TRAIN_WEIGHTS = {
@@ -66,8 +70,30 @@ PBE_VALIDATION_ERRORS = {
     "pTC13": 10.985,
 }
 
+    
+# Describe custom pytorch Dataset.
+class Dataset(torch.utils.data.Dataset):
+    def __init__(self, data):
+        self.data = data
 
-def loss_function(factor_dictionary, total_database_errors, val=False):
+    def __getitem__(self, i):
+        return self.data[i], self.data[i]["Energy"]
+
+    def __len__(self):
+        return len(self.data.keys())
+
+
+def loss_function(factor_dictionary: dict, total_database_errors: dict, val=False):
+    '''
+    Function for calculation of sum of RMSEs by databases
+
+    Args:
+        factor_dictionary: dict used to add weights for databses if needed
+        total_database_errors: dict with db names and corresponding arrays of errors
+    
+    Returns:
+        fchem: weighted sum of RMSEs by database
+    '''
     fchem = 0
 
     for db in sorted(total_database_errors):
@@ -83,7 +109,18 @@ def loss_function(factor_dictionary, total_database_errors, val=False):
     return fchem
 
 
-def batch_fchem(current_bases, reaction_energy, y_batch):
+def batch_fchem(current_bases: list, reaction_energy: torch.tensor, y_batch: torch.tensor):
+    '''
+    Function for calculation of the root of sum of weighted MSEs by databases
+
+    Args:
+        current_bases: list of databases
+        reaction_energy: tensor with predicted energies
+        y_batch: tensor with reference energies
+    
+    Returns:
+        fchem: root of weighted sum of MSEs by database
+    '''
     mse = nn.MSELoss()
     err_dict = dict()
     errors = []
@@ -102,10 +139,21 @@ def batch_fchem(current_bases, reaction_energy, y_batch):
 
     fchem = torch.sqrt(1e-20 + torch.sum(torch.stack(errors)))/len(err_dict)
     return fchem
+
+
+def extend_bases(X_batch, bases) -> tuple[list]:
+    '''
+    Function for logging the current databases and the overall databases during training
+
+    Args:
+        X_batch: current batch
+        bases: overall databases before including X_batch
     
+    Returns:
+        current_bases: bases in the current batch
+        bases: overall bases
+    '''
 
-
-def extend_bases(X_batch, bases):
     if len(X_batch["Database"][0]) == 1:
         current_bases = [X_batch["Database"],]
     else:
@@ -116,6 +164,9 @@ def extend_bases(X_batch, bases):
 
 
 def make_total_db_errors(pred_energies, reaction_energy, errors, ref_energies, y_batch, total_database_errors, current_bases):
+    '''
+    Function for making a dictionary of the format: {database name: list of absolute errors}
+    '''
     if len(pred_energies): 
         pred_energies = torch.hstack([pred_energies, reaction_energy])
         ref_energies = torch.hstack([ref_energies, y_batch])
@@ -133,170 +184,19 @@ def make_total_db_errors(pred_energies, reaction_energy, errors, ref_energies, y
 
 
 
-data, data_train, data_test = load_chk(path="checkpoints")
-
-parser = OptionParser()
-parser.add_option('--Name', type=str,
-                  help="Name of the functional",
-                  default="PBE_8_32")
-parser.add_option('--N_preopt', type=int,
-                  default=3,
-                  help="Number of pre-optimization epochs")
-parser.add_option('--N_train', type=int,
-                  default=1000,
-                  help="Number of training epochs")
-parser.add_option('--Batch_size', type=int,
-                  default=3,
-                  help="Number of reactions in a batch")
-parser.add_option('--Dropout', type=float,
-                  default=0.6,
-                  help="Dropout rate during training")
-parser.add_option('--Omega', type=float,
-                  default=0.0,
-                  help="Omega value in the loss function")
-parser.add_option('--LR_train', type=float,
-                  default=1e-4,
-                  help="Omega value in the loss function")
-parser.add_option('--LR_predopt', type=float,
-                  default=2e-2,
-                  help="Omega value in the loss function")
-
-(Opts, args) = parser.parse_args()
-
-name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt = (
-    Opts.Name,
-    Opts.N_preopt,
-    Opts.N_train,
-    Opts.Batch_size,
-    Opts.Dropout,
-    Opts.Omega,
-    Opts.LR_train,
-    Opts.LR_predopt
-)
-
-print('name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt')
-print(name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt)
-
-
-if "PBE" in name:
-    rung = "GGA"
-    dft = "PBE"
-
-elif "XALPHA" in name:
-    rung = "LDA"
-    dft = "XALPHA"
-    nconstants = 1
-
-
-num_layers, h_dim = map(int, name.split("_")[1:])
-device = torch.device("cuda:0") if torch.cuda.is_available else torch.device("cpu")
-
-
-if dft == "PBE":
-    model = pcPBEMLOptimizer(
-        num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft
-    ).to(device)
-elif dft == "XALPHA":
-    model = MLOptimizer(
-        num_layers, h_dim, nconstants, dropout, dft
-    ).to(device)
-
-# Load dispersion corrections.
-with open("./dispersions/dispersions.pickle", "rb") as handle:
-    dispersions = pickle.load(handle)
-
-# Describe custom pytorch Dataset.
-class Dataset(torch.utils.data.Dataset):
-    def __init__(self, data):
-        self.data = data
-
-    def __getitem__(self, i):
-        return self.data[i], self.data[i]["Energy"]
-
-    def __len__(self):
-        return len(self.data.keys())
-
-# Load train, test and pre-optimization dataloaders.
-train_set = Dataset(data=data_train)
-train_dataloader = torch.utils.data.DataLoader(
-    train_set,
-    batch_size=batch_size,
-    num_workers=2,
-    pin_memory=True,
-    shuffle=True,
-    collate_fn=collate_fn,
-)
-test_set = Dataset(data=data_test)
-test_dataloader = torch.utils.data.DataLoader(
-    test_set,
-    batch_size=batch_size,
-    num_workers=2,
-    pin_memory=True,
-    shuffle=False,
-    collate_fn=collate_fn,
-)
-train_predopt_set = DatasetPredopt(data=data, dft=dft)
-train_predopt_dataloader = torch.utils.data.DataLoader(
-    train_predopt_set,
-    batch_size=batch_size,
-    num_workers=2,
-    pin_memory=True,
-    shuffle=False,
-    collate_fn=collate_fn_predopt,
-)
-
-criterion = nn.MSELoss()
-
-
-name += "_" + str(dropout)
-
-optimizer = torch.optim.Adam(
-    model.parameters(), lr=lr_predopt, betas=(0.9, 0.999), weight_decay=0.01
-)
-
-from importlib import reload
-
-import predopt
-
-reload(predopt)
-import utils
-
-reload(utils)
-import dataset
-
-reload(dataset)
-
-from predopt import predopt
-
-# Pre-optimize the model.
-train_loss_mse, train_loss_mae = predopt(
-    model,
-    criterion,
-    optimizer,
-    train_predopt_dataloader,
-    device,
-    n_epochs=n_predopt,
-    accum_iter=1,
-)
-
-
-torch.cuda.empty_cache()
-
-
-from tqdm.notebook import tqdm
-
-mae = nn.L1Loss()
-
-
 def exc_loss(
     reaction, pred_constants, predicted_local_energies,  dft="PBE", true_constants=true_constants_PBE,
     val=False
 ):
+    '''
+    Function that calculates local energy loss compared to PBE functional
+    '''
+
+    criterion = nn.MSELoss()
 
     HARTREE2KCAL = 627.5095
 
-    # Turn backsplit indices into slices.
-    backsplit_ind = reaction["backsplit_ind"].to(torch.int32)
+    backsplit_ind = reaction["backsplit_ind"].to(torch.int32) # Turn backsplit indices into slices.
     indices = list(
         zip(
             torch.hstack((torch.tensor(0).to(torch.int32), backsplit_ind)),
@@ -307,20 +207,17 @@ def exc_loss(
 
     loss = torch.zeros(1, requires_grad=True).to(device)
 
-    # Split them into systems.
     predicted_local_energies = [
         predicted_local_energies[start:stop] for start, stop in indices
-    ]
+    ] # Split them into systems
 
-    # Calculate local PBE energies.
     true_local_energies = get_local_energies(
         reaction, true_constants.to(device), device, rung="GGA", dft="PBE"
-    )["Local_energies"]
+    )["Local_energies"] # Calculate local PBE energies.
 
-    # Split them into systems.
     true_local_energies = [
         true_local_energies[start:stop] for start, stop in indices
-    ]
+    ] # Split them into systems.
 
     for i in range(n_molecules):
         loss += (
@@ -333,8 +230,6 @@ def exc_loss(
     )
     return loss * HARTREE2KCAL / n_molecules
 
-
-true_constants_PBE = true_constants_PBE.to(device)
 
 def train(
     model,
@@ -534,7 +429,7 @@ def train(
         if val_fchem <= min(test_fchem):
             if prev:
                 os.remove(prev)
-            prev = f'best_models/RELATIVE_AE17/lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_loss_{val_fchem:.2f}_{test_loss_exc[-1]:.4f}.pth'
+            prev = f'best_models/RELATIVE_AE17/NEW_FORMULA/lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_loss_{val_fchem:.2f}_{test_loss_exc[-1]:.4f}.pth'
             torch.save(
                 model.state_dict(), prev
             )
@@ -543,7 +438,7 @@ def train(
         ax[1].plot(range(1, len(val_full_loss)+1), test_fchem, label='Validation Fchem')
         ax[0].legend()
         ax[1].legend()
-        plt.savefig(f"./batch_fchem/RELATIVE_AE17/lr_{lr_train}_{name}_{omega}.png")
+        plt.savefig(f"./batch_fchem/RELATIVE_AE17/NEW_FORMULA/lr_{lr_train}_{name}_{omega}.png")
         plt.clf()
         plt.close()
 
@@ -560,37 +455,185 @@ def train(
     return train_loss_mae, test_loss_mae
 
 
-from importlib import reload
 
-import NN_models
-import dft_functionals.PBE as PBE
-import reaction_energy_calculation
-import utils
+if __name__ == "__main__":
 
-reload(NN_models)
-reload(utils)
-reload(reaction_energy_calculation)
-reload(PBE)
+    data, data_train, data_test = load_chk(path="checkpoints")
 
-optimizer = torch.optim.Adam(
-    model.parameters(), lr=lr_train, betas=(0.9, 0.999), weight_decay=0.01
-)
-if dft=='XALPHA':
+    parser = OptionParser()
+    parser.add_option('--Name', type=str,
+                      help="Name of the functional",
+                      default="PBE_8_32")
+    parser.add_option('--N_preopt', type=int,
+                      default=3,
+                      help="Number of pre-optimization epochs")
+    parser.add_option('--N_train', type=int,
+                      default=1000,
+                      help="Number of training epochs")
+    parser.add_option('--Batch_size', type=int,
+                      default=3,
+                      help="Number of reactions in a batch")
+    parser.add_option('--Dropout', type=float,
+                      default=0.6,
+                      help="Dropout rate during training")
+    parser.add_option('--Omega', type=float,
+                      default=0.0,
+                      help="Omega value in the loss function")
+    parser.add_option('--LR_train', type=float,
+                      default=1e-4,
+                      help="Omega value in the loss function")
+    parser.add_option('--LR_predopt', type=float,
+                      default=2e-2,
+                      help="Omega value in the loss function")
+
+    (Opts, args) = parser.parse_args()
+
+    name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt = (
+        Opts.Name,
+        Opts.N_preopt,
+        Opts.N_train,
+        Opts.Batch_size,
+        Opts.Dropout,
+        Opts.Omega,
+        Opts.LR_train,
+        Opts.LR_predopt
+    )
+
+    print('name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt')
+    print(name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt)
+
+
+    if "PBE" in name:
+        rung = "GGA"
+        dft = "PBE"
+
+    elif "XALPHA" in name:
+        rung = "LDA"
+        dft = "XALPHA"
+        nconstants = 1
+
+
+    num_layers, h_dim = map(int, name.split("_")[1:])
+
+
+    if dft == "PBE":
+        model = pcPBEMLOptimizer(
+            num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft
+        ).to(device)
+    elif dft == "XALPHA":
+        model = MLOptimizer(
+            num_layers, h_dim, nconstants, dropout, dft
+        ).to(device)
+
+    # Load dispersion corrections.
+    with open("./dispersions/dispersions.pickle", "rb") as handle:
+        dispersions = pickle.load(handle)
+
+    # Load train, test and pre-optimization dataloaders.
+    train_set = Dataset(data=data_train)
+    train_dataloader = torch.utils.data.DataLoader(
+        train_set,
+        batch_size=batch_size,
+        num_workers=2,
+        pin_memory=True,
+        shuffle=True,
+        collate_fn=collate_fn,
+    )
+    test_set = Dataset(data=data_test)
+    test_dataloader = torch.utils.data.DataLoader(
+        test_set,
+        batch_size=batch_size,
+        num_workers=2,
+        pin_memory=True,
+        shuffle=False,
+        collate_fn=collate_fn,
+    )
+    train_predopt_set = DatasetPredopt(data=data, dft=dft)
+    train_predopt_dataloader = torch.utils.data.DataLoader(
+        train_predopt_set,
+        batch_size=batch_size,
+        num_workers=2,
+        pin_memory=True,
+        shuffle=False,
+        collate_fn=collate_fn_predopt,
+    )
+
+    name += "_" + str(dropout)
+
+
+    from importlib import reload
+
+    import predopt
+
+    reload(predopt)
+    import utils
+
+    reload(utils)
+    import dataset
+
+    reload(dataset)
+
+    from predopt import predopt
+
+
+
+    from tqdm.notebook import tqdm
+
+    mae = nn.L1Loss()
+
+
+    from importlib import reload
+
+    import NN_models
+    import dft_functionals.PBE as PBE
+    import reaction_energy_calculation
+    import utils
+
+    reload(NN_models)
+    reload(utils)
+    reload(reaction_energy_calculation)
+    reload(PBE)
+
+
+    criterion = nn.MSELoss()
+
+
+    name += "_" + str(dropout)
+
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=lr_predopt, betas=(0.9, 0.999), weight_decay=0.01
+    )
+
+    train_loss_mse, train_loss_mae = predopt(
+        model,
+        criterion,
+        optimizer,
+        train_predopt_dataloader,
+        device,
+        n_epochs=n_predopt,
+        accum_iter=1,
+    )
+
+
+    true_constants_PBE = true_constants_PBE.to(device)
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=lr_train, betas=(0.9, 0.999), weight_decay=0.01
+    )
+
     scheduler = StepLR(optimizer, step_size=100, gamma=0.1)
-else:
-    scheduler = None
 
-N_EPOCHS = n_train
-ACCUM_ITER = 1
-VERBOSE = False
-train_loss_mae, test_loss_mae = train(
-    model,
-    criterion,
-    optimizer,
-    train_dataloader,
-    test_dataloader,
-    n_epochs=N_EPOCHS,
-    accum_iter=ACCUM_ITER,
-    omega=omega,
-    verbose=VERBOSE
-)
+    N_EPOCHS = n_train
+    ACCUM_ITER = 1
+    VERBOSE = False
+
+    train_loss_mae, test_loss_mae = train(
+        model,
+        criterion,
+        optimizer,
+        train_dataloader,
+        test_dataloader,
+        n_epochs=N_EPOCHS,
+        accum_iter=ACCUM_ITER,
+        omega=omega,
+        verbose=VERBOSE
+    )
