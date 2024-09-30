@@ -13,7 +13,7 @@ python -m InterfaceG16 --Mode GE
 ## Calculating system energies
 1) Calculate NN functionals' energies:
 ```
-python -m InterfaceG16 --Mode CE
+python -m InterfaceG16 --Mode CE --Functional {name of the functional}
 ```
 
 2) Calculate PBE and XAlpha energies:
@@ -34,8 +34,8 @@ python -m add_d3_corrections
 
 5) Calculate WTMAD-2 and create a .csv table in the Results folder for comparison:
 ```
-python -m InterfaceG16 --Functional NN_PBE > Results/NN_PBE.txt
-python -m InterfaceG16 --Functional NN_XALPHA > Results/NN_XAlpha.txt
+python -m InterfaceG16 --Functional {name of the NN_PBE functional} > Results/NN_PBE.txt
+python -m InterfaceG16 --Functional {name of the NN_XALPHA functional} > Results/NN_XAlpha.txt
 python -m InterfaceG16 --Functional PBE_D3BJ > Results/PBE-D3BJ.txt
 python -m InterfaceG16 --Functional XAlpha > Results/XAlpha.txt
 cd Results/
