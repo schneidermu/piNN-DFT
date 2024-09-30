@@ -53,6 +53,21 @@ To calculate the enhancement factor in the molecule of Argon dimer, run:
 python -m gen_cubgrid_Ar2
 ```
 
+## Electron density accuracy calculations
+Change the paths to den_mol_or folder and your Multiwfn file in the script
+To calculate the avRANE, run:
+```
+python -m run_molden --Functional {name of the functional}
+```
+Then, go to den_mol_or folder and run:
+```
+python calcden.py calc 128
+```
+```
+python dniad
+```
+
+
 ## Visualize the results
 To reproduce figures with enhancement factor, run the `Fxc_Ar2_visualization.ipynb` notebook in Results folder, the .csv and .npy files are already generated in the precious steps
 
