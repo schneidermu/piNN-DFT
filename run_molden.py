@@ -19,7 +19,7 @@ python -m get_molden --Functional {functional} --Molecule {molecule}'''
 molecules = ['BH3', 'CO', 'F2', 'H2', 'H2O', 'HF', 'Li2', 'LiF', 'LiH', 'N2']
 
 for molecule in molecules:
-    slurm_file = f"get_molden_{molecule}.slurm"
+    slurm_file = f"get_molden.slurm"
     with open(slurm_file, "w") as file:
         file.write(script_template.format(functional=functional, molecule=molecule))
     os.system(f"sbatch {slurm_file}")

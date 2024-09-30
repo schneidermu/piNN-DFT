@@ -8,7 +8,7 @@ import density_functional_approximation_dm21 as dm21
 parser = OptionParser()
 parser.add_option("--System", type=str, help="System to calculate")
 parser.add_option(
-    "--Functional", type=str, default="NN", help="Functional for calculation"
+    "--Functional", type=str, default="NN_PBE_0", help="Functional for calculation"
 )
 parser.add_option(
     "--Dispersion", type=str, default=False, help="D3 Dispersion calculation"
@@ -18,11 +18,11 @@ parser.add_option("--NFinal", type=int, default=50, help="Number of systems to s
 
 (Opts, args) = parser.parse_args()
 
+omega_str_list = ['0', '0076', '067', '18', '33', '50', '67', '82', '93', '99', '100']
 
-numint_dict = {
-    "NN_PBE": dm21.NeuralNumInt(dm21.Functional.NN_PBE),
-#    "NN_XALPHA": dm21.NeuralNumInt(dm21.Functional.NN_XALPHA),
-}
+numint_dict = {f'NN_PBE_{omega}': dm21.NeuralNumInt(getattr(dm21.Functional, f'NN_PBE_{omega}')) for omega in omega_str_list}
+numint_dict.update({f'NN_XALPHA_{omega}': dm21.NeuralNumInt(getattr(dm21.Functional, f'NN_XALPHA_{omega}')) for omega in omega_str_list})
+
 non_nn_functional_dict = {"PBE": "PBE", "XAlpha": "1.05*lda,"}
 
 system_name = Opts.System
@@ -82,7 +82,7 @@ def get_PBE0_density(mf):
     return mf, dm0
 
 
-def calculate_functional_energy(mf, functional_name, d3_energy, dm0):
+def calculate_functional_energy(mf, functional_name, d3_energy, dm0=None):
     mf._numint = numint_dict[functional_name]
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 1e-3
@@ -119,21 +119,19 @@ def main():
     d3 = disp.DFTD3Dispersion(molecule, xc="PBE0", version="d3bj")
     d3_energy = d3.kernel()[0]
 
-    for functional_name in numint_dict:
-        print(f"\n\n{functional_name} calculation \n\n")
-        try:
-            corrected_energy = calculate_functional_energy(
-                mf, functional_name, d3_energy, dm0
-            )
-        except Exception as E:
-            print(E)
-            corrected_energy = "ERROR"
-
-        finally:
-            with open(
-                f"Results/EnergyList_{NFinal}_{functional_name}.txt", "a"
-            ) as file:
-                file.write(f"{system_name}.gif_ {corrected_energy}\n")
+    print(f"\n\n{functional} calculation \n\n")
+    try:
+        corrected_energy = calculate_functional_energy(
+            mf, functional, d3_energy, dm0=dm0
+        )
+    except Exception as E:
+        print(E)
+        corrected_energy = "ERROR"
+    finally:
+        with open(
+            f"Results/EnergyList_{NFinal}_{functional}.txt", "a"
+        ) as file:
+            file.write(f"{system_name}.gif_ {corrected_energy}\n")
 
 
 def test_non_nn_functional():
@@ -167,7 +165,7 @@ def calculate_dispersions():
 if __name__ == "__main__":
     if dispersion:
         calculate_dispersions()
-    elif functional == "NN":
+    elif "NN" in functional:
         main()
     else:
         test_non_nn_functional()

@@ -39,6 +39,28 @@ class Functional(enum.Enum):
     # pylint: disable=invalid-name
     NN_PBE = enum.auto()
     NN_XALPHA = enum.auto()
+    NN_XALPHA_0 = enum.auto()
+    NN_XALPHA_0076 = enum.auto()
+    NN_XALPHA_067 = enum.auto()
+    NN_XALPHA_18 = enum.auto()
+    NN_XALPHA_33 = enum.auto()
+    NN_XALPHA_50 = enum.auto()
+    NN_XALPHA_67 = enum.auto()
+    NN_XALPHA_82 = enum.auto()
+    NN_XALPHA_93 = enum.auto()
+    NN_XALPHA_99 = enum.auto()
+    NN_XALPHA_100 = enum.auto()
+    NN_PBE_0 = enum.auto()
+    NN_PBE_0076 = enum.auto()
+    NN_PBE_067 = enum.auto()
+    NN_PBE_18 = enum.auto()
+    NN_PBE_33 = enum.auto()
+    NN_PBE_50 = enum.auto()
+    NN_PBE_67 = enum.auto()
+    NN_PBE_82 = enum.auto()
+    NN_PBE_93 = enum.auto()
+    NN_PBE_99 = enum.auto()
+    NN_PBE_100 = enum.auto()
     # pylint: enable=invalid-name
 
 
@@ -571,4 +593,3 @@ class NeuralNumInt(numint.NumInt):
         exc = exc.astype(np.float64)
         vxc = tuple(v.astype(np.float64) for v in (vxc_0, vxc_1, vxc_2, vxc_3))
         return exc, (vxc_0.astype(np.float64), vxc_1.astype(np.float64), vxc_2.astype(np.float64), vxc_3.astype(np.float64)), fxc, kxc
-        # vxc_1 problem

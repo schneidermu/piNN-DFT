@@ -145,9 +145,9 @@ def f_svwn3(rho, c_arr):
 
 
 def F_XALPHA(rho, constant):
-#    catch_nan(rho=rho, constant=constant)
-    rs, z = rs_z_calc(rho)
-    res_energy =  f_xalpha_x(rs, z, constant)
+    eps = 1e-29
+    res_energy = constant[:, 0] * LDA_X_FACTOR * (rho[:, 0] + rho[:, 1] + eps)**(1/3)
+
     return res_energy
 
 

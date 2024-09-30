@@ -64,28 +64,34 @@ class MLOptimizer(nn.Module):
 
         self.hidden_layers = nn.Sequential(*modules)
 
-    def nonzero_custom_sigmoid(self, x):
-        a = 47/300
-        exp = torch.e**(0.5*x)
-        # Custom sigmoid translates from [-inf, +inf] to [0.05, 4]
-        result = (4*exp+a)/(3+a+exp)
+
+    def dm21_like_sigmoid(self, x):
+
+        exp = torch.exp(-0.5*x)
+        return 2/(1+exp)
+
+
+    def unsymm_forward(self, x):
+
+        x = self.hidden_layers(x)
+        x = 1.05*self.dm21_like_sigmoid(x)
+
+        return x
+
+    def forward(self, x):
+        
+        result = (self.unsymm_forward(x)+self.unsymm_forward(x[:, [1, 0, 4, 3, 2, 6, 5]]))/2
+
         return result
 
 
-    def forward(self, x):
-        x = self.hidden_layers(x)
-
-        if self.DFT == "XALPHA":
-            x = self.nonzero_custom_sigmoid(x)
-            x = x * 1.05
-        return x
 
 
 hardtanh = torch.nn.Hardtanh(min_val=0.05, max_val=1)
 
 
 class pcPBEMLOptimizer(nn.Module):
-    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=21, dropout=0.4, DFT=None):
+    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=21, dropout=0.0, DFT=None):
         super().__init__()
 
         self.DFT = DFT
@@ -199,8 +205,8 @@ class pcPBEMLOptimizer(nn.Module):
         return c_arr
 
 
-def NN_XALPHA_model(num_layers=16, h_dim=32, nconstants=1, dropout=0.6, DFT='XALPHA'):
+def NN_XALPHA_model(num_layers=4, h_dim=512, nconstants=1, dropout=0.0, DFT='XALPHA'):
     return MLOptimizer(num_layers=num_layers, h_dim=h_dim, nconstants=nconstants, dropout=dropout, DFT=DFT)
 
-def NN_PBE_model(num_layers=8, h_dim=32, dropout=0.6, DFT='PBE'):
+def NN_PBE_model(num_layers=8, h_dim=32, dropout=0.0, DFT='PBE'):
     return pcPBEMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT)
