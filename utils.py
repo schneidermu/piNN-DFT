@@ -39,29 +39,10 @@ def save_tensors(**kwargs):
         torch.save(v, f"log/{k}.pt")
 
 
-#def log_params(model, metric1, metric2, name, predopt=False):
-#    with mlflow.start_run() as run:
-#        if predopt:
-#            metric1_name = "train_loss_mse"
-#            metric2_name = "train_loss_mae"
-#        else:
-#            metric1_name = "train_loss_mae"
-#            metric2_name = "test_loss_mae"
-#        mlflow.pytorch.log_model(model, name)
-#        mlflow.log_param("n_epochs", len(metric1))
-#        mlflow.log_metric(metric1_name, metric1[-1])
-#        mlflow.log_metric(metric2_name, metric2[-1])
-#        plt.plot(np.arange(1, len(metric1) + 1), metric1, label=metric1_name)
-#        plt.plot(np.arange(1, len(metric1) + 1), metric2, label=metric2_name)
-#        plt.legend()
-#        plt.xlabel("number of epochs")
-#        plt.ylabel("loss")
-#        plt.grid()
-#        plt.savefig(f"{name}.png")
-#        mlflow.log_artifact(f"{name}.png")
-#        os.remove(f"./{name}.png")
-#        plt.close()
-#
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 def retrieve_name(var):
     callers_local_vars = inspect.currentframe().f_back.f_locals.items()
@@ -69,7 +50,8 @@ def retrieve_name(var):
 
 
 def set_random_seed(seed):
-    # seed everything
+    torch.use_deterministic_algorithms(True)
+    os.environ['PYTHONHASHSEED'] = str(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     torch.manual_seed(seed)
