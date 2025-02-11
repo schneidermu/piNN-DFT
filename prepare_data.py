@@ -34,14 +34,36 @@ def train_split(data, test_size, shuffle=False, random_state=42):
     train, test = dict(), dict()
 
     for i in train_index:
-        train[i] = data[i]
+
+        database = data[i]["Database"]
+        components = data[i]["Components"]
+
+        if (
+            database=="AE17" and components[0] not in ["H_ae17", "He_ae17", "Li_ae17", "Be_ae17", "N_ae17", "Ne_ae17", "Na_ae17", "Mg_ae17", "P_ae17", "Ar_ae17"]
+        ) or (
+            "HCl_htbh38" in components # This reaction is in diet-GMTKN55, so do not train on it
+        ) or (
+            "HCl_mgae109" in components # This reaction is in diet-GMTKN55, so do not train on it
+        ):
+            print(data[i]["Components"])
+            test[i] = data[i]
+        else:
+            train[i] = data[i]
+
     for i in test_index:
-        test[i] = data[i]
+
+        database = data[i]["Database"]
+        components = data[i]["Components"]
+
+        if database == "AE17" and components[0] in ["H_ae17", "He_ae17", "Li_ae17", "Be_ae17", "N_ae17", "Ne_ae17", "Na_ae17", "Mg_ae17", "P_ae17", "Ar_ae17"]:
+            train[i] = data[i]
+        else:
+            test[i] = data[i]
 
     return rename_keys(train), rename_keys(test)
 
 
-def prepare(path="data", test_size=0.2, random_state=41):
+def prepare(path="data", test_size=0.2, random_state=42):
     # Make a single dictionary from the whole dataset.
     data = make_reactions_dict(path=path)
 
