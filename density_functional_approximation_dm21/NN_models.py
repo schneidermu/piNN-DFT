@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+import numpy as np
 
 device = torch.device('cpu')
 true_constants_PBE = torch.Tensor([[0.06672455,
@@ -22,20 +23,34 @@ Define an nn.Module class for a simple residual block with equal dimensions
 class ResBlock(nn.Module):
 
     """
-    Iniialize a residual block with two FC followed by (batchnorm + relu + dropout) layers 
+    Iniialize a residual block with two FC followed by (batchnorm + relu + dropout) layers
     """
+
     def __init__(self, h_dim, dropout):
         super().__init__()
-        self.fc = nn.Sequential(
+
+        self.fc1 = nn.Sequential(
             nn.Linear(h_dim, h_dim, bias=False),
-            nn.BatchNorm1d(h_dim),
-            nn.LeakyReLU(),
-            nn.Dropout(p=dropout))
-        
+            nn.LayerNorm(h_dim),
+            nn.PReLU(),
+            nn.Dropout(p=dropout),
+        )
+        self.fc2 = nn.Sequential(
+            nn.Linear(h_dim, h_dim, bias=False),
+            nn.LayerNorm(h_dim),
+            nn.PReLU(),
+            nn.Dropout(p=dropout),
+        )
+
     def forward(self, x):
         residue = x
 
-        return self.fc(self.fc(x)) + residue # skip connection 
+        out = self.fc1(x)
+        out = self.fc2(out)
+        out += residue
+
+        return out 
+
 
 
 class MLOptimizer(nn.Module):
@@ -87,11 +102,11 @@ class MLOptimizer(nn.Module):
 
 
 
-hardtanh = torch.nn.Hardtanh(min_val=0.05, max_val=1)
+hardtanh = torch.nn.Hardtanh(min_val=0.01, max_val=1)
 
 
 class pcPBEMLOptimizer(nn.Module):
-    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=21, dropout=0.0, DFT=None):
+    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.0, DFT=None):
         super().__init__()
 
         self.DFT = DFT
@@ -101,16 +116,12 @@ class pcPBEMLOptimizer(nn.Module):
 
         input_layer_c = [
                 nn.Linear(7, h_dim, bias=False),
-                nn.BatchNorm1d(h_dim),
-                nn.LeakyReLU(),
-                nn.Dropout(p=0.0),
+                nn.PReLU(),
             ]
         
         input_layer_x = [
                 nn.Linear(5, h_dim, bias=False),
-                nn.BatchNorm1d(h_dim),
-                nn.LeakyReLU(),
-                nn.Dropout(p=0.0),
+                nn.PReLU(),
             ]
 
         modules_x.extend(
@@ -132,81 +143,182 @@ class pcPBEMLOptimizer(nn.Module):
 
     
     def kappa_activation(self, x):
-
-        # Translates from [-inf, +inf] to [0, 1]
+        '''
+        Translates values from [-inf, +inf] to [0, 1]
+        '''
         return hardtanh(x+1)
 
-    # 0,1 rho alpha beta
-    # 2,3 s_alpha, s_beta
-    # 4,5 tau a tau b
 
     def get_exchange_constants(self, x):
 
-        x_x = self.hidden_layers_x(x[:, 2:])
+        x_x = self.hidden_layers_x(x[:, 2:]) # Slice out density descriptors
 
-        mu = x_x[:, 1]
-        kappa = self.kappa_activation(x_x[:, 0])
-
-        del x_x
-
-        return mu, kappa
+        return x_x[:, 1], self.kappa_activation(x_x[:, 0])
 
 
     def get_correlation_constants(self, x):
 
         x_c = self.hidden_layers_c(x)
 
-        beta = x_c[:, 0] 
-        gamma = x_c[:, 1]
-        lda_c_params = x_c[:, 2:]
-
-        del x_c
-        
-        return beta, gamma, lda_c_params
+#        return x_c[:, 0], x_c[:, 1], x_c[:, 2:]
+        return x_c[:, 0], x_c[:, 1]
 
     
     @staticmethod
     def all_sigma_zero(x):
-        # For betta
-        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 5]).to(device)])
+        '''
+        Function for parameter beta and mu constraint
+        '''
+        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 5]).to(x.device)])
     
     @staticmethod
     def all_sigma_inf(x):
-        # For lda_c
-        return torch.hstack([x[:, :2], torch.ones([x.shape[0], 5]).to(device)])
+        '''
+        Function for PW91 correlation perameters constraint
+        '''
+        return torch.hstack([x[:, :2], torch.ones([x.shape[0], 5]).to(x.device)])
     
     @staticmethod
     def all_rho_inf(x):
-        # For gamma
-        # Then rs is zero
-        return torch.hstack([torch.zeros([x.shape[0], 2]).to(device), x[:, 2:]])
+        '''
+        Function for parameter gamma constraint
+        '''
+        return torch.hstack([torch.zeros([x.shape[0], 2]).to(x.device), x[:, 2:]])
 
     @staticmethod
     def custom_relu(x):
-        return torch.nn.functional.relu(x+0.95)+0.05
+        return torch.nn.functional.relu(x+0.99)+0.01
 
     def forward(self, x):
 
         mu, kappa = self.get_exchange_constants(x)
-        beta, gamma, lda_c_params = self.get_correlation_constants(x)
+
+#        beta, gamma, lda_c_params = self.get_correlation_constants(x)
+        beta, gamma = self.get_correlation_constants(x)
 
         beta = self.custom_relu((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
         gamma = self.custom_relu((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
-        lda_c_params = self.custom_relu(lda_c_params-self.get_correlation_constants(self.all_sigma_inf(x))[2])
+#        lda_c_params = self.custom_relu(lda_c_params-self.get_correlation_constants(self.all_sigma_inf(x))[2])
 
         mu = self.custom_relu((mu - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
 
         kappa = kappa.view(-1,1)
 
-        c_arr = torch.hstack([beta, gamma, lda_c_params, torch.ones([x.shape[0], 1]).to(device), kappa, mu])*true_constants_PBE
+#        return torch.hstack([beta, gamma, lda_c_params, torch.ones([x.shape[0], 1]).to(x.device), kappa, mu])*true_constants_PBE.to(x.device)
+        return torch.hstack([beta, gamma, torch.ones([x.shape[0], 20]).to(x.device), kappa, mu])*true_constants_PBE.to(x.device)
 
-        del mu, beta, gamma, kappa, lda_c_params
 
-        return c_arr
+
+class pcPBENagai(pcPBEMLOptimizer):
+
+    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.4, DFT=None):
+        super().__init__(num_layers, h_dim)
+
+
+        self.input_c = nn.Sequential(
+            *[
+                nn.Linear(7, h_dim, bias=False),
+                nn.LayerNorm(h_dim),
+                nn.LeakyReLU(),
+            ]
+        )
+        self.fc1_c = nn.Sequential(
+            *[
+                nn.Linear(h_dim, h_dim),
+                nn.LayerNorm(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=dropout),
+            ]
+        )
+        self.fc2_c = nn.Sequential(
+            *[
+                nn.Linear(h_dim, h_dim),
+                nn.LayerNorm(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=dropout),
+            ]
+        )
+        self.output_c = nn.Sequential(
+            *[
+                nn.Linear(h_dim, nconstants_c),
+            ]
+        )
+
+        self.input_x = nn.Sequential(
+            *[
+                nn.Linear(5, h_dim, bias=False),
+                nn.LayerNorm(h_dim),
+                nn.LeakyReLU(),
+            ]
+        )
+        self.fc1_x = nn.Sequential(
+            *[
+                nn.Linear(h_dim, h_dim),
+                nn.LayerNorm(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=dropout),
+            ]
+        )
+        self.fc2_x = nn.Sequential(
+            *[
+                nn.Linear(h_dim, h_dim),
+                nn.LayerNorm(h_dim),
+                nn.LeakyReLU(),
+                nn.Dropout(p=dropout),
+            ]
+        )
+        self.output_x = nn.Sequential(
+            *[
+                nn.Linear(h_dim, nconstants_x),
+            ]
+        )
+
+    def get_exchange_constants(self, x):
+        x = self.input_x(x[:, 2:])
+
+        x = self.fc1_x(x)
+
+        x = self.fc2_x(x)
+
+        x = self.output_x(x)
+
+        return x[:, 0], x[:, 1]
+    
+    def get_correlation_constants(self, x):
+
+
+        x = self.input_c(x)
+
+        x = self.fc1_c(x)
+
+        x = self.fc2_c(x)
+
+        x = self.output_c(x)
+
+        return x[:, 0], x[:, 1]
+
+
+    def forward(self, x):
+
+        mu, kappa = self.get_exchange_constants(x)
+
+        beta, gamma = self.get_correlation_constants(x)
+
+        beta = self.custom_relu((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
+        gamma = self.custom_relu((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
+        mu = self.custom_relu((mu - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
+
+        kappa = self.kappa_activation(kappa.view(-1,1))
+
+        return torch.hstack([beta, gamma, torch.ones([x.shape[0], 20]).to(x.device), kappa, mu])*true_constants_PBE.to(x.device)
+
+
 
 
 def NN_XALPHA_model(num_layers=4, h_dim=512, nconstants=1, dropout=0.0, DFT='XALPHA'):
     return MLOptimizer(num_layers=num_layers, h_dim=h_dim, nconstants=nconstants, dropout=dropout, DFT=DFT)
 
-def NN_PBE_model(num_layers=8, h_dim=32, dropout=0.0, DFT='PBE'):
+def NN_PBE_model(num_layers=6, h_dim=32, dropout=0.0, DFT='PBE'):
     return pcPBEMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT)
+
+

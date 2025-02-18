@@ -38,8 +38,9 @@ class NN_FUNCTIONAL:
             dir_path + "/" + relative_path_to_model_state_dict[name]
         )
         model = nn_model[name]()
+        print(path_to_model_state_dict)
         model.load_state_dict(
-            torch.load(path_to_model_state_dict, map_location=torch.device("cpu")), strict=False
+            torch.load(path_to_model_state_dict, map_location=torch.device("cpu"))
         )
         model.eval()
         self.name = name
@@ -143,22 +144,22 @@ class NN_FUNCTIONAL:
         # Concatenate features to get input for NN
         nn_inputs = torch.cat([feature_dict[key] for key in keys[:7]], dim=0).T
 
-        eps = 1e-21
+        eps = 10**(-15)
 
-        nn_inputs[:, 0] = 1/(feature_dict["rho_a"] + 1e-10)**(1/3)
-        nn_inputs[:, 1] = 1/(feature_dict["rho_b"] + 1e-10)**(1/3) 
-        alpha_grad = torch.sqrt(feature_dict["norm_grad_a"] + eps)/(feature_dict["rho_a"] + 1e-10)**(4/3)
-        norm_grad = torch.sqrt(feature_dict["norm_grad"])/(feature_dict["rho_a"] + feature_dict["rho_b"] + 1e-10)**(4/3)
-        beta_grad = torch.sqrt(feature_dict["norm_grad_b"] + eps)/(feature_dict["rho_b"] + 1e-10)**(4/3)
+        nn_inputs[:, 0] = 1/(feature_dict["rho_a"] + 1e-7)**(1/3)
+        nn_inputs[:, 1] = 1/(feature_dict["rho_b"] + 1e-7)**(1/3) 
+        alpha_grad = torch.sqrt(feature_dict["norm_grad_a"] + eps)/(feature_dict["rho_a"] + 1e-7)**(4/3)
+        norm_grad = torch.sqrt(feature_dict["norm_grad"] + eps)/(feature_dict["rho_a"] + feature_dict["rho_b"] + 1e-7)**(4/3)
+        beta_grad = torch.sqrt(feature_dict["norm_grad_b"] + eps)/(feature_dict["rho_b"] + 1e-7)**(4/3)
         nn_inputs[:, 2] = torch.where(feature_dict["rho_a"]>eps, alpha_grad, 0)
         nn_inputs[:, 3] = torch.where((feature_dict["rho_a"]+feature_dict["rho_b"])>eps, norm_grad, 0)
         nn_inputs[:, 4] = torch.where(feature_dict["rho_b"]>eps, beta_grad, 0)
 
-        tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * (feature_dict["rho_a"] + 1e-10)**(5/3)
-        tau_tf_beta = 3/10 * (3*np.pi**2)**(2/3) * (feature_dict["rho_b"] + 1e-10)**(5/3)
+        tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * (feature_dict["rho_a"] + 1e-7)**(5/3)
+        tau_tf_beta = 3/10 * (3*np.pi**2)**(2/3) * (feature_dict["rho_b"] + 1e-7)**(5/3)
 
-        nn_inputs[:, 5] = torch.where(tau_tf_alpha>eps, (feature_dict["tau_a"] - tau_tf_alpha)/(tau_tf_alpha + 1e-7), 0)
-        nn_inputs[:, 6] = torch.where(tau_tf_beta>eps, (feature_dict["tau_b"] - tau_tf_beta)/(tau_tf_beta + 1e-7), 0)
+        nn_inputs[:, 5] = torch.where(tau_tf_alpha>eps, (feature_dict["tau_a"] - tau_tf_alpha)/(tau_tf_alpha), 0)
+        nn_inputs[:, 6] = torch.where(tau_tf_beta>eps, (feature_dict["tau_b"] - tau_tf_beta)/(tau_tf_beta), 0)
 
         nn_features = torch.tanh(nn_inputs)
 
