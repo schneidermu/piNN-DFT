@@ -142,11 +142,13 @@ class pcPBEMLOptimizer(nn.Module):
 
         input_layer_c = [
                 nn.Linear(7, h_dim, bias=False),
+                nn.LayerNorm(h_dim),
                 nn.PReLU(),
             ]
         
         input_layer_x = [
                 nn.Linear(5, h_dim, bias=False),
+                nn.LayerNorm(h_dim),
                 nn.PReLU(),
             ]
 
@@ -186,7 +188,6 @@ class pcPBEMLOptimizer(nn.Module):
 
         x_c = self.hidden_layers_c(x)
 
-#        return x_c[:, 0], x_c[:, 1], x_c[:, 2:]
         return x_c[:, 0], x_c[:, 1]
 
     
@@ -227,7 +228,6 @@ class pcPBEMLOptimizer(nn.Module):
         beta = self.custom_relu((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
         gamma = self.custom_relu((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
         mu = self.custom_relu((mu - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
-
         kappa = kappa.view(-1,1)
 
         return torch.hstack([beta, gamma, torch.ones([x.shape[0], 20]).to(x.device), kappa, mu])*true_constants_PBE.to(x.device)
