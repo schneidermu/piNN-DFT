@@ -179,21 +179,33 @@ def add_reaction_info_from_h5(reaction, path):
 
     # Now X is rho_a, rho_b, sigma_aa, norm_sigma, sigma_bb, taua, taub
 
-    rs_alpha = 1/densities[:, 0]**(1/3)
-    rs_beta = np.where(densities[:, 1]>eps, 1/densities[:, 1]**(1/3), np.inf)
+    eps_rho = 1e-7
+    eps_sigma = 10**(-56/3)
+    eps_tau = 10**(-35/3)
 
-    s_alpha = np.sqrt(sigmas[:, 0])/densities[:, 0]**(4/3)
-    s_norm = np.sqrt(X[:, 3])/(densities[:, 0]+densities[:, 1])**(4/3)
-    s_beta = np.where(densities[:, 1]>eps, np.sqrt(sigmas[:, 2])/densities[:, 1]**(4/3), 0)
+    rs_alpha = 1/(densities[:, 0] + eps_rho)**(1/3)/(4*np.pi/3)**(1/3)
+    rs_beta = 1/(densities[:, 1] + eps_rho)**(1/3)/(4*np.pi/3)**(1/3)
 
-    tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * densities[:, 0]**(5/3)
-    tau_tf_beta = 3/10 * (3*np.pi**2)**(2/3) * densities[:, 1]**(5/3)
-    tau_alpha = (X[:, -2]-tau_tf_alpha)/tau_tf_alpha
-    tau_beta = np.where(tau_tf_beta>eps, (X[:, -1]-tau_tf_beta)/tau_tf_beta, 0)
+    s_alpha = np.sqrt(sigmas[:, 0])/(densities[:, 0] + eps_rho)**(4/3)/(2*(3*np.pi**2)**(1/3))
+    s_norm = np.sqrt(X[:, 3])/(densities[:, 0]+densities[:, 1] + eps_rho)**(4/3)/(2*(3*np.pi**2)**(1/3))
+    s_beta = np.sqrt(sigmas[:, 2])/(densities[:, 1] + eps_rho)**(4/3)/(2*(3*np.pi**2)**(1/3))
+
+    tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * (densities[:, 0] + eps_rho)**(5/3)
+    tau_tf_beta = 3/10 * (3*np.pi**2)**(2/3) * (densities[:, 1] + eps_rho)**(5/3)
+
+#    tau_w_alpha = sigmas[:, 0]/(8*(densities[:, 0] + eps_rho))
+#    tau_w_beta = sigmas[:, 2]/(8*(densities[:, 1] + eps_rho))
+
+    tau_alpha = (X[:, -2])/tau_tf_alpha
+    tau_beta = (X[:, -1])/tau_tf_beta
 
     # tanh grid data
     X = np.column_stack([rs_alpha, rs_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta])
-    X = np.tanh(X)
+#    X = np.tanh(X/10) # This way the mean of every column of X is close to 0.5
+
+    print("Mean",np.mean(np.tanh(X), axis=0))
+    print("Min", np.min(np.tanh(X), axis=0))
+    print("Max", np.max(np.tanh(X), axis=0))
 
     backsplit_ind = np.array(backsplit_ind)
 

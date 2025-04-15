@@ -40,6 +40,7 @@ def train_split(data, test_size, shuffle=False, random_state=42):
 
         if (
             database=="AE17" and components[0] not in ["H_ae17", "He_ae17", "Li_ae17", "Be_ae17", "N_ae17", "Ne_ae17", "Na_ae17", "Mg_ae17", "P_ae17", "Ar_ae17"]
+#            database=="AE17" and components[0] not in ["H_ae17",]
         ) or (
             "HCl_htbh38" in components # This reaction is in diet-GMTKN55, so do not train on it
         ) or (
@@ -56,6 +57,7 @@ def train_split(data, test_size, shuffle=False, random_state=42):
         components = data[i]["Components"]
 
         if database == "AE17" and components[0] in ["H_ae17", "He_ae17", "Li_ae17", "Be_ae17", "N_ae17", "Ne_ae17", "Na_ae17", "Mg_ae17", "P_ae17", "Ar_ae17"]:
+#        if database == "AE17" and components[0] in ["H_ae17",]:
             train[i] = data[i]
         else:
             test[i] = data[i]
