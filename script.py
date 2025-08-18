@@ -5,6 +5,7 @@ from pyscf import dft, gto, lib
 
 from density_functional_approximation_dm21.functional import NN_FUNCTIONAL
 
+
 def get_coords_charge_spin(system_name):
     with open(f"GIF/{system_name}/{system_name}.gif_", "r") as file:
         coords = ""
@@ -60,12 +61,12 @@ def get_PBE0_density(mf):
 def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None):
     print(functional_name)
     model = NN_FUNCTIONAL(functional_name)
-    mf.define_xc_(model.eval_xc, 'MGGA')
+    mf.define_xc_(model.eval_xc, "MGGA")
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 1e-3
 
     energy = mf.kernel(dm0=dm0)
-    
+
     if not mf.converged:
         with open("./non_converged_systems_gmtkn55.log", "a") as file:
             file.write(f"{functional_name}-{system_name}\n")
@@ -98,7 +99,6 @@ def main(system_name, functional, NFinal):
     dm0 = None
 
     mf.chkfile = None
-    
 
     print(f"\n\n{functional} calculation \n\n")
     try:
@@ -109,9 +109,7 @@ def main(system_name, functional, NFinal):
         print(E)
         corrected_energy = "ERROR"
     finally:
-        with open(
-            f"Results/EnergyList_{NFinal}_{functional}.txt", "a"
-        ) as file:
+        with open(f"Results/EnergyList_{NFinal}_{functional}.txt", "a") as file:
             file.write(f"{system_name}.gif_ {corrected_energy}\n")
 
 
@@ -153,7 +151,9 @@ if __name__ == "__main__":
         "--Dispersion", type=str, default=False, help="D3 Dispersion calculation"
     )
     parser.add_option("--System", type=str, help="System to calculate")
-    parser.add_option("--NFinal", type=int, default=30, help="Number of systems to select")
+    parser.add_option(
+        "--NFinal", type=int, default=30, help="Number of systems to select"
+    )
 
     (Opts, args) = parser.parse_args()
 

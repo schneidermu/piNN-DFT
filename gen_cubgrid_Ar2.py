@@ -100,11 +100,7 @@ for i, func in enumerate(funcs):
     pdat["PBE Fxc"] = fxc
     df["PBE"] = fxc
 
-nn_funcs = [
-    "NN_PBE",
-    "NN_PBE*",
-    "NN_XALPHA"
-]
+nn_funcs = ["NN_PBE", "NN_PBE*", "NN_XALPHA"]
 
 for i, func in enumerate(nn_funcs):
     functional = func_dict[func]

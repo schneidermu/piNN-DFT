@@ -106,6 +106,7 @@ def get_tr_NN(rs, s, alpha, func, color, dash):
         y,
     )
 
+
 fig = go.Figure()
 
 max_s = 5

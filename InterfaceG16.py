@@ -1,13 +1,14 @@
 import os
 from optparse import OptionParser
+
 import yaml
+
 import density_functional_approximation_dm21 as dm21
 
+omega_str_list = ["0", "0076", "067", "18", "33", "50", "67", "82", "93", "99", "100"]
 
-omega_str_list = ['0', '0076', '067', '18', '33', '50', '67', '82', '93', '99', '100']
-
-func_dict = [f'NN_PBE_{omega}' for omega in omega_str_list]
-func_dict.extend([f'NN_XALPHA_{omega}' for omega in omega_str_list])
+func_dict = [f"NN_PBE_{omega}" for omega in omega_str_list]
+func_dict.extend([f"NN_XALPHA_{omega}" for omega in omega_str_list])
 
 parser = OptionParser()
 parser.add_option("--NFinal", type=int, default=30, help="Number systems to select")
@@ -148,8 +149,8 @@ def ReadSystems(NFinal=NFinal, InputFile=None):
             Errors[System] = EnergyDiff
 
             MAE += abs(EnergyDiff) * Weight
-#            print("Weight", Weight)
-#            print(System, abs(EnergyDiff) * Weight)
+            #            print("Weight", Weight)
+            #            print(System, abs(EnergyDiff) * Weight)
             MAEDen += 1.0  # Weight
 
     if len(WarningList) > 0:
@@ -175,15 +176,23 @@ if Mode == "GE":  # Generation mode - makes the .gif_ files
         except:
             print(f"{dir} already exists")
         for Functional in func_dict:
-            with open(f"GIF/{system_name}/calculate_system_energy_{Functional}.slurm", "w") as file:
-                file.write(script_template.format(system_name=system_name, NFinal=NFinal, Functional=Functional))
+            with open(
+                f"GIF/{system_name}/calculate_system_energy_{Functional}.slurm", "w"
+            ) as file:
+                file.write(
+                    script_template.format(
+                        system_name=system_name, NFinal=NFinal, Functional=Functional
+                    )
+                )
             print(f"GIF/{system_name}/calculate_system_energy_{Functional}.slurm")
         for non_nn in ["PBE", "XAlpha", "r2SCAN"]:
             with open(
                 f"GIF/{system_name}/calculate_system_energy_{non_nn}.slurm", "w"
             ) as file:
                 file.write(
-                    script_template.format(system_name=system_name, NFinal=NFinal, Functional=non_nn)
+                    script_template.format(
+                        system_name=system_name, NFinal=NFinal, Functional=non_nn
+                    )
                 )
 elif Mode == "CE":
     filenames = list(os.walk("GIF"))[1:]
@@ -202,6 +211,5 @@ elif Mode == "D3":
 else:
     MAE, Errors = ReadSystems(NFinal)
     print(
-        "NFinal = %3d, NActual = %3d, WTMAD2 = %.3f"
-        % (NFinal, len(list(Errors)), MAE)
+        "NFinal = %3d, NActual = %3d, WTMAD2 = %.3f" % (NFinal, len(list(Errors)), MAE)
     )

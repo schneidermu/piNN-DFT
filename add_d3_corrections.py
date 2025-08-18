@@ -1,6 +1,5 @@
 from optparse import OptionParser
 
-
 parser = OptionParser()
 parser.add_option("--NFinal", type=int, default=50, help="Number systems to select")
 
