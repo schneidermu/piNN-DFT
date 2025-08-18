@@ -43,19 +43,17 @@ def rs_z_calc(rho):
 def xs_xt_calc(rho, sigmas, t=True):     # sigma 1 is alpha beta contracted gradient
 
     DIMENSIONS = 3
-    eps_add_rho = 1e-7
-    eps_add_sigma = 10**(-15)
+    eps_add_rho = 1e-10
+    eps_add_sigma = 10**(-40)
     eps = 1e-29
 
-    xs0 = torch.sqrt(sigmas[:,0]+eps_add_sigma)/(rho[:,0] + eps_add_rho)**(1 + 1/DIMENSIONS)
+    xs0 = torch.sqrt(sigmas[:,0] + eps_add_sigma)/(rho[:,0] + eps_add_rho)**(1 + 1/DIMENSIONS)
     xs1 = torch.where((sigmas[:,2] < eps) & (rho[:,1] < eps), # last sigma and last rho equal 0
                       torch.sqrt(sigmas[:,0] + eps_add_sigma)/(rho[:,0] + eps_add_rho)**(1 + 1/DIMENSIONS), 
                       torch.sqrt(sigmas[:,2] + eps_add_sigma)/(rho[:,1] + eps_add_rho)**(1 + 1/DIMENSIONS))
 
     if t:
-        xt  = torch.sqrt(sigmas[:,0] + 2*sigmas[:,1] + sigmas[:,2]+eps_add_sigma)/(rho[:,0] + rho[:,1] + eps_add_rho)**(1 + 1/DIMENSIONS)
-
-    if t:
+        xt  = torch.sqrt(sigmas[:,0] + 2*sigmas[:,1] + sigmas[:,2] + eps_add_sigma)/(rho[:,0] + rho[:,1] + eps_add_rho)**(1 + 1/DIMENSIONS)
         return xs0, xs1, xt
 
     return xs0, xs1
@@ -171,7 +169,7 @@ def pbe_f(x, c_arr):
 
 
 def gga_exchange(func, rs, z, xs0, xs1, c_arr): # -screen_dens -z_thr
-    res_gga_exchange = lda_x_spin(rs, z, c_arr)*func(xs0, c_arr) + lda_x_spin(rs, -z, c_arr)*func(xs1, c_arr)
+    res_gga_exchange = lda_x_spin(rs, z, c_arr)*func(xs0, c_arr[:, list(range(22))+[22,23]]) + lda_x_spin(rs, -z, c_arr)*func(xs1, c_arr[:, list(range(22))+[24,25]])
     return res_gga_exchange 
 
                                          

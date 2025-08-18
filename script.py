@@ -5,33 +5,7 @@ from pyscf import dft, gto, lib
 
 import density_functional_approximation_dm21 as dm21
 
-parser = OptionParser()
-parser.add_option("--System", type=str, help="System to calculate")
-parser.add_option(
-    "--Functional", type=str, default="NN_PBE_0", help="Functional for calculation"
-)
-parser.add_option(
-    "--Dispersion", type=str, default=False, help="D3 Dispersion calculation"
-)
-parser.add_option("--NFinal", type=int, default=50, help="Number of systems to select")
-
-
-(Opts, args) = parser.parse_args()
-
-omega_str_list = ['0', '0076', '067', '18', '33', '50', '67', '82', '93', '99', '100']
-
-numint_dict = {f'NN_PBE_{omega}': dm21.NeuralNumInt(getattr(dm21.Functional, f'NN_PBE_{omega}')) for omega in omega_str_list}
-numint_dict.update({f'NN_XALPHA_{omega}': dm21.NeuralNumInt(getattr(dm21.Functional, f'NN_XALPHA_{omega}')) for omega in omega_str_list})
-
-non_nn_functional_dict = {"PBE": "PBE", "XAlpha": "1.05*lda,"}
-
-system_name = Opts.System
-functional = Opts.Functional
-dispersion = Opts.Dispersion
-NFinal = Opts.NFinal
-
-non_nn_functional = non_nn_functional_dict.get(functional)
-
+from density_functional_approximation_dm21.functional import NN_FUNCTIONAL
 
 def get_coords_charge_spin(system_name):
     with open(f"GIF/{system_name}/{system_name}.gif_", "r") as file:
@@ -64,12 +38,15 @@ def initialize_molecule(coords, charge, spin):
     molecule.verbose = 4
     molecule.spin = spin
     molecule.charge = charge
+    molecule.symmetry = False
     molecule.build()
 
     if spin == 0:
         mf = dft.RKS(molecule)
     else:
         mf = dft.UKS(molecule)
+
+    mf.max_cycle = 25
 
     return molecule, mf
 
@@ -82,12 +59,21 @@ def get_PBE0_density(mf):
     return mf, dm0
 
 
-def calculate_functional_energy(mf, functional_name, d3_energy, dm0=None):
-    mf._numint = numint_dict[functional_name]
+def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None):
+    print(functional_name)
+    model = NN_FUNCTIONAL(functional_name)
+    mf.define_xc_(model.eval_xc, 'MGGA')
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 1e-3
 
     energy = mf.kernel(dm0=dm0)
+    
+    if not mf.converged:
+        with open("./non_converged_systems_gmtkn55.log", "a") as file:
+            file.write(f"{functional_name}-{system_name}\n")
+
+    d3 = disp.DFTD3Dispersion(mf.mol, xc="PBE", version="d3bj")
+    d3_energy = d3.kernel()[0]
 
     return energy + d3_energy
 
@@ -98,31 +84,32 @@ def calculate_non_nn_functional_energy(mf, functional_name):
     return energy
 
 
-def main():
-    print("Number of threads:", lib.num_threads())
+def main(system_name, functional, NFinal):
+
+    non_nn_functional_dict = {"PBE": "PBE", "XAlpha": "1.05*lda,"}
+
+    lib.num_threads(4)
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
 
     molecule, mf = initialize_molecule(coords, charge, spin)
 
-    print("\n\nInitial PBE0 calculation\n\n")
+#    print("\n\nInitial PBE0 calculation\n\n")
     checkpoint = f'checkpoints/{system_name}.chk'
-    mf.chkfile = checkpoint
-    try:
-        dm0 = mf.from_chk(checkpoint)
-    except:
-        mf, dm0 = get_PBE0_density(mf)
+    dm0 = None
+#    mf.chkfile = checkpoint
+#    try:
+#        dm0 = mf.from_chk(checkpoint)
+#    except:
+#        mf, dm0 = get_PBE0_density(mf)
 
     mf.chkfile = None
     
 
-    d3 = disp.DFTD3Dispersion(molecule, xc="PBE0", version="d3bj")
-    d3_energy = d3.kernel()[0]
-
     print(f"\n\n{functional} calculation \n\n")
     try:
         corrected_energy = calculate_functional_energy(
-            mf, functional, d3_energy, dm0=dm0
+            mf, functional, dm0=dm0, system_name=system_name
         )
     except Exception as E:
         print(E)
@@ -134,7 +121,7 @@ def main():
             file.write(f"{system_name}.gif_ {corrected_energy}\n")
 
 
-def test_non_nn_functional():
+def test_non_nn_functional(system_name, non_nn_functional, NFinal):
     print("Number of threads:", lib.num_threads())
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
@@ -163,9 +150,27 @@ def calculate_dispersions():
 
 
 if __name__ == "__main__":
+    parser = OptionParser()
+
+    parser.add_option(
+        "--Functional", type=str, default="NN_PBE_0", help="Functional for calculation"
+    )
+    parser.add_option(
+        "--Dispersion", type=str, default=False, help="D3 Dispersion calculation"
+    )
+    parser.add_option("--System", type=str, help="System to calculate")
+    parser.add_option("--NFinal", type=int, default=50, help="Number of systems to select")
+
+    (Opts, args) = parser.parse_args()
+
+    system_name = Opts.System
+    functional = Opts.Functional
+    dispersion = Opts.Dispersion
+    NFinal = Opts.NFinal
+
     if dispersion:
         calculate_dispersions()
     elif "NN" in functional:
-        main()
+        main(system_name, functional, NFinal)
     else:
-        test_non_nn_functional()
+        test_non_nn_functional(system_name, functional, NFinal)
