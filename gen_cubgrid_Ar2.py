@@ -9,8 +9,9 @@ from pyscf import dft, gto, lib
 import density_functional_approximation_dm21 as dm21
 
 func_dict = {
-    "NN_PBE": dm21.NN_FUNCTIONAL("NN_PBE"),
-    "NN_XALPHA": dm21.NN_FUNCTIONAL("NN_XALPHA"),
+    "NN_PBE": dm21.NN_FUNCTIONAL("NN_PBE_18"),
+    "NN_PBE*": dm21.NN_FUNCTIONAL("NN_PBE_star"),
+    "NN_XALPHA": dm21.NN_FUNCTIONAL("NN_XALPHA_99"),
 }
 
 ldax = xc.LibXCFunctional("lda_x", "unpolarized")
@@ -99,7 +100,11 @@ for i, func in enumerate(funcs):
     pdat["PBE Fxc"] = fxc
     df["PBE"] = fxc
 
-nn_funcs = ["NN_PBE", "NN_XALPHA"]
+nn_funcs = [
+    "NN_PBE",
+    "NN_PBE*",
+    "NN_XALPHA"
+]
 
 for i, func in enumerate(nn_funcs):
     functional = func_dict[func]

@@ -14,6 +14,6 @@
 
 """An interface to DM21 family of exchange-correlation functionals for PySCF."""
 
-from density_functional_approximation_dm21.neural_numint import Functional
-from density_functional_approximation_dm21.neural_numint import NeuralNumInt
+#from density_functional_approximation_dm21.neural_numint import Functional
+#from density_functional_approximation_dm21.neural_numint import NeuralNumInt
 from density_functional_approximation_dm21.functional import NN_FUNCTIONAL

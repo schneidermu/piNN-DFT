@@ -1,16 +1,8 @@
 import torch
 from torch import nn
-import random
 import numpy as np
 
-random.seed(42)
-
 device = torch.device("cpu")
-
-SCALING_CONSTANT = 1/2**(1/3)
-
-stds = torch.Tensor([0.77, 0.77, 65.78, 65.78, 65.78, 1115.48, 1115.48]).to(device)
-#stds = torch.Tensor([0.77, 0.77, 65.78, 65.78, 65.78, 100, 100]).to(device)
 
 true_constants_PBE = torch.Tensor(
     [
@@ -199,16 +191,13 @@ class pcPBEMLOptimizer(nn.Module):
         self.hidden_layers_x = nn.Sequential(*modules_x)
         self.hidden_layers_c = nn.Sequential(*modules_c)
 
-        self.modules_x = modules_x
-        self.modules_c = modules_c
-
     
     def kappa_activation(self, x):
         '''
         Translates values from [-inf, +inf] to [0, 1]
         '''
         return sigmoid(4*(x+0.5))
-    
+
     def beta_activation(self, x):
         '''
         Translates values from [-inf, +inf] to [0.75, 1.25] as beta is weakly dependent on density
@@ -221,7 +210,7 @@ class pcPBEMLOptimizer(nn.Module):
         x_x_up = self.hidden_layers_x(x[:, [2, 5]])
         x_x_down = self.hidden_layers_x(x[:, [4, 6]])
 
-        return x_x_up[:, 1], x_x_up[:, 0], x_x_down[:, 1], x_x_down[:, 0] 
+        return x_x_up[:, 1], x_x_up[:, 0], x_x_down[:, 1], x_x_down[:, 0]
 
     def get_correlation_constants(self, x):
 
@@ -229,20 +218,28 @@ class pcPBEMLOptimizer(nn.Module):
 
         return x_c[:, 0], x_c[:, 1]
 
-    
+
     @staticmethod
     def all_sigma_zero(x):
         '''
-        Function for parameter mu and beta constraint
+        Function for parameter mu constraint
         '''
-        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 3]).to(x.device), x[:, 5:]])
+        return torch.hstack([x[:, :2], torch.zeros_like(x[:, 2:]).to(x.device)])  #0.76159415595*torch.ones_like(x[:, 5:])])
 
     @staticmethod
     def all_sigma_inf(x):
         '''
-        Function for PW91 correlation perameters constraint
+        Function for PW91 correlation parameters constraint
         '''
         return torch.hstack([x[:, :2], torch.ones([x.shape[0], 5]).to(x.device)])
+    
+    @staticmethod
+    def all_sigma_zero_beta(x):
+        '''
+        Function for parameter beta constraint
+        '''
+        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 3]).to(x.device), x[:, 5:]])
+
     
     @staticmethod
     def all_rho_inf(x):
@@ -252,74 +249,61 @@ class pcPBEMLOptimizer(nn.Module):
         return torch.hstack([torch.ones([x.shape[0], 2]).to(x.device), x[:, 2:]])
 
     @staticmethod
-    def custom_relu(x):
-        return torch.nn.functional.relu(x+0.99)+0.01
-
-    @staticmethod
     def shifted_elu(x):
         return elu(x)+1
 
     def forward(self, x):
-#        import matplotlib.pyplot as plt
-
-        x = torch.tanh(x) #/stds.to(x.device)
-        
-#        x_init = self.all_sigma_zero(torch.tanh(x/stds))[:, [2, 5]][x[:, 5]<1]
-#
-#        out = self.modules_x[2](self.modules_x[1](self.modules_x[0](x_init)))
-#
-#        plt.plot(x[:, 5][x[:, 5]<1].detach().numpy(), out.detach().numpy())
-#        plt.title("First layer")
-#        plt.xlabel("tau/tau_tf-1")
-#        plt.ylabel("neuron ativation value")
-#        plt.savefig("first_layer.jpg")
-#
-#        out = self.modules_x[3](out)
-#        plt.clf()
-#        plt.plot(x[:, 5].detach().numpy(), out.detach().numpy())
-#        plt.title("Second layer")
-#        plt.xlabel("tau/tau_tf-1")
-#        plt.ylabel("neuron ativation value")
-#        plt.savefig("second_layer.jpg")
-#
-#
-#        out = self.modules_x[4](x)
-#        plt.clf()
-#        plt.plot(x[:, 5].detach().numpy(), out.detach().numpy())
-#        plt.title("Third layer")
-#        plt.xlabel("tau/tau_tf-1")
-#        plt.ylabel("neuron ativation value")
-#        plt.savefig("third_layer.jpg")
-
-#        raise Exception
-
 
         mu_up, kappa_up, mu_down, kappa_down = self.get_exchange_constants(x)
 
-#        plt.plot(x[:, 5].detach().numpy(), mu_up.detach().numpy(), label="unconstrained")
-
-
         beta, gamma = self.get_correlation_constants(x)
 
-        beta = self.beta_activation((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
+        beta = self.beta_activation((beta - self.get_correlation_constants(self.all_sigma_zero_beta(x))[0]).view(-1,1))
         gamma = self.shifted_elu((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
         mu_up = self.shifted_elu((mu_up - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
         mu_down = self.shifted_elu((mu_down - self.get_exchange_constants(self.all_sigma_zero(x))[2])).view(-1,1)
         kappa_up = self.kappa_activation(kappa_up).view(-1,1)
         kappa_down = self.kappa_activation(kappa_down).view(-1,1)
 
-#        plt.plot(x[:, 5].detach().numpy(), self.get_exchange_constants(self.all_sigma_zero(torch.tanh(SCALING_CONSTANT*x)))[0].detach().numpy(), label="constrained")
-#        plt.legend()
-#        plt.xlim(-0.05,0.05)
-#        plt.savefig("enh_forward.jpg")
-#        raise Exception
+        return torch.hstack([beta, gamma, torch.ones([x.shape[0], 20]).to(x.device), kappa_up, mu_up, kappa_down, mu_down])*true_constants_PBE.to(x.device)
 
+
+class pcPBEstar(pcPBEMLOptimizer):
+
+    def get_exchange_constants(self, x):
+
+        x_x_up = self.hidden_layers_x(x[:, [2, 5]])
+        x_x_down = self.hidden_layers_x(x[:, [4, 6]])
+
+        return x_x_up[:, 1].view(-1,1), x_x_up[:, 0].view(-1,1), x_x_down[:, 1].view(-1,1), x_x_down[:, 0].view(-1,1)
+
+    def get_correlation_constants(self, x):
+
+        x_c = self.hidden_layers_c(x)
+
+        return x_c[:, 0].view(-1,1), x_c[:, 1].view(-1,1)
+
+    def forward(self, x):
+
+        mu_up, kappa_up, mu_down, kappa_down = self.get_exchange_constants(x)
+
+        beta, gamma = self.get_correlation_constants(x)
+
+        kappa_up = self.kappa_activation(kappa_up)
+        kappa_down = self.kappa_activation(kappa_down)
+        mu_up = self.shifted_elu(mu_up)
+        mu_down = self.shifted_elu(mu_down)
+        beta = self.beta_activation(beta)
+        gamma = self.shifted_elu(gamma)
 
         return torch.hstack([beta, gamma, torch.ones([x.shape[0], 20]).to(x.device), kappa_up, mu_up, kappa_down, mu_down])*true_constants_PBE.to(x.device)
 
 
-def NN_XALPHA_model(num_layers=4, h_dim=512, nconstants=1, dropout=0.0, DFT='XALPHA'):
+def NN_XALPHA_model(num_layers=6, h_dim=32, nconstants=1, dropout=0.0, DFT='XALPHA'):
     return MLOptimizer(num_layers=num_layers, h_dim=h_dim, nconstants=nconstants, dropout=dropout, DFT=DFT)
 
-def NN_PBE_model(num_layers=6, h_dim=64, dropout=0.0, DFT='PBE'):
+def NN_PBE_model(num_layers=6, h_dim=32, dropout=0.0, DFT='PBE'):
     return pcPBEMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT)
+
+def NN_PBE_star_model(num_layers=6, h_dim=32, dropout=0.0, DFT='PBE'):
+    return pcPBEstar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT)

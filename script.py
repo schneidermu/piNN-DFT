@@ -3,8 +3,6 @@ from optparse import OptionParser
 import dftd3.pyscf as disp
 from pyscf import dft, gto, lib
 
-import density_functional_approximation_dm21 as dm21
-
 from density_functional_approximation_dm21.functional import NN_FUNCTIONAL
 
 def get_coords_charge_spin(system_name):
@@ -72,7 +70,7 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
         with open("./non_converged_systems_gmtkn55.log", "a") as file:
             file.write(f"{functional_name}-{system_name}\n")
 
-    d3 = disp.DFTD3Dispersion(mf.mol, xc="PBE", version="d3bj")
+    d3 = disp.DFTD3Dispersion(mf.mol, xc="PBE0", version="d3bj")
     d3_energy = d3.kernel()[0]
 
     return energy + d3_energy
@@ -80,28 +78,24 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
 
 def calculate_non_nn_functional_energy(mf, functional_name):
     mf.xc = functional_name
+    mf.conv_tol = 1e-6
+    mf.conv_tol_grad = 1e-3
     energy = mf.kernel()
-    return energy
+
+    d3 = disp.DFTD3Dispersion(mf.mol, xc=functional_name, version="d3bj")
+    d3_energy = d3.kernel()[0]
+
+    return energy + d3_energy
 
 
 def main(system_name, functional, NFinal):
-
-    non_nn_functional_dict = {"PBE": "PBE", "XAlpha": "1.05*lda,"}
 
     lib.num_threads(4)
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
 
-    molecule, mf = initialize_molecule(coords, charge, spin)
-
-#    print("\n\nInitial PBE0 calculation\n\n")
-    checkpoint = f'checkpoints/{system_name}.chk'
+    _, mf = initialize_molecule(coords, charge, spin)
     dm0 = None
-#    mf.chkfile = checkpoint
-#    try:
-#        dm0 = mf.from_chk(checkpoint)
-#    except:
-#        mf, dm0 = get_PBE0_density(mf)
 
     mf.chkfile = None
     
@@ -126,7 +120,7 @@ def test_non_nn_functional(system_name, non_nn_functional, NFinal):
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
 
-    molecule, mf = initialize_molecule(coords, charge, spin)
+    _, mf = initialize_molecule(coords, charge, spin)
 
     energy = calculate_non_nn_functional_energy(mf, non_nn_functional)
 
@@ -159,7 +153,7 @@ if __name__ == "__main__":
         "--Dispersion", type=str, default=False, help="D3 Dispersion calculation"
     )
     parser.add_option("--System", type=str, help="System to calculate")
-    parser.add_option("--NFinal", type=int, default=50, help="Number of systems to select")
+    parser.add_option("--NFinal", type=int, default=30, help="Number of systems to select")
 
     (Opts, args) = parser.parse_args()
 

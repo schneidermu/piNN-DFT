@@ -3,6 +3,12 @@ from optparse import OptionParser
 import yaml
 import density_functional_approximation_dm21 as dm21
 
+
+omega_str_list = ['0', '0076', '067', '18', '33', '50', '67', '82', '93', '99', '100']
+
+func_dict = [f'NN_PBE_{omega}' for omega in omega_str_list]
+func_dict.extend([f'NN_XALPHA_{omega}' for omega in omega_str_list])
+
 parser = OptionParser()
 parser.add_option("--NFinal", type=int, default=30, help="Number systems to select")
 parser.add_option("--Mode", type="string", default="Analyse", help="Mode")
@@ -10,25 +16,23 @@ parser.add_option(
     "--Functional", type="string", default="NN_PBE_0", help="Functional to evaluate"
 )
 
-omega_str_list = ['0', '0076', '067', '18', '33', '50', '67', '82', '93', '99', '100']
-
-func_dict = {f'NN_PBE_{omega}': dm21.NeuralNumInt(getattr(dm21.Functional, f'NN_PBE_{omega}')) for omega in omega_str_list}
-func_dict.update({f'NN_XALPHA_{omega}': dm21.NeuralNumInt(getattr(dm21.Functional, f'NN_XALPHA_{omega}')) for omega in omega_str_list})
-
-
 (Opts, args) = parser.parse_args()
 
 Functional = Opts.Functional
 NFinal = Opts.NFinal
 script_template = """#! /bin/bash
-#SBATCH --job-name="NN Functionals Benchmark"
-#SBATCH --ntasks=4
+#SBATCH --job-name="E {system_name} {Functional}"
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --hint=nomultithread
 #SBATCH --output="/home/xray/schneiderm/log_files/{Functional}_{system_name}_"%j.out
 # Executable
 python -m script --System {system_name} --NFinal {NFinal} --Functional {Functional}"""
 dispersion_script_template = """#! /bin/bash
-#SBATCH --job-name="NN Functionals Benchmark"
-#SBATCH --ntasks=4
+#SBATCH --job-name="E {system_name} {Functional}"
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --hint=nomultithread
 #SBATCH --output="/home/xray/schneiderm/log_files/D3(BJ)_{system_name}_"%j.out
 # Executable
 python -m script --Dispersion True --System {system_name} --NFinal {NFinal}"""
@@ -144,6 +148,8 @@ def ReadSystems(NFinal=NFinal, InputFile=None):
             Errors[System] = EnergyDiff
 
             MAE += abs(EnergyDiff) * Weight
+#            print("Weight", Weight)
+#            print(System, abs(EnergyDiff) * Weight)
             MAEDen += 1.0  # Weight
 
     if len(WarningList) > 0:
@@ -172,9 +178,7 @@ if Mode == "GE":  # Generation mode - makes the .gif_ files
             with open(f"GIF/{system_name}/calculate_system_energy_{Functional}.slurm", "w") as file:
                 file.write(script_template.format(system_name=system_name, NFinal=NFinal, Functional=Functional))
             print(f"GIF/{system_name}/calculate_system_energy_{Functional}.slurm")
-        with open(f"GIF/{system_name}/calculate_system_dispersion.slurm", "w") as file:
-            file.write(dispersion_script_template.format(system_name=system_name, NFinal=NFinal))
-        for non_nn in ["PBE", "XAlpha"]:
+        for non_nn in ["PBE", "XAlpha", "r2SCAN"]:
             with open(
                 f"GIF/{system_name}/calculate_system_energy_{non_nn}.slurm", "w"
             ) as file:
@@ -185,14 +189,10 @@ elif Mode == "CE":
     filenames = list(os.walk("GIF"))[1:]
     for name in sorted(filenames):
         current_path = name[0].replace("\\", "/")
-        if Functional[:2] == "NN":
-            slurm_path = f"/home/xray/schneiderm/SCF-calculations/{current_path}/calculate_system_energy_{Functional}.slurm"
-            print(slurm_path)
-            os.system(f"sbatch {slurm_path}")
-        else:
-            for non_nn in ["PBE", "XAlpha"]:
-                slurm_path = f"/home/xray/schneiderm/SCF-calculations/{current_path}/calculate_system_energy_{non_nn}.slurm"
-                os.system(f"sbatch {slurm_path}")
+        slurm_path = f"/home/xray/schneiderm/SCF-calculations/{current_path}/calculate_system_energy_{Functional}.slurm"
+        print(slurm_path)
+        os.system(f"sbatch {slurm_path}")
+
 elif Mode == "D3":
     filenames = list(os.walk("GIF"))[1:]
     for name in sorted(filenames):

@@ -11,11 +11,17 @@ import density_functional_approximation_dm21 as dm21
 buf = StringIO()
 
 ldax = xc.LibXCFunctional("lda_x", "unpolarized")
-df = {"NN_PBE": dict(), "NN_XALPHA": dict(), "PBE": dict()}
+df = {
+    "NN_PBE": dict(),
+    "NN_PBE*": dict(),
+    "NN_XALPHA": dict(),
+    "PBE": dict(),
+}
 
 func_dict = {
-    "NN_PBE": dm21.NN_FUNCTIONAL("NN_PBE"),
-    "NN_XALPHA": dm21.NN_FUNCTIONAL("NN_XALPHA"),
+    "NN_PBE": dm21.NN_FUNCTIONAL("NN_PBE_18"),
+    "NN_PBE*": dm21.NN_FUNCTIONAL("NN_PBE_star"),
+    "NN_XALPHA": dm21.NN_FUNCTIONAL("NN_XALPHA_99"),
 }
 
 
@@ -100,7 +106,6 @@ def get_tr_NN(rs, s, alpha, func, color, dash):
         y,
     )
 
-
 fig = go.Figure()
 
 max_s = 5
@@ -109,8 +114,12 @@ res_pbe = get_tr(1, max_s, 0, ["gga_x_pbe", "gga_c_pbe"], "black", None)
 df["PBE"].update({"0": res_pbe[2]})
 fig.add_trace(res_pbe[0])
 
-colors = ["red", "green"]
-funcs = ["NN_PBE", "NN_XALPHA"]
+colors = ["red", "orange", "green"]
+funcs = [
+    "NN_PBE",
+    "NN_PBE*",
+    "NN_XALPHA",
+]
 
 for n, i in enumerate(funcs):
     res_0 = get_tr_NN(1, max_s, 0, i, colors[n], "dash")
@@ -135,6 +144,10 @@ tuples = [
     ("NN_PBE", "1"),
     ("NN_PBE", "100"),
     ("NN_PBE", "inf"),
+    ("NN_PBE*", "0"),
+    ("NN_PBE*", "1"),
+    ("NN_PBE*", "100"),
+    ("NN_PBE*", "inf"),
     ("NN_XALPHA", "0"),
     ("NN_XALPHA", "1"),
     ("NN_XALPHA", "100"),

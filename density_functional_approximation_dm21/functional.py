@@ -2,13 +2,10 @@ import os
 
 import torch
 
-from .NN_models import NN_PBE_model, NN_XALPHA_model, true_constants_PBE
+from .NN_models import NN_PBE_model, NN_XALPHA_model, NN_PBE_star_model
 from .PBE import F_PBE
 from .SVWN3 import F_XALPHA
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-
 
 torch.set_default_tensor_type(torch.DoubleTensor)
 
@@ -24,10 +21,12 @@ relative_path_to_model_state_dict.update({f"NN_XALPHA_{omega}": f"checkpoints/NN
 relative_path_to_model_state_dict.update({f"NN_PBE_{omega}": f"checkpoints/NN_PBE/state_dict_0.{omega}.pth" for omega in omega_str_list})
 relative_path_to_model_state_dict.update({f"NN_XALPHA_100": f"checkpoints/NN_XALPHA/state_dict_1.pth"})
 relative_path_to_model_state_dict.update({f"NN_PBE_100": f"checkpoints/NN_PBE/state_dict_1.pth"})
+relative_path_to_model_state_dict.update({f"NN_PBE_star": f"checkpoints/NN_PBE/state_dict_*.pth"})
 
 nn_model = {
     "NN_PBE": NN_PBE_model,
     "NN_XALPHA": NN_XALPHA_model,
+    "NN_PBE_star": NN_PBE_star_model,
 }
 
 omega_str_list.append('100')
@@ -106,15 +105,15 @@ class NN_FUNCTIONAL:
 
         feature_dict = dict()
 
-        feature_dict["rho_a"] = torch.tensor(rho / 2, dtype=torch.float32).view(1, -1)
-        feature_dict["rho_b"] = torch.tensor(rho / 2, dtype=torch.float32).view(1, -1)
-        feature_dict["tau_a"] = torch.tensor(tau / 2, dtype=torch.float32).view(1, -1)
-        feature_dict["tau_b"] = torch.tensor(tau / 2, dtype=torch.float32).view(1, -1)
-        feature_dict["norm_grad"] = torch.tensor(sigma, dtype=torch.float32).view(1, -1)
-        feature_dict["norm_grad_a"] = torch.tensor(sigma / 4, dtype=torch.float32).view(
+        feature_dict["rho_a"] = torch.tensor(rho / 2, dtype=torch.float64).view(1, -1)
+        feature_dict["rho_b"] = torch.tensor(rho / 2, dtype=torch.float64).view(1, -1)
+        feature_dict["tau_a"] = torch.tensor(tau / 2, dtype=torch.float64).view(1, -1)
+        feature_dict["tau_b"] = torch.tensor(tau / 2, dtype=torch.float64).view(1, -1)
+        feature_dict["norm_grad"] = torch.tensor(sigma, dtype=torch.float64).view(1, -1)
+        feature_dict["norm_grad_a"] = torch.tensor(sigma / 4, dtype=torch.float64).view(
             1, -1
         )
-        feature_dict["norm_grad_b"] = torch.tensor(sigma / 4, dtype=torch.float32).view(
+        feature_dict["norm_grad_b"] = torch.tensor(sigma / 4, dtype=torch.float64).view(
             1, -1
         )
         feature_dict["norm_grad_ab"] = (
@@ -146,11 +145,12 @@ class NN_FUNCTIONAL:
             "norm_grad_ab",
         ]
 
-        eps_sigma = 1e-40
+        eps_rho = 1e-27
+        eps_sigma = eps_rho**(8/3)
 
         nn_inputs = torch.cat([feature_dict[key] for key in keys[:7]], dim=0).T
-        rho_a_inp = feature_dict["rho_a"] + 1e-7
-        rho_b_inp = feature_dict["rho_b"] + 1e-7
+        rho_a_inp = feature_dict["rho_a"] + eps_rho
+        rho_b_inp = feature_dict["rho_b"] + eps_rho
         grad_a_inp = feature_dict["norm_grad_a"]
         grad_b_inp = feature_dict["norm_grad_b"]
         grad_inp = feature_dict["norm_grad"]
@@ -158,24 +158,23 @@ class NN_FUNCTIONAL:
         tau_b_inp = feature_dict["tau_b"]
         nn_inputs[:, 0] = rho_a_inp ** (1/3)
         nn_inputs[:, 1] = rho_b_inp ** (1/3)
-        nn_inputs[:, 2] = torch.sqrt(grad_a_inp + eps_sigma) / rho_a_inp ** (4/3)
-        nn_inputs[:, 3] = torch.sqrt(grad_inp + eps_sigma) / (rho_a_inp + rho_b_inp - 1e-7) ** (4/3)
-        nn_inputs[:, 4] = torch.sqrt(grad_b_inp + eps_sigma) / rho_b_inp ** (4/3)
+        nn_inputs[:, 2] = torch.sqrt(grad_a_inp + eps_sigma) / rho_a_inp ** (4/3) / (3*np.pi**2)**(1/3) / 2
+        nn_inputs[:, 3] = torch.sqrt(grad_inp + eps_sigma) / (rho_a_inp + rho_b_inp - eps_rho) ** (4/3) / (3*np.pi**2)**(1/3) / 2
+        nn_inputs[:, 4] = torch.sqrt(grad_b_inp + eps_sigma) / rho_b_inp ** (4/3) / (3*np.pi**2)**(1/3) / 2
         tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * (rho_a_inp)**(5/3)
         tau_tf_beta =  3/10 * (3*np.pi**2)**(2/3) * (rho_b_inp)**(5/3)
-        nn_inputs[:, 5] = tau_a_inp / tau_tf_alpha - 1
-        nn_inputs[:, 6] = tau_b_inp / tau_tf_beta - 1
+        tau_w_alpha = grad_a_inp / (8 * rho_a_inp)
+        tau_w_beta = grad_b_inp / (8 * rho_b_inp)
+        nn_inputs[:, 5] = (tau_a_inp - tau_w_alpha) / tau_tf_alpha - 1
+        nn_inputs[:, 6] = (tau_b_inp - tau_w_beta) / tau_tf_beta - 1
 
 
+        constants = self.model(torch.tanh(nn_inputs))
 
-        constants = self.model(nn_inputs)
-
-        # Get densities for functional input
         functional_densities = torch.cat(
             [feature_dict[key] for key in keys[:2]], dim=0
         ).T
 
-        # Get gradients for functional input
         functional_gradients = torch.cat(
             [feature_dict["norm_grad_a"], feature_dict["norm_grad_ab"], feature_dict["norm_grad_b"]], dim=0
         ).T
@@ -267,9 +266,11 @@ class NN_FUNCTIONAL:
         nn_inputs = torch.cat([feature_dict[key] for key in keys[:7]], dim=0).T
 
 
-        eps_sigma = 1e-40
-        rho_a_inp = feature_dict["rho_a"] + 1e-7
-        rho_b_inp = feature_dict["rho_b"] + 1e-7
+        eps_rho = 1e-10
+        eps_sigma = 1e-30
+
+        rho_a_inp = feature_dict["rho_a"] + eps_rho
+        rho_b_inp = feature_dict["rho_b"] + eps_rho
 
         grad_a_inp = feature_dict["norm_grad_a"]
         grad_b_inp = feature_dict["norm_grad_b"]
@@ -278,16 +279,17 @@ class NN_FUNCTIONAL:
         tau_b_inp = feature_dict["tau_b"]
         nn_inputs[:, 0] = rho_a_inp ** (1/3)
         nn_inputs[:, 1] = rho_b_inp ** (1/3)
-        nn_inputs[:, 2] = torch.sqrt(grad_a_inp + eps_sigma) / rho_a_inp ** (4/3)
-        nn_inputs[:, 3] = torch.sqrt(grad_inp + eps_sigma) / (rho_a_inp + rho_b_inp - 1e-7) ** (4/3)
-        nn_inputs[:, 4] = torch.sqrt(grad_b_inp + eps_sigma) / rho_b_inp ** (4/3)
+        nn_inputs[:, 2] = torch.sqrt(grad_a_inp + eps_sigma) / rho_a_inp ** (4/3) / (3*np.pi**2)**(1/3) / 2
+        nn_inputs[:, 3] = torch.sqrt(grad_inp + eps_sigma) / (rho_a_inp + rho_b_inp - eps_rho) ** (4/3)  / (3*np.pi**2)**(1/3) / 2
+        nn_inputs[:, 4] = torch.sqrt(grad_b_inp + eps_sigma) / rho_b_inp ** (4/3) / (3*np.pi**2)**(1/3) / 2
         tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * (rho_a_inp)**(5/3)
         tau_tf_beta =  3/10 * (3*np.pi**2)**(2/3) * (rho_b_inp)**(5/3)
-        nn_inputs[:, 5] = tau_a_inp / tau_tf_alpha - 1
-        nn_inputs[:, 6] = tau_b_inp / tau_tf_beta - 1
+        tau_w_alpha = grad_a_inp / (8 * rho_a_inp)
+        tau_w_beta = grad_b_inp / (8 * rho_b_inp)
+        nn_inputs[:, 5] = (tau_a_inp - tau_w_alpha) / tau_tf_alpha - 1
+        nn_inputs[:, 6] = (tau_b_inp - tau_w_beta) / tau_tf_beta - 1
 
-
-        constants = self.model(nn_inputs)
+        constants = self.model(torch.tanh(nn_inputs))
 
         functional_densities = torch.cat(
             [feature_dict[key] for key in keys[:2]], dim=0

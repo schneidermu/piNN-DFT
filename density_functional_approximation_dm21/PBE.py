@@ -44,7 +44,7 @@ def xs_xt_calc(rho, sigmas, t=True):     # sigma 1 is alpha beta contracted grad
 
     DIMENSIONS = 3
     eps_add_rho = 1e-10
-    eps_add_sigma = 10**(-40)
+    eps_add_sigma = eps_add_rho**(8/3)
     eps = 1e-29
 
     xs0 = torch.sqrt(sigmas[:,0] + eps_add_sigma)/(rho[:,0] + eps_add_rho)**(1 + 1/DIMENSIONS)
