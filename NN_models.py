@@ -2,11 +2,18 @@ import torch
 from torch import nn
 import random
 import numpy as np
+import math
 
 random.seed(42)
 
 device = torch.device("cuda") if torch.cuda.is_available else torch.device("cpu")
 #device = torch.device("cpu")
+
+SCALING_CONSTANT = 1/2**(1/3)
+
+stds = torch.Tensor([0.77, 0.77, 6.578, 6.578, 6.578, 1115.48, 1115.48]).to(device)
+#stds = torch.Tensor([0.77, 0.77, 6.578, 6.578, 6.578, 100, 100]).to(device)
+
 
 true_constants_PBE = torch.Tensor(
     [
@@ -36,10 +43,14 @@ true_constants_PBE = torch.Tensor(
             -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3),
             0.8040,
             0.2195149727645171,
+            0.8040,
+            0.2195149727645171,
         ]
     ]
 ).to(device)
-hardtanh = torch.nn.Hardtanh(min_val=0.01, max_val=1)
+
+sigmoid = torch.nn.Sigmoid()
+elu = torch.nn.ELU()
 
 """
 Define an nn.Module class for a simple residual block with equal dimensions
@@ -55,27 +66,45 @@ class ResBlock(nn.Module):
     def __init__(self, h_dim, dropout):
         super().__init__()
 
-        self.fc1 = nn.Sequential(
+        self.fc = nn.Sequential(
             nn.Linear(h_dim, h_dim, bias=False),
             nn.LayerNorm(h_dim),
-            nn.PReLU(),
-            nn.Dropout(p=dropout),
+            nn.GELU(),
+            nn.Linear(h_dim, h_dim, bias=False),
+            nn.LayerNorm(h_dim)
         )
-        self.fc2 = nn.Sequential(
+        self.dropout = nn.Dropout(dropout)
+        self.activation = nn.GELU()
+
+    def forward(self, x):
+        residue = x
+        out = self.fc(x)
+        out = self.dropout(out + residue)
+        return self.activation(out)    
+
+class NoResBlock(nn.Module):
+
+    """
+    Iniialize a residual block with two FC followed by (batchnorm + relu + dropout) layers
+    """
+
+    def __init__(self, h_dim, dropout):
+        super().__init__()
+
+        self.block = nn.Sequential(
             nn.Linear(h_dim, h_dim, bias=False),
             nn.LayerNorm(h_dim),
-            nn.PReLU(),
+            nn.GELU(),
+            nn.Dropout(p=dropout),
+            nn.Linear(h_dim, h_dim, bias=False),
+            nn.LayerNorm(h_dim),
+            nn.GELU(),
             nn.Dropout(p=dropout),
         )
 
     def forward(self, x):
-        residue = x
 
-        out = self.fc1(x)
-        out = self.fc2(out)
-        out += residue
-
-        return out 
+        return self.block(x)
 
 
 class MLOptimizer(nn.Module):
@@ -91,8 +120,8 @@ class MLOptimizer(nn.Module):
         modules.extend(
             [
                 nn.Linear(7, h_dim, bias=False),
-                nn.BatchNorm1d(h_dim),
-                nn.LeakyReLU(),
+                nn.LayerNorm(h_dim),
+                nn.GELU(),
             ]
         )
 
@@ -115,6 +144,8 @@ class MLOptimizer(nn.Module):
 
     def unsymm_forward(self, x):
 
+        x = torch.tanh(x/stds.to(x.device))
+
         x = self.hidden_layers(x)
         x = 1.05*self.dm21_like_sigmoid(x)
 
@@ -132,7 +163,7 @@ class MLOptimizer(nn.Module):
 
 
 class pcPBEMLOptimizer(nn.Module):
-    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.4, DFT=None):
+    def __init__(self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.2, DFT=None):
         super().__init__()
 
         self.DFT = DFT
@@ -143,13 +174,13 @@ class pcPBEMLOptimizer(nn.Module):
         input_layer_c = [
                 nn.Linear(7, h_dim, bias=False),
                 nn.LayerNorm(h_dim),
-                nn.PReLU(),
+                nn.GELU(),
             ]
         
         input_layer_x = [
-                nn.Linear(5, h_dim, bias=False),
+                nn.Linear(2, h_dim, bias=False),
                 nn.LayerNorm(h_dim),
-                nn.PReLU(),
+                nn.GELU(),
             ]
 
         modules_x.extend(
@@ -159,9 +190,13 @@ class pcPBEMLOptimizer(nn.Module):
             input_layer_c
         )
 
-        for _ in range(num_layers // 2 - 1):
-            modules_x.append(ResBlock(h_dim, dropout))
-            modules_c.append(ResBlock(h_dim, dropout))
+        if num_layers // 2 - 1 > 1:
+            for _ in range(num_layers // 2 - 1):
+                modules_x.append(ResBlock(h_dim, dropout))
+                modules_c.append(ResBlock(h_dim, dropout))
+        else:
+            modules_x.append(NoResBlock(h_dim, dropout))
+            modules_c.append(NoResBlock(h_dim, dropout))
 
         modules_x.append(nn.Linear(h_dim, nconstants_x, bias=True))
         modules_c.append(nn.Linear(h_dim, nconstants_c, bias=True))
@@ -174,15 +209,23 @@ class pcPBEMLOptimizer(nn.Module):
         '''
         Translates values from [-inf, +inf] to [0, 1]
         '''
-        return hardtanh(x+1)
+        return sigmoid(4*(x+0.5))
+
+
+    def beta_activation(self, x):
+        '''
+        Translates values from [-inf, +inf] to [0.75, 1.25] as beta is weakly dependent on density
+        '''
+        return (sigmoid(8*x)+1.5)/2
+
 
 
     def get_exchange_constants(self, x):
 
-        x_x = self.hidden_layers_x(x[:, 2:]) # Slice out density descriptors
+        x_x_up = self.hidden_layers_x(x[:, [2, 5]]) # Slice out density descriptors
+        x_x_down = self.hidden_layers_x(x[:, [4, 6]])
 
-        return x_x[:, 1], self.kappa_activation(x_x[:, 0])
-
+        return x_x_up[:, 1], x_x_up[:, 0], x_x_down[:, 1], x_x_down[:, 0] 
 
     def get_correlation_constants(self, x):
 
@@ -194,14 +237,14 @@ class pcPBEMLOptimizer(nn.Module):
     @staticmethod
     def all_sigma_zero(x):
         '''
-        Function for parameter beta and mu constraint
+        Function for parameter mu and beta constraint
         '''
-        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 5]).to(x.device)])
+        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 3]).to(x.device), x[:, 5:]])
     
     @staticmethod
     def all_sigma_inf(x):
         '''
-        Function for PW91 correlation perameters constraint
+        Function for PW91 correlation parameters constraint
         '''
         return torch.hstack([x[:, :2], torch.ones([x.shape[0], 5]).to(x.device)])
     
@@ -210,24 +253,30 @@ class pcPBEMLOptimizer(nn.Module):
         '''
         Function for parameter gamma constraint
         '''
-        return torch.hstack([torch.zeros([x.shape[0], 2]).to(x.device), x[:, 2:]])
+        return torch.hstack([torch.ones([x.shape[0], 2]).to(x.device), x[:, 2:]])
+
 
     @staticmethod
     def custom_relu(x):
         return torch.nn.functional.relu(x+0.99)+0.01
 
+    @staticmethod
+    def shifted_elu(x):
+        return elu(x)+1
 
     def forward(self, x):
-        if self.training:
-            x = random.choice([x, x[:, [1, 0, 4, 3, 2, 6, 5]]])
 
-        mu, kappa = self.get_exchange_constants(x)
+        x = x/stds.to(x.device) # Scale by standard deviations
 
-        beta, gamma = self.get_correlation_constants(x)
+        mu_up, kappa_up, mu_down, kappa_down = self.get_exchange_constants(torch.tanh(SCALING_CONSTANT*x))
 
-        beta = self.custom_relu((beta - self.get_correlation_constants(self.all_sigma_zero(x))[0]).view(-1,1))
-        gamma = self.custom_relu((gamma - self.get_correlation_constants(self.all_rho_inf(x))[1]).view(-1,1))
-        mu = self.custom_relu((mu - self.get_exchange_constants(self.all_sigma_zero(x))[0])).view(-1,1)
-        kappa = kappa.view(-1,1)
+        beta, gamma = self.get_correlation_constants(torch.tanh(x))
 
-        return torch.hstack([beta, gamma, torch.ones([x.shape[0], 20]).to(x.device), kappa, mu])*true_constants_PBE.to(x.device)
+        beta = self.beta_activation((beta - self.get_correlation_constants(self.all_sigma_zero(torch.tanh(x)))[0]).view(-1,1))
+        gamma = self.shifted_elu((gamma - self.get_correlation_constants(self.all_rho_inf(torch.tanh(x)))[1]).view(-1,1))
+        mu_up = self.shifted_elu((mu_up - self.get_exchange_constants(self.all_sigma_zero(torch.tanh(SCALING_CONSTANT*x)))[0])).view(-1,1)
+        mu_down = self.shifted_elu((mu_down - self.get_exchange_constants(self.all_sigma_zero(torch.tanh(SCALING_CONSTANT*x)))[2])).view(-1,1)
+        kappa_up = self.kappa_activation(kappa_up).view(-1,1)
+        kappa_down = self.kappa_activation(kappa_down).view(-1,1)
+
+        return torch.hstack([beta, gamma, torch.ones([x.shape[0], 20]).to(x.device), kappa_up, mu_up, kappa_down, mu_down])*true_constants_PBE.to(x.device)
