@@ -1,13 +1,10 @@
-import torch
 import numpy as np
+import torch
 
 from utils import catch_nan
 
-
 # VWN
-fpp_vwn = 4 / (
-    9 * (2 ** (1 / 3) - 1)
-)
+fpp_vwn = 4 / (9 * (2 ** (1 / 3) - 1))
 
 
 def Q_vwn(b, c):
@@ -192,7 +189,9 @@ def F_XALPHA(rho, constant):
     eps = 1e-29
 
     catch_nan(rho=rho, constant=constant)
-    res_energy = constant[:, 0] * LDA_X_FACTOR * (rho[:, 0] + rho[:, 1] + eps)**(1/3)
+    res_energy = (
+        constant[:, 0] * LDA_X_FACTOR * (rho[:, 0] + rho[:, 1] + eps) ** (1 / 3)
+    )
 
     return res_energy
 
