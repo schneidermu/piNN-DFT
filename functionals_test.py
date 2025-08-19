@@ -4,12 +4,19 @@ import numpy as np
 import torch
 from torch import nn
 
+from dataset import collate_fn
 from predopt import true_constants_PBE
+from predopt_train import FCHEM_VALIDATION as FCHEM_FACTORS
+from predopt_train import (
+    Dataset,
+    exc_loss,
+    extend_bases,
+    loss_function,
+    make_total_db_errors,
+)
 from prepare_data import load_chk
 from reaction_energy_calculation import calculate_reaction_energy
-from predopt_train import extend_bases, exc_loss, make_total_db_errors, loss_function, FCHEM_VALIDATION as FCHEM_FACTORS, Dataset
 from utils import set_random_seed
-from dataset import collate_fn
 
 device = torch.device("cpu")
 
@@ -66,10 +73,12 @@ names = {
 }
 
 with open("./dispersions/dispersions.pickle", "rb") as handle:
-        dispersions = pickle.load(handle)
+    dispersions = pickle.load(handle)
 
 with torch.no_grad():
-    for index, dataset in enumerate([train_dataloader, test_dataloader, total_dataloader]):
+    for index, dataset in enumerate(
+        [train_dataloader, test_dataloader, total_dataloader]
+    ):
 
         local_lst = []
         pred_energies = []
@@ -84,15 +93,30 @@ with torch.no_grad():
             grid_size = len(X_batch["Grid"])
             constants = (torch.ones(grid_size) * 1.05).view(grid_size, 1)
 
-            val = (index == 1)
-
+            val = index == 1
 
             energies, local_energies = calculate_reaction_energy(
-                X_batch, constants, device, rung="LDA", dft="XALPHA", dispersions=dispersions
+                X_batch,
+                constants,
+                device,
+                rung="LDA",
+                dft="XALPHA",
+                dispersions=dispersions,
             )
-            local_loss = exc_loss(X_batch, constants, local_energies, dft="XALPHA", val=val)
-            pred_energies, ref_energies, errors, total_database_errors = make_total_db_errors(pred_energies, energies, errors, ref_energies, y_batch, total_database_errors, current_bases)
-            
+            local_loss = exc_loss(
+                X_batch, constants, local_energies, dft="XALPHA", val=val
+            )
+            pred_energies, ref_energies, errors, total_database_errors = (
+                make_total_db_errors(
+                    pred_energies,
+                    energies,
+                    errors,
+                    ref_energies,
+                    y_batch,
+                    total_database_errors,
+                    current_bases,
+                )
+            )
 
             local_lst.append(torch.sqrt(local_loss).item())
 
@@ -105,13 +129,14 @@ with torch.no_grad():
 
 
 with torch.no_grad():
-    for index, dataset in enumerate([train_dataloader, test_dataloader, total_dataloader]):
+    for index, dataset in enumerate(
+        [train_dataloader, test_dataloader, total_dataloader]
+    ):
         local_lst = []
         pred_energies = []
         ref_energies = []
         bases = []
         total_database_errors = {}
-
 
         for batch_idx, (X_batch, y_batch) in enumerate(dataset):
 
@@ -121,9 +146,24 @@ with torch.no_grad():
                 grid_size, 24
             ) * true_constants_PBE
             energies, local_energies = calculate_reaction_energy(
-                X_batch, constants, device, rung="GGA", dft="PBE", dispersions=dispersions
+                X_batch,
+                constants,
+                device,
+                rung="GGA",
+                dft="PBE",
+                dispersions=dispersions,
             )
-            pred_energies, ref_energies, errors, total_database_errors = make_total_db_errors(pred_energies, energies, errors, ref_energies, y_batch, total_database_errors, current_bases)
+            pred_energies, ref_energies, errors, total_database_errors = (
+                make_total_db_errors(
+                    pred_energies,
+                    energies,
+                    errors,
+                    ref_energies,
+                    y_batch,
+                    total_database_errors,
+                    current_bases,
+                )
+            )
 
         fchem = loss_function(FCHEM_FACTORS, total_database_errors)
 

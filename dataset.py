@@ -41,7 +41,7 @@ def load_ref_energies(path):
         "DBH76": ref(251, 288, path) + ref(291, 328, path),
         "NCCE31": ref(331, 361, path),
         "ABDE4": ref(206, 209, path),
-        "AE17":ref(375, 391, path),
+        "AE17": ref(375, 391, path),
         "pTC13": ref(232, 234, path) + ref(237, 241, path) + ref(244, 248, path),
     }
     return ref_e
@@ -179,33 +179,64 @@ def add_reaction_info_from_h5(reaction, path):
 
     # Now X is rho_a, rho_b, sigma_aa, norm_sigma, sigma_bb, taua, taub
 
-    eps_rho = 1e-7
-    eps_sigma = 10**(-56/3)
-    eps_tau = 10**(-35/3)
+    eps_rho = 1e-27
+    #    eps_sigma = 10**(-56/3)
 
-    rs_alpha = 1/(densities[:, 0] + eps_rho)**(1/3)/(4*np.pi/3)**(1/3)
-    rs_beta = 1/(densities[:, 1] + eps_rho)**(1/3)/(4*np.pi/3)**(1/3)
+    n_alpha = densities[:, 0] ** (1 / 3)
+    n_beta = densities[:, 1] ** (1 / 3)
 
-    s_alpha = np.sqrt(sigmas[:, 0])/(densities[:, 0] + eps_rho)**(4/3)/(2*(3*np.pi**2)**(1/3))
-    s_norm = np.sqrt(X[:, 3])/(densities[:, 0]+densities[:, 1] + eps_rho)**(4/3)/(2*(3*np.pi**2)**(1/3))
-    s_beta = np.sqrt(sigmas[:, 2])/(densities[:, 1] + eps_rho)**(4/3)/(2*(3*np.pi**2)**(1/3))
+    s_alpha = (
+        np.where(
+            densities[:, 0] > 0,
+            np.sqrt(sigmas[:, 0]) / (densities[:, 0] + eps_rho) ** (4 / 3),
+            0,
+        )
+        / (3 * np.pi**2) ** (1 / 3)
+        / 2
+    )
+    s_norm = (
+        np.where(
+            densities[:, 0] + densities[:, 1] > 0,
+            np.sqrt(X[:, 3]) / (densities[:, 0] + densities[:, 1] + eps_rho) ** (4 / 3),
+            0,
+        )
+        / (3 * np.pi**2) ** (1 / 3)
+        / 2
+    )
+    s_beta = (
+        np.where(
+            densities[:, 1] > 0,
+            np.sqrt(sigmas[:, 2]) / (densities[:, 1] + eps_rho) ** (4 / 3),
+            0,
+        )
+        / (3 * np.pi**2) ** (1 / 3)
+        / 2
+    )
 
-    tau_tf_alpha = 3/10 * (3*np.pi**2)**(2/3) * (densities[:, 0] + eps_rho)**(5/3)
-    tau_tf_beta = 3/10 * (3*np.pi**2)**(2/3) * (densities[:, 1] + eps_rho)**(5/3)
+    tau_tf_alpha = (
+        3 / 10 * (3 * np.pi**2) ** (2 / 3) * (densities[:, 0] + eps_rho) ** (5 / 3)
+    )
+    tau_tf_beta = (
+        3 / 10 * (3 * np.pi**2) ** (2 / 3) * (densities[:, 1] + eps_rho) ** (5 / 3)
+    )
+    tau_w_alpha = sigmas[:, 0] / (8 * (densities[:, 0] + eps_rho))
+    tau_w_beta = sigmas[:, 2] / (8 * (densities[:, 1] + eps_rho))
 
-#    tau_w_alpha = sigmas[:, 0]/(8*(densities[:, 0] + eps_rho))
-#    tau_w_beta = sigmas[:, 2]/(8*(densities[:, 1] + eps_rho))
-
-    tau_alpha = (X[:, -2])/tau_tf_alpha
-    tau_beta = (X[:, -1])/tau_tf_beta
+    tau_alpha = (X[:, 5] - tau_w_alpha) / tau_tf_alpha
+    tau_beta = (X[:, 6] - tau_w_beta) / tau_tf_beta
 
     # tanh grid data
-    X = np.column_stack([rs_alpha, rs_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta])
-#    X = np.tanh(X/10) # This way the mean of every column of X is close to 0.5
+    X = np.column_stack([n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta])
+    #    X = X/(1+X)
+    #    X = np.log(1+X)
+    #    X[:, 2:5] = X[:, 2:5] * 0.1 # For better scale in the relevant rs<10 region
+    X[X < 0] = 0
+    X[:, 5:] = X[:, 5:] - 1
+    X = np.tanh(X)
 
-    print("Mean",np.mean(np.tanh(X), axis=0))
-    print("Min", np.min(np.tanh(X), axis=0))
-    print("Max", np.max(np.tanh(X), axis=0))
+    print("Mean", np.median(X, axis=0))
+    print("Min", np.min(X, axis=0))
+    print("Max", np.max(X, axis=0))
 
     backsplit_ind = np.array(backsplit_ind)
 

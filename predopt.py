@@ -57,6 +57,8 @@ true_constants_PBE = torch.Tensor(
             -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3),
             0.8040,
             0.2195149727645171,
+            0.8040,
+            0.2195149727645171,
         ]
     ]
 )
@@ -104,8 +106,11 @@ def predopt(
             X_batch = X_batch["Grid"].to(device, non_blocking=True)
             y_batch = torch.tile(y_batch, [X_batch.shape[0], 1]).to(
                 device, non_blocking=True
-            )
-            predictions = model(X_batch)
+            )[
+                :, [0, 1, 22, 23, 24, 25]
+            ]  # If PBE
+            predictions = model(X_batch)[:, [0, 1, 22, 23, 24, 25]]  # if PBE
+
             loss = criterion(predictions, y_batch)
             loss.backward()
 
@@ -132,5 +137,8 @@ def predopt(
 
         print(f"train MSE Loss = {train_loss_mse[epoch]:.8f}")
         print(f"train MAE Loss = {train_loss_mae[epoch]:.8f}")
+
+        if np.mean(train_mae_losses_per_epoch) < 1e-8:
+            return train_loss_mse, train_loss_mae  # Early stopping
 
     return train_loss_mse, train_loss_mae
