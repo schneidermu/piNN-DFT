@@ -6,12 +6,15 @@ import pylibxc as xc
 import torch
 from pyscf import dft, gto, lib
 
-import density_functional_approximation_dm21 as dm21
+import DFT as DFT
+from pcNN_mol.dft_pcnn import model as Nagai_model
 
 func_dict = {
-    "NN_PBE": dm21.NN_FUNCTIONAL("NN_PBE_18"),
-    "NN_PBE*": dm21.NN_FUNCTIONAL("NN_PBE_star"),
-    "NN_XALPHA": dm21.NN_FUNCTIONAL("NN_XALPHA_99"),
+    "NN_PBE": DFT.NN_FUNCTIONAL("NN_PBE_067"),
+    "NN_PBE*": DFT.NN_FUNCTIONAL("NN_PBE_star"),
+    "NN_PBE_star_star": DFT.NN_FUNCTIONAL("NN_PBE_star_star_18"),
+    "NN_XALPHA": DFT.NN_FUNCTIONAL("NN_XALPHA_067"),
+    "Nagai": "Nagai"
 }
 
 ldax = xc.LibXCFunctional("lda_x", "unpolarized")
@@ -100,16 +103,19 @@ for i, func in enumerate(funcs):
     pdat["PBE Fxc"] = fxc
     df["PBE"] = fxc
 
-nn_funcs = ["NN_PBE", "NN_PBE*", "NN_XALPHA"]
+nn_funcs = ["NN_PBE", "NN_PBE*", "NN_PBE_star_star", "NN_XALPHA", "Nagai"]
 
 for i, func in enumerate(nn_funcs):
     functional = func_dict[func]
 
-    exc = (
-        functional(features=inp, device=torch.device("cpu"), mode="Enhancement")[1]
-        .detach()
-        .numpy()
-    )
+    if func=="Nagai":
+        exc = Nagai_model.return_y([inp["rho"], np.sqrt(inp["sigma"]/3), np.sqrt(inp["sigma"]/3), np.sqrt(inp["sigma"]/3), inp["tau"]])
+    else:
+        exc = (
+            functional(features=inp, device=torch.device("cpu"), mode="Enhancement")[1]
+            .detach()
+            .numpy()
+        )
 
     fxc = exc / ex_lda
 

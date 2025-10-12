@@ -1,4 +1,3 @@
-# пример построения Fxc от s (нормированный градиент) для различных функционалов
 from io import StringIO
 
 import numpy as np
@@ -6,7 +5,8 @@ import plotly.graph_objects as go
 import pylibxc as xc
 import torch
 
-import density_functional_approximation_dm21 as dm21
+import DFT as DFT
+from pcNN_mol.dft_pcnn import model as Nagai_model
 
 buf = StringIO()
 
@@ -14,14 +14,18 @@ ldax = xc.LibXCFunctional("lda_x", "unpolarized")
 df = {
     "NN_PBE": dict(),
     "NN_PBE*": dict(),
+    "NN_PBE_star_star": dict(),
     "NN_XALPHA": dict(),
     "PBE": dict(),
+    "Nagai": dict(),
 }
 
 func_dict = {
-    "NN_PBE": dm21.NN_FUNCTIONAL("NN_PBE_18"),
-    "NN_PBE*": dm21.NN_FUNCTIONAL("NN_PBE_star"),
-    "NN_XALPHA": dm21.NN_FUNCTIONAL("NN_XALPHA_99"),
+    "NN_PBE": DFT.NN_FUNCTIONAL("NN_PBE_067"),
+    "NN_PBE*": DFT.NN_FUNCTIONAL("NN_PBE_star"),
+    "NN_PBE_star_star": DFT.NN_FUNCTIONAL("NN_PBE_star_star_18"),
+    "NN_XALPHA": DFT.NN_FUNCTIONAL("NN_XALPHA_067"),
+    "Nagai": "Nagai",
 }
 
 
@@ -84,11 +88,14 @@ def get_tr_NN(rs, s, alpha, func, color, dash):
     inp["sigma"] = sigma
     inp["tau"] = tau
 
-    y = (
-        functional(features=inp, device=torch.device("cpu"), mode="Enhancement")[1]
-        .detach()
-        .numpy()
-    )
+    if func == "Nagai":
+        y = Nagai_model.return_y([inp["rho"], np.sqrt(sigma/3), np.sqrt(sigma/3), np.sqrt(sigma/3), tau])
+    else:
+        y = (
+            functional(features=inp, device=torch.device("cpu"), mode="Enhancement")[1]
+            .detach()
+            .numpy()
+        )
 
     retlx = ldax.compute(inp)
 
@@ -115,11 +122,13 @@ res_pbe = get_tr(1, max_s, 0, ["gga_x_pbe", "gga_c_pbe"], "black", None)
 df["PBE"].update({"0": res_pbe[2]})
 fig.add_trace(res_pbe[0])
 
-colors = ["red", "orange", "green"]
+colors = ["red", "orange", "black", "green", "black"]
 funcs = [
     "NN_PBE",
     "NN_PBE*",
+    "NN_PBE_star_star",
     "NN_XALPHA",
+    "Nagai",
 ]
 
 for n, i in enumerate(funcs):
@@ -149,10 +158,18 @@ tuples = [
     ("NN_PBE*", "1"),
     ("NN_PBE*", "100"),
     ("NN_PBE*", "inf"),
+    ("NN_PBE_star_star", "0"), 
+    ("NN_PBE_star_star", "1"), 
+    ("NN_PBE_star_star", "100"),
+    ("NN_PBE_star_star", "inf"),
     ("NN_XALPHA", "0"),
     ("NN_XALPHA", "1"),
     ("NN_XALPHA", "100"),
     ("NN_XALPHA", "inf"),
+    ("Nagai", "0"),
+    ("Nagai", "1"),
+    ("Nagai", "100"),
+    ("Nagai", "inf"),
     ("PBE", "0"),
 ]
 

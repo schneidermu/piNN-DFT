@@ -13,7 +13,7 @@ script_template = """#! /bin/bash
 #SBATCH --job-name="Rho {molecule} {functional}"
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --output="/home/xray/schneiderm/log_molden/{functional}_{molecule}_"%j.out
+#SBATCH --output="../log_molden/{functional}_{molecule}_"%j.out
 # Executable
 python -m get_molden --Functional '{functional}' --Molecule {molecule}"""
 
@@ -21,11 +21,22 @@ script_atom_template = """#! /bin/bash
 #SBATCH --job-name="Rho {atom} +{charge} {functional}"
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --output="/home/xray/schneiderm/log_atoms/{functional}_{atom}_+{charge}_"%j.out
+#SBATCH --output="../log_atoms/{functional}_{atom}_+{charge}_"%j.out
 # Executable
 python -m get_molden --Functional '{functional}' --Atom {atom} --Charge {charge}"""
 
-molecules = ["BH3", "CO", "F2", "H2", "H2O", "HF", "Li2", "LiF", "LiH", "N2"]
+molecules = [
+    "BH3",
+    "CO",
+    "F2",
+    "H2",
+    "H2O",
+    "HF",
+    "Li2",
+    "LiF",
+    "LiH",
+    "N2"
+]
 atoms = [
     "Be 0",
     "B 1",
