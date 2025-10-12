@@ -3,12 +3,9 @@ from optparse import OptionParser
 
 import yaml
 
-import density_functional_approximation_dm21 as dm21
+from DFT.functional import omega_str_list
 
-omega_str_list = ["0", "0076", "067", "18", "33", "50", "67", "82", "93", "99", "100"]
-
-func_dict = [f"NN_PBE_{omega}" for omega in omega_str_list]
-func_dict.extend([f"NN_XALPHA_{omega}" for omega in omega_str_list])
+func_list = [f"NN_PBE_{omega}" for omega in omega_str_list] + [f"NN_XALPHA_{omega}" for omega in omega_str_list] + ["Nagai"] + ["NN_PBE_star", "NN_PBE_star_star"] + [f"NN_PBE_star_star_{omega}" for omega in omega_str_list]
 
 parser = OptionParser()
 parser.add_option("--NFinal", type=int, default=30, help="Number systems to select")
@@ -24,17 +21,17 @@ NFinal = Opts.NFinal
 script_template = """#! /bin/bash
 #SBATCH --job-name="E {system_name} {Functional}"
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=2
 #SBATCH --hint=nomultithread
-#SBATCH --output="/home/xray/schneiderm/log_files/{Functional}_{system_name}_"%j.out
+#SBATCH --output="../log_files/log_files/{Functional}_{system_name}_"%j.out
 # Executable
 python -m script --System {system_name} --NFinal {NFinal} --Functional {Functional}"""
 dispersion_script_template = """#! /bin/bash
 #SBATCH --job-name="E {system_name} {Functional}"
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=2
 #SBATCH --hint=nomultithread
-#SBATCH --output="/home/xray/schneiderm/log_files/D3(BJ)_{system_name}_"%j.out
+#SBATCH --output="../log_files/log_files/D3(BJ)_{system_name}_"%j.out
 # Executable
 python -m script --Dispersion True --System {system_name} --NFinal {NFinal}"""
 
@@ -175,7 +172,7 @@ if Mode == "GE":  # Generation mode - makes the .gif_ files
             os.rename(old_dir, new_dir)
         except:
             print(f"{dir} already exists")
-        for Functional in func_dict:
+        for Functional in func_list:
             with open(
                 f"GIF/{system_name}/calculate_system_energy_{Functional}.slurm", "w"
             ) as file:
@@ -185,7 +182,7 @@ if Mode == "GE":  # Generation mode - makes the .gif_ files
                     )
                 )
             print(f"GIF/{system_name}/calculate_system_energy_{Functional}.slurm")
-        for non_nn in ["PBE", "XAlpha", "r2SCAN"]:
+        for non_nn in ["PBE", "XAlpha", "r2SCAN", "SCAN", "TPSS"]:
             with open(
                 f"GIF/{system_name}/calculate_system_energy_{non_nn}.slurm", "w"
             ) as file:
@@ -198,7 +195,7 @@ elif Mode == "CE":
     filenames = list(os.walk("GIF"))[1:]
     for name in sorted(filenames):
         current_path = name[0].replace("\\", "/")
-        slurm_path = f"/home/xray/schneiderm/SCF-calculations/{current_path}/calculate_system_energy_{Functional}.slurm"
+        slurm_path = f"{current_path}/calculate_system_energy_{Functional}.slurm"
         print(slurm_path)
         os.system(f"sbatch {slurm_path}")
 

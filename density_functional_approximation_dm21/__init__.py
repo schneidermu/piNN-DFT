@@ -1,1 +1,0 @@
-from density_functional_approximation_dm21.functional import NN_FUNCTIONAL

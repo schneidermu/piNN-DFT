@@ -4,8 +4,28 @@ from optparse import OptionParser
 from pyscf import gto, lib, scf
 from pyscf.gto.basis import parse_gaussian
 from pyscf.tools import wfn_format
+from pyscf.scf import diis
 
-from density_functional_approximation_dm21.functional import NN_FUNCTIONAL
+
+from DFT.functional import NN_FUNCTIONAL
+from pcNN_mol.dft_pcnn import model as Nagai_model
+
+
+PROBLEMATIC_SYSTEMS = [
+    "Li2",
+    "LiH",
+    "H2",
+    "C +2",
+    "C +4",
+    "N +3",
+    "Be +0",
+    "B +1",
+    "B +3",
+    "O +4",
+    "O +6",
+    "Ne +6",
+    "F +5", 
+]
 
 
 def main():
@@ -61,7 +81,9 @@ def main():
 
     # Configure solver
     mf = scf.RKS(mol)
-    if "NN" not in functional:
+    if functional == "Nagai":
+        mf.define_xc_(Nagai_model.eval_xc, "MGGA")
+    elif "NN" not in functional:
         mf.xc = functional
         functional += "_pyscf"
     else:
@@ -78,12 +100,32 @@ def main():
 
     mf.conv_tol = 1e-9
     mf.conv_tol_grad = 1e-6
+    mf.max_cycle = 50
+
     mf.chkfile = None
+
     if molecule_name:
         mf.grids.level = 5
     else:
         mf.grids.atom_grid = (155, 974)
-    mf.max_cycle = 25
+
+    if molecule_name in PROBLEMATIC_SYSTEMS or f"{atom_name} +{charge}" in PROBLEMATIC_SYSTEMS:
+
+        mf.conv_tol = 1e-6
+        mf.conv_tol_grad = 1e-3
+
+        mf.level_shift = 0.5
+
+        mf.damp = 0.5
+
+        mf.diis = diis.EDIIS()
+
+        mf.diis.space = 12
+
+        mf.diis_start_cycle = 10
+
+        mf.max_cycle = 100
+
     mf.run()
 
     if not mf.converged:
@@ -107,8 +149,7 @@ def main():
         PBE0_DIR = os.path.join(GRID_DIR, f"grid_{molecule_name}")
         INPUT_DIR = os.path.join(MOLECULE_DIR, "gamess.wfn")
         OUTPUT_DIR = os.path.join(MOLECULE_DIR, "calc.out")
-        if not os.path.exists(MOLECULE_DIR):
-            os.mkdir(MOLECULE_DIR)
+        os.makedirs(MOLECULE_DIR, exist_ok=True)
     else:
         CALC_DIR = "/home/xray/schneiderm/denrho/dtestin"
         FUNCTIONAL_DIR = os.path.join(CALC_DIR, functional.replace("_pyscf", ""))

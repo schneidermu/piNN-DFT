@@ -2,8 +2,25 @@ from optparse import OptionParser
 
 import dftd3.pyscf as disp
 from pyscf import dft, gto, lib
+from pyscf.scf import diis
+from pyscf.scf import addons
 
-from density_functional_approximation_dm21.functional import NN_FUNCTIONAL
+from DFT.functional import NN_FUNCTIONAL
+from pcNN_mol.dft_pcnn import model as Nagai_model
+
+
+PROBLEMATIC_SYSTEMS = [
+    "G21EA-14-EA_14",
+    "G21EA-14-EA_14n",
+    "W4-11-57-b",
+    "MB16-43-10-10",
+    "BH76-5-hclhts",
+    "MB16-43-10-BH3",
+    "HEAVY28-16-sbh3",
+    "W4-11-57-f",
+    "W4-11-30-cl",
+    "W4-11-132-cl",
+]
 
 
 def get_coords_charge_spin(system_name):
@@ -60,19 +77,57 @@ def get_PBE0_density(mf):
 
 def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None):
     print(functional_name)
-    model = NN_FUNCTIONAL(functional_name)
-    mf.define_xc_(model.eval_xc, "MGGA")
+    
+    if functional_name == "Nagai":
+        mf.define_xc_(Nagai_model.eval_xc, "MGGA")
+    else:
+        model = NN_FUNCTIONAL(functional_name)
+        mf.define_xc_(model.eval_xc, "MGGA")
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 1e-3
 
-    energy = mf.kernel(dm0=dm0)
+    scf_data = {"latest_delta_e": None, "latest_g_norm": None}
+
+    def log_convergence(env):
+        scf_data["latest_delta_e"] = abs(env["e_tot"] - env["last_hf_e"])
+        scf_data["latest_g_norm"] = env["norm_gorb"]
+
+    mf.callback = log_convergence
+
+    if system_name in PROBLEMATIC_SYSTEMS:
+
+        mf.level_shift = 1.0
+        mf.damp = 0.7
+        mf.diis = diis.EDIIS()
+        mf.diis.space = 12
+        mf.diis_start_cycle = 25
+        mf.max_cycle = 100
+        mf.conv_tol = 1e-5
+        mf.conv_tol_grad = 1e-3
+
+        energy = mf.kernel()
+
+    else:
+        energy = mf.kernel(dm0=dm0)
 
     if not mf.converged:
-        with open("./non_converged_systems_gmtkn55.log", "a") as file:
-            file.write(f"{functional_name}-{system_name}\n")
+        latest_delta_e = scf_data["latest_delta_e"]
+        latest_g_norm = scf_data["latest_g_norm"]
+
+        if latest_delta_e is not None:
+            with open("./non_converged_systems_gmtkn55.log", "a") as file:
+                log_line = (
+                    f"{functional}-{system_name}: Not converged. "
+                    f"Last dE = {latest_delta_e:.2e}, |g| = {latest_g_norm:.2e}\n"
+                )
+                file.write(log_line)
+                print(f"Logged: {log_line.strip()}")
 
     d3 = disp.DFTD3Dispersion(mf.mol, xc="PBE0", version="d3bj")
     d3_energy = d3.kernel()[0]
+
+    if functional_name=="Nagai":
+        d3_energy = 0 # D3 is not used in Nagai et al. paper
 
     return energy + d3_energy
 
@@ -81,7 +136,29 @@ def calculate_non_nn_functional_energy(mf, functional_name):
     mf.xc = functional_name
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 1e-3
+    scf_data = {"latest_delta_e": None, "latest_g_norm": None}
+
+    def log_convergence(env):
+        scf_data["latest_delta_e"] = abs(env["e_tot"] - env["last_hf_e"])
+        scf_data["latest_g_norm"] = env["norm_gorb"]
+
+    mf.callback = log_convergence
+
     energy = mf.kernel()
+
+    if not mf.converged:
+        latest_delta_e = scf_data["latest_delta_e"]
+        latest_g_norm = scf_data["latest_g_norm"]
+
+        if latest_delta_e is not None:
+            with open("./non_converged_systems_gmtkn55.log", "a") as file:
+                log_line = (
+                    f"{functional}-{system_name}: Not converged. "
+                    f"Last dE = {latest_delta_e:.2e}, |g| = {latest_g_norm:.2e}\n"
+                )
+                file.write(log_line)
+                print(f"Logged: {log_line.strip()}")
+
 
     d3 = disp.DFTD3Dispersion(mf.mol, xc=functional_name, version="d3bj")
     d3_energy = d3.kernel()[0]
@@ -164,7 +241,7 @@ if __name__ == "__main__":
 
     if dispersion:
         calculate_dispersions()
-    elif "NN" in functional:
+    elif "NN" in functional or functional=="Nagai":
         main(system_name, functional, NFinal)
     else:
         test_non_nn_functional(system_name, functional, NFinal)

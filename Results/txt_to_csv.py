@@ -6,6 +6,7 @@ filenames = [
     "NN_PBE.txt",
     "XAlpha.txt",
     "NN_XAlpha.txt",
+    "NN_PBE_star.txt",
 ]
 
 def extract_energies_from_txt(filename):
