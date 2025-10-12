@@ -55,7 +55,7 @@ python -m gen_cubgrid_Ar2
 ```
 
 ## Electron and atomic density accuracy calculations
-Change the paths to den_mol_or folder and your Multiwfn file in the script, create calc folder and paste the LDA densities there. Create grids folder and paste the grids into it. Calculate CCSD reference densities and paste them into den_mol_or/REF/CCSORT.npz file.
+Change the paths to den_mol_or folder and your Multiwfn file in the script, create calc folder and paste the LDA densities there. Create grids folder and paste the grids into it. Paste CCSD reference densities into den_mol_or/REF/CCSORT.npz file.
 To calculate the avRANE, run:
 ```
 python -m run_molden --Functional {name of the functional}
@@ -67,3 +67,12 @@ python calcden.py calc 128
 ```
 python dniad
 ```
+To calculate the MaxNE, run in the denrho/dtestin/{functional name} folder:
+```
+./sfwn
+```
+After it's finished, go to denrho folder and run:
+```
+./krms {functional name} CCSD
+```
+
