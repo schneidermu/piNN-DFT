@@ -1,6 +1,6 @@
-import numpy as np
 import subprocess
 
+import numpy as np
 from mpmath import chebyt, chop, taylor
 
 train_sbatch_template = """#! /bin/bash
@@ -50,11 +50,11 @@ for functional, batch_size in functionals:
             file.write(train_script_content)
 
         try:
-            train_job_id_bytes = subprocess.check_output(["sbatch", "--parsable", train_script_file])
+            train_job_id_bytes = subprocess.check_output(
+                ["sbatch", "--parsable", train_script_file]
+            )
             train_job_id = train_job_id_bytes.decode().strip()
             print(f"Training job submitted. ID: {train_job_id}")
         except subprocess.CalledProcessError as e:
             print(f"  ERROR: Failed to submit training job. Slurm error: {e}")
             continue
-
-

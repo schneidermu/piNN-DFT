@@ -1,21 +1,21 @@
+import collections
 import gc
 import os
 import pickle
 import shutil
 import subprocess
 from optparse import OptionParser
-import collections
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch import nn
-from torch.optim.lr_scheduler import SequentialLR, LinearLR, CosineAnnealingLR
+from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from tqdm.notebook import tqdm
 
 from dataset import collate_fn, collate_fn_predopt
-from NN_models import MLOptimizer, pcPBEMLOptimizer, pcPBEdoublestar, pcPBEstar
-from predopt import DatasetPredopt, true_constants_PBE, predopt
+from NN_models import MLOptimizer, pcPBEdoublestar, pcPBEMLOptimizer, pcPBEstar
+from predopt import DatasetPredopt, predopt, true_constants_PBE
 from prepare_data import load_chk
 from reaction_energy_calculation import calculate_reaction_energy, get_local_energies
 from utils import configure_optimizers, seed_worker, set_random_seed
@@ -103,7 +103,7 @@ class EarlyStopper:
         self.patience = patience
         self.min_delta = min_delta
         self.counter = 0
-        self.min_validation_loss = float('inf')
+        self.min_validation_loss = float("inf")
 
     def early_stop(self, validation_loss):
         if validation_loss < self.min_validation_loss:
@@ -384,12 +384,13 @@ def train(
             if "STARSTAR" in name:
                 reaction_energy, local_energies = calculate_reaction_energy(
                     X_batch,
-                    torch.ones(X_batch_grid.shape[0], 26).to(device)*true_constants_PBE,
+                    torch.ones(X_batch_grid.shape[0], 26).to(device)
+                    * true_constants_PBE,
                     device,
                     rung=rung,
                     dft=dft,
                     dispersions=dispersions,
-                    enhancement=torch.stack(predictions, dim=1)
+                    enhancement=torch.stack(predictions, dim=1),
                 )
 
             else:
@@ -508,14 +509,14 @@ def train(
                 if "STARSTAR" in name:
                     reaction_energy, local_energies = calculate_reaction_energy(
                         X_batch,
-                        torch.ones(X_batch_grid.shape[0], 26).to(device)*true_constants_PBE,
+                        torch.ones(X_batch_grid.shape[0], 26).to(device)
+                        * true_constants_PBE,
                         device,
                         rung=rung,
                         dft=dft,
                         dispersions=dispersions,
-                        enhancement=torch.stack(predictions, dim=1)
+                        enhancement=torch.stack(predictions, dim=1),
                     )
-
 
                 else:
                     reaction_energy, local_energies = calculate_reaction_energy(
@@ -599,7 +600,7 @@ def train(
 
         val_loss_window.append(val_full_loss[-1])
         test_fchem_window.append(test_fchem[-1])
-        
+
         smoothed_val_loss = np.mean(val_loss_window)
         smoothed_fchem = np.mean(test_fchem_window)
 
@@ -611,7 +612,9 @@ def train(
         torch.save(model.module.state_dict(), prev)
 
         if len(val_loss_window) == smoothing_window:
-            print(f"Smoothed Val Loss: {smoothed_val_loss:.8f}, Smoothed Fchem: {smoothed_fchem:.8f}")
+            print(
+                f"Smoothed Val Loss: {smoothed_val_loss:.8f}, Smoothed Fchem: {smoothed_fchem:.8f}"
+            )
 
             if scheduler:
                 scheduler.step()
@@ -624,7 +627,7 @@ def train(
                         os.remove(prev_best)
                     except OSError as e:
                         print(f"Error removing previous best model: {e}")
-                
+
                 prev_best = f"{best_model_dir}BEST_EPOCH_bs_{batch_size}_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_train_loss_{train_full_loss[-1]:.3f}_val_loss_{val_full_loss[-1]:.3f}_train_exc_{train_loss_exc[-1]:.5f}_val_exc_{test_loss_exc[-1]:.5f}_train_fchem_{train_fchem:.3f}_val_fchem_{val_fchem:.3f}.pth"
                 torch.save(model.module.state_dict(), prev_best)
 
@@ -637,9 +640,7 @@ def train(
         )
         ax[0].legend()
         ax[1].legend()
-        plt.savefig(
-            f"./batch_fchem/bs_{batch_size}_lr_{lr_train}_{name}_{omega}.png"
-        )
+        plt.savefig(f"./batch_fchem/bs_{batch_size}_lr_{lr_train}_{name}_{omega}.png")
         plt.clf()
         plt.close()
 
@@ -694,7 +695,17 @@ if __name__ == "__main__":
 
     (Opts, args) = parser.parse_args()
 
-    name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience = (
+    (
+        name,
+        n_predopt,
+        n_train,
+        batch_size,
+        dropout,
+        omega,
+        lr_train,
+        lr_predopt,
+        patience,
+    ) = (
         Opts.Name,
         Opts.N_preopt,
         Opts.N_train,
@@ -706,8 +717,20 @@ if __name__ == "__main__":
         Opts.Patience,
     )
 
-    print("name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience")
-    print(name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience)
+    print(
+        "name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience"
+    )
+    print(
+        name,
+        n_predopt,
+        n_train,
+        batch_size,
+        dropout,
+        omega,
+        lr_train,
+        lr_predopt,
+        patience,
+    )
     print("Number of GPUs:", torch.cuda.device_count())
 
     xalpha = False
@@ -734,9 +757,7 @@ if __name__ == "__main__":
 
         elif "STAR" in name:
             model = nn.DataParallel(
-                pcPBEstar(
-                    num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft
-                )
+                pcPBEstar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft)
             ).to(device)
 
         else:
@@ -808,7 +829,6 @@ if __name__ == "__main__":
     if "STARSTAR" in name:
         double_star = True
 
-
     train_loss_mse, train_loss_mae = predopt(
         model,
         criterion,
@@ -825,11 +845,19 @@ if __name__ == "__main__":
     optimizer = configure_optimizers(model=model, learning_rate=lr_train)
 
     warmup_epochs = 5
-    warmup_scheduler = LinearLR(optimizer, start_factor=0.001, total_iters=warmup_epochs)
+    warmup_scheduler = LinearLR(
+        optimizer, start_factor=0.001, total_iters=warmup_epochs
+    )
 
-    main_scheduler = CosineAnnealingLR(optimizer, T_max=n_train - warmup_epochs, eta_min=1e-6)
+    main_scheduler = CosineAnnealingLR(
+        optimizer, T_max=n_train - warmup_epochs, eta_min=1e-6
+    )
 
-    scheduler = SequentialLR(optimizer, schedulers=[warmup_scheduler, main_scheduler], milestones=[warmup_epochs])    
+    scheduler = SequentialLR(
+        optimizer,
+        schedulers=[warmup_scheduler, main_scheduler],
+        milestones=[warmup_epochs],
+    )
 
     early_stopper = EarlyStopper(patience=50)
 

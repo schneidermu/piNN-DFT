@@ -84,7 +84,15 @@ class DatasetPredopt(torch.utils.data.Dataset):
 
 
 def predopt(
-    model, criterion, optimizer, train_loader, device, n_epochs=2, accum_iter=1, double_star=False, xalpha=False
+    model,
+    criterion,
+    optimizer,
+    train_loader,
+    device,
+    n_epochs=2,
+    accum_iter=1,
+    double_star=False,
+    xalpha=False,
 ):
     train_loss_mse = []
     train_loss_mae = []
@@ -103,13 +111,11 @@ def predopt(
             if not double_star and not xalpha:
                 y_batch = torch.tile(y_batch, [X_batch.shape[0], 1]).to(
                     device, non_blocking=True
-                )[
-                    :, [0, 1, 22, 23, 24, 25]
-                ]
+                )[:, [0, 1, 22, 23, 24, 25]]
                 predictions = model(X_batch)[:, [0, 1, 22, 23, 24, 25]]
             elif xalpha:
                 predictions = model(X_batch)
-                y_batch = 1.05*torch.ones(X_batch.shape[0], 1, device=device)
+                y_batch = 1.05 * torch.ones(X_batch.shape[0], 1, device=device)
             else:
                 predictions = torch.stack(model(X_batch), dim=1).to(device)
                 y_batch = torch.ones(X_batch.shape[0], 3, device=device)

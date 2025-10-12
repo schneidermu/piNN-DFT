@@ -226,9 +226,15 @@ def pbe_f(x, c_arr):
 
 def gga_exchange(func, rs, z, xs0, xs1, c_arr, enhancement=None):  # -screen_dens -z_thr
     if enhancement is None:
-        res_gga_exchange = lda_x_spin(rs, z, c_arr)*func(xs0, c_arr[:, list(range(22))+[22,23]]) + lda_x_spin(rs, -z, c_arr)*func(xs1, c_arr[:, list(range(22))+[24,25]])
+        res_gga_exchange = lda_x_spin(rs, z, c_arr) * func(
+            xs0, c_arr[:, list(range(22)) + [22, 23]]
+        ) + lda_x_spin(rs, -z, c_arr) * func(xs1, c_arr[:, list(range(22)) + [24, 25]])
     else:
-        res_gga_exchange = enhancement[:, 0]*lda_x_spin(rs, z, c_arr)*func(xs0, c_arr[:, list(range(22))+[22,23]]) + enhancement[:, 1]*lda_x_spin(rs, -z, c_arr)*func(xs1, c_arr[:, list(range(22))+[24,25]])
+        res_gga_exchange = enhancement[:, 0] * lda_x_spin(rs, z, c_arr) * func(
+            xs0, c_arr[:, list(range(22)) + [22, 23]]
+        ) + enhancement[:, 1] * lda_x_spin(rs, -z, c_arr) * func(
+            xs1, c_arr[:, list(range(22)) + [24, 25]]
+        )
     catch_nan(res_gga_exchange=res_gga_exchange)
     return res_gga_exchange
 
@@ -245,7 +251,9 @@ def F_PBE(rho, sigmas, c_arr, device, enhancement=None):
     rs, z = rs_z_calc(rho)
     xs0, xs1, xt = xs_xt_calc(rho, sigmas)
     if enhancement is not None:
-        res_energy = PBE_X(rs, z, xt, xs0, xs1, c_arr, enhancement=enhancement[:, [0,1]]) + enhancement[:, 2]*PBE_C(rs, z, xt, c_arr, device)
+        res_energy = PBE_X(
+            rs, z, xt, xs0, xs1, c_arr, enhancement=enhancement[:, [0, 1]]
+        ) + enhancement[:, 2] * PBE_C(rs, z, xt, c_arr, device)
     else:
         res_energy = PBE_X(rs, z, xt, xs0, xs1, c_arr) + PBE_C(rs, z, xt, c_arr, device)
     catch_nan(res_energy=res_energy)

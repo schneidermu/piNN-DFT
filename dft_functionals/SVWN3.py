@@ -148,7 +148,7 @@ def rs_z_calc(rho):
 # SLATER
 
 LDA_X_FACTOR = -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3)
-XALPHA_PARAM = - 3 / 4 * (3 / np.pi) ** (1 / 3)
+XALPHA_PARAM = -3 / 4 * (3 / np.pi) ** (1 / 3)
 RS_FACTOR = (3 / (4 * np.pi)) ** (1 / 3)
 DIMENSIONS = 3
 

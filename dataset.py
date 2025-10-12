@@ -179,65 +179,6 @@ def add_reaction_info_from_h5(reaction, path):
 
     # Now X is rho_a, rho_b, sigma_aa, norm_sigma, sigma_bb, taua, taub
 
-    eps_rho = 1e-27
-    #    eps_sigma = 10**(-56/3)
-
-    n_alpha = densities[:, 0] ** (1 / 3)
-    n_beta = densities[:, 1] ** (1 / 3)
-
-    s_alpha = (
-        np.where(
-            densities[:, 0] > 0,
-            np.sqrt(sigmas[:, 0]) / (densities[:, 0] + eps_rho) ** (4 / 3),
-            0,
-        )
-        / (3 * np.pi**2) ** (1 / 3)
-        / 2
-    )
-    s_norm = (
-        np.where(
-            densities[:, 0] + densities[:, 1] > 0,
-            np.sqrt(X[:, 3]) / (densities[:, 0] + densities[:, 1] + eps_rho) ** (4 / 3),
-            0,
-        )
-        / (3 * np.pi**2) ** (1 / 3)
-        / 2
-    )
-    s_beta = (
-        np.where(
-            densities[:, 1] > 0,
-            np.sqrt(sigmas[:, 2]) / (densities[:, 1] + eps_rho) ** (4 / 3),
-            0,
-        )
-        / (3 * np.pi**2) ** (1 / 3)
-        / 2
-    )
-
-    tau_tf_alpha = (
-        3 / 10 * (3 * np.pi**2) ** (2 / 3) * (densities[:, 0] + eps_rho) ** (5 / 3)
-    )
-    tau_tf_beta = (
-        3 / 10 * (3 * np.pi**2) ** (2 / 3) * (densities[:, 1] + eps_rho) ** (5 / 3)
-    )
-    tau_w_alpha = sigmas[:, 0] / (8 * (densities[:, 0] + eps_rho))
-    tau_w_beta = sigmas[:, 2] / (8 * (densities[:, 1] + eps_rho))
-
-    tau_alpha = (X[:, 5] - tau_w_alpha) / tau_tf_alpha
-    tau_beta = (X[:, 6] - tau_w_beta) / tau_tf_beta
-
-    # tanh grid data
-    X = np.column_stack([n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta])
-    #    X = X/(1+X)
-    #    X = np.log(1+X)
-    #    X[:, 2:5] = X[:, 2:5] * 0.1 # For better scale in the relevant rs<10 region
-    X[X < 0] = 0
-    X[:, 5:] = X[:, 5:] - 1
-    X = np.tanh(X)
-
-    print("Mean", np.median(X, axis=0))
-    print("Min", np.min(X, axis=0))
-    print("Max", np.max(X, axis=0))
-
     backsplit_ind = np.array(backsplit_ind)
 
     labels = [
