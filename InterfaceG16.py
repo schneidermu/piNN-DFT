@@ -5,7 +5,13 @@ import yaml
 
 from DFT.functional import omega_str_list
 
-func_list = [f"NN_PBE_{omega}" for omega in omega_str_list] + [f"NN_XALPHA_{omega}" for omega in omega_str_list] + ["Nagai"] + ["NN_PBE_star", "NN_PBE_star_star"] + [f"NN_PBE_star_star_{omega}" for omega in omega_str_list]
+func_list = (
+    [f"NN_PBE_{omega}" for omega in omega_str_list]
+    + [f"NN_XALPHA_{omega}" for omega in omega_str_list]
+    + ["Nagai"]
+    + ["NN_PBE_star", "NN_PBE_star_star"]
+    + [f"NN_PBE_star_star_{omega}" for omega in omega_str_list]
+)
 
 parser = OptionParser()
 parser.add_option("--NFinal", type=int, default=30, help="Number systems to select")

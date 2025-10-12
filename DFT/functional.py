@@ -3,10 +3,14 @@ import os
 import numpy as np
 import torch
 
-from .NN_models import NN_PBE_model, NN_PBE_star_star_model, NN_PBE_star_model, NN_XALPHA_model
+from .NN_models import (
+    NN_PBE_model,
+    NN_PBE_star_model,
+    NN_PBE_star_star_model,
+    NN_XALPHA_model,
+)
 from .PBE import F_PBE
 from .SVWN3 import F_XALPHA
-
 
 true_constants_PBE = torch.Tensor(
     [
@@ -74,7 +78,10 @@ relative_path_to_model_state_dict.update(
     {f"NN_PBE_star": f"checkpoints/NN_PBE/state_dict_star_0.067.pth"}
 )
 relative_path_to_model_state_dict.update(
-    {f"NN_PBE_star_star_{omega}": f"checkpoints/NN_PBE/state_dict_star_star_0.{omega}.pth" for omega in omega_str_list}
+    {
+        f"NN_PBE_star_star_{omega}": f"checkpoints/NN_PBE/state_dict_star_star_0.{omega}.pth"
+        for omega in omega_str_list
+    }
 )
 relative_path_to_model_state_dict.update(
     {f"NN_PBE_star_star_100": f"checkpoints/NN_PBE/state_dict_star_star_1.pth"}
@@ -84,14 +91,16 @@ nn_model = {
     "NN_PBE": NN_PBE_model,
     "NN_XALPHA": NN_XALPHA_model,
     "NN_PBE_star": NN_PBE_star_model,
-    "NN_PBE_star_star": NN_PBE_star_star_model
+    "NN_PBE_star_star": NN_PBE_star_star_model,
 }
 
 omega_str_list.append("100")
 
 nn_model.update({f"NN_XALPHA_{omega}": NN_XALPHA_model for omega in omega_str_list})
 nn_model.update({f"NN_PBE_{omega}": NN_PBE_model for omega in omega_str_list})
-nn_model.update({f"NN_PBE_star_star_{omega}": NN_PBE_star_star_model for omega in omega_str_list})
+nn_model.update(
+    {f"NN_PBE_star_star_{omega}": NN_PBE_star_star_model for omega in omega_str_list}
+)
 
 
 class NN_FUNCTIONAL:
@@ -216,8 +225,16 @@ class NN_FUNCTIONAL:
         tau_a_inp = feature_dict["tau_a"]
         tau_b_inp = feature_dict["tau_b"]
 
-        constants = self.model(nn_inputs, rho_a_inp, rho_b_inp, grad_a_inp, grad_b_inp, grad_inp, tau_a_inp, tau_b_inp)
-
+        constants = self.model(
+            nn_inputs,
+            rho_a_inp,
+            rho_b_inp,
+            grad_a_inp,
+            grad_b_inp,
+            grad_inp,
+            tau_a_inp,
+            tau_b_inp,
+        )
 
         functional_densities = torch.cat(
             [feature_dict[key] for key in keys[:2]], dim=0
@@ -234,9 +251,17 @@ class NN_FUNCTIONAL:
 
         if "NN_PBE" in self.name:
             if "star_star" in self.name:
-                vxc = F_PBE(functional_densities, functional_gradients, true_constants_PBE, "cpu", torch.stack(constants, dim=1))
+                vxc = F_PBE(
+                    functional_densities,
+                    functional_gradients,
+                    true_constants_PBE,
+                    "cpu",
+                    torch.stack(constants, dim=1),
+                )
             else:
-                vxc = F_PBE(functional_densities, functional_gradients, constants, "cpu")
+                vxc = F_PBE(
+                    functional_densities, functional_gradients, constants, "cpu"
+                )
         elif "NN_XALPHA" in self.name:
             vxc = F_XALPHA(functional_densities, constants)
         else:
@@ -334,8 +359,16 @@ class NN_FUNCTIONAL:
         tau_a_inp = feature_dict["tau_a"]
         tau_b_inp = feature_dict["tau_b"]
 
-        constants = self.model(nn_inputs, rho_a_inp, rho_b_inp, grad_a_inp, grad_b_inp, grad_inp, tau_a_inp, tau_b_inp)
-
+        constants = self.model(
+            nn_inputs,
+            rho_a_inp,
+            rho_b_inp,
+            grad_a_inp,
+            grad_b_inp,
+            grad_inp,
+            tau_a_inp,
+            tau_b_inp,
+        )
 
         functional_densities = torch.cat(
             [feature_dict[key] for key in keys[:2]], dim=0
@@ -351,9 +384,17 @@ class NN_FUNCTIONAL:
 
         if "PBE" in self.name:
             if "star_star" in self.name:
-                vxc = F_PBE(functional_densities, functional_gradients, true_constants_PBE, "cpu", torch.stack(constants, dim=1))
+                vxc = F_PBE(
+                    functional_densities,
+                    functional_gradients,
+                    true_constants_PBE,
+                    "cpu",
+                    torch.stack(constants, dim=1),
+                )
             else:
-                vxc = F_PBE(functional_densities, functional_gradients, constants, "cpu")
+                vxc = F_PBE(
+                    functional_densities, functional_gradients, constants, "cpu"
+                )
         else:
             vxc = F_XALPHA(functional_densities, constants)
 

@@ -14,7 +14,7 @@ func_dict = {
     "NN_PBE*": DFT.NN_FUNCTIONAL("NN_PBE_star"),
     "NN_PBE_star_star": DFT.NN_FUNCTIONAL("NN_PBE_star_star_18"),
     "NN_XALPHA": DFT.NN_FUNCTIONAL("NN_XALPHA_067"),
-    "Nagai": "Nagai"
+    "Nagai": "Nagai",
 }
 
 ldax = xc.LibXCFunctional("lda_x", "unpolarized")
@@ -108,8 +108,16 @@ nn_funcs = ["NN_PBE", "NN_PBE*", "NN_PBE_star_star", "NN_XALPHA", "Nagai"]
 for i, func in enumerate(nn_funcs):
     functional = func_dict[func]
 
-    if func=="Nagai":
-        exc = Nagai_model.return_y([inp["rho"], np.sqrt(inp["sigma"]/3), np.sqrt(inp["sigma"]/3), np.sqrt(inp["sigma"]/3), inp["tau"]])
+    if func == "Nagai":
+        exc = Nagai_model.return_y(
+            [
+                inp["rho"],
+                np.sqrt(inp["sigma"] / 3),
+                np.sqrt(inp["sigma"] / 3),
+                np.sqrt(inp["sigma"] / 3),
+                inp["tau"],
+            ]
+        )
     else:
         exc = (
             functional(features=inp, device=torch.device("cpu"), mode="Enhancement")[1]

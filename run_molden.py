@@ -25,18 +25,7 @@ script_atom_template = """#! /bin/bash
 # Executable
 python -m get_molden --Functional '{functional}' --Atom {atom} --Charge {charge}"""
 
-molecules = [
-    "BH3",
-    "CO",
-    "F2",
-    "H2",
-    "H2O",
-    "HF",
-    "Li2",
-    "LiF",
-    "LiH",
-    "N2"
-]
+molecules = ["BH3", "CO", "F2", "H2", "H2O", "HF", "Li2", "LiF", "LiH", "N2"]
 atoms = [
     "Be 0",
     "B 1",

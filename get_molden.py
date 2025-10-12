@@ -3,13 +3,11 @@ from optparse import OptionParser
 
 from pyscf import gto, lib, scf
 from pyscf.gto.basis import parse_gaussian
-from pyscf.tools import wfn_format
 from pyscf.scf import diis
-
+from pyscf.tools import wfn_format
 
 from DFT.functional import NN_FUNCTIONAL
 from pcNN_mol.dft_pcnn import model as Nagai_model
-
 
 PROBLEMATIC_SYSTEMS = [
     "Li2",
@@ -24,7 +22,7 @@ PROBLEMATIC_SYSTEMS = [
     "O +4",
     "O +6",
     "Ne +6",
-    "F +5", 
+    "F +5",
 ]
 
 
@@ -109,7 +107,10 @@ def main():
     else:
         mf.grids.atom_grid = (155, 974)
 
-    if molecule_name in PROBLEMATIC_SYSTEMS or f"{atom_name} +{charge}" in PROBLEMATIC_SYSTEMS:
+    if (
+        molecule_name in PROBLEMATIC_SYSTEMS
+        or f"{atom_name} +{charge}" in PROBLEMATIC_SYSTEMS
+    ):
 
         mf.conv_tol = 1e-6
         mf.conv_tol_grad = 1e-3

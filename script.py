@@ -2,12 +2,10 @@ from optparse import OptionParser
 
 import dftd3.pyscf as disp
 from pyscf import dft, gto, lib
-from pyscf.scf import diis
-from pyscf.scf import addons
+from pyscf.scf import addons, diis
 
 from DFT.functional import NN_FUNCTIONAL
 from pcNN_mol.dft_pcnn import model as Nagai_model
-
 
 PROBLEMATIC_SYSTEMS = [
     "G21EA-14-EA_14",
@@ -77,7 +75,7 @@ def get_PBE0_density(mf):
 
 def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None):
     print(functional_name)
-    
+
     if functional_name == "Nagai":
         mf.define_xc_(Nagai_model.eval_xc, "MGGA")
     else:
@@ -126,8 +124,8 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
     d3 = disp.DFTD3Dispersion(mf.mol, xc="PBE0", version="d3bj")
     d3_energy = d3.kernel()[0]
 
-    if functional_name=="Nagai":
-        d3_energy = 0 # D3 is not used in Nagai et al. paper
+    if functional_name == "Nagai":
+        d3_energy = 0  # D3 is not used in Nagai et al. paper
 
     return energy + d3_energy
 
@@ -158,7 +156,6 @@ def calculate_non_nn_functional_energy(mf, functional_name):
                 )
                 file.write(log_line)
                 print(f"Logged: {log_line.strip()}")
-
 
     d3 = disp.DFTD3Dispersion(mf.mol, xc=functional_name, version="d3bj")
     d3_energy = d3.kernel()[0]
@@ -241,7 +238,7 @@ if __name__ == "__main__":
 
     if dispersion:
         calculate_dispersions()
-    elif "NN" in functional or functional=="Nagai":
+    elif "NN" in functional or functional == "Nagai":
         main(system_name, functional, NFinal)
     else:
         test_non_nn_functional(system_name, functional, NFinal)

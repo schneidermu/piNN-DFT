@@ -1,17 +1,17 @@
-from script import get_coords_charge_spin, initialize_molecule
-from DFT.functional import NN_FUNCTIONAL
 from optparse import OptionParser
+
+from DFT.functional import NN_FUNCTIONAL
+from script import get_coords_charge_spin, initialize_molecule
 
 
 def calculate_functional_energy(mf, functional_name):
 
     print(functional_name)
-    
+
     model = NN_FUNCTIONAL(functional_name)
     mf.define_xc_(model.eval_xc, "MGGA")
     mf.conv_tol = 1e-15
     mf.max_cycle = 50
-
 
     energy = mf.kernel()
 
@@ -36,5 +36,3 @@ if __name__ == "__main__":
     Functional = Opts.Functional
 
     main(functional_name=Functional)
-
-

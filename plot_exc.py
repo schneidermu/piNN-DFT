@@ -89,7 +89,15 @@ def get_tr_NN(rs, s, alpha, func, color, dash):
     inp["tau"] = tau
 
     if func == "Nagai":
-        y = Nagai_model.return_y([inp["rho"], np.sqrt(sigma/3), np.sqrt(sigma/3), np.sqrt(sigma/3), tau])
+        y = Nagai_model.return_y(
+            [
+                inp["rho"],
+                np.sqrt(sigma / 3),
+                np.sqrt(sigma / 3),
+                np.sqrt(sigma / 3),
+                tau,
+            ]
+        )
     else:
         y = (
             functional(features=inp, device=torch.device("cpu"), mode="Enhancement")[1]
@@ -158,8 +166,8 @@ tuples = [
     ("NN_PBE*", "1"),
     ("NN_PBE*", "100"),
     ("NN_PBE*", "inf"),
-    ("NN_PBE_star_star", "0"), 
-    ("NN_PBE_star_star", "1"), 
+    ("NN_PBE_star_star", "0"),
+    ("NN_PBE_star_star", "1"),
     ("NN_PBE_star_star", "100"),
     ("NN_PBE_star_star", "inf"),
     ("NN_XALPHA", "0"),
