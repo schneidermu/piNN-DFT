@@ -224,26 +224,30 @@ def pbe_f(x, c_arr):
     return res_pbe_f
 
 
-def gga_exchange(func, rs, z, xs0, xs1, c_arr):  # -screen_dens -z_thr
-    res_gga_exchange = lda_x_spin(rs, z, c_arr) * func(
-        xs0, c_arr[:, list(range(22)) + [22, 23]]
-    ) + lda_x_spin(rs, -z, c_arr) * func(xs1, c_arr[:, list(range(22)) + [24, 25]])
+def gga_exchange(func, rs, z, xs0, xs1, c_arr, enhancement=None):  # -screen_dens -z_thr
+    if enhancement is None:
+        res_gga_exchange = lda_x_spin(rs, z, c_arr)*func(xs0, c_arr[:, list(range(22))+[22,23]]) + lda_x_spin(rs, -z, c_arr)*func(xs1, c_arr[:, list(range(22))+[24,25]])
+    else:
+        res_gga_exchange = enhancement[:, 0]*lda_x_spin(rs, z, c_arr)*func(xs0, c_arr[:, list(range(22))+[22,23]]) + enhancement[:, 1]*lda_x_spin(rs, -z, c_arr)*func(xs1, c_arr[:, list(range(22))+[24,25]])
     catch_nan(res_gga_exchange=res_gga_exchange)
     return res_gga_exchange
 
 
-def PBE_X(rs, z, xt, xs0, xs1, c_arr):
-    res_PBE_X = gga_exchange(pbe_f, rs, z, xs0, xs1, c_arr)
+def PBE_X(rs, z, xt, xs0, xs1, c_arr, enhancement=None):
+    res_PBE_X = gga_exchange(pbe_f, rs, z, xs0, xs1, c_arr, enhancement=enhancement)
     catch_nan(res_PBE_X=res_PBE_X)
     return res_PBE_X
 
 
 # @torch.compile
-def F_PBE(rho, sigmas, c_arr, device):
+def F_PBE(rho, sigmas, c_arr, device, enhancement=None):
     catch_nan(rho=rho, sigmas=sigmas, c_arr=c_arr)
     rs, z = rs_z_calc(rho)
     xs0, xs1, xt = xs_xt_calc(rho, sigmas)
-    res_energy = PBE_X(rs, z, xt, xs0, xs1, c_arr) + PBE_C(rs, z, xt, c_arr, device)
+    if enhancement is not None:
+        res_energy = PBE_X(rs, z, xt, xs0, xs1, c_arr, enhancement=enhancement[:, [0,1]]) + enhancement[:, 2]*PBE_C(rs, z, xt, c_arr, device)
+    else:
+        res_energy = PBE_X(rs, z, xt, xs0, xs1, c_arr) + PBE_C(rs, z, xt, c_arr, device)
     catch_nan(res_energy=res_energy)
     return res_energy
 

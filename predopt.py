@@ -84,18 +84,14 @@ class DatasetPredopt(torch.utils.data.Dataset):
 
 
 def predopt(
-    model, criterion, optimizer, train_loader, device, n_epochs=2, accum_iter=1
+    model, criterion, optimizer, train_loader, device, n_epochs=2, accum_iter=1, double_star=False, xalpha=False
 ):
     train_loss_mse = []
     train_loss_mae = []
 
     for epoch in range(n_epochs):
         print("Epoch", epoch + 1)
-        # train
-        # model.train()
-
-        # delete dropout in predopt
-        model.eval()
+        model.train()
 
         train_mse_losses_per_epoch = []
         train_mae_losses_per_epoch = []
@@ -104,12 +100,19 @@ def predopt(
 
         for batch_idx, (X_batch, y_batch) in enumerate(progress_bar):
             X_batch = X_batch["Grid"].to(device, non_blocking=True)
-            y_batch = torch.tile(y_batch, [X_batch.shape[0], 1]).to(
-                device, non_blocking=True
-            )[
-                :, [0, 1, 22, 23, 24, 25]
-            ]  # If PBE
-            predictions = model(X_batch)[:, [0, 1, 22, 23, 24, 25]]  # if PBE
+            if not double_star and not xalpha:
+                y_batch = torch.tile(y_batch, [X_batch.shape[0], 1]).to(
+                    device, non_blocking=True
+                )[
+                    :, [0, 1, 22, 23, 24, 25]
+                ]
+                predictions = model(X_batch)[:, [0, 1, 22, 23, 24, 25]]
+            elif xalpha:
+                predictions = model(X_batch)
+                y_batch = 1.05*torch.ones(X_batch.shape[0], 1, device=device)
+            else:
+                predictions = torch.stack(model(X_batch), dim=1).to(device)
+                y_batch = torch.ones(X_batch.shape[0], 3, device=device)
 
             loss = criterion(predictions, y_batch)
             loss.backward()

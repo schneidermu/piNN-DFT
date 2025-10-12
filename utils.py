@@ -135,14 +135,13 @@ def configure_optimizers(model, learning_rate):
     optim_groups = [
         {
             "params": [param_dict[pn] for pn in sorted(list(decay))],
-            "weight_decay": 0.01,
+            "weight_decay": 1e-2,
         },
         {
             "params": [param_dict[pn] for pn in sorted(list(no_decay))],
             "weight_decay": 0.0,
         },
     ]
-    #    optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate)
 
     optimizer = torch.optim.RAdam(
         optim_groups, lr=learning_rate, decoupled_weight_decay=True

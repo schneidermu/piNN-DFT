@@ -147,7 +147,8 @@ def rs_z_calc(rho):
 
 # SLATER
 
-LDA_X_FACTOR = -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3)  # param
+LDA_X_FACTOR = -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3)
+XALPHA_PARAM = - 3 / 4 * (3 / np.pi) ** (1 / 3)
 RS_FACTOR = (3 / (4 * np.pi)) ** (1 / 3)
 DIMENSIONS = 3
 
@@ -190,7 +191,7 @@ def F_XALPHA(rho, constant):
 
     catch_nan(rho=rho, constant=constant)
     res_energy = (
-        constant[:, 0] * LDA_X_FACTOR * (rho[:, 0] + rho[:, 1] + eps) ** (1 / 3)
+        constant[:, 0] * XALPHA_PARAM * (rho[:, 0] + rho[:, 1] + eps) ** (1 / 3)
     )
 
     return res_energy

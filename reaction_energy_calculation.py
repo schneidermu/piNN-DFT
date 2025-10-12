@@ -5,7 +5,7 @@ from dft_functionals.PBE import F_PBE
 from dft_functionals.SVWN3 import F_XALPHA, f_svwn3
 
 
-def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE"):
+def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE", enhancement=None):
     calc_reaction_data = {}
     densities = reaction["Densities"].to(device)
     if rung == "LDA":
@@ -16,7 +16,7 @@ def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE"):
     elif rung == "GGA":
         gradients = (reaction["Gradients"]).to(device)
         if dft == "PBE":
-            local_energies = F_PBE(densities, gradients, constants, device)
+            local_energies = F_PBE(densities, gradients, constants, device, enhancement=enhancement)
 
     calc_reaction_data["Local_energies"] = local_energies
     calc_reaction_data["Densities"] = densities
@@ -79,9 +79,9 @@ def get_energy_reaction(reaction, molecule_energies):
 
 
 def calculate_reaction_energy(
-    reaction, constants, device, rung, dft, dispersions=dict()
+    reaction, constants, device, rung, dft, dispersions=dict(), enhancement=None
 ):
-    local_energies = get_local_energies(reaction, constants, device, rung, dft)
+    local_energies = get_local_energies(reaction, constants, device, rung, dft, enhancement=enhancement)
     if local_energies["Local_energies"].isnan().any():
         print(local_energies["Local_energies"].isnan().sum())
         torch.save(local_energies["Local_energies"], "local_energies.pt")
