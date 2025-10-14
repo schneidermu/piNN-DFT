@@ -13,8 +13,4 @@
 To train and validate the models, run `calculations.py` with suitable parameters.
 
 
-## Testing the non-parametrized functionals on the dataset
-To test PBE and XAlpha functionals of M06-2X train and test dataset, run `functionals_test.py`
-
-
 
