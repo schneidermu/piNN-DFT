@@ -1,0 +1,12 @@
+dftd3==1.2.1
+h5py==3.10.0
+ipykernel==6.29.5
+ipython==8.32.0
+matplotlib==3.10.1
+numpy==1.26.4
+pandas==2.2.3
+pyscf==2.7.0
+PyYAML==6.0.2
+seaborn==0.13.2
+torch==2.3.0
+unicodeit==0.7.5
