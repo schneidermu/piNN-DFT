@@ -549,3 +549,221 @@ class pcPBEdoublestar(pcPBEMLOptimizer):
         Fc = self.shifted_elu(Fc_intermediate - 1.0).squeeze(-1)
 
         return Fx_up, Fx_down, Fc
+
+
+def test_model_constraints(model, model_name):
+    """
+    Runs a suite of tests for constraints on a given model.
+    """
+    print(f"--- Running Constraint Verification for {model_name} ---")
+
+    BATCH_SIZE = 8
+    model.eval()
+    nn_inputs_placeholder = torch.zeros(
+        BATCH_SIZE, 7, device=next(model.parameters()).device
+    )
+    all_passed = True
+
+    rho_a = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 5 + 0.1
+    rho_b = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 5 + 0.1
+    grad_zero = torch.zeros(BATCH_SIZE, device=nn_inputs_placeholder.device)
+
+    if isinstance(model, pcPBEdoublestar):
+        print("\n[1/4] Checking Exchange UEG Limit (Fx -> 1.0)...")
+        tau_tf_2rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_a) ** (5 / 3)
+        tau_tf_2rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_b) ** (5 / 3)
+        tau_a_test = tau_tf_2rho_a / 2
+        tau_b_test = tau_tf_2rho_b / 2
+        Fx_up, Fx_down, _ = model(
+            nn_inputs_placeholder,
+            rho_a,
+            rho_b,
+            grad_zero,
+            grad_zero,
+            grad_zero,
+            tau_a_test,
+            tau_b_test,
+        )
+        fx_up_passed = torch.allclose(Fx_up, torch.ones_like(Fx_up))
+        fx_down_passed = torch.allclose(Fx_down, torch.ones_like(Fx_down))
+        print(
+            f"Fx (spin-up) -> 1.0? {'PASS' if fx_up_passed else 'FAIL'} (Mean: {Fx_up.mean().item():.6f})"
+        )
+        print(
+            f"Fx (spin-down) -> 1.0? {'PASS' if fx_down_passed else 'FAIL'} (Mean: {Fx_down.mean().item():.6f})"
+        )
+        if not (fx_up_passed and fx_down_passed):
+            all_passed = False
+
+        print("\n[2/4] Checking Correlation UEG Limit (Fc -> 1.0)...")
+        tau_tf_rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_a ** (5 / 3)
+        tau_tf_rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_b ** (5 / 3)
+        _, _, Fc_ueg = model(
+            nn_inputs_placeholder,
+            rho_a,
+            rho_b,
+            grad_zero,
+            grad_zero,
+            grad_zero,
+            tau_tf_rho_a,
+            tau_tf_rho_b,
+        )
+        fc_ueg_passed = torch.allclose(Fc_ueg, torch.ones_like(Fc_ueg))
+        print(
+            f"Fc -> 1.0? {'PASS' if fc_ueg_passed else 'FAIL'} (Mean: {Fc_ueg.mean().item():.6f})"
+        )
+        if not fc_ueg_passed:
+            all_passed = False
+
+        print("\n[3/4] Checking Correlation High-Density Limit (Fc -> 1.0)...")
+        rho_large = torch.full((BATCH_SIZE,), 1e7, device=nn_inputs_placeholder.device)
+        rand_grads = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 10
+        rand_taus = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 100
+        _, _, Fc_hd = model(
+            nn_inputs_placeholder,
+            rho_large,
+            rho_large,
+            rand_grads,
+            rand_grads,
+            rand_grads * 2,
+            rand_taus,
+            rand_taus,
+        )
+        fc_hd_passed = torch.allclose(Fc_hd, torch.ones_like(Fc_hd), atol=1e-5)
+        print(
+            f"Fc -> 1.0? {'PASS' if fc_hd_passed else 'FAIL'} (Mean: {Fc_hd.mean().item():.6f})"
+        )
+        if not fc_hd_passed:
+            all_passed = False
+
+    elif isinstance(model, pcPBEMLOptimizer):
+        true_factors = true_constants_PBE.repeat(BATCH_SIZE, 1).to(
+            nn_inputs_placeholder.device
+        )
+
+        print("\n[TEST 1/4] Checking `mu` constraint (Exchange UEG Limit)...")
+        tau_tf_2rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_a) ** (5 / 3)
+        tau_tf_2rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_b) ** (5 / 3)
+        tau_a_test = tau_tf_2rho_a / 2
+        tau_b_test = tau_tf_2rho_b / 2
+        output_mu = (
+            model(
+                nn_inputs_placeholder,
+                rho_a,
+                rho_b,
+                grad_zero,
+                grad_zero,
+                grad_zero,
+                tau_a_test,
+                tau_b_test,
+            )
+            / true_factors
+        )
+        mu_up, mu_down = output_mu[:, 23], output_mu[:, 25]
+        mu_up_passed = torch.allclose(mu_up, torch.ones_like(mu_up))
+        mu_down_passed = torch.allclose(mu_down, torch.ones_like(mu_down))
+        print(
+            f"Mu (spin-up) -> 1.0? {'PASS' if mu_up_passed else 'FAIL'} (Mean: {mu_up.mean().item():.6f})"
+        )
+        print(
+            f"Mu (spin-down) -> 1.0? {'PASS' if mu_down_passed else 'FAIL'} (Mean: {mu_down.mean().item():.6f})"
+        )
+        if not (mu_up_passed and mu_down_passed):
+            all_passed = False
+
+        print("\n[TEST 2/4] Checking `beta` constraint (Correlation UEG Limit)...")
+        tau_tf_rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_a ** (5 / 3)
+        tau_tf_rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_b ** (5 / 3)
+        output_beta = (
+            model(
+                nn_inputs_placeholder,
+                rho_a,
+                rho_b,
+                grad_zero,
+                grad_zero,
+                grad_zero,
+                tau_tf_rho_a,
+                tau_tf_rho_b,
+            )
+            / true_factors
+        )
+        beta = output_beta[:, 0]
+        beta_passed = torch.allclose(beta, torch.ones_like(beta))
+        print(
+            f"Beta -> 1.0? {'PASS' if beta_passed else 'FAIL'} (Mean: {beta.mean().item():.6f})"
+        )
+        if not beta_passed:
+            all_passed = False
+
+        print(
+            "\n[TEST 3/4] Checking `gamma` constraint (Correlation High-Density Limit)..."
+        )
+        rho_large = torch.full((BATCH_SIZE,), 1e6, device=nn_inputs_placeholder.device)
+        rand_grads = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
+        rand_taus = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
+        output_gamma = (
+            model(
+                nn_inputs_placeholder,
+                rho_large,
+                rho_large,
+                rand_grads,
+                rand_grads,
+                rand_grads,
+                rand_taus,
+                rand_taus,
+            )
+            / true_factors
+        )
+        gamma = output_gamma[:, 1]
+        gamma_passed = torch.allclose(gamma, torch.ones_like(gamma))
+        print(
+            f"Gamma -> 1.0? {'PASS' if gamma_passed else 'FAIL'} (Mean: {gamma.mean().item():.6f})"
+        )
+        if not gamma_passed:
+            all_passed = False
+
+        print("\n[TEST 4/4] Checking Spin Symmetry...")
+        rho1, rho2 = torch.rand(BATCH_SIZE) + 0.1, torch.rand(BATCH_SIZE) + 0.1
+        grad1, grad2 = torch.rand(BATCH_SIZE), torch.rand(BATCH_SIZE)
+        tau1, tau2 = torch.rand(BATCH_SIZE) * 10, torch.rand(BATCH_SIZE) * 10
+        out1 = model(
+            nn_inputs_placeholder, rho1, rho2, grad1, grad2, grad1 + grad2, tau1, tau2
+        )
+        out2 = model(
+            nn_inputs_placeholder, rho2, rho1, grad2, grad1, grad1 + grad2, tau2, tau1
+        )
+        corr_symm = torch.allclose(out1[:, 0], out2[:, 0]) and torch.allclose(
+            out1[:, 1], out2[:, 1]
+        )
+        exch_swap = torch.allclose(out1[:, 22], out2[:, 24]) and torch.allclose(
+            out1[:, 24], out2[:, 22]
+        )
+        print(
+            f"  > Correlation parameters are symmetric? {'PASS' if corr_symm else 'FAIL'}"
+        )
+        print(
+            f"  > Exchange parameters correctly swapped? {'PASS' if exch_swap else 'FAIL'}"
+        )
+        if not (corr_symm and exch_swap):
+            all_passed = False
+
+    else:
+        print(f"ERROR: Model type {model_name} not recognized for testing.")
+        return False
+
+    print("\n--- Summary ---")
+    if all_passed:
+        print(f"SUCCESS: All constraints for {model_name} were met.")
+    else:
+        print(f"FAILURE: One or more constraints for {model_name} were not satisfied.")
+
+    return all_passed
+
+
+if __name__ == "__main__":
+    pbe_optimizer_model = pcPBEMLOptimizer(num_layers=4, h_dim=16)
+    test_model_constraints(pbe_optimizer_model, "pcPBEMLOptimizer")
+
+    print("\n" + "=" * 60 + "\n")
+    pbe_doublestar_model = pcPBEdoublestar(num_layers=4, h_dim=16)
+    test_model_constraints(pbe_doublestar_model, "pcPBEdoublestar")

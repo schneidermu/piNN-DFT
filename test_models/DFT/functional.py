@@ -1,4 +1,6 @@
 import os
+import sys
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -9,8 +11,14 @@ from .NN_models import (
     NN_PBE_star_star_model,
     NN_XALPHA_model,
 )
-from .PBE import F_PBE
-from .SVWN3 import F_XALPHA
+
+# Import from shared dft_functionals at project root
+root_path = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(root_path))
+from dft_functionals import PBE, SVWN3
+
+F_PBE = PBE.F_PBE
+F_XALPHA = SVWN3.F_XALPHA
 
 true_constants_PBE = torch.Tensor(
     [

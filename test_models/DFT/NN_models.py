@@ -1,115 +1,29 @@
-import numpy as np
+"""
+Neural network models for test_models - re-exported from train_models.
+
+This module re-exports the NN models from train_models for use in test_models.
+Both packages use identical base implementations. If test_models needs different
+behavior, specific classes and methods can be overridden here.
+"""
+
+import sys
+from pathlib import Path
+
 import torch
-from torch import nn
 
-device = torch.device("cpu")
+# Add train_models to path to import base models
+train_models_path = Path(__file__).parent.parent.parent / "train_models"
+sys.path.insert(0, str(train_models_path))
 
-true_constants_PBE = torch.Tensor(
-    [
-        [
-            0.06672455,
-            (1 - torch.log(torch.Tensor([2]))) / (np.pi**2),
-            1.709921,
-            7.5957,
-            14.1189,
-            10.357,
-            3.5876,
-            6.1977,
-            3.6231,
-            1.6382,
-            3.3662,
-            0.88026,
-            0.49294,
-            0.62517,
-            0.49671,
-            # 1,  1,  1,
-            0.031091,
-            0.015545,
-            0.016887,
-            0.21370,
-            0.20548,
-            0.11125,
-            -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3),
-            0.8040,
-            0.2195149727645171,
-            0.8040,
-            0.2195149727645171,
-        ]
-    ]
+from NN_models import (
+    MLOptimizer as MLOptimizer_train,
+    pcPBEMLOptimizer as pcPBEMLOptimizer_train,
+    pcPBEdoublestar as pcPBEdoublestar_train,
+    true_constants_PBE
 )
 
-sigmoid = torch.nn.Sigmoid()
-elu = torch.nn.ELU()
 
-"""
-Define an nn.Module class for a simple residual block with equal dimensions
-"""
-
-
-class ResBlock(nn.Module):
-    """
-    Iniialize a residual block with two FC followed by (LayerNorm + GELU + dropout) layers
-    """
-
-    def __init__(self, h_dim, dropout):
-        super().__init__()
-
-        self.fc = nn.Sequential(
-            nn.Linear(h_dim, h_dim, bias=False),
-            nn.LayerNorm(h_dim),
-            nn.GELU(),
-            nn.Linear(h_dim, h_dim, bias=False),
-            nn.LayerNorm(h_dim),
-        )
-        self.dropout = nn.Dropout(dropout)
-        self.activation = nn.GELU()
-
-    def forward(self, x):
-        residue = x
-        out = self.fc(x)
-        out = self.dropout(out + residue)
-        return self.activation(out)
-
-
-class MLOptimizer(nn.Module):
-    def __init__(self, num_layers, h_dim, nconstants, dropout, DFT=None, constants=[]):
-        super().__init__()
-
-        self.DFT = DFT
-        self.constants = constants
-        if self.constants:
-            nconstants = len(constants)
-
-        modules = []
-        modules.extend(
-            [
-                nn.Linear(7, h_dim, bias=False),
-                nn.LayerNorm(h_dim),
-                nn.GELU(),
-            ]
-        )
-
-        for _ in range(num_layers // 2 - 1):
-            modules.append(ResBlock(h_dim, dropout))
-
-        modules.append(nn.Linear(h_dim, nconstants, bias=True))
-
-        self.hidden_layers = nn.Sequential(*modules)
-
-    def dm21_like_sigmoid(self, x):
-        """
-        Custom sigmoid translates from [-inf, +inf] to [0, 2]
-        """
-
-        exp = torch.exp(-0.5 * x)
-        return 2 / (1 + exp)
-
-    def unsymm_forward(self, x):
-
-        x = self.hidden_layers(x)
-        x = 1.05 * self.dm21_like_sigmoid(x)
-
-        return x
+class MLOptimizer(MLOptimizer_train):
 
     @staticmethod
     def get_density_descriptors(
@@ -131,23 +45,23 @@ class MLOptimizer(nn.Module):
         nn_inputs[:, 2] = (
             torch.sqrt(grad_a_inp + eps_sigma)
             / rho_a_inp ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
             / 2
         )
         nn_inputs[:, 3] = (
             torch.sqrt(grad_inp + eps_sigma)
             / (rho_a_inp + rho_b_inp - eps_rho) ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
             / 2
         )
         nn_inputs[:, 4] = (
             torch.sqrt(grad_b_inp + eps_sigma)
             / rho_b_inp ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
             / 2
         )
-        tau_tf_alpha = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_a_inp) ** (5 / 3)
-        tau_tf_beta = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_b_inp) ** (5 / 3)
+        tau_tf_alpha = 3 / 10 * (3 * torch.pi**2) ** (2 / 3) * (rho_a_inp) ** (5 / 3)
+        tau_tf_beta = 3 / 10 * (3 * torch.pi**2) ** (2 / 3) * (rho_b_inp) ** (5 / 3)
         tau_w_alpha = grad_a_inp / (8 * rho_a_inp)
         tau_w_beta = grad_b_inp / (8 * rho_b_inp)
         nn_inputs[:, 5] = (tau_a_inp - tau_w_alpha) / tau_tf_alpha - 1
@@ -189,98 +103,7 @@ class MLOptimizer(nn.Module):
         return result
 
 
-class pcPBEMLOptimizer(nn.Module):
-    def __init__(
-        self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.2, DFT=None
-    ):
-        super().__init__()
-
-        self.DFT = DFT
-
-        modules_x = []  # NN part for exchange
-        modules_c = []  # NN part for correlation
-
-        input_layer_c = [
-            nn.Linear(7, h_dim, bias=False),
-            nn.LayerNorm(h_dim),
-            nn.GELU(),
-        ]
-
-        input_layer_x = [
-            nn.Linear(2, h_dim, bias=False),
-            nn.LayerNorm(h_dim),
-            nn.GELU(),
-        ]
-
-        modules_x.extend(input_layer_x)
-        modules_c.extend(input_layer_c)
-
-        for _ in range(num_layers // 2 - 1):
-            modules_x.append(ResBlock(h_dim, dropout))
-            modules_c.append(ResBlock(h_dim, dropout))
-
-        modules_x.append(nn.Linear(h_dim, nconstants_x, bias=True))
-        modules_c.append(nn.Linear(h_dim, nconstants_c, bias=True))
-
-        self.hidden_layers_x = nn.Sequential(*modules_x)
-        self.hidden_layers_c = nn.Sequential(*modules_c)
-
-    def kappa_activation(self, x):
-        """
-        Translates values from [-inf, +inf] to [0, 1]
-        """
-        return sigmoid(4 * (x + 0.5))
-
-    def beta_activation(self, x):
-        """
-        Translates values from [-inf, +inf] to [0.75, 1.25] as beta is weakly dependent on density
-        """
-        return (sigmoid(8 * x) + 1.5) / 2
-
-    def get_exchange_constants(self, x):
-
-        x_x_up = self.hidden_layers_x(x[:, [2, 5]])
-        x_x_down = self.hidden_layers_x(x[:, [4, 6]])
-
-        return x_x_up[:, 1], x_x_up[:, 0], x_x_down[:, 1], x_x_down[:, 0]
-
-    def get_correlation_constants(self, x):
-
-        x_c = self.hidden_layers_c(x)
-
-        return x_c[:, 0], x_c[:, 1]
-
-    @staticmethod
-    def all_sigma_zero(x):
-        """
-        Function for parameter mu constraint
-        """
-        return torch.hstack([x[:, :2], torch.zeros_like(x[:, 2:])])
-
-    @staticmethod
-    def all_sigma_inf(x):
-        """
-        Function for PW91 correlation parameters constraint
-        """
-        return torch.hstack([x[:, :2], torch.ones([x.shape[0], 5])])
-
-    @staticmethod
-    def all_sigma_zero_beta(x):
-        """
-        Function for parameter beta constraint
-        """
-        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 3]), x[:, 5:]])
-
-    @staticmethod
-    def all_rho_inf(x):
-        """
-        Function for parameter gamma constraint
-        """
-        return torch.hstack([torch.ones([x.shape[0], 2]), x[:, 2:]])
-
-    @staticmethod
-    def shifted_elu(x):
-        return elu(x) + 1
+class pcPBEMLOptimizer(pcPBEMLOptimizer_train):
 
     @staticmethod
     def get_density_descriptors(
@@ -302,23 +125,23 @@ class pcPBEMLOptimizer(nn.Module):
         nn_inputs[:, 2] = (
             torch.sqrt(grad_a_inp + eps_sigma)
             / rho_a_inp ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
             / 2
         )
         nn_inputs[:, 3] = (
             torch.sqrt(grad_inp + eps_sigma)
             / (rho_a_inp + rho_b_inp - eps_rho) ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
             / 2
         )
         nn_inputs[:, 4] = (
             torch.sqrt(grad_b_inp + eps_sigma)
             / rho_b_inp ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
             / 2
         )
-        tau_tf_alpha = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_a_inp) ** (5 / 3)
-        tau_tf_beta = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_b_inp) ** (5 / 3)
+        tau_tf_alpha = 3 / 10 * (3 * torch.pi**2) ** (2 / 3) * (rho_a_inp) ** (5 / 3)
+        tau_tf_beta = 3 / 10 * (3 * torch.pi**2) ** (2 / 3) * (rho_b_inp) ** (5 / 3)
         tau_w_alpha = grad_a_inp / (8 * rho_a_inp)
         tau_w_beta = grad_b_inp / (8 * rho_b_inp)
         nn_inputs[:, 5] = (tau_a_inp - tau_w_alpha) / tau_tf_alpha - 1
@@ -508,27 +331,7 @@ class pcPBEstar(pcPBEMLOptimizer):
         return final_tensor * constants_batch
 
 
-class pcPBEdoublestar(pcPBEMLOptimizer):
-
-    def __init__(
-        self, num_layers, h_dim, nconstants_x=1, nconstants_c=1, dropout=0.2, DFT=None
-    ):
-        super().__init__(
-            num_layers,
-            h_dim,
-            nconstants_x=nconstants_x,
-            nconstants_c=nconstants_c,
-            dropout=dropout,
-            DFT=DFT,
-        )
-
-    @staticmethod
-    def _compute_l(a, b, delta=1.0):
-        """
-        Computes the weighting function l(a - b) = tanh(|a-b|^2 / delta^2)
-        """
-        dist_sq = torch.sum((a - b) ** 2, dim=1)
-        return torch.tanh(dist_sq / delta**2)
+class pcPBEdoublestar(pcPBEMLOptimizer, pcPBEdoublestar_train):
 
     def forward(
         self,
@@ -641,221 +444,3 @@ def NN_PBE_star_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
 
 def NN_PBE_star_star_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
     return pcPBEdoublestar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT)
-
-
-def test_model_constraints(model, model_name):
-    """
-    Runs a suite of tests for constraints on a given model.
-    """
-    print(f"--- Running Constraint Verification for {model_name} ---")
-
-    BATCH_SIZE = 8
-    model.eval()
-    nn_inputs_placeholder = torch.zeros(
-        BATCH_SIZE, 7, device=next(model.parameters()).device
-    )
-    all_passed = True
-
-    rho_a = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 5 + 0.1
-    rho_b = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 5 + 0.1
-    grad_zero = torch.zeros(BATCH_SIZE, device=nn_inputs_placeholder.device)
-
-    if isinstance(model, pcPBEdoublestar):
-        print("\n[1/4] Checking Exchange UEG Limit (Fx -> 1.0)...")
-        tau_tf_2rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_a) ** (5 / 3)
-        tau_tf_2rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_b) ** (5 / 3)
-        tau_a_test = tau_tf_2rho_a / 2
-        tau_b_test = tau_tf_2rho_b / 2
-        Fx_up, Fx_down, _ = model(
-            nn_inputs_placeholder,
-            rho_a,
-            rho_b,
-            grad_zero,
-            grad_zero,
-            grad_zero,
-            tau_a_test,
-            tau_b_test,
-        )
-        fx_up_passed = torch.allclose(Fx_up, torch.ones_like(Fx_up))
-        fx_down_passed = torch.allclose(Fx_down, torch.ones_like(Fx_down))
-        print(
-            f"Fx (spin-up) -> 1.0? {'PASS' if fx_up_passed else 'FAIL'} (Mean: {Fx_up.mean().item():.6f})"
-        )
-        print(
-            f"Fx (spin-down) -> 1.0? {'PASS' if fx_down_passed else 'FAIL'} (Mean: {Fx_down.mean().item():.6f})"
-        )
-        if not (fx_up_passed and fx_down_passed):
-            all_passed = False
-
-        print("\n[2/4] Checking Correlation UEG Limit (Fc -> 1.0)...")
-        tau_tf_rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_a ** (5 / 3)
-        tau_tf_rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_b ** (5 / 3)
-        _, _, Fc_ueg = model(
-            nn_inputs_placeholder,
-            rho_a,
-            rho_b,
-            grad_zero,
-            grad_zero,
-            grad_zero,
-            tau_tf_rho_a,
-            tau_tf_rho_b,
-        )
-        fc_ueg_passed = torch.allclose(Fc_ueg, torch.ones_like(Fc_ueg))
-        print(
-            f"Fc -> 1.0? {'PASS' if fc_ueg_passed else 'FAIL'} (Mean: {Fc_ueg.mean().item():.6f})"
-        )
-        if not fc_ueg_passed:
-            all_passed = False
-
-        print("\n[3/4] Checking Correlation High-Density Limit (Fc -> 1.0)...")
-        rho_large = torch.full((BATCH_SIZE,), 1e7, device=nn_inputs_placeholder.device)
-        rand_grads = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 10
-        rand_taus = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 100
-        _, _, Fc_hd = model(
-            nn_inputs_placeholder,
-            rho_large,
-            rho_large,
-            rand_grads,
-            rand_grads,
-            rand_grads * 2,
-            rand_taus,
-            rand_taus,
-        )
-        fc_hd_passed = torch.allclose(Fc_hd, torch.ones_like(Fc_hd), atol=1e-5)
-        print(
-            f"Fc -> 1.0? {'PASS' if fc_hd_passed else 'FAIL'} (Mean: {Fc_hd.mean().item():.6f})"
-        )
-        if not fc_hd_passed:
-            all_passed = False
-
-    elif isinstance(model, pcPBEMLOptimizer):
-        true_factors = true_constants_PBE.repeat(BATCH_SIZE, 1).to(
-            nn_inputs_placeholder.device
-        )
-
-        print("\n[TEST 1/4] Checking `mu` constraint (Exchange UEG Limit)...")
-        tau_tf_2rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_a) ** (5 / 3)
-        tau_tf_2rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_b) ** (5 / 3)
-        tau_a_test = tau_tf_2rho_a / 2
-        tau_b_test = tau_tf_2rho_b / 2
-        output_mu = (
-            model(
-                nn_inputs_placeholder,
-                rho_a,
-                rho_b,
-                grad_zero,
-                grad_zero,
-                grad_zero,
-                tau_a_test,
-                tau_b_test,
-            )
-            / true_factors
-        )
-        mu_up, mu_down = output_mu[:, 23], output_mu[:, 25]
-        mu_up_passed = torch.allclose(mu_up, torch.ones_like(mu_up))
-        mu_down_passed = torch.allclose(mu_down, torch.ones_like(mu_down))
-        print(
-            f"Mu (spin-up) -> 1.0? {'PASS' if mu_up_passed else 'FAIL'} (Mean: {mu_up.mean().item():.6f})"
-        )
-        print(
-            f"Mu (spin-down) -> 1.0? {'PASS' if mu_down_passed else 'FAIL'} (Mean: {mu_down.mean().item():.6f})"
-        )
-        if not (mu_up_passed and mu_down_passed):
-            all_passed = False
-
-        print("\n[TEST 2/4] Checking `beta` constraint (Correlation UEG Limit)...")
-        tau_tf_rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_a ** (5 / 3)
-        tau_tf_rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_b ** (5 / 3)
-        output_beta = (
-            model(
-                nn_inputs_placeholder,
-                rho_a,
-                rho_b,
-                grad_zero,
-                grad_zero,
-                grad_zero,
-                tau_tf_rho_a,
-                tau_tf_rho_b,
-            )
-            / true_factors
-        )
-        beta = output_beta[:, 0]
-        beta_passed = torch.allclose(beta, torch.ones_like(beta))
-        print(
-            f"Beta -> 1.0? {'PASS' if beta_passed else 'FAIL'} (Mean: {beta.mean().item():.6f})"
-        )
-        if not beta_passed:
-            all_passed = False
-
-        print(
-            "\n[TEST 3/4] Checking `gamma` constraint (Correlation High-Density Limit)..."
-        )
-        rho_large = torch.full((BATCH_SIZE,), 1e6, device=nn_inputs_placeholder.device)
-        rand_grads = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
-        rand_taus = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
-        output_gamma = (
-            model(
-                nn_inputs_placeholder,
-                rho_large,
-                rho_large,
-                rand_grads,
-                rand_grads,
-                rand_grads,
-                rand_taus,
-                rand_taus,
-            )
-            / true_factors
-        )
-        gamma = output_gamma[:, 1]
-        gamma_passed = torch.allclose(gamma, torch.ones_like(gamma))
-        print(
-            f"Gamma -> 1.0? {'PASS' if gamma_passed else 'FAIL'} (Mean: {gamma.mean().item():.6f})"
-        )
-        if not gamma_passed:
-            all_passed = False
-
-        print("\n[TEST 4/4] Checking Spin Symmetry...")
-        rho1, rho2 = torch.rand(BATCH_SIZE) + 0.1, torch.rand(BATCH_SIZE) + 0.1
-        grad1, grad2 = torch.rand(BATCH_SIZE), torch.rand(BATCH_SIZE)
-        tau1, tau2 = torch.rand(BATCH_SIZE) * 10, torch.rand(BATCH_SIZE) * 10
-        out1 = model(
-            nn_inputs_placeholder, rho1, rho2, grad1, grad2, grad1 + grad2, tau1, tau2
-        )
-        out2 = model(
-            nn_inputs_placeholder, rho2, rho1, grad2, grad1, grad1 + grad2, tau2, tau1
-        )
-        corr_symm = torch.allclose(out1[:, 0], out2[:, 0]) and torch.allclose(
-            out1[:, 1], out2[:, 1]
-        )
-        exch_swap = torch.allclose(out1[:, 22], out2[:, 24]) and torch.allclose(
-            out1[:, 24], out2[:, 22]
-        )
-        print(
-            f"  > Correlation parameters are symmetric? {'PASS' if corr_symm else 'FAIL'}"
-        )
-        print(
-            f"  > Exchange parameters correctly swapped? {'PASS' if exch_swap else 'FAIL'}"
-        )
-        if not (corr_symm and exch_swap):
-            all_passed = False
-
-    else:
-        print(f"ERROR: Model type {model_name} not recognized for testing.")
-        return False
-
-    print("\n--- Summary ---")
-    if all_passed:
-        print(f"SUCCESS: All constraints for {model_name} were met.")
-    else:
-        print(f"FAILURE: One or more constraints for {model_name} were not satisfied.")
-
-    return all_passed
-
-
-if __name__ == "__main__":
-    pbe_optimizer_model = pcPBEMLOptimizer(num_layers=4, h_dim=16)
-    test_model_constraints(pbe_optimizer_model, "pcPBEMLOptimizer")
-
-    print("\n" + "=" * 60 + "\n")
-    pbe_doublestar_model = pcPBEdoublestar(num_layers=4, h_dim=16)
-    test_model_constraints(pbe_doublestar_model, "pcPBEdoublestar")

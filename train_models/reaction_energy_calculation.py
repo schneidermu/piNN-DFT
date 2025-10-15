@@ -1,8 +1,17 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 import torch
 
-from dft_functionals.PBE import F_PBE
-from dft_functionals.SVWN3 import F_XALPHA, f_svwn3
+# Import from shared dft_functionals at project root
+root_path = Path(__file__).parent.parent
+sys.path.insert(0, str(root_path))
+from DFT import PBE, SVWN3
+
+F_PBE = PBE.F_PBE
+F_XALPHA = SVWN3.F_XALPHA
+f_svwn3 = SVWN3.f_svwn3
 
 
 def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE", enhancement=None):
