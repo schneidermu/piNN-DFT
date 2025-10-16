@@ -4,43 +4,11 @@ import numpy as np
 import torch
 from torch import nn
 
+from dft_functionals import true_constants_PBE
+
 random.seed(42)
 
 device = torch.device("cuda") if torch.cuda.is_available else torch.device("cpu")
-
-true_constants_PBE = torch.Tensor(
-    [
-        [
-            0.06672455,
-            (1 - torch.log(torch.Tensor([2]))) / (np.pi**2),
-            1.709921,
-            7.5957,
-            14.1189,
-            10.357,
-            3.5876,
-            6.1977,
-            3.6231,
-            1.6382,
-            3.3662,
-            0.88026,
-            0.49294,
-            0.62517,
-            0.49671,
-            # 1,  1,  1,
-            0.031091,
-            0.015545,
-            0.016887,
-            0.21370,
-            0.20548,
-            0.11125,
-            -3 / 8 * (3 / np.pi) ** (1 / 3) * 4 ** (2 / 3),
-            0.8040,
-            0.2195149727645171,
-            0.8040,
-            0.2195149727645171,
-        ]
-    ]
-)  # .to(device)
 
 sigmoid = torch.nn.Sigmoid()
 elu = torch.nn.ELU()
