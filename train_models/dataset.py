@@ -13,7 +13,7 @@ def ref(x, y, path):
     returns reference energies for points of a reaction grid from Reference_data.csv
     """
     if path == None:
-        pathfile = "Reference_data.csv"
+        pathfile = "../MN_dataset/Reference_data.csv"
     else:
         pathfile = f"{path}/Reference_data.csv"
 
@@ -56,7 +56,7 @@ def load_component_names(path):
      which is a dictionary with Components and Coefficients data about all reactions
     """
     if path == None:
-        pathfile = "total_dataframe_sorted_final.csv"
+        pathfile = "../MN_dataset/total_dataframe_sorted_final.csv"
     else:
         pathfile = f"{path}/total_dataframe_sorted_final.csv"
 
