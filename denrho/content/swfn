@@ -1,0 +1,11 @@
+#!/bin/bash
+for inf in *.wfn
+do
+echo Running ${inf} ...
+/home/xray/schneiderm/Multiwfn38/Multiwfn ${inf} < genRHO.txt > /dev/null
+mv RDF.txt ${inf//.wfn}_RHO.rdf
+/home/xray/schneiderm/Multiwfn38/Multiwfn ${inf} < genGRD.txt > /dev/null
+mv RDF.txt ${inf//.wfn}_GRD.rdf
+/home/xray/schneiderm/Multiwfn38/Multiwfn ${inf} < genLR.txt > /dev/null
+mv RDF.txt ${inf//.wfn}_LR.rdf
+done

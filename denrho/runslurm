@@ -1,0 +1,45 @@
+#!/usr/bin/python3
+
+import os
+import subprocess
+import sys
+
+
+def go(path, ans = []):
+    dirs = os.listdir(path)
+    for dir in dirs:
+        newpath = path + "/" + dir
+        if os.path.isdir(newpath):
+            go(newpath)
+        else:
+            ans.append(newpath)
+    return ans
+
+
+def get_path(fpath):
+    ans = ""
+    tail = ""
+    fpath = fpath[::-1]
+    j = 0
+    for char in fpath:
+        if j == 1:
+            ans += char
+        if char == "/" and j == 0:
+            j = 1
+        elif j == 0:
+            tail += char
+
+    return ans[::-1], tail[::-1]
+
+
+path = sys.argv[1]
+
+files = go(path)
+home = os.getcwd()
+
+for f in files:
+    if "SLURM" in f:
+        inf = get_path(f)
+        os.chdir(inf[0])
+        process = subprocess.Popen("sbatch " + inf[1], shell=True)
+        os.chdir(home)

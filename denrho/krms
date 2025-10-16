@@ -1,0 +1,103 @@
+#!/usr/bin/python3
+
+import numpy as np
+import sys
+import re
+import os
+
+
+db2a = 1 / 0.529177
+
+
+def formatq(lines):
+    ans = []
+    for j in lines:
+        while "\n" in j:
+            j = j.replace("\n", "")
+        result = re.sub(" +", " ", j).split(" ")
+        while result.count('') != 0:
+            result.remove('')
+        ans.append(result)
+    return ans
+
+
+def get_rdf(inp):
+    with open(inp) as gdf:
+        points = formatq(gdf.readlines())
+        return np.array(list(map(lambda x: [float(x[0]), float(x[1]), float(x[2])], points)))
+
+
+def rmsd(inp, ref):
+    return np.sqrt(sum((inp - ref) ** 2) / len(inp))
+
+
+def get_type(st):
+
+    return st.split("_")[-1].rstrip(".rdf")
+
+
+def get_rms(lines, f):
+    for line in lines:
+        if line[0] == f:
+            return float(line[1])
+    return 0
+
+
+def gen_files(lres, metod):
+    ans = []
+    for line in lres:
+        if metod in line[0]:
+            ans.append(line[0])
+    return ans
+
+
+metod = sys.argv[1]
+metod_ref = sys.argv[2]
+
+path = "dtestin/"
+
+grd = []
+rho = []
+lr = []
+
+
+if os.path.exists(path + metod):
+    inf = os.listdir(path + metod)
+else:
+    print("WARNING")
+
+for f in inf:
+    if ".rdf" in f:
+
+        tmp = get_rdf(path + metod + "/" + f)[:,2] * db2a
+        tmp_ref = get_rdf(path + metod_ref + "/" + f.replace(metod, metod_ref))[:,2] * db2a
+
+        rms = rmsd(tmp, tmp_ref)
+
+
+        print(f)
+        print(rms)
+        print()
+
+        t = get_type(f[:-4].replace("MIX_E", "MIX-E"))
+
+        if t == "RHO":
+            rho.append(rms / 0.009943368)
+        elif t == "GRD":
+            grd.append(rms / 0.092398036)
+        elif t == "LR":
+            lr.append(rms / 1.445110833)
+
+print("Max NE RHO = ", max(rho))
+print("Max NE GRD = ", max(grd))
+print("Max NE LR = ", max(lr))
+print("Max NE of Max = ", max([max(rho), max(grd), max(lr)]))
+print("Mean NE of Max = ", sum([max(rho), max(grd), max(lr)]) / 3)
+
+print("Mean NE RHO = ", sum(rho) / len(rho))
+print("Mean NE GRD = ", sum(grd) / len(grd))
+print("Mean NE LR = ", sum(lr) / len(lr))
+print("Max NE of Mean = ", max([sum(rho) / len(rho), sum(grd) / len(grd), sum(lr) / len(lr)]))
+print("Mean NE of Mean = ", sum([sum(rho) / len(rho), sum(grd) / len(grd), sum(lr) / len(lr)]) / 3)
+
+np.save(metod, max([max(rho), max(grd), max(lr)]))
