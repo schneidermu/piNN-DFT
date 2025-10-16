@@ -1,11 +1,10 @@
-# Benchmarking of the functionals on Diet GMTKN55 (30 and 50 reactions), enhancement factor calculations
+# Benchmarking of the functionals on Diet GMTKN55 (30 reactions), enhancement factor calculations
 
 
 ## Preparing data
 
-1) Clone the repository
-2) Create and activate virtual environment, install packages from requirements.txt
-3) Generate GIF-files:
+1) Create and activate virtual environment, install packages from requirements.txt
+2) Generate GIF-files:
 ```
 python -m InterfaceG16 --Mode GE
 ```
@@ -15,24 +14,7 @@ python -m InterfaceG16 --Mode GE
 ```
 python -m InterfaceG16 --Mode CE --Functional {name of the functional}
 ```
-
-2) Calculate PBE and XAlpha energies:
-
-```
-python -m InterfaceG16 --Mode CE --Functional Non-NN
-```
-3) Calculate PBE0 energies and D3(BJ) corrections:
-```
-python -m InterfaceG16 --Mode D3
-```
-
-4) Add the D3BJ corrections to PBE and XAlpha energies (for NN functionals they are added during step 1):
-
-```
-python -m add_d3_corrections
-```
-
-5) Calculate WTMAD-2 and create a .csv table in the Results folder for comparison:
+2) Calculate WTMAD-2 and create a .csv table in the Results folder for comparison:
 ```
 python -m InterfaceG16 --Functional {name of the NN_PBE functional} > Results/NN_PBE.txt
 python -m InterfaceG16 --Functional {name of the NN_PBE_star functional} > Results/NN_PBE_star.txt
@@ -55,7 +37,7 @@ python -m gen_cubgrid_Ar2
 ```
 
 ## Electron and atomic density accuracy calculations
-Change the paths to den_mol_or folder and your Multiwfn file in the script, create calc folder and paste the LDA densities there. Create grids folder and paste the grids into it. Paste CCSD reference densities into den_mol_or/REF/CCSORT.npz file.
+Change the paths to den_mol_or folder, denrho folder and your Multiwfn file in the get_molden.py script, create calc folder and paste the LDA densities there. Create grids folder and paste the grids into it. Paste CCSD reference densities into den_mol_or/REF/CCSORT.npz file.
 To calculate the avRANE, run:
 ```
 python -m run_molden --Functional {name of the functional}
