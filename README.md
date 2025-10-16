@@ -37,7 +37,7 @@ Pre-trained model weights are available in the [`test_models/DFT/checkpoints/`](
 The repository is organized into several key directories:
 
 ```
-└── schneidermu-pinn-dft/
+└── piNN-DFT/
     ├── train_models/         # Scripts for training the NN functionals from scratch.
     ├── test_models/          # Scripts for benchmarking, analysis, and using pre-trained models.
     ├── dft_functionals/      # Core PyTorch implementations of the baseline DFT functionals (PBE, SVWN3).
