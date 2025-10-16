@@ -143,8 +143,8 @@ def main():
                 print(f"Logged: {log_line.strip()}")
 
     if molecule_name:
-        CALC_DIR = "/home/xray/schneiderm/den_mol_or/calc"
-        GRID_DIR = "/home/xray/schneiderm/den_mol_or/grids"
+        CALC_DIR = "../den_mol_or/calc"
+        GRID_DIR = "../den_mol_or/grids"
         FUNCTIONAL_DIR = os.path.join(CALC_DIR, functional)
         MOLECULE_DIR = os.path.join(FUNCTIONAL_DIR, molecule_name)
         PBE0_DIR = os.path.join(GRID_DIR, f"grid_{molecule_name}")
@@ -152,7 +152,7 @@ def main():
         OUTPUT_DIR = os.path.join(MOLECULE_DIR, "calc.out")
         os.makedirs(MOLECULE_DIR, exist_ok=True)
     else:
-        CALC_DIR = "/home/xray/schneiderm/denrho/dtestin"
+        CALC_DIR = "../denrho/dtestin"
         FUNCTIONAL_DIR = os.path.join(CALC_DIR, functional.replace("_pyscf", ""))
         INPUT_DIR = os.path.join(
             FUNCTIONAL_DIR,

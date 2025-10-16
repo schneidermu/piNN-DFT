@@ -29,7 +29,7 @@ script_template = """#! /bin/bash
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --hint=nomultithread
-#SBATCH --output="../log_files/log_files/{Functional}_{system_name}_"%j.out
+#SBATCH --output="logs/log_energy/{Functional}_{system_name}_"%j.out
 # Executable
 python -m script --System {system_name} --NFinal {NFinal} --Functional {Functional}"""
 dispersion_script_template = """#! /bin/bash
@@ -37,7 +37,7 @@ dispersion_script_template = """#! /bin/bash
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --hint=nomultithread
-#SBATCH --output="../log_files/log_files/D3(BJ)_{system_name}_"%j.out
+#SBATCH --output="logs/log_energy//D3(BJ)_{system_name}_"%j.out
 # Executable
 python -m script --Dispersion True --System {system_name} --NFinal {NFinal}"""
 

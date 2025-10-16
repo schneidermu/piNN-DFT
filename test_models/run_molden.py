@@ -13,7 +13,7 @@ script_template = """#! /bin/bash
 #SBATCH --job-name="Rho {molecule} {functional}"
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --output="../log_molden/{functional}_{molecule}_"%j.out
+#SBATCH --output="logs/log_molden/{functional}_{molecule}_"%j.out
 # Executable
 python -m get_molden --Functional '{functional}' --Molecule {molecule}"""
 
@@ -21,7 +21,7 @@ script_atom_template = """#! /bin/bash
 #SBATCH --job-name="Rho {atom} +{charge} {functional}"
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --output="../log_atoms/{functional}_{atom}_+{charge}_"%j.out
+#SBATCH --output="logs/log_atoms/{functional}_{atom}_+{charge}_"%j.out
 # Executable
 python -m get_molden --Functional '{functional}' --Atom {atom} --Charge {charge}"""
 
