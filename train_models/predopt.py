@@ -1,10 +1,14 @@
 import gc
+import sys
+from pathlib import Path
 
 import numpy as np
 import torch
 from sklearn.metrics import mean_absolute_error
 from tqdm.notebook import tqdm
 
+# Add parent directory to path to import from dft_functionals at project root
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from dft_functionals import true_constants_PBE, true_constants_SVWN3
 
 true_constants_SVWN = true_constants_SVWN3
