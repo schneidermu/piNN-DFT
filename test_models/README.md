@@ -14,41 +14,72 @@ The primary analyses include:
   pip install -r requirements.txt
   ```
 - **Pre-trained Models:** The required `.pth` model files are already included in the `DFT/checkpoints/` subdirectory.
+- **External Dependencies:** This workflow relies on scripts and data from the original **DietGMTKN55** repository. You must manually add them to this directory.
 - **Computational Chemistry Software:** Some analysis steps, particularly for density accuracy, require external tools like **Multiwfn**.
 
 ---
 
 ## Benchmark 1: Thermochemical Accuracy (Diet-GMTKN55)
 
-This procedure calculates the reaction energies for the 30-reaction subset of GMTKN55 and computes the WTMAD-2 error metric. The workflow relies on the `InterfaceG16.py` script and is designed for a SLURM-based HPC cluster.
+This procedure calculates reaction energies for the 30-reaction subset of GMTKN55 and computes the WTMAD-2 error metric.
 
-#### Step 1: Prepare System Input Files
-First, generate the geometry input files (`.gif_`) for all molecular systems in the benchmark set.
+#### Step 1: Obtain Benchmark Scripts and Data
+Before running calculations, you need to download the necessary components from the [DietGMTKN55 repository](https://github.com/gambort/DietGMTKN55).
+
+1.  Download the following files and folders from `https://github.com/gambort/DietGMTKN55/tree/master`:
+    - The script `InterfaceG16.py` (this will be used for **analysis only**).
+    - The entire `GIF/` directory.
+    - The entire `GoodSamples/` directory.
+
+2.  Place them directly into this `test_models/` directory. Your folder structure should look like this:
+    ```
+    test_models/
+    ├── InterfaceG16.py         # <-- Copied script for analysis
+    ├── GIF/                    # <-- Copied directory
+    ├── GoodSamples/            # <-- Copied directory
+    ├── calculate_system_energies.py # <-- Your script for submitting jobs
+    ├── DFT/
+    ├── Results/
+    └── ... (other files)
+    ```
+
+#### Step 2: Prepare and Run Energy Calculations
+
+This is a two-part process. First, you generate the necessary input and job script files. Then, you submit the calculation jobs to your SLURM cluster.
+
+##### 2.1 Generate Job Scripts
+
+Run the following two commands in order. The first command creates the system directories and geometry files, and the second populates them with the SLURM scripts required for each functional.
 
 ```bash
 python InterfaceG16.py --Mode GE
+python calculate_system_energies.py --Mode GE
 ```
-This will populate the `GIF/` directory with subdirectories for each system, containing the geometry file and pre-generated SLURM submission scripts.
 
-#### Step 2: Run Energy Calculations
-Submit the energy calculation jobs to the SLURM queue. You must do this for each functional you wish to evaluate. The script will automatically find and submit the corresponding job files.
+##### 2.2 Submit Calculation Jobs
+
+Use the `calculate_system_energies.py` script to submit all calculation jobs for a specific functional to the SLURM queue.
 
 ```bash
-# Example for our primary model
-python InterfaceG16.py --Mode CE --Functional NN_PBE_067
+# Example for our primary model, NN-PBE
+python calculate_system_energies.py --Mode CE --Functional NN_PBE_067
 
 # Example for the parent PBE functional
-python InterfaceG16.py --Mode CE --Functional PBE
+python calculate_system_energies.py --Mode CE --Functional PBE
 
-# Repeat for other functionals like NN_PBE_star, NN_XALPHA_067, SCAN, etc.
+# Repeat this command for all other functionals you wish to benchmark
+# (e.g., NN_PBE_star, NN_XALPHA_067, SCAN, etc.)
 ```
+This will submit a series of jobs. Wait for all of them to complete before proceeding to the next step.
 
 #### Step 3: Collate and Analyze Results
 After all jobs are complete, a `.txt` file for each functional will be created in the `Results/` directory, containing the calculated energy for each system.
 
-To compute the WTMAD-2 metric and generate a comparative summary table, run the following commands:
+To compute the WTMAD-2 metric and generate a comparative summary table, use the `InterfaceG16.py` script you downloaded, but now only for its analysis capabilities.
+
 ```bash
-# 1. Run the analysis mode for each functional to print WTMAD-2 to console
+# 1. Run the analysis mode for each functional to print WTMAD-2 to the console
+#    and save the detailed error list.
 python InterfaceG16.py --Functional NN_PBE_067 > Results/NN_PBE.txt
 python InterfaceG16.py --Functional PBE > Results/PBE-D3BJ.txt
 # ... repeat for all other functionals ...
@@ -57,21 +88,20 @@ python InterfaceG16.py --Functional PBE > Results/PBE-D3BJ.txt
 cd Results/
 python txt_to_csv.py
 ```
-This will create `DietGMTKN55_results.csv` in the `Results/` folder.
+This will create `DietGMTKN55_results.csv` in the `Results/` folder, containing a side-by-side comparison of the errors for all evaluated functionals.
 
 ---
 
 ## Benchmark 2: Enhancement Factor Analysis
 
-These scripts reproduce the enhancement factor analysis from Figure 4 of the paper.
-
-#### 1. Plot F_xc vs. Normed Gradient (s)
-This script calculates the dependency of the enhancement factor on the reduced density gradient `s` for different values of the iso-orbital indicator `α`.
+This script reproduces the enhancement factor analysis from Figure 4 of the paper by calculating the dependency of `F_xc` on the reduced density gradient `s`.
 
 ```bash
 python plot_exc.py
 ```
 This will generate `Results/exc.npy`, containing the data used for the plots.
+
+---
 
 ## Benchmark 3: Electron Density Accuracy
 
