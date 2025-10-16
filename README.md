@@ -17,8 +17,6 @@ The resulting functional, **NN-PBE-D3(BJ)**, reduces the thermochemical error of
 - [Usage](#usage)
 - [Data Availability](#data-availability)
 - [Reproducing Results](#reproducing-results)
-- [How to Cite](#how-to-cite)
-- [Authors](#authors)
 - [License](#license)
 
 ## Models Overview
@@ -50,8 +48,8 @@ The repository is organized into several key directories:
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/your-username/schneidermu-pinn-dft.git
-    cd schneidermu-pinn-dft
+    git clone https://github.com/TheorChemGroup/piNN-DFT
+    cd piNN-DFT
     ```
 
 2.  **Create a Virtual Environment**
