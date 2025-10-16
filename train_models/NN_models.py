@@ -6,7 +6,6 @@ import numpy as np
 import torch
 from torch import nn
 
-# Add parent directory to path to import from dft_functionals at project root
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from dft_functionals import true_constants_PBE
 
@@ -547,14 +546,13 @@ def test_model_constraints(model, model_name):
         tau_a_test = tau_tf_2rho_a / 2
         tau_b_test = tau_tf_2rho_b / 2
         Fx_up, Fx_down, _ = model(
-            nn_inputs_placeholder,
-            rho_a,
+            torch.stack([rho_a,
             rho_b,
             grad_zero,
             grad_zero,
             grad_zero,
             tau_a_test,
-            tau_b_test,
+            tau_b_test,], dim=1)
         )
         fx_up_passed = torch.allclose(Fx_up, torch.ones_like(Fx_up))
         fx_down_passed = torch.allclose(Fx_down, torch.ones_like(Fx_down))
@@ -571,14 +569,13 @@ def test_model_constraints(model, model_name):
         tau_tf_rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_a ** (5 / 3)
         tau_tf_rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_b ** (5 / 3)
         _, _, Fc_ueg = model(
-            nn_inputs_placeholder,
-            rho_a,
+            torch.stack([rho_a,
             rho_b,
             grad_zero,
             grad_zero,
             grad_zero,
             tau_tf_rho_a,
-            tau_tf_rho_b,
+            tau_tf_rho_b,], dim=1)
         )
         fc_ueg_passed = torch.allclose(Fc_ueg, torch.ones_like(Fc_ueg))
         print(
@@ -592,14 +589,13 @@ def test_model_constraints(model, model_name):
         rand_grads = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 10
         rand_taus = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 100
         _, _, Fc_hd = model(
-            nn_inputs_placeholder,
-            rho_large,
+            torch.stack([rho_large,
             rho_large,
             rand_grads,
             rand_grads,
             rand_grads * 2,
             rand_taus,
-            rand_taus,
+            rand_taus,], dim=1)
         )
         fc_hd_passed = torch.allclose(Fc_hd, torch.ones_like(Fc_hd), atol=1e-5)
         print(
@@ -620,14 +616,13 @@ def test_model_constraints(model, model_name):
         tau_b_test = tau_tf_2rho_b / 2
         output_mu = (
             model(
-                nn_inputs_placeholder,
-                rho_a,
+                torch.stack([rho_a,
                 rho_b,
                 grad_zero,
                 grad_zero,
                 grad_zero,
                 tau_a_test,
-                tau_b_test,
+                tau_b_test,], dim=1)
             )
             / true_factors
         )
@@ -648,14 +643,13 @@ def test_model_constraints(model, model_name):
         tau_tf_rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_b ** (5 / 3)
         output_beta = (
             model(
-                nn_inputs_placeholder,
-                rho_a,
+                torch.stack([rho_a,
                 rho_b,
                 grad_zero,
                 grad_zero,
                 grad_zero,
                 tau_tf_rho_a,
-                tau_tf_rho_b,
+                tau_tf_rho_b,], dim=1)
             )
             / true_factors
         )
@@ -675,14 +669,13 @@ def test_model_constraints(model, model_name):
         rand_taus = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
         output_gamma = (
             model(
-                nn_inputs_placeholder,
-                rho_large,
+                torch.stack([rho_large,
                 rho_large,
                 rand_grads,
                 rand_grads,
                 rand_grads,
                 rand_taus,
-                rand_taus,
+                rand_taus,], dim=1)
             )
             / true_factors
         )
@@ -699,10 +692,10 @@ def test_model_constraints(model, model_name):
         grad1, grad2 = torch.rand(BATCH_SIZE), torch.rand(BATCH_SIZE)
         tau1, tau2 = torch.rand(BATCH_SIZE) * 10, torch.rand(BATCH_SIZE) * 10
         out1 = model(
-            nn_inputs_placeholder, rho1, rho2, grad1, grad2, grad1 + grad2, tau1, tau2
+            torch.stack([rho1, rho2, grad1, grad1 + grad2, grad2, tau1, tau2], dim=1)
         )
         out2 = model(
-            nn_inputs_placeholder, rho2, rho1, grad2, grad1, grad1 + grad2, tau2, tau1
+            torch.stack([rho2, rho1, grad2, grad1 + grad2, grad1, tau2, tau1,], dim=1)
         )
         corr_symm = torch.allclose(out1[:, 0], out2[:, 0]) and torch.allclose(
             out1[:, 1], out2[:, 1]
