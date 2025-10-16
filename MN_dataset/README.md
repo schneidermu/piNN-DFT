@@ -1,4 +1,4 @@
-# MN Neuromorphic dataset
+# MN dataset
 
 ## Dataset structure
 Each h5 file corresponds to one substance.
