@@ -230,7 +230,7 @@ class pcPBEMLOptimizer(nn.Module):
         """
         Function for parameter beta constraint
         """
-        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], 5]).to(x.device)])
+        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], x.shape[1]-2]).to(x.device)])
 
     @staticmethod
     def all_sigma_inf(x):
@@ -385,6 +385,197 @@ class pcPBEMLOptimizer(nn.Module):
             ]
         )
         return final_tensor * constants_batch
+    
+
+class pcPBELMLOptimizer(nn.Module):
+
+    def __init__(
+        self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.2, DFT=None
+    ):
+        super().__init__()
+
+        self.DFT = DFT
+
+        modules_x = []  # NN part for exchange
+        modules_c = []  # NN part for correlation
+
+        input_layer_c = [
+            nn.Linear(9, h_dim, bias=False),
+            nn.LayerNorm(h_dim),
+            nn.GELU(),
+        ]
+
+        input_layer_x = [
+            nn.Linear(3, h_dim, bias=False),
+            nn.LayerNorm(h_dim),
+            nn.GELU(),
+        ]
+
+        modules_x.extend(input_layer_x)
+        modules_c.extend(input_layer_c)
+
+        for _ in range(num_layers // 2 - 1):
+            modules_x.append(ResBlock(h_dim, dropout))
+            modules_c.append(ResBlock(h_dim, dropout))
+
+        modules_x.append(nn.Linear(h_dim, nconstants_x, bias=True))
+        modules_c.append(nn.Linear(h_dim, nconstants_c, bias=True))
+
+        self.hidden_layers_x = nn.Sequential(*modules_x)
+        self.hidden_layers_c = nn.Sequential(*modules_c)
+        
+    
+    def get_exchange_constants(self, x):
+
+        x_x_up = self.hidden_layers_x(x[:, [2, 5, 7]])
+        x_x_down = self.hidden_layers_x(x[:, [4, 6, 8]])
+
+        return (
+            x_x_up[:, 1].view(-1, 1),
+            x_x_up[:, 0].view(-1, 1),
+            x_x_down[:, 1].view(-1, 1),
+            x_x_down[:, 0].view(-1, 1),
+        )
+        
+    def get_exchange_descriptors(self, x):
+        scaling_array = torch.tensor([2, 2, 4, 4, 4, 2, 2, 4, 4]).to(x.device)
+
+        return self.get_density_descriptors(scaling_array * x)
+    
+    
+    @staticmethod
+    def get_density_descriptors(x):
+        """
+        0 - alpha density
+        1 - beta density
+        2 - alpha gradient
+        3 - total gradiet
+        4 - beta gradient
+        5 - tau alpha
+        6 - tau beta
+        7 - lapl alpha
+        8 - lapl beta
+        """
+
+        eps_sigma = 1e-30
+        eps_rho = 1e-10
+
+        n_alpha = x[:, 0] ** (1 / 3)
+        n_beta = x[:, 1] ** (1 / 3)
+
+        s_alpha = (
+            torch.sqrt(x[:, 2] + eps_sigma)
+            / (x[:, 0] + eps_rho) ** (4 / 3)
+            / (3 * np.pi**2) ** (1 / 3)
+            / 2
+        )
+        s_norm = (
+            torch.sqrt(x[:, 3] + eps_sigma)
+            / (x[:, 0] + x[:, 1] + eps_rho) ** (4 / 3)
+            / (3 * np.pi**2) ** (1 / 3)
+            / 2
+        )
+        s_beta = (
+            torch.sqrt(x[:, 4] + eps_sigma)
+            / (x[:, 1] + eps_rho) ** (4 / 3)
+            / (3 * np.pi**2) ** (1 / 3)
+            / 2
+        )
+
+        tau_tf_alpha = (
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5 / 3)
+        )
+        tau_tf_beta = (
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 1] + eps_rho) ** (5 / 3)
+        )
+        tau_w_alpha = x[:, 2] / (8 * (x[:, 0] + eps_rho))
+        tau_w_beta = x[:, 4] / (8 * (x[:, 1] + eps_rho))
+
+        tau_alpha = (x[:, 5] - tau_w_alpha) / tau_tf_alpha - 1 
+        tau_beta = (x[:, 6] - tau_w_beta) / tau_tf_beta - 1
+        
+        q_alpha = x[:, 6] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5/3))
+        q_beta = x[:, 8] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, 1] + eps_rho) ** (5/3))
+
+        X = torch.stack(
+            [n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta, q_alpha, q_beta], dim=1
+        )
+
+        X = torch.tanh(X)
+
+        return X
+    
+    def forward(self, x):
+
+        x_exchange_desc = self.get_exchange_descriptors(x)
+        x_correlation_desc = self.get_density_descriptors(x)
+
+        x_correlation_desc_swapped = x_correlation_desc[:, [1, 0, 4, 3, 2, 6, 5, 8, 7]]
+        params_c_real = (
+            self.hidden_layers_c(x_correlation_desc)
+            + self.hidden_layers_c(x_correlation_desc_swapped)
+        ) / 2
+        beta_real, gamma_real = params_c_real[:, 0].view(-1, 1), params_c_real[
+            :, 1
+        ].view(-1, 1)
+
+        x_corr_sigma_zero = self.all_sigma_zero(x_correlation_desc)
+        x_corr_sigma_zero_swapped = self.all_sigma_zero(x_correlation_desc_swapped)
+        params_c_sigma_zero = (
+            self.hidden_layers_c(x_corr_sigma_zero)
+            + self.hidden_layers_c(x_corr_sigma_zero_swapped)
+        ) / 2
+        beta_at_constraint = params_c_sigma_zero[:, 0].view(-1, 1)
+
+        x_corr_rho_inf = self.all_rho_inf(x_correlation_desc)
+        x_corr_rho_inf_swapped = self.all_rho_inf(x_correlation_desc_swapped)
+        params_c_rho_inf = (
+            self.hidden_layers_c(x_corr_rho_inf)
+            + self.hidden_layers_c(x_corr_rho_inf_swapped)
+        ) / 2
+        gamma_at_constraint = params_c_rho_inf[:, 1].view(-1, 1)
+
+        params_x_up_real = self.hidden_layers_x(x_exchange_desc[:, [2, 5, 7]])
+        params_x_down_real = self.hidden_layers_x(x_exchange_desc[:, [4, 6, 8]])
+        mu_up_real, kappa_up_real = params_x_up_real[:, 0].view(
+            -1, 1
+        ), params_x_up_real[:, 1].view(-1, 1)
+        mu_down_real, kappa_down_real = params_x_down_real[:, 0].view(
+            -1, 1
+        ), params_x_down_real[:, 1].view(-1, 1)
+
+        x_exch_s_zero = self.all_sigma_zero(x_exchange_desc)
+        params_x_s_zero_up = self.hidden_layers_x(x_exch_s_zero[:, [2, 5, 7]])
+        params_x_s_zero_down = self.hidden_layers_x(x_exch_s_zero[:, [4, 6, 8]])
+        mu_up_at_constraint = params_x_s_zero_up[:, 0].view(-1, 1)
+        mu_down_at_constraint = params_x_s_zero_down[:, 0].view(-1, 1)
+
+        beta = self.beta_activation(beta_real - beta_at_constraint)
+        gamma = self.shifted_elu(gamma_real - gamma_at_constraint)
+        mu_up = self.shifted_elu(mu_up_real - mu_up_at_constraint)
+        mu_down = self.shifted_elu(mu_down_real - mu_down_at_constraint)
+        kappa_up = self.kappa_activation(kappa_up_real)
+        kappa_down = self.kappa_activation(kappa_down_real)
+
+        constants_batch = true_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
+            x_exchange_desc.device
+        )
+        fill_tensor = torch.ones(
+            [x_exchange_desc.shape[0], 20], device=x_exchange_desc.device
+        )
+        final_tensor = torch.hstack(
+            [
+                beta,
+                gamma,
+                fill_tensor,
+                kappa_up,
+                mu_up,
+                kappa_down,
+                mu_down,
+            ]
+        )
+        return final_tensor * constants_batch
+    
 
 
 class pcPBEstar(pcPBEMLOptimizer):

@@ -18,6 +18,7 @@ sys.path.insert(0, str(train_models_path))
 from NN_models import (
     MLOptimizer as MLOptimizer_train,
     pcPBEMLOptimizer as pcPBEMLOptimizer_train,
+    pcPBELMLOptimizer as pcPBELMLOptimizer_train,
     pcPBEdoublestar as pcPBEdoublestar_train,
     true_constants_PBE
 )
@@ -420,6 +421,167 @@ class pcPBEdoublestar(pcPBEMLOptimizer, pcPBEdoublestar_train):
         Fc = self.shifted_elu(Fc_intermediate - 1.0).squeeze(-1)
 
         return Fx_up, Fx_down, Fc
+    
+    
+class pcPBELMLOptimizer(pcPBELMLOptimizer_train):
+
+    @staticmethod
+    def get_density_descriptors(
+        nn_inputs,
+        rho_a_inp,
+        rho_b_inp,
+        grad_a_inp,
+        grad_b_inp,
+        grad_inp,
+        tau_a_inp,
+        tau_b_inp,
+        lapl_a_inp,
+        lapl_b_inp,
+    ):
+
+        
+        eps_rho = 1e-10
+        eps_sigma = 1e-30
+
+        nn_inputs[:, 0] = rho_a_inp ** (1 / 3)
+        nn_inputs[:, 1] = rho_b_inp ** (1 / 3)
+        nn_inputs[:, 2] = (
+            torch.sqrt(grad_a_inp + eps_sigma)
+            / rho_a_inp ** (4 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
+            / 2
+        )
+        nn_inputs[:, 3] = (
+            torch.sqrt(grad_inp + eps_sigma)
+            / (rho_a_inp + rho_b_inp - eps_rho) ** (4 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
+            / 2
+        )
+        nn_inputs[:, 4] = (
+            torch.sqrt(grad_b_inp + eps_sigma)
+            / rho_b_inp ** (4 / 3)
+            / (3 * torch.pi**2) ** (1 / 3)
+            / 2
+        )
+        tau_tf_alpha = 3 / 10 * (3 * torch.pi**2) ** (2 / 3) * (rho_a_inp) ** (5 / 3)
+        tau_tf_beta = 3 / 10 * (3 * torch.pi**2) ** (2 / 3) * (rho_b_inp) ** (5 / 3)
+        tau_w_alpha = grad_a_inp / (8 * rho_a_inp)
+        tau_w_beta = grad_b_inp / (8 * rho_b_inp)
+        nn_inputs[:, 5] = (tau_a_inp - tau_w_alpha) / tau_tf_alpha - 1
+        nn_inputs[:, 6] = (tau_b_inp - tau_w_beta) / tau_tf_beta - 1
+        nn_inputs[:, 7] = lapl_a_inp / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_a_inp) ** (5/3))
+        nn_inputs[:, 8] = lapl_b_inp/ (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_b_inp) ** (5/3))
+        
+
+        return torch.tanh(nn_inputs)
+    
+
+    def forward(
+        self,
+        nn_inputs,
+        rho_a_inp,
+        rho_b_inp,
+        grad_a_inp,
+        grad_b_inp,
+        grad_inp,
+        tau_a_inp,
+        tau_b_inp,
+        lapl_a_inp,
+        lapl_b_inp,
+    ):
+
+        x_exchange_desc = self.get_density_descriptors(
+            nn_inputs,
+            2 * rho_a_inp,
+            2 * rho_b_inp,
+            4 * grad_a_inp,
+            4 * grad_b_inp,
+            4 * grad_inp,
+            2 * tau_a_inp,
+            2 * tau_b_inp,
+            4 * lapl_a_inp,
+            4 * lapb_b_inp,
+        )
+
+        x_correlation_desc = self.get_density_descriptors(
+            nn_inputs,
+            rho_a_inp,
+            rho_b_inp,
+            grad_a_inp,
+            grad_b_inp,
+            grad_inp,
+            tau_a_inp,
+            tau_b_inp,
+            lapl_a_inp,
+            lapl_b_inp,
+        )
+
+        x_correlation_desc_swapped = x_correlation_desc[:, [1, 0, 4, 3, 2, 6, 5, 8, 7]]
+        params_c_real = (
+            self.hidden_layers_c(x_correlation_desc)
+            + self.hidden_layers_c(x_correlation_desc_swapped)
+        ) / 2
+        beta_real, gamma_real = params_c_real[:, 0].view(-1, 1), params_c_real[
+            :, 1
+        ].view(-1, 1)
+
+        x_corr_sigma_zero = self.all_sigma_zero(x_correlation_desc)
+        x_corr_sigma_zero_swapped = self.all_sigma_zero(x_correlation_desc_swapped)
+        params_c_sigma_zero = (
+            self.hidden_layers_c(x_corr_sigma_zero)
+            + self.hidden_layers_c(x_corr_sigma_zero_swapped)
+        ) / 2
+        beta_at_constraint = params_c_sigma_zero[:, 0].view(-1, 1)
+
+        x_corr_rho_inf = self.all_rho_inf(x_correlation_desc)
+        x_corr_rho_inf_swapped = self.all_rho_inf(x_correlation_desc_swapped)
+        params_c_rho_inf = (
+            self.hidden_layers_c(x_corr_rho_inf)
+            + self.hidden_layers_c(x_corr_rho_inf_swapped)
+        ) / 2
+        gamma_at_constraint = params_c_rho_inf[:, 1].view(-1, 1)
+
+        params_x_up_real = self.hidden_layers_x(x_exchange_desc[:, [2, 5, 7]])
+        params_x_down_real = self.hidden_layers_x(x_exchange_desc[:, [4, 6, 8]])
+        mu_up_real, kappa_up_real = params_x_up_real[:, 0].view(
+            -1, 1
+        ), params_x_up_real[:, 1].view(-1, 1)
+        mu_down_real, kappa_down_real = params_x_down_real[:, 0].view(
+            -1, 1
+        ), params_x_down_real[:, 1].view(-1, 1)
+
+        x_exch_s_zero = self.all_sigma_zero(x_exchange_desc)
+        params_x_s_zero_up = self.hidden_layers_x(x_exch_s_zero[:, [2, 5, 7]])
+        params_x_s_zero_down = self.hidden_layers_x(x_exch_s_zero[:, [4, 6, 8]])
+        mu_up_at_constraint = params_x_s_zero_up[:, 0].view(-1, 1)
+        mu_down_at_constraint = params_x_s_zero_down[:, 0].view(-1, 1)
+
+        beta = self.beta_activation(beta_real - beta_at_constraint)
+        gamma = self.shifted_elu(gamma_real - gamma_at_constraint)
+        mu_up = self.shifted_elu(mu_up_real - mu_up_at_constraint)
+        mu_down = self.shifted_elu(mu_down_real - mu_down_at_constraint)
+        kappa_up = self.kappa_activation(kappa_up_real)
+        kappa_down = self.kappa_activation(kappa_down_real)
+
+        constants_batch = true_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
+            x_exchange_desc.device
+        )
+        fill_tensor = torch.ones(
+            [x_exchange_desc.shape[0], 20], device=x_exchange_desc.device
+        )
+        final_tensor = torch.hstack(
+            [
+                beta,
+                gamma,
+                fill_tensor,
+                kappa_up,
+                mu_up,
+                kappa_down,
+                mu_down,
+            ]
+        )
+        return final_tensor * constants_batch
+
 
 
 def NN_XALPHA_model(num_layers=6, h_dim=128, nconstants=1, dropout=0.0, DFT="XALPHA"):
