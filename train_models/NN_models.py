@@ -387,7 +387,7 @@ class pcPBEMLOptimizer(nn.Module):
         return final_tensor * constants_batch
     
 
-class pcPBELMLOptimizer(nn.Module):
+class pcPBELMLOptimizer(pcPBEMLOptimizer):
 
     def __init__(
         self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.2, DFT=None
