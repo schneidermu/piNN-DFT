@@ -160,9 +160,9 @@ def add_reaction_info_from_h5(reaction, path):
             HF_energies = np.append(HF_energies, f["ener"][:][0])
             X_raw = np.array(f["grid"][:])
             if len(X) == 0:
-                X = X_raw[:, 3:-1]
+                X = X_raw[:, 3:13]
             else:
-                X = np.vstack((X, X_raw[:, 3:-1]))
+                X = np.vstack((X, X_raw[:, 3:13]))
             X = X[
                 np.logical_or((X[:, 1] > eps), (X[:, 2] > eps))
             ]  # energy of both alpha and beta density equal zero will be zero
@@ -177,7 +177,7 @@ def add_reaction_info_from_h5(reaction, path):
     X = np.copy(X)
     X[:, 3] = X[:, 2] + X[:, 4] + 2 * X[:, 3]
 
-    # Now X is rho_a, rho_b, sigma_aa, norm_sigma, sigma_bb, taua, taub
+    # Now X is rho_a, rho_b, sigma_aa, norm_sigma, sigma_bb, taua, taub, lapla, laplb
 
     backsplit_ind = np.array(backsplit_ind)
 
