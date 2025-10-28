@@ -12,10 +12,8 @@ def ref(x, y, path):
     """
     returns reference energies for points of a reaction grid from Reference_data.csv
     """
-    if path == None:
-        pathfile = "../MN_dataset/Reference_data.csv"
-    else:
-        pathfile = f"{path}/Reference_data.csv"
+
+    pathfile = "../MN_dataset/Reference_data.csv"
 
     hartree2kcal = 627.5095
     with open(pathfile, newline="", encoding="cp1251") as csvfile:
@@ -55,11 +53,8 @@ def load_component_names(path):
                         }
      which is a dictionary with Components and Coefficients data about all reactions
     """
-    if path == None:
-        pathfile = "../MN_dataset/total_dataframe_sorted_final.csv"
-    else:
-        pathfile = f"{path}/total_dataframe_sorted_final.csv"
-
+    pathfile = "../MN_dataset/total_dataframe_sorted_final.csv"
+  
     with open(pathfile, newline="", encoding="cp1251") as csvfile:
         ref_file = csv.reader(csvfile, delimiter=",")
         ref = dict()

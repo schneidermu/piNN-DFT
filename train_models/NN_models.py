@@ -392,7 +392,7 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
     def __init__(
         self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.2, DFT=None
     ):
-        super().__init__()
+        super().__init__(num_layers, h_dim, nconstants_x, nconstants_c, dropout, DFT)
 
         self.DFT = DFT
 
@@ -438,7 +438,7 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         )
         
     def get_exchange_descriptors(self, x):
-        scaling_array = torch.tensor([2, 2, 4, 4, 4, 2, 2, 4, 4]).to(x.device)
+        scaling_array = torch.tensor([2, 2, 4, 4, 4, 2, 2, 2, 2]).to(x.device)
 
         return self.get_density_descriptors(scaling_array * x)
     
