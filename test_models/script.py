@@ -1,11 +1,11 @@
 from optparse import OptionParser
 
 import dftd3.pyscf as disp
+from DFT.functional import NN_FUNCTIONAL
+from DFT.numint import RKS_with_Laplacian, UKS_with_Laplacian
+from pcNN_mol.dft_pcnn import model as Nagai_model
 from pyscf import dft, gto, lib
 from pyscf.scf import addons, diis
-
-from DFT.functional import NN_FUNCTIONAL
-from pcNN_mol.dft_pcnn import model as Nagai_model
 
 PROBLEMATIC_SYSTEMS = [
     "G21EA-14-EA_14",
@@ -36,7 +36,7 @@ def get_coords_charge_spin(system_name):
     return coords, charge, spin
 
 
-def initialize_molecule(coords, charge, spin):
+def initialize_molecule(coords, charge, spin, lapl=False):
     ecp_atoms = []
     molecule = gto.Mole()
     molecule.atom = coords
@@ -56,9 +56,15 @@ def initialize_molecule(coords, charge, spin):
     molecule.build()
 
     if spin == 0:
-        mf = dft.RKS(molecule)
+        if not lapl:
+            mf = dft.RKS(molecule)
+        else:
+            mf = RKS_with_Laplacian(molecule)
     else:
-        mf = dft.UKS(molecule)
+        if not lapl:
+            mf = dft.UKS(molecule)
+        else:
+            mf = UKS_with_Laplacian(molecule)
 
     mf.max_cycle = 25
 
@@ -92,7 +98,7 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
 
     mf.callback = log_convergence
 
-    if system_name in PROBLEMATIC_SYSTEMS:
+    if system_name in PROBLEMATIC_SYSTEMS and "XALPHA" in functional_name:
 
         mf.level_shift = 1.0
         mf.damp = 0.7
@@ -169,7 +175,11 @@ def main(system_name, functional, NFinal):
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
 
-    _, mf = initialize_molecule(coords, charge, spin)
+    lapl = False
+    if "PBE-L" in functional:
+        lapl = True
+
+    _, mf = initialize_molecule(coords, charge, spin, lapl=lapl)
     dm0 = None
 
     mf.chkfile = None

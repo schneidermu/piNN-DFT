@@ -1,13 +1,13 @@
 import os
 from optparse import OptionParser
 
+from DFT.functional import NN_FUNCTIONAL
+from DFT.numint import RKS_with_Laplacian
+from pcNN_mol.dft_pcnn import model as Nagai_model
 from pyscf import gto, lib, scf
 from pyscf.gto.basis import parse_gaussian
 from pyscf.scf import diis
 from pyscf.tools import wfn_format
-
-from DFT.functional import NN_FUNCTIONAL
-from pcNN_mol.dft_pcnn import model as Nagai_model
 
 PROBLEMATIC_SYSTEMS = [
     "Li2",
@@ -24,7 +24,6 @@ PROBLEMATIC_SYSTEMS = [
     "Ne +6",
     "F +5",
 ]
-
 
 def main():
     lib.num_threads(4)
@@ -77,8 +76,11 @@ def main():
     mol.verbose = 4
     print(mol._atom)
 
-    # Configure solver
-    mf = scf.RKS(mol)
+    if "PBE-L" in functional:
+        mf = RKS_with_Laplacian(mol)
+    else:
+        mf = scf.RKS(mol)
+
     if functional == "Nagai":
         mf.define_xc_(Nagai_model.eval_xc, "MGGA")
     elif "NN" not in functional:
@@ -107,7 +109,7 @@ def main():
     else:
         mf.grids.atom_grid = (155, 974)
 
-    if (
+    if "XALPHA" in functional and (
         molecule_name in PROBLEMATIC_SYSTEMS
         or f"{atom_name} +{charge}" in PROBLEMATIC_SYSTEMS
     ):
