@@ -562,7 +562,7 @@ class pcPBELMLOptimizer(pcPBELMLOptimizer_train):
         kappa_up = self.kappa_activation(kappa_up_real)
         kappa_down = self.kappa_activation(kappa_down_real)
 
-        constants_batch = NN_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
+        constants_batch = true_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
             x_exchange_desc.device
         )
         fill_tensor = torch.ones(
@@ -595,6 +595,12 @@ def NN_XALPHA_model(num_layers=6, h_dim=128, nconstants=1, dropout=0.0, DFT="XAL
 
 def NN_PBE_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
     return pcPBEMLOptimizer(
+        num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT
+    )
+
+
+def NN_PBE_L_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
+    return pcPBELMLOptimizer(
         num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT
     )
 

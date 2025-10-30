@@ -557,7 +557,7 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         kappa_up = self.kappa_activation(kappa_up_real)
         kappa_down = self.kappa_activation(kappa_down_real)
 
-        constants_batch = NN_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
+        constants_batch = true_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
             x_exchange_desc.device
         )
         fill_tensor = torch.ones(
