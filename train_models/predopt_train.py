@@ -394,6 +394,10 @@ def train(
             scaler.scale(loss).backward()
 
             if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == len(train_loader)):
+
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+
                 scaler.step(optimizer)
                 scaler.update()
                 optimizer.zero_grad(set_to_none=True)
@@ -664,7 +668,6 @@ if __name__ == "__main__":
         base_model = MLOptimizer(num_layers, h_dim, nconstants, dropout, dft).to(device)
 
     model = DDP(base_model, device_ids=[local_rank])
-    model = torch.compile(model)
 
     if local_rank == 0:
         print(FCHEM_VALIDATION)
@@ -769,6 +772,8 @@ if __name__ == "__main__":
     N_EPOCHS = n_train
     ACCUM_ITER = 1
     VERBOSE = False
+
+    model = torch.compile(model)
 
     train_loss_mae, test_loss_mae, best_model_path = train(
         model,

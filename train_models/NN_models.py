@@ -494,7 +494,7 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         tau_alpha = (x[:, 5] - tau_w_alpha) / tau_tf_alpha - 1 
         tau_beta = (x[:, 6] - tau_w_beta) / tau_tf_beta - 1
         
-        q_alpha = x[:, 6] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5/3))
+        q_alpha = x[:, 7] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5/3))
         q_beta = x[:, 8] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, 1] + eps_rho) ** (5/3))
 
         X = torch.stack(
