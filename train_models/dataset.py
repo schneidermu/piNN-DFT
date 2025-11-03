@@ -1,5 +1,9 @@
+from collections import defaultdict
 import copy
 import csv
+import os
+import sys
+from pathlib import Path
 
 import h5py
 import numpy as np
@@ -7,6 +11,36 @@ import torch
 
 from utils import stack_reactions
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from dft_functionals import PBE, true_constants_PBE
+
+
+def build_file_index(data_path):
+    """
+    Scans the data directory and groups augmented .h5 files by their base molecule name,
+    using a double underscore '__' as the separator.
+    """
+    file_index = defaultdict(dict)
+    print(f"Building file index from: {data_path}")
+    
+    for root, _, files in os.walk(data_path):
+        for file in files:
+            if file.endswith(".h5"):
+                file_name_no_ext = file.rsplit('.', 1)[0]
+
+                if '__' in file_name_no_ext:
+                    base_name, grid_suffix = file_name_no_ext.split('__', 1)
+                else:
+                    base_name = file_name_no_ext
+                    grid_suffix = 'default'
+                
+                file_index[base_name][grid_suffix] = os.path.join(root, file)
+
+    if not file_index:
+        raise FileNotFoundError(f"No .h5 files found in {data_path}. Check the path.")
+        
+    print(f"Found {len(file_index)} unique molecule base names.")
+    return file_index
 
 def ref(x, y, path):
     """
@@ -104,34 +138,14 @@ def get_compounds_coefs_energy(reactions, energies):
                 "Coefficients": torch.Tensor(
                     reactions[database][reaction]["Coefficients"].astype(np.float32)
                 ),
-                "Energy": torch.Tensor(np.array(energies[database][reaction][1])),
+                "Energy": torch.tensor([energies[database][reaction][1]], dtype=torch.float32),
             }
             i += 1
 
     return data_final
 
 
-def get_h5_names(reaction):
-    """reaction must be from the function get_compounds_coefs_energy"""
-    database_match = {
-        "MGAE109": "mgae109",
-        "IP13": "ip13",
-        "EA13": "ea13",
-        "PA8": "pa8",
-        "DBH76": "ntbh38",
-        "NCCE31": "ncce31",
-        "ABDE4": "abde4",
-        "AE17": "ae17",
-        "pTC13": "ptc13",
-    }
-    names = []
-    for elem in reaction["Components"]:
-        database = database_match[reaction["Database"]]
-        names.append(f"{elem}.h5")
-    return names
-
-
-def add_reaction_info_from_h5(reaction, path):
+def add_reaction_info_from_h5(reaction, file_index):
     """
     reaction must be from get_compounds_coefs_energy
     returns merged descriptos array X, integration weights,
@@ -150,21 +164,31 @@ def add_reaction_info_from_h5(reaction, path):
     X = np.array([])
     backsplit_ind = []
     HF_energies = np.array([])
-    for component_filename in get_h5_names(reaction):
-        with h5py.File(f"{path}/{component_filename}", "r") as f:
+
+    for h5_path in reaction['component_paths']:
+        with h5py.File(h5_path, "r") as f:
             HF_energies = np.append(HF_energies, f["ener"][:][0])
             X_raw = np.array(f["grid"][:])
             if len(X) == 0:
                 X = X_raw[:, 3:13]
             else:
                 X = np.vstack((X, X_raw[:, 3:13]))
-            X = X[
-                np.logical_or((X[:, 1] > eps), (X[:, 2] > eps))
-            ]  # energy of both alpha and beta density equal zero will be zero
-            backsplit_ind.append(len(X))  # add indexes of molecules start/end
-    weights = X[:, 0]  # get the integral weights
-    densities = X[:, 1:3]  # get the densities
-    sigmas = X[:, 3:6]  # get the contracted gradients
+
+            X = X[np.logical_or((X[:, 1] > eps), (X[:, 2] > eps))]
+            backsplit_ind.append(len(X))
+
+    weights = X[:, 0]
+    densities = X[:, 1:3]
+    sigmas = X[:, 3:6]
+
+    device = torch.device("cpu")
+    pbe_constants = true_constants_PBE.to(device)
+    local_pbe_energies = PBE.F_PBE(
+        torch.from_numpy(densities).float(),
+        torch.from_numpy(sigmas).float(),
+        pbe_constants,
+        device
+    )
 
     X = X[:, 1:]  # get the grid descriptors
 
@@ -183,8 +207,9 @@ def add_reaction_info_from_h5(reaction, path):
         "Gradients",
         "HF_energies",
         "backsplit_ind",
+        "PBE_local_energies"
     ]
-    values = [X, weights, densities, sigmas, HF_energies, backsplit_ind]
+    values = [X, weights, densities, sigmas, HF_energies, backsplit_ind, local_pbe_energies.numpy()]
     for label, value in zip(labels, values):
         reaction[label] = torch.Tensor(value)
 
@@ -193,17 +218,50 @@ def add_reaction_info_from_h5(reaction, path):
 
 def make_reactions_dict(path=None):
     """
-    Path : absolute or relative path to the molecules grid / reaction data
-    Returns a dict like {reaction_id: {*reaction info}} with all info available listed below:
-    ['Database', 'Components', 'Coefficients', 'Energy', 'Grid', 'Weights', 'Densities', 'HF_energies', 'backsplit_ind']
+    Builds the full, augmented dictionary of all reactions for all grid types.
     """
-    data = get_compounds_coefs_energy(
+    file_index = build_file_index(path)
+
+    base_reactions = get_compounds_coefs_energy(
         load_component_names(path), load_ref_energies(path)
     )
-    for i in data.keys():
-        data[i] = add_reaction_info_from_h5(data[i], path)
 
-    return data
+    all_grid_suffixes = set()
+    for molecule_grids in file_index.values():
+        all_grid_suffixes.update(molecule_grids.keys())
+    
+    if not all_grid_suffixes:
+        raise ValueError("No grid suffixes found. Ensure filenames are like 'molecule_gridtype.h5'")
+    
+    print(f"Found {len(all_grid_suffixes)} unique grid types to augment with: {sorted(list(all_grid_suffixes))}")
+
+    augmented_dataset = {}
+    new_key_counter = 0
+    
+    for reaction_data in base_reactions.values():
+        for grid_suffix in all_grid_suffixes:
+            
+            is_valid_combination = all(
+                component in file_index and grid_suffix in file_index[component]
+                for component in reaction_data["Components"]
+            )
+            
+            if is_valid_combination:
+                augmented_reaction = copy.deepcopy(reaction_data)
+
+                augmented_reaction['component_paths'] = [
+                    file_index[comp][grid_suffix] for comp in augmented_reaction["Components"]
+                ]
+                
+                augmented_dataset[new_key_counter] = augmented_reaction
+                new_key_counter += 1
+
+    print(f"Expanded {len(base_reactions)} base reactions into {len(augmented_dataset)} total training samples.")
+
+    for i in augmented_dataset.keys():
+        augmented_dataset[i] = add_reaction_info_from_h5(augmented_dataset[i], file_index)
+
+    return augmented_dataset
 
 
 def collate_fn(data):

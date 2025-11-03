@@ -39,7 +39,7 @@ def backsplit(reaction, calc_reaction_data):
     splitted_data = dict()
     stop = 0
 
-    for i, component in enumerate(np.frombuffer(reaction["Components"], dtype="<U20")):
+    for i, component in enumerate(reaction["Components"]):
         splitted_data[component] = dict()
         start = stop
         stop = backsplit_ind[i]
@@ -51,7 +51,7 @@ def backsplit(reaction, calc_reaction_data):
 
 def integration(reaction, splitted_calc_reaction_data, dispersions=dict()):
     molecule_energies = dict()
-    for i, component in enumerate(np.frombuffer(reaction["Components"], dtype="<U20")):
+    for i, component in enumerate(reaction["Components"]):
         molecule_energies[component + str(i)] = (
             torch.sum(
                 splitted_calc_reaction_data[component]["Local_energies"]
@@ -64,9 +64,9 @@ def integration(reaction, splitted_calc_reaction_data, dispersions=dict()):
             + reaction["HF_energies"][i]
         )
         if dispersions:
-            molecule_energies[component + str(i)] += torch.Tensor(
-                dispersions.get(component, 0)
-            )
+            dispersion_val = torch.tensor(dispersions.get(component, 0), device=splitted_calc_reaction_data[component]["Local_energies"].device)
+            molecule_energies[component + str(i)] += dispersion_val
+
     del splitted_calc_reaction_data
     return molecule_energies
 
