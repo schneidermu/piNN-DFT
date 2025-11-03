@@ -16,20 +16,20 @@ f_svwn3 = SVWN3.f_svwn3
 
 def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE", enhancement=None):
     calc_reaction_data = {}
-    densities = reaction["Densities"].to(device)
+    densities = reaction["Densities"].to(device, non_blocking=True)
     if rung == "LDA":
         if dft == "SVWN3":
             local_energies = f_svwn3(densities, constants)
         if dft == "XALPHA":
             local_energies = F_XALPHA(densities, constants)
     elif rung == "GGA":
-        gradients = (reaction["Gradients"]).to(device)
+        gradients = (reaction["Gradients"]).to(device, non_blocking=True)
         if dft == "PBE":
             local_energies = F_PBE(densities, gradients, constants, device, enhancement=enhancement)
 
     calc_reaction_data["Local_energies"] = local_energies
     calc_reaction_data["Densities"] = densities
-    calc_reaction_data["Weights"] = reaction["Weights"].to(device)
+    calc_reaction_data["Weights"] = reaction["Weights"].to(device, non_blocking=True)
     del local_energies, densities
     return calc_reaction_data
 

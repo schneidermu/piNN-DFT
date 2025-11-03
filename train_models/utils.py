@@ -71,8 +71,9 @@ def stack_reactions(reactions):
             reaction_indices.append(stop + len(v))
             stop += len(v)
         if k in ("Components", "Coefficients", "Database"):
+            v_arr = np.atleast_1d(v)
             reaction[k] = (
-                np.hstack([np.array(reaction[k]), v]) if len(reaction[k]) else v
+                np.hstack([reaction[k], v_arr]) if k in reaction else v_arr
             )
         elif k in ("Grid", "Densities", "Gradients"):
             reaction[k] = torch.vstack([reaction[k], v]) if len(reaction[k]) else v

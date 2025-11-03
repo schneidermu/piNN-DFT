@@ -16,7 +16,6 @@ train_models_path = Path(__file__).parent.parent.parent / "train_models"
 sys.path.insert(0, str(train_models_path))
 
 from NN_models import MLOptimizer as MLOptimizer_train
-from NN_models import NN_constants_PBE
 from NN_models import pcPBEdoublestar as pcPBEdoublestar_train
 from NN_models import pcPBELMLOptimizer as pcPBELMLOptimizer_train
 from NN_models import pcPBEMLOptimizer as pcPBEMLOptimizer_train
@@ -562,7 +561,7 @@ class pcPBELMLOptimizer(pcPBELMLOptimizer_train):
         kappa_up = self.kappa_activation(kappa_up_real)
         kappa_down = self.kappa_activation(kappa_down_real)
 
-        constants_batch = NN_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
+        constants_batch = true_constants_PBE.repeat(x_exchange_desc.shape[0], 1).to(
             x_exchange_desc.device
         )
         fill_tensor = torch.ones(

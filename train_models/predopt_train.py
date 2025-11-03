@@ -2,22 +2,24 @@ import collections
 import gc
 import os
 import pickle
-import shutil
-import subprocess
 from optparse import OptionParser
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+import torch.distributed as dist
 from torch import nn
+from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
-from tqdm.notebook import tqdm
+from torch.utils.data.distributed import DistributedSampler
+from tqdm import tqdm
 
 from dataset import collate_fn, collate_fn_predopt
-from NN_models import MLOptimizer, pcPBEdoublestar, pcPBEMLOptimizer, pcPBEstar
+from NN_models import (MLOptimizer, pcPBEdoublestar, pcPBELMLOptimizer,
+                       pcPBEMLOptimizer, pcPBEstar)
 from predopt import DatasetPredopt, predopt, true_constants_PBE
 from prepare_data import load_chk
-from reaction_energy_calculation import calculate_reaction_energy, get_local_energies
+from reaction_energy_calculation import calculate_reaction_energy
 from utils import configure_optimizers, seed_worker, set_random_seed
 
 set_random_seed(41)
@@ -41,8 +43,6 @@ FCHEM_VALIDATION = {
     "PA8": 1,
     "pTC13": 1,
 }
-
-print(FCHEM_VALIDATION)
 
 FREQ_WEIGHTS = {
     "ABDE4": 1 / 4,
@@ -114,6 +114,36 @@ class EarlyStopper:
             if self.counter >= self.patience:
                 return True
         return False
+
+
+def gather_reaction_names(local_name, device, world_size, local_rank):
+    """
+    Gathers reaction names from all distributed processes to the main process (rank 0).
+    """
+
+    MAX_LEN = 256 
+    
+    encoded = torch.tensor([ord(c) for c in local_name[:MAX_LEN]], dtype=torch.int64, device=device)
+    
+    padded = torch.zeros(MAX_LEN, dtype=torch.int64, device=device)
+    padded[:len(encoded)] = encoded
+    
+    if local_rank == 0:
+        gather_list = [torch.zeros_like(padded) for _ in range(world_size)]
+    else:
+        gather_list = None
+        
+
+    dist.gather(tensor=padded, gather_list=gather_list, dst=0)
+    
+    if local_rank == 0:
+        decoded_names = []
+        for tensor in gather_list:
+            name = "".join([chr(c) for c in tensor if c != 0])
+            decoded_names.append(name)
+        return " | ".join(decoded_names)
+    else:
+        return None
 
 
 def loss_function(factor_dictionary: dict, total_database_errors: dict, val=False):
@@ -272,15 +302,11 @@ def exc_loss(
         predicted_local_energies[start:stop] for start, stop in indices
     ]  # Split them into systems
 
-    true_local_energies = get_local_energies(
-        reaction, true_constants.to(device), device, rung="GGA", dft="PBE"
-    )[
-        "Local_energies"
-    ]  # Calculate local PBE energies.
+    true_local_energies_full = reaction["PBE_local_energies"].to(device, non_blocking=True)
 
     true_local_energies = [
-        true_local_energies[start:stop] for start, stop in indices
-    ]  # Split them into systems.
+        true_local_energies_full[start:stop] for start, stop in indices
+    ]
 
     for i in range(n_molecules):
         loss += torch.sqrt(
@@ -305,354 +331,239 @@ def train(
     omega=0.067,
     lambda_grad=0,
     smoothing_window=10,
+    local_rank=0
 ):
     torch.set_printoptions(precision=2)
-    train_loss_mae = []
-    train_loss_mse = []
-    train_loss_exc = []
-    test_loss_mae = []
-    test_loss_mse = []
-    test_loss_exc = []
-    train_full_loss = []
-    val_full_loss = []
-    test_fchem = []
-    train_fchem_loss = []
+    train_loss_mae, train_loss_mse, train_loss_exc, train_full_loss, train_fchem_loss = [], [], [], [], []
+    val_full_loss, test_loss_mae, test_loss_mse, test_loss_exc, test_fchem = [], [], [], [], []
 
-    prev = None
-    prev_best = None
-
+    prev, prev_best = None, None
     val_loss_window = collections.deque(maxlen=smoothing_window)
     test_fchem_window = collections.deque(maxlen=smoothing_window)
 
-    best_model_dir = f"best_models/"
-    plot_dir = f"./batch_fchem/"
-    os.makedirs(best_model_dir, exist_ok=True)
-    os.makedirs(plot_dir, exist_ok=True)
+    if local_rank == 0:
+        best_model_dir = "best_models/"
+        plot_dir = "./batch_fchem/"
+        os.makedirs(best_model_dir, exist_ok=True)
+        os.makedirs(plot_dir, exist_ok=True)
+
+    scaler = torch.amp.GradScaler()
+    world_size = dist.get_world_size()
 
     for epoch in range(n_epochs):
-        torch.autograd.set_detect_anomaly(False)
-        print(f"Epoch {epoch + 1}")
-        # train
-        model.train()
-        progress_bar_train = tqdm(train_loader)
-        train_mae_losses_per_epoch = []
-        train_mse_losses_per_epoch = []
-        train_grad_penalties_per_epoch = []
-        train_exc_losses_per_epoch = []
-        train_full_loss_per_epoch = []
-        optimizer.zero_grad()
 
-        pred_energies = []
-        ref_energies = []
-        bases = []
-        errors = []
-        total_database_errors = {}
+        model.train()
+        train_loader.sampler.set_epoch(epoch)
+        progress_bar_train = tqdm(
+            train_loader,
+            disable=(local_rank != 0),
+            mininterval=2.0, 
+            bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]'
+        )
+
+        epoch_train_total_database_errors = collections.defaultdict(list)
+
+        epoch_train_loss_sum = 0.0
+        epoch_train_mae_sum = 0.0
+        epoch_train_exc_sum = 0.0
 
         for batch_idx, (X_batch, y_batch) in enumerate(progress_bar_train):
-            X_batch_grid, y_batch = X_batch["Grid"].to(device), y_batch.to(device)
+            X_batch_grid, y_batch = X_batch["Grid"].to(device, non_blocking=True), y_batch.to(device, non_blocking=True)
             X_batch_grid.requires_grad_(True)
-            current_bases, bases = extend_bases(X_batch=X_batch, bases=bases)
-            predictions = model(X_batch_grid)
+            current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
 
-            if lambda_grad > 0:  # Only compute if penalty is active
+            with torch.amp.autocast(device_type="cuda"):
+                predictions = model(X_batch_grid)
 
-                if dft == "PBE":
-                    true_constants, indices = true_constants_PBE, [0, 1, 22, 23, 24, 25]
+                if "STARSTAR" in name:
+                    reaction_energy, local_energies = calculate_reaction_energy(
+                        X_batch,
+                        torch.ones(X_batch_grid.shape[0], 26).to(device) * true_constants_PBE,
+                        device, rung=rung, dft=dft, dispersions=dispersions,
+                        enhancement=torch.stack(predictions, dim=1),
+                    )
                 else:
-                    true_constants, indices = 1.05, [
-                        0,
-                    ]
+                    reaction_energy, local_energies = calculate_reaction_energy(
+                        X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
+                    )
 
-                grad_outputs = torch.ones_like(predictions[:, indices]).to(device)
+                local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
+                batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
+                loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
 
-                grads = torch.autograd.grad(
-                    outputs=(predictions / true_constants)[:, indices],
-                    inputs=X_batch_grid,
-                    grad_outputs=grad_outputs,
-                    create_graph=True,
-                    retain_graph=None,
-                    only_inputs=True,
-                    allow_unused=True,
-                )[0]
+            scaler.scale(loss).backward()
 
-                gradient_penalty = grads.pow(2).mean()
-                train_grad_penalties_per_epoch.append(gradient_penalty.item())
-            else:
-                gradient_penalty = torch.tensor(0.0).to(device)
-                train_grad_penalties_per_epoch.append(0.0)
-
-            if "STARSTAR" in name:
-                reaction_energy, local_energies = calculate_reaction_energy(
-                    X_batch,
-                    torch.ones(X_batch_grid.shape[0], 26).to(device)
-                    * true_constants_PBE,
-                    device,
-                    rung=rung,
-                    dft=dft,
-                    dispersions=dispersions,
-                    enhancement=torch.stack(predictions, dim=1),
-                )
-
-            else:
-                reaction_energy, local_energies = calculate_reaction_energy(
-                    X_batch,
-                    predictions,
-                    device,
-                    rung=rung,
-                    dft=dft,
-                    dispersions=dispersions,
-                )
-
-            local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
-
-            batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-
-            # Calculate total loss function
-            loss = (
-                (1 - omega) * batch_fchem_loss
-                + omega * local_loss * 100
-                + lambda_grad * gradient_penalty
-            )
-            loss.backward()
-
-            pred_energies, ref_energies, errors, total_database_errors = (
-                make_total_db_errors(
-                    pred_energies,
-                    reaction_energy,
-                    errors,
-                    ref_energies,
-                    y_batch,
-                    total_database_errors,
-                    current_bases,
-                )
-            )
+            if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == len(train_loader)):
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
 
             MAE = mae(reaction_energy, y_batch).item()
-            MSE = criterion(reaction_energy, y_batch).item()
-            train_mse_losses_per_epoch.append(MSE)
-            train_mae_losses_per_epoch.append(MAE)
-            train_exc_losses_per_epoch.append(local_loss.item())
-            train_full_loss_per_epoch.append(loss.item())
-
-            progress_bar_train.set_postfix(
-                Loss=f"{loss.item():.3f}",
-                Fchem=f"{batch_fchem_loss.item():.3f}",
-                Exc=f"{local_loss.item():.3f}",
-                GradP=f"{gradient_penalty.item():.4f}",
-                MAE=f"{MAE:.3f}",
+            epoch_train_loss_sum += loss.item()
+            epoch_train_mae_sum += MAE
+            epoch_train_exc_sum += local_loss.item()
+            
+            _, _, _, epoch_train_total_database_errors = make_total_db_errors(
+                [], reaction_energy, [], [], y_batch, epoch_train_total_database_errors, current_bases
             )
 
-            if ((batch_idx + 1) % accum_iter == 0) or (
-                batch_idx + 1 == len(train_loader)
-            ):
-                optimizer.step()
-                optimizer.zero_grad()
-            del (
-                X_batch,
-                X_batch_grid,
-                y_batch,
-                reaction_energy,
-                local_energies,
-                local_loss,
-                MSE,
-                MAE,
-                loss,
-                predictions,
-            )
-            if lambda_grad > 0:
-                del grads
-            gc.collect()
-            torch.cuda.empty_cache()
+            if local_rank == 0:
+                try:
+                    component_names = [str(c) for c in X_batch['Components']]
+                    local_reaction_name = ", ".join(component_names)
+                except (IndexError, TypeError):
+                    local_reaction_name = "loading..."
+                
+                all_reaction_names = gather_reaction_names(local_reaction_name, device, world_size, local_rank)
 
-        train_loss_mse.append(np.mean(train_mse_losses_per_epoch))
-        train_loss_mae.append(np.mean(train_mae_losses_per_epoch))
-        train_loss_exc.append(np.mean(train_exc_losses_per_epoch))
-        train_full_loss.append(np.mean(train_full_loss_per_epoch))
-        print(
-            f"train RMSE Loss = {train_full_loss[epoch]:.8f} MAE Loss = {train_loss_mae[epoch]:.8f}"
-        )
-        print(f"train Local Energy Loss = {train_loss_exc[epoch]:.8f}")
-        print(
-            f"Gradient Penalty Loss = {np.mean(np.array(train_grad_penalties_per_epoch)):.8f}"
-        )
-
-        train_fchem = loss_function(
-            factor_dictionary=FCHEM_VALIDATION,
-            total_database_errors=total_database_errors,
-        )
-        print("\nTrain Fchem", train_fchem, "\n")
-        train_fchem_loss.append(
-            (1 - omega) * train_fchem / 50 + omega * train_loss_exc[-1] * 100
-        )
-
+            else:
+                try:
+                    component_names = [str(c) for c in X_batch['Components']]
+                    local_reaction_name = ", ".join(component_names)
+                except (IndexError, TypeError):
+                    local_reaction_name = "loading..."
+                gather_reaction_names(local_reaction_name, device, world_size, local_rank)
+        
         model.eval()
-        progress_bar_test = tqdm(test_loader)
-        test_mae_losses_per_epoch = []
-        test_mse_losses_per_epoch = []
-        test_exc_losses_per_epoch = []
-        val_full_loss_per_epoch = []
+        progress_bar_test = tqdm(
+            test_loader,
+            disable=(local_rank != 0),
+            mininterval=2.0,
+            bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]'
+        )
+        
+        val_loss_sum = 0.0
+        val_mae_sum = 0.0
+        val_exc_sum = 0.0
+        val_samples_count = 0
+        epoch_val_total_database_errors = collections.defaultdict(list)
 
-        pred_energies = []
-        ref_energies = []
-        bases = []
-        errors = []
-        total_database_errors = {}
-
-        with torch.no_grad():
+        with torch.inference_mode(), torch.amp.autocast(device_type="cuda"):
             for X_batch, y_batch in progress_bar_test:
-                X_batch_grid, y_batch = X_batch["Grid"].to(device), y_batch.to(device)
-
-                current_bases, bases = extend_bases(X_batch=X_batch, bases=bases)
+                X_batch_grid, y_batch = X_batch["Grid"].to(device, non_blocking=True), y_batch.to(device, non_blocking=True)
+                current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
 
                 predictions = model(X_batch_grid)
 
                 if "STARSTAR" in name:
                     reaction_energy, local_energies = calculate_reaction_energy(
                         X_batch,
-                        torch.ones(X_batch_grid.shape[0], 26).to(device)
-                        * true_constants_PBE,
-                        device,
-                        rung=rung,
-                        dft=dft,
-                        dispersions=dispersions,
+                        torch.ones(X_batch_grid.shape[0], 26).to(device) * true_constants_PBE,
+                        device, rung=rung, dft=dft, dispersions=dispersions,
                         enhancement=torch.stack(predictions, dim=1),
                     )
-
                 else:
                     reaction_energy, local_energies = calculate_reaction_energy(
-                        X_batch,
-                        predictions,
-                        device,
-                        rung=rung,
-                        dft=dft,
-                        dispersions=dispersions,
+                        X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
                     )
-
-                pred_energies, ref_energies, errors, total_database_errors = (
-                    make_total_db_errors(
-                        pred_energies,
-                        reaction_energy,
-                        errors,
-                        ref_energies,
-                        y_batch,
-                        total_database_errors,
-                        current_bases,
-                    )
-                )
 
                 local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
-
+                batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
+                loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
                 MAE = mae(reaction_energy, y_batch).item()
 
-                reaction_mse_loss = criterion(reaction_energy, y_batch)
-                batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-
-                MSE = reaction_mse_loss.item()
-
-                loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
-
-                test_mse_losses_per_epoch.append(MSE)
-                test_mae_losses_per_epoch.append(MAE)
-                test_exc_losses_per_epoch.append(local_loss.item())
-                val_full_loss_per_epoch.append(loss.item())
-
-                progress_bar_test.set_postfix(RMSE=batch_fchem_loss, MAE=MAE)
-                del (
-                    X_batch,
-                    X_batch_grid,
-                    y_batch,
-                    reaction_energy,
-                    loss,
-                    MAE,
-                    MSE,
-                    local_energies,
-                    local_loss,
-                    predictions,
+                batch_size = y_batch.size(0)
+                val_loss_sum += loss.item() * batch_size
+                val_mae_sum += MAE * batch_size
+                val_exc_sum += local_loss.item() * batch_size
+                val_samples_count += batch_size
+                
+                _, _, _, epoch_val_total_database_errors = make_total_db_errors(
+                    [], reaction_energy, [], [], y_batch, epoch_val_total_database_errors, current_bases
                 )
-                gc.collect()
-                torch.cuda.empty_cache()
 
-        test_loss_mse.append(np.mean(test_mse_losses_per_epoch))
-        test_loss_mae.append(np.mean(test_mae_losses_per_epoch))
-        test_loss_exc.append(np.mean(test_exc_losses_per_epoch))
-        val_full_loss.append(np.mean(val_full_loss_per_epoch))
-
-        print(
-            f"test RMSE Loss = {val_full_loss[epoch]:.8f} MAE Loss = {test_loss_mae[epoch]:.8f}"
-        )
-        fig, ax = plt.subplots(nrows=2, ncols=1, figsize=[3, 6], sharex=True)
-        ax[0].plot(
-            range(1, len(train_full_loss) + 1), train_full_loss, label="Train Loss"
-        )
-        ax[0].plot(
-            range(1, len(val_full_loss) + 1), val_full_loss, label="Validation Loss"
-        )
-        print(f"test Local Energy Loss = {test_loss_exc[epoch]:.8f}")
-
-        val_fchem = loss_function(
-            factor_dictionary=FCHEM_VALIDATION,
-            total_database_errors=total_database_errors,
-            val=True,
-        )
-        test_fchem.append(
-            (1 - omega) * val_fchem / 15 + omega * test_loss_exc[-1] * 200
-        )
-
-        val_loss_window.append(val_full_loss[-1])
-        test_fchem_window.append(test_fchem[-1])
-
-        smoothed_val_loss = np.mean(val_loss_window)
-        smoothed_fchem = np.mean(test_fchem_window)
-
-        if prev:
-            os.remove(prev)
-        prev = f"{best_model_dir}bs_{batch_size}_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_train_loss_{train_full_loss[-1]:.3f}_val_loss_{val_full_loss[-1]:.3f}_train_exc_{train_loss_exc[-1]:.5f}_val_exc_{test_loss_exc[-1]:.5f}_train_fchem_{train_fchem:.3f}_val_fchem_{val_fchem:.3f}.pth"
-
-        print(prev)
-        torch.save(model.module.state_dict(), prev)
-
-        if len(val_loss_window) == smoothing_window:
-            print(
-                f"Smoothed Val Loss: {smoothed_val_loss:.8f}, Smoothed Fchem: {smoothed_fchem:.8f}"
-            )
-
-            if scheduler:
-                scheduler.step()
-
-            if val_full_loss[-1] <= min(val_full_loss):
-                print(f"New best Val loss: {val_full_loss[-1]:.3f}. Saving model.")
-
-                if prev_best:
+                if local_rank == 0:
                     try:
-                        os.remove(prev_best)
-                    except OSError as e:
-                        print(f"Error removing previous best model: {e}")
+                        component_names = [str(c) for c in X_batch['Components']]
+                        local_reaction_name = ", ".join(component_names)
+                    except (IndexError, TypeError):
+                        local_reaction_name = "loading..."
 
-                prev_best = f"{best_model_dir}BEST_EPOCH_bs_{batch_size}_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_train_loss_{train_full_loss[-1]:.3f}_val_loss_{val_full_loss[-1]:.3f}_train_exc_{train_loss_exc[-1]:.5f}_val_exc_{test_loss_exc[-1]:.5f}_train_fchem_{train_fchem:.3f}_val_fchem_{val_fchem:.3f}.pth"
-                torch.save(model.module.state_dict(), prev_best)
+                    all_reaction_names = gather_reaction_names(local_reaction_name, device, world_size, local_rank)
+                    
+                else:
+                    try:
+                        component_names = [str(c) for c in X_batch['Components']]
+                        local_reaction_name = ", ".join(component_names)
+                    except (IndexError, TypeError):
+                        local_reaction_name = "loading..."
+                    gather_reaction_names(local_reaction_name, device, world_size, local_rank)
 
-        print("\nValidation Fchem", val_fchem, "\n")
-        ax[1].plot(
-            range(1, len(val_full_loss) + 1), train_fchem_loss, label="Train Fchem"
-        )
-        ax[1].plot(
-            range(1, len(val_full_loss) + 1), test_fchem, label="Validation Fchem"
-        )
-        ax[0].legend()
-        ax[1].legend()
-        plt.savefig(f"./batch_fchem/bs_{batch_size}_lr_{lr_train}_{name}_{omega}.png")
-        plt.clf()
-        plt.close()
+        
+        metrics_to_sync = torch.tensor([val_loss_sum, val_mae_sum, val_exc_sum, val_samples_count], device=device)
+        dist.all_reduce(metrics_to_sync, op=dist.ReduceOp.SUM)
 
-        del (
-            val_fchem,
-            train_fchem,
-            test_mse_losses_per_epoch,
-            test_mae_losses_per_epoch,
-            val_full_loss_per_epoch,
-        )
-        gc.collect()
-        torch.cuda.empty_cache()
+        gathered_train_errors_list = [None] * world_size
+        gathered_val_errors_list = [None] * world_size
+        
+        dist.all_gather_object(gathered_train_errors_list, epoch_train_total_database_errors)
+        dist.all_gather_object(gathered_val_errors_list, epoch_val_total_database_errors)
+
+        if local_rank == 0:
+            global_train_errors = collections.defaultdict(list)
+            for local_dict in gathered_train_errors_list:
+                for db_name, errors in local_dict.items():
+                    global_train_errors[db_name].extend(errors)
+
+            global_val_errors = collections.defaultdict(list)
+            for local_dict in gathered_val_errors_list:
+                for db_name, errors in local_dict.items():
+                    global_val_errors[db_name].extend(errors)
+            
+            total_val_loss, total_val_mae, total_val_exc, total_val_samples = metrics_to_sync.tolist()
+
+            avg_val_loss = total_val_loss / total_val_samples if total_val_samples > 0 else 0
+            avg_val_mae = total_val_mae / total_val_samples if total_val_samples > 0 else 0
+            avg_val_exc = total_val_exc / total_val_samples if total_val_samples > 0 else 0
+            
+            avg_train_loss = epoch_train_loss_sum / len(train_loader)
+            avg_train_mae = epoch_train_mae_sum / len(train_loader)
+            avg_train_exc = epoch_train_exc_sum / len(train_loader)
+            
+            train_full_loss.append(avg_train_loss)
+            train_loss_mae.append(avg_train_mae)
+            train_loss_exc.append(avg_train_exc)
+            val_full_loss.append(avg_val_loss)
+            test_loss_mae.append(avg_val_mae)
+            test_loss_exc.append(avg_val_exc)
+
+            print(f"\n--- Epoch {epoch + 1} Summary ---")
+            
+            print("Training Set Metrics:")
+            train_fchem = loss_function(FCHEM_VALIDATION, global_train_errors, val=False)
+            print(f"Global Train Fchem: {train_fchem:.4f}\n")
+            train_fchem_loss.append((1 - omega) * train_fchem / 50 + omega * train_loss_exc[-1] * 100)
+
+            print("Validation Set Metrics:")
+            val_fchem = loss_function(FCHEM_VALIDATION, global_val_errors, val=True)
+            print(f"Global Validation Fchem: {val_fchem:.4f}\n")
+            test_fchem.append((1 - omega) * val_fchem / 15 + omega * test_loss_exc[-1] * 200)
+            
+
+            val_loss_window.append(val_full_loss[-1])
+            
+            if prev and os.path.exists(prev): os.remove(prev)
+            prev = f"{best_model_dir}bs_{batch_size}_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_train_loss_{train_full_loss[-1]:.3f}_val_loss_{val_full_loss[-1]:.3f}_train_fchem_{train_fchem:.3f}_val_fchem_{val_fchem:.3f}.pth"
+            torch.save(model.module.state_dict(), prev)
+
+            if len(val_loss_window) == smoothing_window:
+                if scheduler: scheduler.step()
+                if val_full_loss[-1] <= min(val_full_loss):
+                    print(f"New best Val loss: {val_full_loss[-1]:.3f}. Saving model.")
+                    if prev_best and os.path.exists(prev_best):
+                        try: os.remove(prev_best)
+                        except OSError: pass
+                    prev_best = f"{best_model_dir}BEST_EPOCH_bs_{batch_size}_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_train_loss_{train_full_loss[-1]:.3f}_val_loss_{val_full_loss[-1]:.3f}_train_fchem_{train_fchem:.3f}_val_fchem_{val_fchem:.3f}.pth"
+                    torch.save(model.module.state_dict(), prev_best)
+
+            fig, ax = plt.subplots(nrows=2, ncols=1, figsize=[3, 6], sharex=True)
+            ax[0].plot(train_full_loss, label="Train Loss")
+            ax[0].plot(val_full_loss, label="Validation Loss")
+            ax[1].plot(train_fchem_loss, label="Train Fchem")
+            ax[1].plot(test_fchem, label="Validation Fchem")
+            ax[0].legend(); ax[1].legend()
+            plt.savefig(f"./batch_fchem/bs_{batch_size}_lr_{lr_train}_{name}_{omega}.png")
+            plt.close(fig)
 
     return train_loss_mae, test_loss_mae, prev_best
 
@@ -660,6 +571,11 @@ def train(
 if __name__ == "__main__":
 
     data, data_train, data_test = load_chk(path="checkpoints")
+
+    local_rank = int(os.environ["LOCAL_RANK"])
+    dist.init_process_group(backend="nccl")
+    torch.cuda.set_device(local_rank)
+    device = torch.device("cuda", local_rank)
 
     parser = OptionParser()
     parser.add_option(
@@ -717,22 +633,6 @@ if __name__ == "__main__":
         Opts.Patience,
     )
 
-    print(
-        "name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience"
-    )
-    print(
-        name,
-        n_predopt,
-        n_train,
-        batch_size,
-        dropout,
-        omega,
-        lr_train,
-        lr_predopt,
-        patience,
-    )
-    print("Number of GPUs:", torch.cuda.device_count())
-
     xalpha = False
 
     if "PBE" in name:
@@ -749,66 +649,70 @@ if __name__ == "__main__":
 
     if dft == "PBE":
         if "STARSTAR" in name:
-            model = nn.DataParallel(
-                pcPBEdoublestar(
-                    num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft
-                )
-            ).to(device)
+            base_model = pcPBEdoublestar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
 
         elif "STAR" in name:
-            model = nn.DataParallel(
-                pcPBEstar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft)
-            ).to(device)
+            base_model = pcPBEstar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
+
+        elif "PBE-L" in name:
+            base_model = pcPBELMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
 
         else:
-            model = nn.DataParallel(
-                pcPBEMLOptimizer(
-                    num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft
-                )
-            ).to(device)
+            base_model = pcPBEMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
 
     elif dft == "XALPHA":
-        model = nn.DataParallel(
-            MLOptimizer(num_layers, h_dim, nconstants, dropout, dft)
-        ).to(device)
+        base_model = MLOptimizer(num_layers, h_dim, nconstants, dropout, dft).to(device)
 
-    total_params = sum(p.numel() for p in model.parameters())
-    print(f"Number of parameters: {total_params}")
+    model = DDP(base_model, device_ids=[local_rank])
+    model = torch.compile(model)
 
-    # Load dispersion corrections.
+    if local_rank == 0:
+        print(FCHEM_VALIDATION)
+        print("name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience")
+        print(name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience)
+        print("Number of GPUs:", torch.cuda.device_count())
+        total_params = sum(p.numel() for p in model.module.parameters()) 
+        print(f"Number of parameters: {total_params}")
+
     with open("./dispersions/dispersions.pickle", "rb") as handle:
         dispersions = pickle.load(handle)
 
-    # Load train, test and pre-optimization dataloaders.
     train_set = Dataset(data=data_train)
+    train_sampler = DistributedSampler(train_set, shuffle=True)
     train_dataloader = torch.utils.data.DataLoader(
         train_set,
         batch_size=batch_size,
-        num_workers=2,
+        num_workers=4,
         pin_memory=True,
-        shuffle=True,
+        shuffle=False,
+        sampler=train_sampler,
         generator=g,
         collate_fn=collate_fn,
         worker_init_fn=seed_worker,
     )
+
     test_set = Dataset(data=data_test)
+    test_sampler = DistributedSampler(test_set, shuffle=False)
     test_dataloader = torch.utils.data.DataLoader(
         test_set,
         batch_size=batch_size,
-        num_workers=2,
+        num_workers=4,
         pin_memory=True,
         shuffle=False,
         collate_fn=collate_fn,
+        sampler=test_sampler,
         generator=g,
         worker_init_fn=seed_worker,
     )
     train_predopt_set = DatasetPredopt(data=data, dft=dft)
+    predopt_sampler = DistributedSampler(train_predopt_set, shuffle=False)
     train_predopt_dataloader = torch.utils.data.DataLoader(
         train_predopt_set,
         batch_size=batch_size,
-        num_workers=2,
+        num_workers=4,
         pin_memory=True,
         shuffle=False,
+        sampler=predopt_sampler,
         collate_fn=collate_fn_predopt,
         generator=g,
         worker_init_fn=seed_worker,
@@ -839,6 +743,7 @@ if __name__ == "__main__":
         accum_iter=1,
         double_star=double_star,
         xalpha=xalpha,
+        local_rank=local_rank
     )
 
     true_constants_PBE = true_constants_PBE.to(device)
@@ -877,4 +782,5 @@ if __name__ == "__main__":
         accum_iter=ACCUM_ITER,
         omega=omega,
         verbose=VERBOSE,
+        local_rank=local_rank
     )
