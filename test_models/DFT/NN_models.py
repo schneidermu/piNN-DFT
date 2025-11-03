@@ -598,6 +598,12 @@ def NN_PBE_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
     )
 
 
+def NN_PBE_L_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
+    return pcPBELMLOptimizer(
+        num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT
+    )
+
+
 def NN_PBE_star_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
     return pcPBEstar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=DFT)
 
