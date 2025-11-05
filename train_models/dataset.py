@@ -1,8 +1,8 @@
-from collections import defaultdict
 import copy
 import csv
 import os
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 import h5py
@@ -13,6 +13,41 @@ from utils import stack_reactions
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from dft_functionals import PBE, true_constants_PBE
+
+
+def group_and_augment_reactions(base_reactions, file_index):
+    """
+    Takes a set of base reactions, augments them with all available grid types,
+    and returns them grouped by the original base reaction key.
+    """
+    all_grid_suffixes = set()
+    for molecule_grids in file_index.values():
+        all_grid_suffixes.update(molecule_grids.keys())
+
+    if not all_grid_suffixes:
+        print("Warning: No grid suffixes found for augmentation.")
+        return {}
+
+    grouped_augmented_dataset = defaultdict(list)
+
+    for base_key, reaction_data in base_reactions.items():
+        for grid_suffix in all_grid_suffixes:
+            is_valid_combination = all(
+                component in file_index and grid_suffix in file_index[component]
+                for component in reaction_data["Components"]
+            )
+            
+            if is_valid_combination:
+                augmented_reaction = copy.deepcopy(reaction_data)
+                augmented_reaction['component_paths'] = [
+                    file_index[comp][grid_suffix] for comp in augmented_reaction["Components"]
+                ]
+                
+                populated_reaction = add_reaction_info_from_h5(augmented_reaction, file_index)
+
+                grouped_augmented_dataset[base_key].append(populated_reaction)
+                
+    return dict(grouped_augmented_dataset)
 
 
 def build_file_index(data_path):
@@ -218,57 +253,23 @@ def add_reaction_info_from_h5(reaction, file_index):
 
 def make_reactions_dict(path=None):
     """
-    Builds the full, augmented dictionary of all reactions for all grid types.
+    Builds a dictionary of all reactions, augmented and grouped by base reaction.
     """
     file_index = build_file_index(path)
-
     base_reactions = get_compounds_coefs_energy(
         load_component_names(path), load_ref_energies(path)
     )
-
-    all_grid_suffixes = set()
-    for molecule_grids in file_index.values():
-        all_grid_suffixes.update(molecule_grids.keys())
     
-    if not all_grid_suffixes:
-        raise ValueError("No grid suffixes found. Ensure filenames are like 'molecule_gridtype.h5'")
+    grouped_dataset = group_and_augment_reactions(base_reactions, file_index)
     
-    print(f"Found {len(all_grid_suffixes)} unique grid types to augment with: {sorted(list(all_grid_suffixes))}")
-
-    augmented_dataset = {}
-    new_key_counter = 0
-    
-    for reaction_data in base_reactions.values():
-        for grid_suffix in all_grid_suffixes:
-            
-            is_valid_combination = all(
-                component in file_index and grid_suffix in file_index[component]
-                for component in reaction_data["Components"]
-            )
-            
-            if is_valid_combination:
-                augmented_reaction = copy.deepcopy(reaction_data)
-
-                augmented_reaction['component_paths'] = [
-                    file_index[comp][grid_suffix] for comp in augmented_reaction["Components"]
-                ]
-                
-                augmented_dataset[new_key_counter] = augmented_reaction
-                new_key_counter += 1
-
-    print(f"Expanded {len(base_reactions)} base reactions into {len(augmented_dataset)} total training samples.")
-
-    for i in augmented_dataset.keys():
-        augmented_dataset[i] = add_reaction_info_from_h5(augmented_dataset[i], file_index)
-
-    return augmented_dataset
-
+    total_samples = sum(len(v) for v in grouped_dataset.values())
+    print(f"Grouped {len(base_reactions)} base reactions into {total_samples} total augmented samples.")
+    return grouped_dataset
 
 def collate_fn(data):
     """
     Custom collate function for torch train and test dataloader
     """
-    data = copy.deepcopy(data)
     reactions = []
     energies = []
     for reaction, energy in data:
@@ -287,7 +288,6 @@ def collate_fn_predopt(data):
     """
     Custom collate function for torch predopt dataloader
     """
-    data = copy.deepcopy(data)
     reactions = []
     for reaction, constant in data:
         reactions.append(reaction)
