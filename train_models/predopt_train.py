@@ -424,6 +424,8 @@ def train(
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
 
+            if scheduler: scheduler.step()
+
             MAE = mae(reaction_energy, y_batch).item()
             epoch_train_loss_sum += loss.item()
             epoch_train_mae_sum += MAE
@@ -542,8 +544,6 @@ def train(
             
 
             val_loss_window.append(val_full_loss[-1])
-
-            if scheduler: scheduler.step()
             
             if prev and os.path.exists(prev): os.remove(prev)
             prev = f"{best_model_dir}bs_{batch_size}_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_train_loss_{train_full_loss[-1]:.3f}_val_loss_{val_full_loss[-1]:.3f}_train_fchem_{train_fchem:.3f}_val_fchem_{val_fchem:.3f}.pth"
