@@ -1,7 +1,7 @@
 import collections
-import gc
 import os
 import pickle
+import random
 from optparse import OptionParser
 
 import matplotlib.pyplot as plt
@@ -96,6 +96,32 @@ class Dataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.data.keys())
+    
+
+class AugmentedDataset(torch.utils.data.Dataset):
+    def __init__(self, data):
+        """
+        Initializes the dataset with data grouped by base reaction.
+        `grouped_data` should be a dictionary like:
+        {base_key_0: [aug_1, aug_2, ...], base_key_1: [aug_1, aug_2, ...]}
+        """
+        self.reaction_groups = list(data.values())
+
+    def __len__(self):
+        """
+        The length of the dataset is the number of unique BASE reactions.
+        """
+        return len(self.reaction_groups)
+
+    def __getitem__(self, idx):
+        """
+        When asked for an item, randomly select one augmentation from the corresponding group.
+        """
+        augmentations = self.reaction_groups[idx]
+        
+        chosen_reaction = random.choice(augmentations)
+
+        return chosen_reaction, chosen_reaction["Energy"]
 
 
 class EarlyStopper:
@@ -369,37 +395,33 @@ def train(
 
         for batch_idx, (X_batch, y_batch) in enumerate(progress_bar_train):
             X_batch_grid, y_batch = X_batch["Grid"].to(device, non_blocking=True), y_batch.to(device, non_blocking=True)
-            X_batch_grid.requires_grad_(True)
             current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
 
-            with torch.amp.autocast(device_type="cuda"):
-                predictions = model(X_batch_grid)
+            predictions = model(X_batch_grid)
 
-                if "STARSTAR" in name:
-                    reaction_energy, local_energies = calculate_reaction_energy(
-                        X_batch,
-                        torch.ones(X_batch_grid.shape[0], 26).to(device) * true_constants_PBE,
-                        device, rung=rung, dft=dft, dispersions=dispersions,
-                        enhancement=torch.stack(predictions, dim=1),
-                    )
-                else:
-                    reaction_energy, local_energies = calculate_reaction_energy(
-                        X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
-                    )
+            if "STARSTAR" in name:
+                reaction_energy, local_energies = calculate_reaction_energy(
+                    X_batch,
+                    torch.ones(X_batch_grid.shape[0], 26).to(device) * true_constants_PBE,
+                    device, rung=rung, dft=dft, dispersions=dispersions,
+                    enhancement=torch.stack(predictions, dim=1),
+                )
+            else:
+                reaction_energy, local_energies = calculate_reaction_energy(
+                    X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
+                )
 
-                local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
-                batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-                loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
+            local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
+            batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
+            loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
 
-            scaler.scale(loss).backward()
+            loss.backward()
 
             if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == len(train_loader)):
 
-                scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+#                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) this may be useful if the curve is very noisy
 
-                scaler.step(optimizer)
-                scaler.update()
+                optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
 
             MAE = mae(reaction_energy, y_batch).item()
@@ -411,22 +433,18 @@ def train(
                 [], reaction_energy, [], [], y_batch, epoch_train_total_database_errors, current_bases
             )
 
-            if local_rank == 0:
-                try:
-                    component_names = [str(c) for c in X_batch['Components']]
-                    local_reaction_name = ", ".join(component_names)
-                except (IndexError, TypeError):
-                    local_reaction_name = "loading..."
-                
-                all_reaction_names = gather_reaction_names(local_reaction_name, device, world_size, local_rank)
+        metrics_train_to_sync = torch.tensor(
+            [epoch_train_loss_sum, epoch_train_mae_sum, epoch_train_exc_sum], 
+            device=device
+        )
+        dist.all_reduce(metrics_train_to_sync, op=dist.ReduceOp.SUM)
 
-            else:
-                try:
-                    component_names = [str(c) for c in X_batch['Components']]
-                    local_reaction_name = ", ".join(component_names)
-                except (IndexError, TypeError):
-                    local_reaction_name = "loading..."
-                gather_reaction_names(local_reaction_name, device, world_size, local_rank)
+        total_train_loss, total_train_mae, total_train_exc = (metrics_train_to_sync / world_size).tolist()
+
+        avg_train_loss = total_train_loss / len(train_loader)
+        avg_train_mae = total_train_mae / len(train_loader)
+        avg_train_exc = total_train_exc / len(train_loader)
+        
         
         model.eval()
         progress_bar_test = tqdm(
@@ -476,23 +494,6 @@ def train(
                     [], reaction_energy, [], [], y_batch, epoch_val_total_database_errors, current_bases
                 )
 
-                if local_rank == 0:
-                    try:
-                        component_names = [str(c) for c in X_batch['Components']]
-                        local_reaction_name = ", ".join(component_names)
-                    except (IndexError, TypeError):
-                        local_reaction_name = "loading..."
-
-                    all_reaction_names = gather_reaction_names(local_reaction_name, device, world_size, local_rank)
-                    
-                else:
-                    try:
-                        component_names = [str(c) for c in X_batch['Components']]
-                        local_reaction_name = ", ".join(component_names)
-                    except (IndexError, TypeError):
-                        local_reaction_name = "loading..."
-                    gather_reaction_names(local_reaction_name, device, world_size, local_rank)
-
         
         metrics_to_sync = torch.tensor([val_loss_sum, val_mae_sum, val_exc_sum, val_samples_count], device=device)
         dist.all_reduce(metrics_to_sync, op=dist.ReduceOp.SUM)
@@ -520,10 +521,6 @@ def train(
             avg_val_mae = total_val_mae / total_val_samples if total_val_samples > 0 else 0
             avg_val_exc = total_val_exc / total_val_samples if total_val_samples > 0 else 0
             
-            avg_train_loss = epoch_train_loss_sum / len(train_loader)
-            avg_train_mae = epoch_train_mae_sum / len(train_loader)
-            avg_train_exc = epoch_train_exc_sum / len(train_loader)
-            
             train_full_loss.append(avg_train_loss)
             train_loss_mae.append(avg_train_mae)
             train_loss_exc.append(avg_train_exc)
@@ -545,13 +542,14 @@ def train(
             
 
             val_loss_window.append(val_full_loss[-1])
+
+            if scheduler: scheduler.step()
             
             if prev and os.path.exists(prev): os.remove(prev)
             prev = f"{best_model_dir}bs_{batch_size}_lr_{lr_train}_{name}_{omega}_epoch_{epoch+1}_train_loss_{train_full_loss[-1]:.3f}_val_loss_{val_full_loss[-1]:.3f}_train_fchem_{train_fchem:.3f}_val_fchem_{val_fchem:.3f}.pth"
             torch.save(model.module.state_dict(), prev)
 
             if len(val_loss_window) == smoothing_window:
-                if scheduler: scheduler.step()
                 if val_full_loss[-1] <= min(val_full_loss):
                     print(f"New best Val loss: {val_full_loss[-1]:.3f}. Saving model.")
                     if prev_best and os.path.exists(prev_best):
@@ -680,7 +678,7 @@ if __name__ == "__main__":
     with open("./dispersions/dispersions.pickle", "rb") as handle:
         dispersions = pickle.load(handle)
 
-    train_set = Dataset(data=data_train)
+    train_set = AugmentedDataset(data=data_train)
     train_sampler = DistributedSampler(train_set, shuffle=True)
     train_dataloader = torch.utils.data.DataLoader(
         train_set,
@@ -694,7 +692,7 @@ if __name__ == "__main__":
         worker_init_fn=seed_worker,
     )
 
-    test_set = Dataset(data=data_test)
+    test_set = AugmentedDataset(data=data_test)
     test_sampler = DistributedSampler(test_set, shuffle=False)
     test_dataloader = torch.utils.data.DataLoader(
         test_set,
