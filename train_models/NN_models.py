@@ -8,6 +8,16 @@ from torch import nn
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from dft_functionals import true_constants_PBE
+from dft_functionals.constants import (
+    BETA_CORR_INDEX, EPS_LOG, EPS_RHO, EPS_SIGMA, GAMMA_CORR_INDEX,
+    KAPPA_EX_INDEX, LAPL_ALPHA_INDEX, LAPL_BETA_INDEX,
+    LLMGGA_DESCRIPTOR_DIMENSIONALITY,
+    LLMGGA_DESCRIPTOR_EXCHANGE_DIMENSIONALITY, LLMGGA_SPIN_INVERTED_SLICE,
+    LLMGGA_SPIN_SCALING_MULTIPLIER, MGGA_DESCRIPTOR_DIMENSIONALITY,
+    MGGA_DESCRIPTOR_EXCHANGE_DIMENSIONALITY, MGGA_SPIN_INVERTED_SLICE,
+    MGGA_SPIN_SCALING_MULTIPLIER, MU_EX_INDEX, RHO_ALPHA_INDEX, RHO_BETA_INDEX,
+    S_ALPHA_INDEX, S_BETA_INDEX, S_TOTAL_INDEX, TAU_ALPHA_INDEX,
+    TAU_BETA_INDEX)
 
 random.seed(42)
 
@@ -58,7 +68,7 @@ class MLOptimizer(nn.Module):
         modules = []
         modules.extend(
             [
-                nn.Linear(7, h_dim, bias=False),
+                nn.Linear(MGGA_DESCRIPTOR_DIMENSIONALITY, h_dim, bias=False),
                 nn.LayerNorm(h_dim),
                 nn.GELU(),
             ]
@@ -98,48 +108,45 @@ class MLOptimizer(nn.Module):
         6 - tau beta
         """
 
-        eps_sigma = 1e-30
-        eps_rho = 1e-10
-
-        n_alpha = x[:, 0] ** (1 / 3)
-        n_beta = x[:, 1] ** (1 / 3)
+        n_alpha = x[:, RHO_ALPHA_INDEX] ** (1 / 3)
+        n_beta = x[:, RHO_BETA_INDEX] ** (1 / 3)
 
         s_alpha = (
-            torch.sqrt(x[:, 2] + eps_sigma)
-            / (x[:, 0] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_ALPHA_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_ALPHA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
         s_norm = (
-            torch.sqrt(x[:, 3] + eps_sigma)
-            / (x[:, 0] + x[:, 1] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_TOTAL_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_ALPHA_INDEX] + x[:, RHO_BETA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
         s_beta = (
-            torch.sqrt(x[:, 4] + eps_sigma)
-            / (x[:, 1] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_BETA_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_BETA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
 
         tau_tf_alpha = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5 / 3)
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, RHO_ALPHA_INDEX] + EPS_RHO) ** (5 / 3)
         )
         tau_tf_beta = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 1] + eps_rho) ** (5 / 3)
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, RHO_BETA_INDEX] + EPS_RHO) ** (5 / 3)
         )
-        tau_w_alpha = x[:, 2] / (8 * (x[:, 0] + eps_rho))
-        tau_w_beta = x[:, 4] / (8 * (x[:, 1] + eps_rho))
+        tau_w_alpha = x[:, S_ALPHA_INDEX] / (8 * (x[:, RHO_ALPHA_INDEX] + EPS_RHO))
+        tau_w_beta = x[:, S_BETA_INDEX] / (8 * (x[:, RHO_BETA_INDEX] + EPS_RHO))
 
-        tau_alpha = (x[:, 5] - tau_w_alpha) / tau_tf_alpha
-        tau_beta = (x[:, 6] - tau_w_beta) / tau_tf_beta
+        tau_alpha = (x[:, TAU_ALPHA_INDEX] - tau_w_alpha) / tau_tf_alpha
+        tau_beta = (x[:, TAU_BETA_INDEX] - tau_w_beta) / tau_tf_beta
 
         X = torch.stack(
             [n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta], dim=1
         )
 
-        X[:, 5:] = X[:, 5:] - 1
+        X[:, TAU_ALPHA_INDEX:] = X[:, TAU_ALPHA_INDEX:] - 1
         X = torch.tanh(X)
 
         return X
@@ -153,7 +160,7 @@ class MLOptimizer(nn.Module):
         x = self.get_density_descriptors(x)
 
         result = (
-            self.unsymm_forward(x) + self.unsymm_forward(x[:, [1, 0, 4, 3, 2, 6, 5]])
+            self.unsymm_forward(x) + self.unsymm_forward(x[:, MGGA_SPIN_INVERTED_SLICE])
         ) / 2
 
         return result
@@ -171,13 +178,13 @@ class pcPBEMLOptimizer(nn.Module):
         modules_c = []  # NN part for correlation
 
         input_layer_c = [
-            nn.Linear(7, h_dim, bias=False),
+            nn.Linear(MGGA_DESCRIPTOR_DIMENSIONALITY, h_dim, bias=False),
             nn.LayerNorm(h_dim),
             nn.GELU(),
         ]
 
         input_layer_x = [
-            nn.Linear(2, h_dim, bias=False),
+            nn.Linear(MGGA_DESCRIPTOR_EXCHANGE_DIMENSIONALITY, h_dim, bias=False),
             nn.LayerNorm(h_dim),
             nn.GELU(),
         ]
@@ -209,8 +216,8 @@ class pcPBEMLOptimizer(nn.Module):
 
     def get_exchange_constants(self, x):
 
-        x_x_up = self.hidden_layers_x(x[:, [2, 5]])  # Slice out density descriptors
-        x_x_down = self.hidden_layers_x(x[:, [4, 6]])
+        x_x_up = self.hidden_layers_x(x[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX]])  # Slice out density descriptors
+        x_x_down = self.hidden_layers_x(x[:, [S_BETA_INDEX, TAU_BETA_INDEX]])
 
         return (
             x_x_up[:, 1].view(-1, 1),
@@ -230,7 +237,7 @@ class pcPBEMLOptimizer(nn.Module):
         """
         Function for parameter beta constraint
         """
-        return torch.hstack([x[:, :2], torch.zeros([x.shape[0], x.shape[1]-2]).to(x.device)])
+        return torch.hstack([x[:, :S_ALPHA_INDEX], torch.zeros([x.shape[0], x.shape[1]-2]).to(x.device)])
 
     @staticmethod
     def all_sigma_inf(x):
@@ -238,7 +245,7 @@ class pcPBEMLOptimizer(nn.Module):
         Function for PW91 correlation parameters constraint
         """
         return torch.hstack(
-            [x[:, :2], torch.ones([x.shape[0], 3]).to(x.device), x[:, 5:]]
+            [x[:, :S_ALPHA_INDEX], torch.ones([x.shape[0], 3]).to(x.device), x[:, TAU_ALPHA_INDEX:]]
         )
 
     @staticmethod
@@ -246,7 +253,7 @@ class pcPBEMLOptimizer(nn.Module):
         """
         Function for parameter gamma constraint
         """
-        return torch.hstack([torch.ones([x.shape[0], 2]).to(x.device), x[:, 2:]])
+        return torch.hstack([torch.ones([x.shape[0], 2]).to(x.device), x[:, S_ALPHA_INDEX:]])
 
     @staticmethod
     def shifted_elu(x):
@@ -264,54 +271,51 @@ class pcPBEMLOptimizer(nn.Module):
         6 - tau beta
         """
 
-        eps_sigma = 1e-30
-        eps_rho = 1e-10
-
-        n_alpha = x[:, 0] ** (1 / 3)
-        n_beta = x[:, 1] ** (1 / 3)
+        n_alpha = x[:, RHO_ALPHA_INDEX] ** (1 / 3)
+        n_beta = x[:, RHO_BETA_INDEX] ** (1 / 3)
 
         s_alpha = (
-            torch.sqrt(x[:, 2] + eps_sigma)
-            / (x[:, 0] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_ALPHA_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_ALPHA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
         s_norm = (
-            torch.sqrt(x[:, 3] + eps_sigma)
-            / (x[:, 0] + x[:, 1] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_TOTAL_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_ALPHA_INDEX] + x[:, RHO_BETA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
         s_beta = (
-            torch.sqrt(x[:, 4] + eps_sigma)
-            / (x[:, 1] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_BETA_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_BETA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
 
         tau_tf_alpha = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5 / 3)
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, RHO_ALPHA_INDEX] + EPS_RHO) ** (5 / 3)
         )
         tau_tf_beta = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 1] + eps_rho) ** (5 / 3)
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, RHO_BETA_INDEX] + EPS_RHO) ** (5 / 3)
         )
-        tau_w_alpha = x[:, 2] / (8 * (x[:, 0] + eps_rho))
-        tau_w_beta = x[:, 4] / (8 * (x[:, 1] + eps_rho))
+        tau_w_alpha = x[:, S_ALPHA_INDEX] / (8 * (x[:, RHO_ALPHA_INDEX] + EPS_RHO))
+        tau_w_beta = x[:, S_BETA_INDEX] / (8 * (x[:, RHO_BETA_INDEX] + EPS_RHO))
 
-        tau_alpha = (x[:, 5] - tau_w_alpha) / tau_tf_alpha
-        tau_beta = (x[:, 6] - tau_w_beta) / tau_tf_beta
+        tau_alpha = (x[:, TAU_ALPHA_INDEX] - tau_w_alpha) / tau_tf_alpha
+        tau_beta = (x[:, TAU_BETA_INDEX] - tau_w_beta) / tau_tf_beta
 
         X = torch.stack(
             [n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta], dim=1
         )
 
-        X[:, 5:] = X[:, 5:] - 1
+        X[:, TAU_ALPHA_INDEX:] = X[:, TAU_ALPHA_INDEX:] - 1
         X = torch.tanh(X)
 
         return X
 
     def get_exchange_descriptors(self, x):
-        scaling_array = torch.tensor([2, 2, 4, 4, 4, 2, 2]).to(x.device)
+        scaling_array = MGGA_SPIN_SCALING_MULTIPLIER.to(x.device)
 
         return self.get_density_descriptors(scaling_array * x)
 
@@ -320,13 +324,13 @@ class pcPBEMLOptimizer(nn.Module):
         x_exchange_desc = self.get_exchange_descriptors(x)
         x_correlation_desc = self.get_density_descriptors(x)
 
-        x_correlation_desc_swapped = x_correlation_desc[:, [1, 0, 4, 3, 2, 6, 5]]
+        x_correlation_desc_swapped = x_correlation_desc[:, MGGA_SPIN_INVERTED_SLICE]
         params_c_real = (
             self.hidden_layers_c(x_correlation_desc)
             + self.hidden_layers_c(x_correlation_desc_swapped)
         ) / 2
-        beta_real, gamma_real = params_c_real[:, 0].view(-1, 1), params_c_real[
-            :, 1
+        beta_real, gamma_real = params_c_real[:, BETA_CORR_INDEX].view(-1, 1), params_c_real[
+            :, GAMMA_CORR_INDEX
         ].view(-1, 1)
 
         x_corr_sigma_zero = self.all_sigma_zero(x_correlation_desc)
@@ -335,7 +339,7 @@ class pcPBEMLOptimizer(nn.Module):
             self.hidden_layers_c(x_corr_sigma_zero)
             + self.hidden_layers_c(x_corr_sigma_zero_swapped)
         ) / 2
-        beta_at_constraint = params_c_sigma_zero[:, 0].view(-1, 1)
+        beta_at_constraint = params_c_sigma_zero[:, BETA_CORR_INDEX].view(-1, 1)
 
         x_corr_rho_inf = self.all_rho_inf(x_correlation_desc)
         x_corr_rho_inf_swapped = self.all_rho_inf(x_correlation_desc_swapped)
@@ -343,22 +347,22 @@ class pcPBEMLOptimizer(nn.Module):
             self.hidden_layers_c(x_corr_rho_inf)
             + self.hidden_layers_c(x_corr_rho_inf_swapped)
         ) / 2
-        gamma_at_constraint = params_c_rho_inf[:, 1].view(-1, 1)
+        gamma_at_constraint = params_c_rho_inf[:, GAMMA_CORR_INDEX].view(-1, 1)
 
-        params_x_up_real = self.hidden_layers_x(x_exchange_desc[:, [2, 5]])
-        params_x_down_real = self.hidden_layers_x(x_exchange_desc[:, [4, 6]])
-        mu_up_real, kappa_up_real = params_x_up_real[:, 0].view(
+        params_x_up_real = self.hidden_layers_x(x_exchange_desc[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX]])
+        params_x_down_real = self.hidden_layers_x(x_exchange_desc[:, [S_BETA_INDEX, TAU_BETA_INDEX]])
+        mu_up_real, kappa_up_real = params_x_up_real[:, MU_EX_INDEX].view(
             -1, 1
-        ), params_x_up_real[:, 1].view(-1, 1)
-        mu_down_real, kappa_down_real = params_x_down_real[:, 0].view(
+        ), params_x_up_real[:, KAPPA_EX_INDEX].view(-1, 1)
+        mu_down_real, kappa_down_real = params_x_down_real[:, MU_EX_INDEX].view(
             -1, 1
-        ), params_x_down_real[:, 1].view(-1, 1)
+        ), params_x_down_real[:, KAPPA_EX_INDEX].view(-1, 1)
 
         x_exch_s_zero = self.all_sigma_zero(x_exchange_desc)
-        params_x_s_zero_up = self.hidden_layers_x(x_exch_s_zero[:, [2, 5]])
-        params_x_s_zero_down = self.hidden_layers_x(x_exch_s_zero[:, [4, 6]])
-        mu_up_at_constraint = params_x_s_zero_up[:, 0].view(-1, 1)
-        mu_down_at_constraint = params_x_s_zero_down[:, 0].view(-1, 1)
+        params_x_s_zero_up = self.hidden_layers_x(x_exch_s_zero[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX]])
+        params_x_s_zero_down = self.hidden_layers_x(x_exch_s_zero[:, [S_BETA_INDEX, TAU_BETA_INDEX]])
+        mu_up_at_constraint = params_x_s_zero_up[:, MU_EX_INDEX].view(-1, 1)
+        mu_down_at_constraint = params_x_s_zero_down[:, MU_EX_INDEX].view(-1, 1)
 
         beta = self.beta_activation(beta_real - beta_at_constraint)
         gamma = self.shifted_elu(gamma_real - gamma_at_constraint)
@@ -400,13 +404,13 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         modules_c = []  # NN part for correlation
 
         input_layer_c = [
-            nn.Linear(9, h_dim, bias=False),
+            nn.Linear(LLMGGA_DESCRIPTOR_DIMENSIONALITY*2, h_dim, bias=False),
             nn.LayerNorm(h_dim),
             nn.GELU(),
         ]
 
         input_layer_x = [
-            nn.Linear(3, h_dim, bias=False),
+            nn.Linear(LLMGGA_DESCRIPTOR_EXCHANGE_DIMENSIONALITY*2, h_dim, bias=False),
             nn.LayerNorm(h_dim),
             nn.GELU(),
         ]
@@ -424,11 +428,35 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         self.hidden_layers_x = nn.Sequential(*modules_x)
         self.hidden_layers_c = nn.Sequential(*modules_c)
         
+        
+    @staticmethod
+    def all_sigma_zero(x):
+        """
+        Function for parameter beta constraint
+        """
+        return torch.hstack([x[:, :S_ALPHA_INDEX], torch.zeros([x.shape[0], 7]).to(x.device), x[:, 9:]])
+
+    @staticmethod
+    def all_sigma_inf(x):
+        """
+        Function for PW91 correlation parameters constraint
+        """
+        return torch.hstack(
+            [x[:, :S_ALPHA_INDEX], torch.ones([x.shape[0], 3]).to(x.device), x[:, TAU_ALPHA_INDEX:]]
+        )
+
+    @staticmethod
+    def all_rho_inf(x):
+        """
+        Function for parameter gamma constraint
+        """
+        return torch.hstack([torch.ones([x.shape[0], 2]).to(x.device), x[:, S_ALPHA_INDEX:]])
+        
     
     def get_exchange_constants(self, x):
 
-        x_x_up = self.hidden_layers_x(x[:, [2, 5, 7]])
-        x_x_down = self.hidden_layers_x(x[:, [4, 6, 8]])
+        x_x_up = self.hidden_layers_x(x[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX, S_ALPHA_INDEX+9, TAU_ALPHA_INDEX+9, LAPL_ALPHA_INDEX+9]])
+        x_x_down = self.hidden_layers_x(x[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX, S_BETA_INDEX+9, TAU_BETA_INDEX+9, LAPL_BETA_INDEX+9]])
 
         return (
             x_x_up[:, 1].view(-1, 1),
@@ -438,7 +466,7 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         )
         
     def get_exchange_descriptors(self, x):
-        scaling_array = torch.tensor([2, 2, 4, 4, 4, 2, 2, 2, 2]).to(x.device)
+        scaling_array = LLMGGA_SPIN_SCALING_MULTIPLIER.to(x.device)
 
         return self.get_density_descriptors(scaling_array * x)
     
@@ -457,51 +485,57 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         8 - lapl beta
         """
 
-        eps_sigma = 1e-30
-        eps_rho = 1e-10
-
-        n_alpha = x[:, 0] ** (1 / 3)
-        n_beta = x[:, 1] ** (1 / 3)
+        n_alpha = x[:, RHO_ALPHA_INDEX] ** (1 / 3)
+        n_beta = x[:, RHO_BETA_INDEX] ** (1 / 3)
 
         s_alpha = (
-            torch.sqrt(x[:, 2] + eps_sigma)
-            / (x[:, 0] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_ALPHA_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_ALPHA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
         s_norm = (
-            torch.sqrt(x[:, 3] + eps_sigma)
-            / (x[:, 0] + x[:, 1] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_TOTAL_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_ALPHA_INDEX] + x[:, RHO_BETA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
         s_beta = (
-            torch.sqrt(x[:, 4] + eps_sigma)
-            / (x[:, 1] + eps_rho) ** (4 / 3)
+            torch.sqrt(x[:, S_BETA_INDEX] + EPS_SIGMA)
+            / (x[:, RHO_BETA_INDEX] + EPS_RHO) ** (4 / 3)
             / (3 * np.pi**2) ** (1 / 3)
             / 2
         )
 
         tau_tf_alpha = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5 / 3)
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, RHO_ALPHA_INDEX] + EPS_RHO) ** (5 / 3)
         )
         tau_tf_beta = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, 1] + eps_rho) ** (5 / 3)
+            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (x[:, RHO_BETA_INDEX] + EPS_RHO) ** (5 / 3)
         )
-        tau_w_alpha = x[:, 2] / (8 * (x[:, 0] + eps_rho))
-        tau_w_beta = x[:, 4] / (8 * (x[:, 1] + eps_rho))
+        tau_w_alpha = x[:, S_ALPHA_INDEX] / (8 * (x[:, RHO_ALPHA_INDEX] + EPS_RHO))
+        tau_w_beta = x[:, S_BETA_INDEX] / (8 * (x[:, RHO_BETA_INDEX] + EPS_RHO))
 
-        tau_alpha = (x[:, 5] - tau_w_alpha) / tau_tf_alpha - 1 
-        tau_beta = (x[:, 6] - tau_w_beta) / tau_tf_beta - 1
-        
-        q_alpha = x[:, 7] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, 0] + eps_rho) ** (5/3))
-        q_beta = x[:, 8] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, 1] + eps_rho) ** (5/3))
+        tau_alpha = (x[:, TAU_ALPHA_INDEX] - tau_w_alpha) / tau_tf_alpha - 1
+        tau_beta = (x[:, TAU_BETA_INDEX] - tau_w_beta) / tau_tf_beta - 1
 
-        X = torch.stack(
-            [n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta, q_alpha, q_beta], dim=1
+        q_alpha = x[:, LAPL_ALPHA_INDEX] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, RHO_ALPHA_INDEX] + EPS_RHO) ** (5/3))
+        q_beta = x[:, LAPL_BETA_INDEX] / (4 * (3 * torch.pi**2) ** (2 / 3) * (x[:, RHO_BETA_INDEX] + EPS_RHO) ** (5/3))
+
+        X = torch.hstack(
+            [
+                torch.tanh(
+                    torch.stack(
+                        [n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha, tau_beta, q_alpha, q_beta], dim=1
+                    )
+                ),
+                torch.log(
+                    EPS_LOG + torch.stack(
+                        [n_alpha, n_beta, s_alpha, s_norm, s_beta, tau_alpha+1, tau_beta+1, abs(q_alpha), abs(q_beta)], dim=1
+                    )
+                )
+            ]
         )
-
-        X = torch.tanh(X)
 
         return X
     
@@ -510,13 +544,14 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         x_exchange_desc = self.get_exchange_descriptors(x)
         x_correlation_desc = self.get_density_descriptors(x)
 
-        x_correlation_desc_swapped = x_correlation_desc[:, [1, 0, 4, 3, 2, 6, 5, 8, 7]]
+        log_indices = [idx + 9 for idx in LLMGGA_SPIN_INVERTED_SLICE]
+        x_correlation_desc_swapped = x_correlation_desc[:, LLMGGA_SPIN_INVERTED_SLICE + log_indices]
         params_c_real = (
             self.hidden_layers_c(x_correlation_desc)
             + self.hidden_layers_c(x_correlation_desc_swapped)
         ) / 2
-        beta_real, gamma_real = params_c_real[:, 0].view(-1, 1), params_c_real[
-            :, 1
+        beta_real, gamma_real = params_c_real[:, BETA_CORR_INDEX].view(-1, 1), params_c_real[
+            :, GAMMA_CORR_INDEX
         ].view(-1, 1)
 
         x_corr_sigma_zero = self.all_sigma_zero(x_correlation_desc)
@@ -525,7 +560,7 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             self.hidden_layers_c(x_corr_sigma_zero)
             + self.hidden_layers_c(x_corr_sigma_zero_swapped)
         ) / 2
-        beta_at_constraint = params_c_sigma_zero[:, 0].view(-1, 1)
+        beta_at_constraint = params_c_sigma_zero[:, BETA_CORR_INDEX].view(-1, 1)
 
         x_corr_rho_inf = self.all_rho_inf(x_correlation_desc)
         x_corr_rho_inf_swapped = self.all_rho_inf(x_correlation_desc_swapped)
@@ -533,22 +568,22 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             self.hidden_layers_c(x_corr_rho_inf)
             + self.hidden_layers_c(x_corr_rho_inf_swapped)
         ) / 2
-        gamma_at_constraint = params_c_rho_inf[:, 1].view(-1, 1)
+        gamma_at_constraint = params_c_rho_inf[:, GAMMA_CORR_INDEX].view(-1, 1)
 
-        params_x_up_real = self.hidden_layers_x(x_exchange_desc[:, [2, 5, 7]])
-        params_x_down_real = self.hidden_layers_x(x_exchange_desc[:, [4, 6, 8]])
-        mu_up_real, kappa_up_real = params_x_up_real[:, 0].view(
+        params_x_up_real = self.hidden_layers_x(x_exchange_desc[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX, S_ALPHA_INDEX+9, TAU_ALPHA_INDEX+9, LAPL_ALPHA_INDEX+9]])
+        params_x_down_real = self.hidden_layers_x(x_exchange_desc[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX, S_BETA_INDEX+9, TAU_BETA_INDEX+9, LAPL_BETA_INDEX+9]])
+        mu_up_real, kappa_up_real = params_x_up_real[:, MU_EX_INDEX].view(
             -1, 1
-        ), params_x_up_real[:, 1].view(-1, 1)
-        mu_down_real, kappa_down_real = params_x_down_real[:, 0].view(
+        ), params_x_up_real[:, KAPPA_EX_INDEX].view(-1, 1)
+        mu_down_real, kappa_down_real = params_x_down_real[:, MU_EX_INDEX].view(
             -1, 1
-        ), params_x_down_real[:, 1].view(-1, 1)
+        ), params_x_down_real[:, KAPPA_EX_INDEX].view(-1, 1)
 
         x_exch_s_zero = self.all_sigma_zero(x_exchange_desc)
-        params_x_s_zero_up = self.hidden_layers_x(x_exch_s_zero[:, [2, 5, 7]])
-        params_x_s_zero_down = self.hidden_layers_x(x_exch_s_zero[:, [4, 6, 8]])
-        mu_up_at_constraint = params_x_s_zero_up[:, 0].view(-1, 1)
-        mu_down_at_constraint = params_x_s_zero_down[:, 0].view(-1, 1)
+        params_x_s_zero_up = self.hidden_layers_x(x_exch_s_zero[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX, S_ALPHA_INDEX+9, TAU_ALPHA_INDEX+9, LAPL_ALPHA_INDEX+9]])
+        params_x_s_zero_down = self.hidden_layers_x(x_exch_s_zero[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX, S_BETA_INDEX+9, TAU_BETA_INDEX+9, LAPL_BETA_INDEX+9]])
+        mu_up_at_constraint = params_x_s_zero_up[:, MU_EX_INDEX].view(-1, 1)
+        mu_down_at_constraint = params_x_s_zero_down[:, MU_EX_INDEX].view(-1, 1)
 
         beta = self.beta_activation(beta_real - beta_at_constraint)
         gamma = self.shifted_elu(gamma_real - gamma_at_constraint)
@@ -721,14 +756,22 @@ def test_model_constraints(model, model_name):
 
     BATCH_SIZE = 8
     model.eval()
+    
+    # Determine input dimensionality based on model type
+    if isinstance(model, pcPBELMLOptimizer):
+        input_dim = LLMGGA_DESCRIPTOR_DIMENSIONALITY  # LLMGGA includes laplacian
+    else:
+        input_dim = MGGA_DESCRIPTOR_DIMENSIONALITY  # Standard MGGA descriptors
+    
     nn_inputs_placeholder = torch.zeros(
-        BATCH_SIZE, 7, device=next(model.parameters()).device
+        BATCH_SIZE, input_dim, device=next(model.parameters()).device
     )
     all_passed = True
 
     rho_a = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 5 + 0.1
     rho_b = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device) * 5 + 0.1
     grad_zero = torch.zeros(BATCH_SIZE, device=nn_inputs_placeholder.device)
+    lapl_zero = torch.zeros(BATCH_SIZE, device=nn_inputs_placeholder.device)
 
     if isinstance(model, pcPBEdoublestar):
         print("\n[1/4] Checking Exchange UEG Limit (Fx -> 1.0)...")
@@ -805,18 +848,37 @@ def test_model_constraints(model, model_name):
         tau_tf_2rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (2 * rho_b) ** (5 / 3)
         tau_a_test = tau_tf_2rho_a / 2
         tau_b_test = tau_tf_2rho_b / 2
-        output_mu = (
-            model(
-                torch.stack([rho_a,
-                rho_b,
-                grad_zero,
-                grad_zero,
-                grad_zero,
-                tau_a_test,
-                tau_b_test,], dim=1)
+        
+        if isinstance(model, pcPBELMLOptimizer):
+            # pcPBELMLOptimizer requires 9 dimensions (includes Laplacian)
+            output_mu = (
+                model(
+                    torch.stack([rho_a,
+                    rho_b,
+                    grad_zero,
+                    grad_zero,
+                    grad_zero,
+                    tau_a_test,
+                    tau_b_test,
+                    lapl_zero,
+                    lapl_zero,], dim=1)
+                )
+                / true_factors
             )
-            / true_factors
-        )
+        else:
+            # pcPBEMLOptimizer uses 7 dimensions
+            output_mu = (
+                model(
+                    torch.stack([rho_a,
+                    rho_b,
+                    grad_zero,
+                    grad_zero,
+                    grad_zero,
+                    tau_a_test,
+                    tau_b_test,], dim=1)
+                )
+                / true_factors
+            )
         mu_up, mu_down = output_mu[:, 23], output_mu[:, 25]
         mu_up_passed = torch.allclose(mu_up, torch.ones_like(mu_up))
         mu_down_passed = torch.allclose(mu_down, torch.ones_like(mu_down))
@@ -832,18 +894,35 @@ def test_model_constraints(model, model_name):
         print("\n[TEST 2/4] Checking `beta` constraint (Correlation UEG Limit)...")
         tau_tf_rho_a = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_a ** (5 / 3)
         tau_tf_rho_b = 3 / 10 * (3 * np.pi**2) ** (2 / 3) * rho_b ** (5 / 3)
-        output_beta = (
-            model(
-                torch.stack([rho_a,
-                rho_b,
-                grad_zero,
-                grad_zero,
-                grad_zero,
-                tau_tf_rho_a,
-                tau_tf_rho_b,], dim=1)
+        
+        if isinstance(model, pcPBELMLOptimizer):
+            output_beta = (
+                model(
+                    torch.stack([rho_a,
+                    rho_b,
+                    grad_zero,
+                    grad_zero,
+                    grad_zero,
+                    tau_tf_rho_a,
+                    tau_tf_rho_b,
+                    lapl_zero,
+                    lapl_zero,], dim=1)
+                )
+                / true_factors
             )
-            / true_factors
-        )
+        else:
+            output_beta = (
+                model(
+                    torch.stack([rho_a,
+                    rho_b,
+                    grad_zero,
+                    grad_zero,
+                    grad_zero,
+                    tau_tf_rho_a,
+                    tau_tf_rho_b,], dim=1)
+                )
+                / true_factors
+            )
         beta = output_beta[:, 0]
         beta_passed = torch.allclose(beta, torch.ones_like(beta))
         print(
@@ -858,18 +937,36 @@ def test_model_constraints(model, model_name):
         rho_large = torch.full((BATCH_SIZE,), 1e6, device=nn_inputs_placeholder.device)
         rand_grads = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
         rand_taus = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
-        output_gamma = (
-            model(
-                torch.stack([rho_large,
-                rho_large,
-                rand_grads,
-                rand_grads,
-                rand_grads,
-                rand_taus,
-                rand_taus,], dim=1)
+        rand_lapl = torch.rand(BATCH_SIZE, device=nn_inputs_placeholder.device)
+        
+        if isinstance(model, pcPBELMLOptimizer):
+            output_gamma = (
+                model(
+                    torch.stack([rho_large,
+                    rho_large,
+                    rand_grads,
+                    rand_grads,
+                    rand_grads,
+                    rand_taus,
+                    rand_taus,
+                    rand_lapl,
+                    rand_lapl,], dim=1)
+                )
+                / true_factors
             )
-            / true_factors
-        )
+        else:
+            output_gamma = (
+                model(
+                    torch.stack([rho_large,
+                    rho_large,
+                    rand_grads,
+                    rand_grads,
+                    rand_grads,
+                    rand_taus,
+                    rand_taus,], dim=1)
+                )
+                / true_factors
+            )
         gamma = output_gamma[:, 1]
         gamma_passed = torch.allclose(gamma, torch.ones_like(gamma))
         print(
@@ -882,12 +979,22 @@ def test_model_constraints(model, model_name):
         rho1, rho2 = torch.rand(BATCH_SIZE) + 0.1, torch.rand(BATCH_SIZE) + 0.1
         grad1, grad2 = torch.rand(BATCH_SIZE), torch.rand(BATCH_SIZE)
         tau1, tau2 = torch.rand(BATCH_SIZE) * 10, torch.rand(BATCH_SIZE) * 10
-        out1 = model(
-            torch.stack([rho1, rho2, grad1, grad1 + grad2, grad2, tau1, tau2], dim=1)
-        )
-        out2 = model(
-            torch.stack([rho2, rho1, grad2, grad1 + grad2, grad1, tau2, tau1,], dim=1)
-        )
+        lapl1, lapl2 = torch.rand(BATCH_SIZE), torch.rand(BATCH_SIZE)
+        
+        if isinstance(model, pcPBELMLOptimizer):
+            out1 = model(
+                torch.stack([rho1, rho2, grad1, grad1 + grad2, grad2, tau1, tau2, lapl1, lapl2], dim=1)
+            )
+            out2 = model(
+                torch.stack([rho2, rho1, grad2, grad1 + grad2, grad1, tau2, tau1, lapl2, lapl1], dim=1)
+            )
+        else:
+            out1 = model(
+                torch.stack([rho1, rho2, grad1, grad1 + grad2, grad2, tau1, tau2], dim=1)
+            )
+            out2 = model(
+                torch.stack([rho2, rho1, grad2, grad1 + grad2, grad1, tau2, tau1,], dim=1)
+            )
         corr_symm = torch.allclose(out1[:, 0], out2[:, 0]) and torch.allclose(
             out1[:, 1], out2[:, 1]
         )
@@ -919,6 +1026,10 @@ def test_model_constraints(model, model_name):
 if __name__ == "__main__":
     pbe_optimizer_model = pcPBEMLOptimizer(num_layers=4, h_dim=16)
     test_model_constraints(pbe_optimizer_model, "pcPBEMLOptimizer")
+
+    print("\n" + "=" * 60 + "\n")
+    pbe_pbel_model = pcPBELMLOptimizer(num_layers=4, h_dim=16)
+    test_model_constraints(pbe_pbel_model, "pcPBELMLOptimizer")
 
     print("\n" + "=" * 60 + "\n")
     pbe_doublestar_model = pcPBEdoublestar(num_layers=4, h_dim=16)
