@@ -91,11 +91,6 @@ def predopt(
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
 
-
-            del X_batch, y_batch, predictions, loss, MAE, MSE
-            gc.collect()
-            torch.cuda.empty_cache()
-
         if local_rank == 0:
             train_loss_mse.append(np.mean(train_mse_losses_per_epoch))
             train_loss_mae.append(np.mean(train_mae_losses_per_epoch))

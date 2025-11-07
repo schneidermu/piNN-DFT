@@ -294,3 +294,22 @@ def collate_fn_predopt(data):
     reactions_stacked = stack_reactions(reactions)
     del reactions, data
     return reactions_stacked, constant
+
+
+def fast_collate_fn_predopt(data, chunk_size=1000):
+    """
+    An optimized collate function specifically for the predopt task.
+    """
+
+    all_grid_chunks = []
+    
+    reactions, constants = zip(*data)
+    constant_target = constants[0] 
+
+    for reaction in reactions:
+        chunks = torch.split(reaction['Grid'], chunk_size, dim=0)
+        all_grid_chunks.extend(chunks)
+
+    final_grid_batch = torch.cat(all_grid_chunks, dim=0)
+    
+    return {'Grid': final_grid_batch}, constant_target
