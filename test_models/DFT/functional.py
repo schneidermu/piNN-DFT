@@ -328,16 +328,8 @@ class NN_FUNCTIONAL:
         if with_lapl:
             keys.extend(["lapl_a", "lapl_b"])
 
-        if not with_lapl: 
-            nn_inputs = torch.cat([feature_dict[key] for key in keys[:7]], dim=0).T
-        else:
-            nn_inputs = torch.cat([feature_dict[key] for key in keys[:9]], dim=0).T
-
-        eps_rho = 1e-10
-        eps_sigma = 1e-30
-
-        rho_a_inp = feature_dict["rho_a"] + eps_rho
-        rho_b_inp = feature_dict["rho_b"] + eps_rho
+        rho_a_inp = feature_dict["rho_a"]
+        rho_b_inp = feature_dict["rho_b"]
 
         grad_a_inp = feature_dict["norm_grad_a"]
         grad_b_inp = feature_dict["norm_grad_b"]
@@ -348,31 +340,13 @@ class NN_FUNCTIONAL:
         if with_lapl:
             lapl_a_inp = feature_dict["lapl_a"]
             lapl_b_inp = feature_dict["lapl_b"]
-
-            constants = self.model(
-                nn_inputs,
-                rho_a_inp,
-                rho_b_inp,
-                grad_a_inp,
-                grad_b_inp,
-                grad_inp,
-                tau_a_inp,
-                tau_b_inp,
-                lapl_a_inp,
-                lapl_b_inp,
-            )
+            
+            X = torch.cat([rho_a_inp, rho_b_inp, grad_a_inp, grad_inp, grad_b_inp, tau_a_inp, tau_b_inp, lapl_a_inp, lapl_b_inp], dim=0).T
         
         else:
-            constants = self.model(
-                nn_inputs,
-                rho_a_inp,
-                rho_b_inp,
-                grad_a_inp,
-                grad_b_inp,
-                grad_inp,
-                tau_a_inp,
-                tau_b_inp,
-            )
+            X = torch.cat([rho_a_inp, rho_b_inp, grad_a_inp, grad_inp, grad_b_inp, tau_a_inp, tau_b_inp], dim=0).T
+            
+        constants = self.model(X)
             
 
         functional_densities = torch.cat(
