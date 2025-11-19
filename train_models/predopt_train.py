@@ -3,8 +3,10 @@ import os
 import pickle
 import random
 from optparse import OptionParser
+from dotenv import find_dotenv, load_dotenv
 
 import matplotlib.pyplot as plt
+import neptune
 import numpy as np
 import torch
 import torch.distributed as dist
@@ -14,7 +16,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
-from dataset import collate_fn, collate_fn_predopt
+from dataset import collate_fn, collate_fn_predopt, fast_collate_fn_predopt
 from NN_models import (MLOptimizer, pcPBEdoublestar, pcPBELMLOptimizer,
                        pcPBEMLOptimizer, pcPBEstar)
 from predopt import DatasetPredopt, predopt, true_constants_PBE
@@ -38,7 +40,7 @@ FCHEM_VALIDATION = {
     "DBH76": 1,
     "EA13": 1,
     "IP13": 1,
-    "MGAE109": 1 / 4.73394495412844,
+    "MGAE109": 1/4.73394495412844,
     "NCCE31": 10,
     "PA8": 1,
     "pTC13": 1,
@@ -56,8 +58,12 @@ FREQ_WEIGHTS = {
     "pTC13": 1 / 13,
 }
 
-mean_freq_weight = np.mean(
+mean_weight = np.mean(
     np.array([FCHEM_VALIDATION[db] * FREQ_WEIGHTS[db] for db in FCHEM_VALIDATION])
+)
+
+mean_freq_weight = np.mean(
+    np.array([FREQ_WEIGHTS[db] for db in FREQ_WEIGHTS])
 )
 
 PBE_TRAIN_ERRORS = {
@@ -142,35 +148,6 @@ class EarlyStopper:
         return False
 
 
-def gather_reaction_names(local_name, device, world_size, local_rank):
-    """
-    Gathers reaction names from all distributed processes to the main process (rank 0).
-    """
-
-    MAX_LEN = 256 
-    
-    encoded = torch.tensor([ord(c) for c in local_name[:MAX_LEN]], dtype=torch.int64, device=device)
-    
-    padded = torch.zeros(MAX_LEN, dtype=torch.int64, device=device)
-    padded[:len(encoded)] = encoded
-    
-    if local_rank == 0:
-        gather_list = [torch.zeros_like(padded) for _ in range(world_size)]
-    else:
-        gather_list = None
-        
-
-    dist.gather(tensor=padded, gather_list=gather_list, dst=0)
-    
-    if local_rank == 0:
-        decoded_names = []
-        for tensor in gather_list:
-            name = "".join([chr(c) for c in tensor if c != 0])
-            decoded_names.append(name)
-        return " | ".join(decoded_names)
-    else:
-        return None
-
 
 def loss_function(factor_dictionary: dict, total_database_errors: dict, val=False):
     """
@@ -233,12 +210,51 @@ def batch_fchem(
         factor = (
             FCHEM_VALIDATION.get(database, 1)
             * FREQ_WEIGHTS.get(database, 1)
-            / mean_freq_weight
+            / mean_weight
         )
 
         fchem.append(factor * torch.sqrt(1e-20 + mse(db_predictions, db_ref)))
 
     batch_error = torch.sum(torch.stack(fchem)) / len(fchem)
+
+    return batch_error
+
+
+def batch_mse_weighted(
+    current_bases: list, reaction_energy: torch.tensor, y_batch: torch.tensor, normalization_function = torch.sqrt, do_factor: bool = True,
+):
+    """
+    Function for calculation of the root of sum of weighted MSEs by databases
+
+    Args:
+        current_bases: list of databases
+        reaction_energy: tensor with predicted energies
+        y_batch: tensor with reference energies
+
+    Returns:
+        fchem: root of weighted sum of MSEs by database
+    """
+    err_dict = dict()
+
+    fchem = []
+
+    for database, pred, ref in zip(current_bases, reaction_energy, y_batch):
+        err_dict[database] = err_dict.get(database, [[], []])
+
+        err_dict[database][0].append(pred)
+        err_dict[database][1].append(ref)
+
+    for database in err_dict:
+
+        db_predictions = torch.stack(err_dict[database][0])
+        db_ref = torch.stack(err_dict[database][1])
+        if do_factor:
+            factor = FREQ_WEIGHTS.get(database, 1) / mean_freq_weight
+            fchem.append(factor * (db_predictions-db_ref)**2 / (1e-3 + normalization_function(torch.abs(db_ref))))
+        else:
+            fchem.append((db_predictions-db_ref)**2 / (1e-3 + normalization_function(torch.abs(db_ref))))
+
+    batch_error = torch.sum(torch.stack(fchem)) / len(y_batch)
 
     return batch_error
 
@@ -351,6 +367,7 @@ def train(
     early_stopper,
     train_loader,
     test_loader,
+    run,
     n_epochs=25,
     accum_iter=1,
     verbose=False,
@@ -412,6 +429,7 @@ def train(
                 )
 
             local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
+#            batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch, normalization_function=torch.abs, do_factor=True)
             batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
             loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
 
@@ -419,12 +437,11 @@ def train(
 
             if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == len(train_loader)):
 
-#                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) this may be useful if the curve is very noisy
+#                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) # this may be useful if the curve is very noisy
 
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
 
-            if scheduler: scheduler.step()
 
             MAE = mae(reaction_energy, y_batch).item()
             epoch_train_loss_sum += loss.item()
@@ -434,6 +451,8 @@ def train(
             _, _, _, epoch_train_total_database_errors = make_total_db_errors(
                 [], reaction_energy, [], [], y_batch, epoch_train_total_database_errors, current_bases
             )
+
+        if scheduler: scheduler.step()
 
         metrics_train_to_sync = torch.tensor(
             [epoch_train_loss_sum, epoch_train_mae_sum, epoch_train_exc_sum], 
@@ -484,6 +503,7 @@ def train(
                 local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
                 batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
                 loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
+
                 MAE = mae(reaction_energy, y_batch).item()
 
                 batch_size = y_batch.size(0)
@@ -530,6 +550,33 @@ def train(
             test_loss_mae.append(avg_val_mae)
             test_loss_exc.append(avg_val_exc)
 
+            if run is not None:
+                run["train/full_loss"].append(avg_train_loss)
+                run["validation/full_loss"].append(avg_val_loss)
+                run["train/exc_loss"].append(avg_train_exc)
+                run["validation/exc_loss"].append(avg_val_exc)
+
+                for db, errors_list in global_train_errors.items():
+                    rmse_value = np.sqrt(np.mean(np.square(errors_list)))
+                    run[f"train/{db}_rmse"].append(rmse_value)
+
+                for db, errors_list in global_val_errors.items():
+                    rmse_value = np.sqrt(np.mean(np.square(errors_list)))
+                    run[f"validation/{db}_rmse"].append(rmse_value)
+
+                if hasattr(model.module, 'log_scale_rho'):
+                    scale_rho = torch.nn.ReLU()(model.module.log_scale_rho).item()+1
+                    scale_sigma = torch.nn.ReLU()(model.module.log_scale_sigma).item()+1
+                    scale_tau = torch.nn.ReLU()(model.module.log_scale_tau).item()+1
+                    
+                    run["scaling_params/rho"].append(scale_rho)
+                    run["scaling_params/sigma"].append(scale_sigma)
+                    run["scaling_params/tau"].append(scale_tau)
+
+                    if hasattr(model.module, 'log_scale_lapl'):
+                        scale_lapl = torch.nn.ReLU()(model.module.log_scale_lapl).item()+1
+                        run["scaling_params/lapl"].append(scale_lapl)
+
             print(f"\n--- Epoch {epoch + 1} Summary ---")
             
             print("Training Set Metrics:")
@@ -567,7 +614,7 @@ def train(
             plt.savefig(f"./batch_fchem/bs_{batch_size}_lr_{lr_train}_{name}_{omega}.png")
             plt.close(fig)
 
-    return train_loss_mae, test_loss_mae, prev_best
+    return train_full_loss, val_full_loss, prev_best
 
 
 if __name__ == "__main__":
@@ -608,7 +655,16 @@ if __name__ == "__main__":
         help="Omega value in the loss function",
     )
     parser.add_option(
-        "--Patience", type=int, default=50, help="Patience for early stopping"
+        "--Weight_decay",
+        type=float,
+        default=1e-2,
+        help="Weight decay for optimizer",
+    )
+    parser.add_option(
+        "--Optimizer",
+        type=str,
+        default="radamw",
+        help="Optimizer to use",
     )
 
     (Opts, args) = parser.parse_args()
@@ -622,7 +678,8 @@ if __name__ == "__main__":
         omega,
         lr_train,
         lr_predopt,
-        patience,
+        weight_decay,
+        optimizer_str,
     ) = (
         Opts.Name,
         Opts.N_preopt,
@@ -632,7 +689,8 @@ if __name__ == "__main__":
         Opts.Omega,
         Opts.LR_train,
         Opts.LR_predopt,
-        Opts.Patience,
+        Opts.Weight_decay,
+        Opts.Optimizer,
     )
 
     xalpha = False
@@ -669,8 +727,8 @@ if __name__ == "__main__":
 
     if local_rank == 0:
         print(FCHEM_VALIDATION)
-        print("name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience")
-        print(name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt, patience)
+        print("name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt")
+        print(name, n_predopt, n_train, batch_size, dropout, omega, lr_train, lr_predopt)
         print("Number of GPUs:", torch.cuda.device_count())
         total_params = sum(p.numel() for p in model.module.parameters()) 
         print(f"Number of parameters: {total_params}")
@@ -714,7 +772,7 @@ if __name__ == "__main__":
         pin_memory=True,
         shuffle=False,
         sampler=predopt_sampler,
-        collate_fn=collate_fn_predopt,
+        collate_fn=fast_collate_fn_predopt,
         generator=g,
         worker_init_fn=seed_worker,
     )
@@ -734,6 +792,28 @@ if __name__ == "__main__":
     if "STARSTAR" in name:
         double_star = True
 
+    run = None
+
+    if local_rank == 0:
+
+        load_dotenv(find_dotenv())
+
+        api_token = os.getenv("NEPTUNE_API_TOKEN")
+
+        run = neptune.init_run(
+            project="schneidermu/piNN-DFT",
+            api_token=api_token,
+        )
+        run["parameters"] = {
+            "name": name,
+            "num_layers": num_layers,
+            "h_dim": h_dim,
+            "dropout": dropout,
+            "weight_decay": weight_decay,
+            "optimizer": optimizer_str,
+            "lr_train": lr_train
+        }
+
     train_loss_mse, train_loss_mae = predopt(
         model,
         criterion,
@@ -748,7 +828,9 @@ if __name__ == "__main__":
     )
 
     true_constants_PBE = true_constants_PBE.to(device)
-    optimizer = configure_optimizers(model=model, learning_rate=lr_train)
+
+    optimizer = configure_optimizers(model=model, learning_rate=lr_train, optimizer_str=optimizer_str, weight_decay=weight_decay)
+
 
     warmup_epochs = 5
     warmup_scheduler = LinearLR(
@@ -781,9 +863,12 @@ if __name__ == "__main__":
         early_stopper,
         train_dataloader,
         test_dataloader,
+        run,
         n_epochs=N_EPOCHS,
         accum_iter=ACCUM_ITER,
         omega=omega,
         verbose=VERBOSE,
         local_rank=local_rank
     )
+    if local_rank == 0 and run:
+        run.stop()

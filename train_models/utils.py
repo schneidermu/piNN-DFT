@@ -119,7 +119,7 @@ def stack_reactions(reactions):
     return final_reaction
 
 
-def configure_optimizers(model, learning_rate):
+def configure_optimizers(model, learning_rate, optimizer_str="radamw", weight_decay=1e-2):
     """
     This long function is unfortunately doing something very simple and is being very defensive:
     We are separating out all parameters of the model into two buckets: those that will experience
@@ -138,6 +138,11 @@ def configure_optimizers(model, learning_rate):
     for mn, m in model.named_modules():
         for pn, p in m.named_parameters():
             fpn = "%s.%s" % (mn, pn) if mn else pn  # full param name
+
+            if pn.startswith("log_scale"):
+                # all custom scaling parameters will not be decayed
+                no_decay.add(fpn)
+    
             if pn.endswith("bias"):
                 # all biases will not be decayed
                 no_decay.add(fpn)
@@ -163,7 +168,7 @@ def configure_optimizers(model, learning_rate):
     optim_groups = [
         {
             "params": [param_dict[pn] for pn in sorted(list(decay))],
-            "weight_decay": 1e-2,
+            "weight_decay": weight_decay,
         },
         {
             "params": [param_dict[pn] for pn in sorted(list(no_decay))],
@@ -171,7 +176,15 @@ def configure_optimizers(model, learning_rate):
         },
     ]
 
-    optimizer = torch.optim.RAdam(
-        optim_groups, lr=learning_rate, decoupled_weight_decay=True
-    )
+    if optimizer_str == "radamw":
+        optimizer = torch.optim.RAdam(
+            optim_groups, lr=learning_rate, decoupled_weight_decay=True
+        )
+    elif optimizer_str == "adamw":
+        optimizer = torch.optim.AdamW(
+            optim_groups, lr=learning_rate
+        )
+    else:
+        raise ValueError(f"Unknown optimizer: {optimizer_str}")
+
     return optimizer
