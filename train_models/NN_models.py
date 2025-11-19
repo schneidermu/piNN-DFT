@@ -21,7 +21,7 @@ from dft_functionals.constants import (
 
 random.seed(42)
 
-device = torch.device("cuda") if torch.cuda.is_available else torch.device("cpu")
+device = torch.device("cpu")
 
 sigmoid = torch.nn.Sigmoid()
 elu = torch.nn.ELU()
@@ -204,10 +204,6 @@ class pcPBEMLOptimizer(nn.Module):
         self.hidden_layers_c = nn.Sequential(*modules_c)
 
         self.scaling_array = MGGA_SPIN_SCALING_MULTIPLIER.to(device)
-
-        self.log_scale_rho = nn.Parameter(torch.zeros(1, device=device))
-        self.log_scale_sigma = nn.Parameter(torch.zeros(1, device=device))
-        self.log_scale_tau = nn.Parameter(torch.zeros(1, device=device))
 
     def kappa_activation(self, x):
         """
@@ -442,11 +438,6 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         self.hidden_layers_c = nn.Sequential(*modules_c)
 
         self.scaling_array = LLMGGA_SPIN_SCALING_MULTIPLIER.to(device)
-
-        self.log_scale_rho = nn.Parameter(torch.zeros(1, device=device))
-        self.log_scale_sigma = nn.Parameter(torch.zeros(1, device=device))
-        self.log_scale_tau = nn.Parameter(torch.zeros(1, device=device))
-        self.log_scale_lapl = nn.Parameter(torch.zeros(1, device=device))
         
         
     @staticmethod
@@ -486,79 +477,93 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         )
     
     def get_density_descriptors(self, x):
-        """
-        0 - alpha density
-        1 - beta density
-        2 - alpha gradient
-        3 - total gradiet
-        4 - beta gradient
-        5 - tau alpha
-        6 - tau beta
-        7 - lapl alpha
-        8 - lapl beta
-        """
+            """
+            0 - alpha density (bounded)
+            1 - beta density (bounded)
+            2 - alpha gradient (s^2 / (1+s^2))
+            3 - total gradient (s^2 / (1+s^2))
+            4 - beta gradient (s^2 / (1+s^2))
+            5 - alpha iso-orbital indicator (alpha / (1+alpha))
+            6 - beta iso-orbital indicator (alpha / (1+alpha))
+            7 - alpha reduced laplacian (q / (1+|q|))
+            8 - beta reduced laplacian (q / (1+|q|))
+            """
 
-        rho_a = x[:, RHO_ALPHA_INDEX]
-        rho_b = x[:, RHO_BETA_INDEX]
-        sigma_a = x[:, S_ALPHA_INDEX]
-        sigma_tot = x[:, S_TOTAL_INDEX]
-        sigma_b = x[:, S_BETA_INDEX]
-        tau_a_raw = x[:, TAU_ALPHA_INDEX]
-        tau_b_raw = x[:, TAU_BETA_INDEX]
-        lapl_a = x[:, LAPL_ALPHA_INDEX]
-        lapl_b = x[:, LAPL_BETA_INDEX]
+            rho_a = x[:, RHO_ALPHA_INDEX]
+            rho_b = x[:, RHO_BETA_INDEX]
+            sigma_a = x[:, S_ALPHA_INDEX]
+            sigma_tot = x[:, S_TOTAL_INDEX]
+            sigma_b = x[:, S_BETA_INDEX]
+            tau_a_raw = x[:, TAU_ALPHA_INDEX]
+            tau_b_raw = x[:, TAU_BETA_INDEX]
+            lapl_a = x[:, LAPL_ALPHA_INDEX]
+            lapl_b = x[:, LAPL_BETA_INDEX]
 
-        n_alpha = (rho_a + EPS_RHO) ** (1 / 3)
-        n_beta = (rho_b + EPS_RHO) ** (1 / 3)
+            n_alpha_raw = (rho_a + EPS_RHO) ** (1 / 3)
+            n_beta_raw = (rho_b + EPS_RHO) ** (1 / 3)
+            
+            n_alpha = n_alpha_raw / (1.0 + n_alpha_raw)
+            n_beta = n_beta_raw / (1.0 + n_beta_raw)
 
-        s_alpha = (
-            torch.sqrt(sigma_a + EPS_SIGMA)
-            / (rho_a + EPS_RHO) ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
-            / 2
-        )
-        s_norm = (
-            torch.sqrt(sigma_tot + EPS_SIGMA)
-            / (rho_a + rho_b + EPS_RHO) ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
-            / 2
-        )
-        s_beta = (
-            torch.sqrt(sigma_b + EPS_SIGMA)
-            / (rho_b + EPS_RHO) ** (4 / 3)
-            / (3 * np.pi**2) ** (1 / 3)
-            / 2
-        )
 
-        tau_tf_alpha = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5 / 3)
-        )
-        tau_tf_beta = (
-            3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_b + EPS_RHO) ** (5 / 3)
-        )
-        tau_w_alpha = s_alpha / (8 * (rho_a + EPS_RHO))
-        tau_w_beta = s_beta / (8 * (rho_b + EPS_RHO))
+            c_fermi = (3 * np.pi**2) ** (1 / 3)
+            
+            s_alpha_raw = (
+                torch.sqrt(sigma_a + EPS_SIGMA)
+                / (rho_a + EPS_RHO) ** (4 / 3)
+                / c_fermi
+                / 2
+            )
+            s_norm_raw = (
+                torch.sqrt(sigma_tot + EPS_SIGMA)
+                / (rho_a + rho_b + EPS_RHO) ** (4 / 3)
+                / c_fermi
+                / 2
+            )
+            s_beta_raw = (
+                torch.sqrt(sigma_b + EPS_SIGMA)
+                / (rho_b + EPS_RHO) ** (4 / 3)
+                / c_fermi
+                / 2
+            )
 
-        tau_alpha = (tau_a_raw - tau_w_alpha) / tau_tf_alpha - 1
-        tau_beta = (tau_b_raw - tau_w_beta) / tau_tf_beta - 1
+            s_alpha = s_alpha_raw**2 / (1.0 + s_alpha_raw**2)
+            s_norm = s_norm_raw**2 / (1.0 + s_norm_raw**2)
+            s_beta = s_beta_raw**2 / (1.0 + s_beta_raw**2)
 
-        q_alpha = lapl_a / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5/3))
-        q_beta = lapl_b / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_b + EPS_RHO) ** (5/3))
+            tau_tf_alpha = (
+                3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5 / 3)
+            )
+            tau_tf_beta = (
+                3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_b + EPS_RHO) ** (5 / 3)
+            )
+            
+            tau_w_alpha = sigma_a / (8 * (rho_a + EPS_RHO))
+            tau_w_beta = sigma_b / (8 * (rho_b + EPS_RHO))
 
-        scale_rho = relu(self.log_scale_rho)+1
-        scale_sigma = relu(self.log_scale_sigma)+1
-        scale_tau = relu(self.log_scale_tau)+1
-        scale_lapl = relu(self.log_scale_lapl)+1
+            alpha_alpha_raw = (tau_a_raw - tau_w_alpha) / (tau_tf_alpha + EPS_RHO)
+            alpha_beta_raw = (tau_b_raw - tau_w_beta) / (tau_tf_beta + EPS_RHO)
+            
+            alpha_alpha_raw = torch.clamp(alpha_alpha_raw, min=0.0)
+            alpha_beta_raw = torch.clamp(alpha_beta_raw, min=0.0)
 
-        X = torch.stack([n_alpha/scale_rho, n_beta/scale_rho, s_alpha/scale_sigma, s_norm/scale_sigma, s_beta/scale_sigma, tau_alpha/scale_tau, tau_beta/scale_tau, q_alpha/scale_lapl, q_beta/scale_lapl], dim=1)
+            alpha_alpha = alpha_alpha_raw / (1.0 + alpha_alpha_raw)
+            alpha_beta = alpha_beta_raw / (1.0 + alpha_beta_raw)
 
-#        X = torch.hstack(
-#            [
-#                torch.tanh(X), torch.asinh(x)
-#            ]
-#        )
+            q_alpha_raw = lapl_a / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5/3))
+            q_beta_raw = lapl_b / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_b + EPS_RHO) ** (5/3))
+            
+            q_alpha = q_alpha_raw / (1.0 + torch.abs(q_alpha_raw))
+            q_beta = q_beta_raw / (1.0 + torch.abs(q_beta_raw))
 
-        return torch.tanh(X)
+            X = torch.stack([
+                n_alpha, n_beta, 
+                s_alpha, s_norm, s_beta, 
+                alpha_alpha, alpha_beta, 
+                q_alpha, q_beta
+            ], dim=1)
+
+            return X
     
     def forward(self, x):
 

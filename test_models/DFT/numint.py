@@ -38,7 +38,6 @@ class NumIntWithLaplacian(numint.NumInt):
             for i in range(nset):
                 rho = make_rho(i, ao, mask, xctype)
 
-                # This will now receive the correct rho and succeed
                 exc, vxc = self.eval_xc(xc_code, rho, spin=0, relativity=0, deriv=1)[:2]
 
                 den = rho[0] * weight if xctype != 'LDA' else rho * weight
