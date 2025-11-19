@@ -21,7 +21,7 @@ from dft_functionals.constants import (
 
 random.seed(42)
 
-device = torch.device("cpu")
+device = torch.device("cuda")
 
 sigmoid = torch.nn.Sigmoid()
 elu = torch.nn.ELU()
@@ -443,10 +443,20 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
     @staticmethod
     def all_sigma_zero(x):
         """
-        Function for parameter beta constraint
+        Function for parameter beta constraint.
+        Sets descriptors to UEG values.
+        S -> 0 (Indices 2,3,4)
+        Q -> 0 (Indices 7,8)
+        Alpha -> 1.0 (UEG). 
+        Since descriptor is alpha/(1+alpha), UEG value is 0.5.
+        Indices 5, 6 are set to 0.5.
         """
-        return torch.hstack([x[:, :S_ALPHA_INDEX], torch.zeros([x.shape[0], 7]).to(x.device)])
-
+        densities = x[:, :2]
+        zeros_s = torch.zeros(x.shape[0], 3, device=x.device) 
+        halves_alpha = torch.full((x.shape[0], 2), 0.5, device=x.device)
+        zeros_q = torch.zeros(x.shape[0], 2, device=x.device) 
+        
+        return torch.cat([densities, zeros_s, halves_alpha, zeros_q], dim=1)
     @staticmethod
     def all_sigma_inf(x):
         """
@@ -527,9 +537,9 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
                 / 2
             )
 
-            s_alpha = s_alpha_raw**2 / (1.0 + s_alpha_raw**2)
-            s_norm = s_norm_raw**2 / (1.0 + s_norm_raw**2)
-            s_beta = s_beta_raw**2 / (1.0 + s_beta_raw**2)
+            s_alpha = s_alpha_raw / (1.0 + s_alpha_raw)
+            s_norm = s_norm_raw / (1.0 + s_norm_raw)
+            s_beta = s_beta_raw / (1.0 + s_beta_raw)
 
             tau_tf_alpha = (
                 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5 / 3)
@@ -553,8 +563,8 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             q_alpha_raw = lapl_a / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5/3))
             q_beta_raw = lapl_b / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_b + EPS_RHO) ** (5/3))
             
-            q_alpha = q_alpha_raw / (1.0 + torch.abs(q_alpha_raw))
-            q_beta = q_beta_raw / (1.0 + torch.abs(q_beta_raw))
+            q_alpha = q_alpha_raw / torch.sqrt(1.0 + q_alpha_raw**2)
+            q_beta = q_beta_raw / torch.sqrt(1.0 + q_beta_raw**2)
 
             X = torch.stack([
                 n_alpha, n_beta, 
