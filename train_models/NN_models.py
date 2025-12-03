@@ -21,7 +21,7 @@ from dft_functionals.constants import (
 
 random.seed(42)
 
-device = torch.device("cuda")
+device = torch.device("cpu")
 
 sigmoid = torch.nn.Sigmoid()
 elu = torch.nn.ELU()
@@ -438,6 +438,11 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         self.hidden_layers_c = nn.Sequential(*modules_c)
 
         self.scaling_array = LLMGGA_SPIN_SCALING_MULTIPLIER.to(device)
+
+        self.log_scale_rho = nn.Parameter(torch.zeros(1))
+        self.log_scale_sigma = nn.Parameter(torch.zeros(1))
+        self.log_scale_tau = nn.Parameter(torch.zeros(1))
+        self.log_scale_lapl = nn.Parameter(torch.zeros(1))
         
         
     @staticmethod
@@ -499,6 +504,11 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             8 - beta reduced laplacian (q / (1+|q|))
             """
 
+            scale_rho = relu(self.log_scale_rho) + 1.0
+            scale_sigma = relu(self.log_scale_sigma) + 1.0
+            scale_alpha = relu(self.log_scale_tau) + 1.0
+            scale_q = relu(self.log_scale_lapl) + 1.0
+
             rho_a = x[:, RHO_ALPHA_INDEX]
             rho_b = x[:, RHO_BETA_INDEX]
             sigma_a = x[:, S_ALPHA_INDEX]
@@ -512,8 +522,8 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             n_alpha_raw = (rho_a + EPS_RHO) ** (1 / 3)
             n_beta_raw = (rho_b + EPS_RHO) ** (1 / 3)
             
-            n_alpha = n_alpha_raw / (1.0 + n_alpha_raw)
-            n_beta = n_beta_raw / (1.0 + n_beta_raw)
+            n_alpha = n_alpha_raw / scale_rho
+            n_beta = n_beta_raw / scale_rho
 
 
             c_fermi = (3 * np.pi**2) ** (1 / 3)
@@ -537,9 +547,9 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
                 / 2
             )
 
-            s_alpha = s_alpha_raw / (1.0 + s_alpha_raw)
-            s_norm = s_norm_raw / (1.0 + s_norm_raw)
-            s_beta = s_beta_raw / (1.0 + s_beta_raw)
+            s_alpha = s_alpha_raw / scale_sigma
+            s_norm = s_norm_raw / scale_sigma
+            s_beta = s_beta_raw / scale_sigma
 
             tau_tf_alpha = (
                 3 / 10 * (3 * np.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5 / 3)
@@ -551,20 +561,20 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             tau_w_alpha = sigma_a / (8 * (rho_a + EPS_RHO))
             tau_w_beta = sigma_b / (8 * (rho_b + EPS_RHO))
 
-            alpha_alpha_raw = (tau_a_raw - tau_w_alpha) / (tau_tf_alpha + EPS_RHO)
-            alpha_beta_raw = (tau_b_raw - tau_w_beta) / (tau_tf_beta + EPS_RHO)
+            alpha_alpha_raw = (tau_a_raw - tau_w_alpha) / (tau_tf_alpha + EPS_RHO) - 1
+            alpha_beta_raw = (tau_b_raw - tau_w_beta) / (tau_tf_beta + EPS_RHO) - 1
             
-            alpha_alpha_raw = torch.clamp(alpha_alpha_raw, min=0.0)
-            alpha_beta_raw = torch.clamp(alpha_beta_raw, min=0.0)
+            alpha_alpha_raw = torch.clamp(alpha_alpha_raw, min=-1.0)
+            alpha_beta_raw = torch.clamp(alpha_beta_raw, min=-1.0)
 
-            alpha_alpha = alpha_alpha_raw / (1.0 + alpha_alpha_raw)
-            alpha_beta = alpha_beta_raw / (1.0 + alpha_beta_raw)
+            alpha_alpha = alpha_alpha_raw / scale_alpha
+            alpha_beta = alpha_beta_raw / scale_alpha
 
             q_alpha_raw = lapl_a / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_a + EPS_RHO) ** (5/3))
             q_beta_raw = lapl_b / (4 * (3 * torch.pi**2) ** (2 / 3) * (rho_b + EPS_RHO) ** (5/3))
             
-            q_alpha = q_alpha_raw / torch.sqrt(1.0 + q_alpha_raw**2)
-            q_beta = q_beta_raw / torch.sqrt(1.0 + q_beta_raw**2)
+            q_alpha = q_alpha_raw / scale_q
+            q_beta = q_beta_raw / scale_q
 
             X = torch.stack([
                 n_alpha, n_beta, 
@@ -573,7 +583,7 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
                 q_alpha, q_beta
             ], dim=1)
 
-            return X
+            return torch.tanh(X)
     
     def forward(self, x):
 
@@ -646,6 +656,185 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             ]
         )
         return final_tensor * constants_batch
+
+
+LLMGGA_ZETA_DESCRIPTOR_DIMENSIONALITY = LLMGGA_DESCRIPTOR_DIMENSIONALITY + 1
+
+
+class pcPBELMLOptimizerV2(pcPBELMLOptimizer):
+    """
+    An advanced version of pcPBELMLOptimizer with three key enhancements:
+    1.  Adds spin-polarization (zeta) as a direct input to the correlation network.
+    2.  Performs spin-symmetrization early, within the hidden layers of the correlation network.
+    3.  Fuses information from the exchange network's hidden layers into the correlation
+        network's final prediction layer for a more holistic model.
+    """
+    def __init__(
+        self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.2, num_symm_blocks=1, DFT=None
+    ):
+        # Call the parent's init, but we will be overwriting most network modules
+        super().__init__(num_layers, h_dim, nconstants_x, nconstants_c, dropout, DFT)
+
+        # --- 1. Correlation Network (Rebuilt in parts) ---
+        
+        # Part 1: Input layers before symmetrization
+        c_input_modules = [
+            nn.Linear(LLMGGA_ZETA_DESCRIPTOR_DIMENSIONALITY, h_dim, bias=False),
+            nn.LayerNorm(h_dim),
+            nn.GELU(),
+        ]
+        self.c_input_layers = nn.Sequential(*c_input_modules)
+
+        # Part 2: The ResBlocks where symmetrization will occur
+        self.c_symmetrization_blocks = nn.Sequential(
+            *[ResBlock(h_dim, dropout) for _ in range(num_symm_blocks)]
+        )
+
+        # Part 3: The remaining ResBlocks after symmetrization
+        num_post_symm_blocks = (num_layers // 2 - 1) - num_symm_blocks
+        self.c_post_symm_blocks = nn.Sequential(
+            *[ResBlock(h_dim, dropout) for _ in range(num_post_symm_blocks)]
+        )
+
+        # Part 4: The final output layer, which now takes a larger concatenated input
+        # Input: h_dim (from corr) + h_dim (from ex_up) + h_dim (from ex_down)
+        self.c_output_layer = nn.Linear(3 * h_dim, nconstants_c, bias=True)
+
+        # --- 2. Exchange Network (Rebuilt in parts) ---
+
+        # Part 1: The feature extractor (everything except the final layer)
+        x_feature_modules = [
+            nn.Linear(LLMGGA_DESCRIPTOR_EXCHANGE_DIMENSIONALITY, h_dim, bias=False),
+            nn.LayerNorm(h_dim),
+            nn.GELU(),
+        ]
+        for _ in range(num_layers // 2 - 1):
+            x_feature_modules.append(ResBlock(h_dim, dropout))
+        self.x_feature_extractor = nn.Sequential(*x_feature_modules)
+        
+        # Part 2: The final output layer
+        self.x_output_layer = nn.Linear(h_dim, nconstants_x, bias=True)
+        
+        # We no longer use the monolithic hidden_layers_x/c from the parent
+        del self.hidden_layers_x
+        del self.hidden_layers_c
+        
+    @staticmethod
+    def all_sigma_zero(x):
+        """
+        Function for parameter beta constraint (UEG Limit).
+        This method OVERRIDES the parent's implementation to handle 10 descriptors.
+        
+        The UEG limit (s=0, q=0, alpha=1) is valid for ANY spin polarization.
+        Therefore, we must PRESERVE the original zeta from the input tensor 'x'.
+        """
+        densities_norm = x[:, :2]
+        zeros_s = torch.zeros(x.shape[0], 3, device=x.device)
+        zeros_alpha = torch.zeros(x.shape[0], 2, device=x.device)
+        zeros_q = torch.zeros(x.shape[0], 2, device=x.device)
+        
+        # This is the crucial fix: preserve the original zeta (the last column).
+        zeta = x[:, -1].unsqueeze(1)
+        
+        return torch.cat([densities_norm, zeros_s, zeros_alpha, zeros_q, zeta], dim=1)
+
+
+    def get_density_descriptors(self, x):
+        """
+        Calculates 10 descriptors: 9 from the parent class plus zeta.
+        """
+
+        base_descriptors = super().get_density_descriptors(x)
+
+        rho_a = x[:, 0]
+        rho_b = x[:, 1]
+        zeta = (rho_a - rho_b) / (rho_a + rho_b + EPS_RHO)
+
+        return torch.cat([base_descriptors, zeta.unsqueeze(1)], dim=1)
+
+
+    def forward(self, x):
+        x_correlation_desc = self.get_density_descriptors(x)
+        x_exchange_desc_scaled = self.get_density_descriptors(self.scaling_array * x)
+
+        x_corr_desc_swapped = x_correlation_desc[:, LLMGGA_SPIN_INVERTED_SLICE + [-1]]
+        x_corr_desc_swapped[:, -1] *= -1
+
+        hidden_x_up_scaled = self.x_feature_extractor(x_exchange_desc_scaled[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX]])
+        hidden_x_down_scaled = self.x_feature_extractor(x_exchange_desc_scaled[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
+        hidden_x_symm = (hidden_x_up_scaled + hidden_x_down_scaled) / 2
+        
+        params_x_up_real = self.x_output_layer(hidden_x_up_scaled)
+        params_x_down_real = self.x_output_layer(hidden_x_down_scaled)
+        mu_up_real, kappa_up_real = params_x_up_real[:, MU_EX_INDEX].view(-1, 1), params_x_up_real[:, KAPPA_EX_INDEX].view(-1, 1)
+        mu_down_real, kappa_down_real = params_x_down_real[:, MU_EX_INDEX].view(-1, 1), params_x_down_real[:, KAPPA_EX_INDEX].view(-1, 1)
+        
+        h_pre_symm = self.c_symmetrization_blocks(self.c_input_layers(x_correlation_desc))
+        h_pre_symm_swapped = self.c_symmetrization_blocks(self.c_input_layers(x_corr_desc_swapped))
+        h_post_symm = (h_pre_symm + h_pre_symm_swapped) / 2
+        hidden_c = self.c_post_symm_blocks(h_post_symm)
+        
+        final_corr_input = torch.cat([hidden_c, hidden_x_symm, hidden_x_symm], dim=1)
+        params_c_real = self.c_output_layer(final_corr_input)
+        beta_real, gamma_real = params_c_real[:, BETA_CORR_INDEX].view(-1, 1), params_c_real[:, GAMMA_CORR_INDEX].view(-1, 1)
+
+
+        rho_a, rho_b = x[:, RHO_ALPHA_INDEX], x[:, RHO_BETA_INDEX]
+        zeros = torch.zeros_like(rho_a)
+        tau_tf_2rho_a = 3/10 * (3*np.pi**2)**(2/3) * (2*rho_a + EPS_RHO)**(5/3)
+        tau_tf_2rho_b = 3/10 * (3*np.pi**2)**(2/3) * (2*rho_b + EPS_RHO)**(5/3)
+        raw_ueg_exch_input = torch.stack([rho_a, rho_b, zeros, zeros, zeros, tau_tf_2rho_a/2, tau_tf_2rho_b/2, zeros, zeros], dim=1)
+        x_exch_ueg_desc = self.get_density_descriptors(self.scaling_array * raw_ueg_exch_input)
+
+        hidden_x_up_ueg = self.x_feature_extractor(x_exch_ueg_desc[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX]])
+        hidden_x_down_ueg = self.x_feature_extractor(x_exch_ueg_desc[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
+        mu_up_at_constraint = self.x_output_layer(hidden_x_up_ueg)[:, MU_EX_INDEX].view(-1, 1)
+        mu_down_at_constraint = self.x_output_layer(hidden_x_down_ueg)[:, MU_EX_INDEX].view(-1, 1)
+
+        tau_tf_rho_a = 3/10 * (3*np.pi**2)**(2/3) * (rho_a + EPS_RHO)**(5/3)
+        tau_tf_rho_b = 3/10 * (3*np.pi**2)**(2/3) * (rho_b + EPS_RHO)**(5/3)
+        raw_ueg_corr_input = torch.stack([rho_a, rho_b, zeros, zeros, zeros, tau_tf_rho_a, tau_tf_rho_b, zeros, zeros], dim=1)
+
+        x_corr_ueg_desc = self.get_density_descriptors(raw_ueg_corr_input)
+        x_corr_ueg_desc_swapped = x_corr_ueg_desc[:, LLMGGA_SPIN_INVERTED_SLICE + [-1]]
+        x_corr_ueg_desc_swapped[:, -1] *= -1
+        
+        x_exch_ueg_desc_for_corr = self.get_density_descriptors(self.scaling_array * raw_ueg_corr_input)
+        hidden_x_up_for_beta = self.x_feature_extractor(x_exch_ueg_desc_for_corr[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX]])
+        hidden_x_down_for_beta = self.x_feature_extractor(x_exch_ueg_desc_for_corr[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
+        hidden_x_symm_for_beta = (hidden_x_up_for_beta + hidden_x_down_for_beta) / 2
+
+        h_pre_symm_beta = self.c_symmetrization_blocks(self.c_input_layers(x_corr_ueg_desc))
+        h_pre_symm_swapped_beta = self.c_symmetrization_blocks(self.c_input_layers(x_corr_ueg_desc_swapped))
+        h_post_symm_beta = (h_pre_symm_beta + h_pre_symm_swapped_beta) / 2
+        h_c_ueg = self.c_post_symm_blocks(h_post_symm_beta)
+
+
+        final_corr_input_ueg = torch.cat([h_c_ueg, hidden_x_symm_for_beta, hidden_x_symm_for_beta], dim=1)
+        beta_at_constraint = self.c_output_layer(final_corr_input_ueg)[:, BETA_CORR_INDEX].view(-1, 1)
+
+        x_corr_rho_inf = self.all_rho_inf(x_correlation_desc)
+        x_corr_rho_inf_swapped = self.all_rho_inf(x_corr_desc_swapped)
+        h_pre_symm_rho_inf = self.c_symmetrization_blocks(self.c_input_layers(x_corr_rho_inf))
+        h_pre_symm_swapped_rho_inf = self.c_symmetrization_blocks(self.c_input_layers(x_corr_rho_inf_swapped))
+        h_c_constr_gamma = self.c_post_symm_blocks((h_pre_symm_rho_inf + h_pre_symm_swapped_rho_inf) / 2)
+        final_corr_input_constr_rho_inf = torch.cat([h_c_constr_gamma, hidden_x_symm, hidden_x_symm], dim=1)
+        gamma_at_constraint = self.c_output_layer(final_corr_input_constr_rho_inf)[:, GAMMA_CORR_INDEX].view(-1, 1)
+
+        beta = self.beta_activation(beta_real - beta_at_constraint)
+        gamma = self.shifted_elu(gamma_real - gamma_at_constraint)
+        mu_up = self.shifted_elu(mu_up_real - mu_up_at_constraint)
+        mu_down = self.shifted_elu(mu_down_real - mu_down_at_constraint)
+        kappa_up = self.kappa_activation(kappa_up_real)
+        kappa_down = self.kappa_activation(kappa_down_real)
+
+        constants_batch = true_constants_PBE.repeat(x.shape[0], 1).to(device)
+        fill_tensor = torch.ones([x.shape[0], 20], device=x.device)
+        final_tensor = torch.hstack(
+            [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down]
+        )
+        return final_tensor * constants_batch
+
     
 
 
@@ -1064,7 +1253,7 @@ if __name__ == "__main__":
     test_model_constraints(pbe_optimizer_model, "pcPBEMLOptimizer")
 
     print("\n" + "=" * 60 + "\n")
-    pbe_pbel_model = pcPBELMLOptimizer(num_layers=4, h_dim=16)
+    pbe_pbel_model = pcPBELMLOptimizerV2(num_layers=4, h_dim=16)
     test_model_constraints(pbe_pbel_model, "pcPBELMLOptimizer")
 
     print("\n" + "=" * 60 + "\n")
