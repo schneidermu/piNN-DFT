@@ -672,12 +672,9 @@ class pcPBELMLOptimizerV2(pcPBELMLOptimizer):
     def __init__(
         self, num_layers, h_dim, nconstants_x=2, nconstants_c=2, dropout=0.2, num_symm_blocks=1, DFT=None
     ):
-        # Call the parent's init, but we will be overwriting most network modules
         super().__init__(num_layers, h_dim, nconstants_x, nconstants_c, dropout, DFT)
 
-        # --- 1. Correlation Network (Rebuilt in parts) ---
-        
-        # Part 1: Input layers before symmetrization
+
         c_input_modules = [
             nn.Linear(LLMGGA_ZETA_DESCRIPTOR_DIMENSIONALITY, h_dim, bias=False),
             nn.LayerNorm(h_dim),
@@ -685,24 +682,18 @@ class pcPBELMLOptimizerV2(pcPBELMLOptimizer):
         ]
         self.c_input_layers = nn.Sequential(*c_input_modules)
 
-        # Part 2: The ResBlocks where symmetrization will occur
         self.c_symmetrization_blocks = nn.Sequential(
             *[ResBlock(h_dim, dropout) for _ in range(num_symm_blocks)]
         )
 
-        # Part 3: The remaining ResBlocks after symmetrization
         num_post_symm_blocks = (num_layers // 2 - 1) - num_symm_blocks
         self.c_post_symm_blocks = nn.Sequential(
             *[ResBlock(h_dim, dropout) for _ in range(num_post_symm_blocks)]
         )
 
-        # Part 4: The final output layer, which now takes a larger concatenated input
-        # Input: h_dim (from corr) + h_dim (from ex_up) + h_dim (from ex_down)
-        self.c_output_layer = nn.Linear(3 * h_dim, nconstants_c, bias=True)
+        self.c_output_layer = nn.Linear(2 * h_dim, nconstants_c, bias=True)
 
-        # --- 2. Exchange Network (Rebuilt in parts) ---
 
-        # Part 1: The feature extractor (everything except the final layer)
         x_feature_modules = [
             nn.Linear(LLMGGA_DESCRIPTOR_EXCHANGE_DIMENSIONALITY, h_dim, bias=False),
             nn.LayerNorm(h_dim),
@@ -774,7 +765,7 @@ class pcPBELMLOptimizerV2(pcPBELMLOptimizer):
         h_post_symm = (h_pre_symm + h_pre_symm_swapped) / 2
         hidden_c = self.c_post_symm_blocks(h_post_symm)
         
-        final_corr_input = torch.cat([hidden_c, hidden_x_symm, hidden_x_symm], dim=1)
+        final_corr_input = torch.cat([hidden_c, hidden_x_symm,], dim=1)
         params_c_real = self.c_output_layer(final_corr_input)
         beta_real, gamma_real = params_c_real[:, BETA_CORR_INDEX].view(-1, 1), params_c_real[:, GAMMA_CORR_INDEX].view(-1, 1)
 
@@ -810,7 +801,7 @@ class pcPBELMLOptimizerV2(pcPBELMLOptimizer):
         h_c_ueg = self.c_post_symm_blocks(h_post_symm_beta)
 
 
-        final_corr_input_ueg = torch.cat([h_c_ueg, hidden_x_symm_for_beta, hidden_x_symm_for_beta], dim=1)
+        final_corr_input_ueg = torch.cat([h_c_ueg, hidden_x_symm_for_beta], dim=1)
         beta_at_constraint = self.c_output_layer(final_corr_input_ueg)[:, BETA_CORR_INDEX].view(-1, 1)
 
         x_corr_rho_inf = self.all_rho_inf(x_correlation_desc)
@@ -818,7 +809,7 @@ class pcPBELMLOptimizerV2(pcPBELMLOptimizer):
         h_pre_symm_rho_inf = self.c_symmetrization_blocks(self.c_input_layers(x_corr_rho_inf))
         h_pre_symm_swapped_rho_inf = self.c_symmetrization_blocks(self.c_input_layers(x_corr_rho_inf_swapped))
         h_c_constr_gamma = self.c_post_symm_blocks((h_pre_symm_rho_inf + h_pre_symm_swapped_rho_inf) / 2)
-        final_corr_input_constr_rho_inf = torch.cat([h_c_constr_gamma, hidden_x_symm, hidden_x_symm], dim=1)
+        final_corr_input_constr_rho_inf = torch.cat([h_c_constr_gamma, hidden_x_symm], dim=1)
         gamma_at_constraint = self.c_output_layer(final_corr_input_constr_rho_inf)[:, GAMMA_CORR_INDEX].view(-1, 1)
 
         beta = self.beta_activation(beta_real - beta_at_constraint)
