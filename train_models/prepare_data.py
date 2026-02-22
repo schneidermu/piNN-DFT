@@ -121,7 +121,7 @@ def save_chk(data, data_train, data_test, path="checkpoints"):
 def load_chk(path="checkpoints"):
     """
     Load processed data from pickle.
-    Returns the flat predopt data and the grouped train/test data.
+    Returns predopt data, grouped train/test reaction data, AND vxc train/val data.
     """
     with open(f"{path}/data_predopt.pickle", "rb") as f:
         data = pickle.load(f)
@@ -129,7 +129,25 @@ def load_chk(path="checkpoints"):
         data_train = pickle.load(f)
     with open(f"{path}/data_test_grouped.pickle", "rb") as f:
         data_test = pickle.load(f)
-    return data, data_train, data_test
+
+    data_vxc_train = []
+    data_vxc_val = []
+    
+    try:
+        if os.path.exists(f"{path}/data_vxc_train.pickle"):
+            with open(f"{path}/data_vxc_train.pickle", "rb") as f:
+                data_vxc_train = pickle.load(f)
+        
+        if os.path.exists(f"{path}/data_vxc_val.pickle"):
+            with open(f"{path}/data_vxc_val.pickle", "rb") as f:
+                data_vxc_val = pickle.load(f)
+                
+        if len(data_vxc_train) > 0:
+            print(f"Loaded {len(data_vxc_train)} Vxc training systems.")
+    except Exception as e:
+        print(f"Warning: Could not load Vxc data: {e}")
+
+    return data, data_train, data_test, data_vxc_train, data_vxc_val
 
 
 if __name__ == "__main__":

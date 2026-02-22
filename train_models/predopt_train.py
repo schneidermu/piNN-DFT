@@ -16,12 +16,12 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
-from dataset import collate_fn, collate_fn_predopt, fast_collate_fn_predopt
-from NN_models import (MLOptimizer, pcPBEdoublestar, pcPBELMLOptimizer,
+from dataset import collate_fn, fast_collate_fn_predopt
+from NN_models import (MLOptimizer, pcPBEdoublestar, pcPBELMLOptimizerV2,
                        pcPBEMLOptimizer, pcPBEstar)
 from predopt import DatasetPredopt, predopt, true_constants_PBE
 from prepare_data import load_chk
-from reaction_energy_calculation import calculate_reaction_energy
+from reaction_energy_calculation import calculate_reaction_energy, get_local_energies
 from utils import configure_optimizers, seed_worker, set_random_seed
 
 set_random_seed(41)
@@ -90,6 +90,51 @@ PBE_VALIDATION_ERRORS = {
     "PA8": 2.634,
     "pTC13": 4.150,
 }
+
+
+def set_scales_trainable(model, trainable=True):
+    base_model = model.module if hasattr(model, 'module') else model
+    
+    # List the parameters you want to toggle
+    scale_params = [
+        base_model.log_scale_rho,
+        base_model.log_scale_sigma,
+        base_model.log_scale_tau,
+        base_model.log_scale_lapl
+    ]
+    
+    for p in scale_params:
+        p.requires_grad = trainable
+    
+    status = "ENABLED" if trainable else "DISABLED"
+    print(f"--- Scale Parameter Training: {status} ---")
+
+
+class VxcDataset(torch.utils.data.Dataset):
+    """Dataset wrapper for Vxc data loaded from pickle."""
+    def __init__(self, data_list):
+        self.data = data_list
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        return self.data[idx]
+
+def vxc_collate_fn(batch):
+    """
+    Concatenates grid points from multiple systems into one large batch.
+    This is efficient for point-wise physics training.
+    """
+    grids = [item['Grid'] for item in batch]
+    vrhos = [item['Vrho'] for item in batch]
+    weights = [item['Weights'] for item in batch]
+    
+    return {
+        "Grid": torch.cat(grids, dim=0),
+        "Vrho": torch.cat(vrhos, dim=0),
+        "Weights": torch.cat(weights, dim=0)
+    }
 
 
 # Describe custom pytorch Dataset.
@@ -359,30 +404,69 @@ def exc_loss(
     return loss * HARTREE2KCAL / n_molecules
 
 
+def vxc_loss(model, X_batch, device, rung="GGA", dft="PBE", name="PBE_8_32"):
+
+    grid_raw = X_batch["Grid"].to(device).clone().detach()
+    rho = grid_raw[:, 4:6].clone().requires_grad_(True) 
+    sigma = grid_raw[:, 6:9].clone().requires_grad_(True)
+    
+    target_vrho = X_batch["Vrho"].to(device)
+    weights = X_batch["Weights"].to(device)
+
+
+    model_input = torch.cat([rho, sigma, grid_raw[:, 9:]], dim=1)
+    predictions = model(model_input)
+    
+    if "STAR" in name: 
+        constants = torch.ones(rho.shape[0], 26).to(device) * true_constants_PBE
+        enhancement = torch.stack(predictions, dim=1) if "STARSTAR" in name else predictions
+    else:
+        constants = predictions
+        enhancement = None
+
+    calc_data = get_local_energies(
+        {"Densities": rho, "Gradients": sigma, "Weights": weights}, 
+        constants, device, rung=rung, dft=dft, enhancement=enhancement
+    )
+
+    rho_tot = (rho[:, 0] + rho[:, 1])
+
+    e_xc_pred = calc_data["Local_energies"]*rho_tot
+
+    grads = torch.autograd.grad(
+        outputs=e_xc_pred,
+        inputs=rho,
+        grad_outputs=torch.ones_like(e_xc_pred),
+        create_graph=True, 
+        retain_graph=True
+    )[0]
+    
+    pred_vrho = (grads[:, 0] + grads[:, 1]) / 2.0
+
+    rho_total = (rho[:, 0] + rho[:, 1]).detach()
+    diff_sq = (pred_vrho - target_vrho)**2
+
+    
+    loss_integral = torch.sum(rho_total.detach() * weights * diff_sq)
+    
+    norm_factor = torch.sum(rho_total.detach() * weights)
+    loss = loss_integral / (norm_factor + 1e-10)
+    
+    return loss
+
 def train(
-    model,
-    criterion,
-    optimizer,
-    scheduler,
-    early_stopper,
-    train_loader,
-    test_loader,
-    run,
-    n_epochs=25,
-    accum_iter=1,
-    verbose=False,
-    omega=0.067,
-    lambda_grad=0,
-    smoothing_window=10,
-    local_rank=0
+    model, criterion, optimizer, scheduler, early_stopper,
+    train_loader, test_loader, 
+    vxc_train_loader, vxc_test_loader,
+    run, n_epochs=25, accum_iter=1, verbose=False,
+    omega=0.067, lambda_grad=0, smoothing_window=10, local_rank=0
 ):
     torch.set_printoptions(precision=2)
-    train_loss_mae, train_loss_mse, train_loss_exc, train_full_loss, train_fchem_loss = [], [], [], [], []
-    val_full_loss, test_loss_mae, test_loss_mse, test_loss_exc, test_fchem = [], [], [], [], []
+    train_loss_mae, train_loss_vxc, train_full_loss, train_fchem_loss = [], [], [], []
+    val_full_loss, test_loss_mae, val_loss_vxc, test_fchem = [], [], [], []
 
     prev, prev_best = None, None
     val_loss_window = collections.deque(maxlen=smoothing_window)
-    test_fchem_window = collections.deque(maxlen=smoothing_window)
 
     if local_rank == 0:
         best_model_dir = "best_models/"
@@ -390,8 +474,9 @@ def train(
         os.makedirs(best_model_dir, exist_ok=True)
         os.makedirs(plot_dir, exist_ok=True)
 
-    scaler = torch.amp.GradScaler()
     world_size = dist.get_world_size()
+    
+    vxc_iter = iter(vxc_train_loader)
 
     for epoch in range(n_epochs):
 
@@ -408,36 +493,40 @@ def train(
 
         epoch_train_loss_sum = 0.0
         epoch_train_mae_sum = 0.0
-        epoch_train_exc_sum = 0.0
+        epoch_train_vxc_sum = 0.0
 
         for batch_idx, (X_batch, y_batch) in enumerate(progress_bar_train):
             X_batch_grid, y_batch = X_batch["Grid"].to(device, non_blocking=True), y_batch.to(device, non_blocking=True)
             current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
 
+            try:
+                X_vxc = next(vxc_iter)
+            except StopIteration:
+                vxc_iter = iter(vxc_train_loader)
+                X_vxc = next(vxc_iter)
+
             predictions = model(X_batch_grid)
 
             if "STARSTAR" in name:
-                reaction_energy, local_energies = calculate_reaction_energy(
+                reaction_energy, _ = calculate_reaction_energy(
                     X_batch,
                     torch.ones(X_batch_grid.shape[0], 26).to(device) * true_constants_PBE,
                     device, rung=rung, dft=dft, dispersions=dispersions,
                     enhancement=torch.stack(predictions, dim=1),
                 )
             else:
-                reaction_energy, local_energies = calculate_reaction_energy(
+                reaction_energy, _ = calculate_reaction_energy(
                     X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
                 )
 
-            local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
-#            batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch, normalization_function=torch.abs, do_factor=True)
             batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-            loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
+            loss_vxc = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, name=name)
+
+            loss = (1 - omega) * batch_fchem_loss + omega * loss_vxc * 1000
 
             loss.backward()
 
             if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == len(train_loader)):
-
-#                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) # this may be useful if the curve is very noisy
 
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
@@ -446,7 +535,7 @@ def train(
             MAE = mae(reaction_energy, y_batch).item()
             epoch_train_loss_sum += loss.item()
             epoch_train_mae_sum += MAE
-            epoch_train_exc_sum += local_loss.item()
+            epoch_train_vxc_sum += loss_vxc.item()
             
             _, _, _, epoch_train_total_database_errors = make_total_db_errors(
                 [], reaction_energy, [], [], y_batch, epoch_train_total_database_errors, current_bases
@@ -455,16 +544,16 @@ def train(
         if scheduler: scheduler.step()
 
         metrics_train_to_sync = torch.tensor(
-            [epoch_train_loss_sum, epoch_train_mae_sum, epoch_train_exc_sum], 
+            [epoch_train_loss_sum, epoch_train_mae_sum, epoch_train_vxc_sum], 
             device=device
         )
         dist.all_reduce(metrics_train_to_sync, op=dist.ReduceOp.SUM)
 
-        total_train_loss, total_train_mae, total_train_exc = (metrics_train_to_sync / world_size).tolist()
+        total_train_loss, total_train_mae, total_train_vxc = (metrics_train_to_sync / world_size).tolist()
 
         avg_train_loss = total_train_loss / len(train_loader)
         avg_train_mae = total_train_mae / len(train_loader)
-        avg_train_exc = total_train_exc / len(train_loader)
+        avg_train_vxc = total_train_vxc / len(train_loader) # Average Vxc Loss
         
         
         model.eval()
@@ -477,11 +566,12 @@ def train(
         
         val_loss_sum = 0.0
         val_mae_sum = 0.0
-        val_exc_sum = 0.0
         val_samples_count = 0
+        vxc_val_iter = iter(vxc_test_loader)
+        val_vxc_sum = 0.0
         epoch_val_total_database_errors = collections.defaultdict(list)
 
-        with torch.inference_mode(), torch.amp.autocast(device_type="cuda"):
+        with torch.no_grad(), torch.amp.autocast(device_type="cuda"):
             for X_batch, y_batch in progress_bar_test:
                 X_batch_grid, y_batch = X_batch["Grid"].to(device, non_blocking=True), y_batch.to(device, non_blocking=True)
                 current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
@@ -489,35 +579,44 @@ def train(
                 predictions = model(X_batch_grid)
 
                 if "STARSTAR" in name:
-                    reaction_energy, local_energies = calculate_reaction_energy(
+                    reaction_energy, _ = calculate_reaction_energy(
                         X_batch,
                         torch.ones(X_batch_grid.shape[0], 26).to(device) * true_constants_PBE,
                         device, rung=rung, dft=dft, dispersions=dispersions,
                         enhancement=torch.stack(predictions, dim=1),
                     )
                 else:
-                    reaction_energy, local_energies = calculate_reaction_energy(
+                    reaction_energy, _ = calculate_reaction_energy(
                         X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
                     )
 
-                local_loss = exc_loss(X_batch, predictions, local_energies, dft=dft)
-                batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-                loss = (1 - omega) * batch_fchem_loss + omega * local_loss * 100
+                try:
+                    X_vxc = next(vxc_val_iter)
+                except StopIteration:
+                    vxc_val_iter = iter(vxc_test_loader)
+                    X_vxc = next(vxc_val_iter)
 
+                with torch.enable_grad():
+                    loss_vxc_val = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, name=name)
+
+                batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
+
+                curr_batch_size = y_batch.size(0)
+                
+                loss = (1 - omega) * batch_fchem_loss + omega * loss_vxc_val * 1000
+                val_vxc_sum += loss_vxc_val.item() * curr_batch_size
+                val_loss_sum += loss.item() * curr_batch_size
                 MAE = mae(reaction_energy, y_batch).item()
 
-                batch_size = y_batch.size(0)
-                val_loss_sum += loss.item() * batch_size
-                val_mae_sum += MAE * batch_size
-                val_exc_sum += local_loss.item() * batch_size
-                val_samples_count += batch_size
+                val_mae_sum += MAE * curr_batch_size
+                val_samples_count += curr_batch_size
                 
                 _, _, _, epoch_val_total_database_errors = make_total_db_errors(
                     [], reaction_energy, [], [], y_batch, epoch_val_total_database_errors, current_bases
                 )
 
         
-        metrics_to_sync = torch.tensor([val_loss_sum, val_mae_sum, val_exc_sum, val_samples_count], device=device)
+        metrics_to_sync = torch.tensor([val_loss_sum, val_mae_sum, val_vxc_sum, val_samples_count], device=device)
         dist.all_reduce(metrics_to_sync, op=dist.ReduceOp.SUM)
 
         gathered_train_errors_list = [None] * world_size
@@ -537,24 +636,25 @@ def train(
                 for db_name, errors in local_dict.items():
                     global_val_errors[db_name].extend(errors)
             
-            total_val_loss, total_val_mae, total_val_exc, total_val_samples = metrics_to_sync.tolist()
+            total_val_loss, total_val_mae, total_val_vxc, total_val_samples = metrics_to_sync.tolist()
 
             avg_val_loss = total_val_loss / total_val_samples if total_val_samples > 0 else 0
             avg_val_mae = total_val_mae / total_val_samples if total_val_samples > 0 else 0
-            avg_val_exc = total_val_exc / total_val_samples if total_val_samples > 0 else 0
+            avg_val_vxc = total_val_vxc / total_val_samples if total_val_samples > 0 else 0
             
             train_full_loss.append(avg_train_loss)
             train_loss_mae.append(avg_train_mae)
-            train_loss_exc.append(avg_train_exc)
+            train_loss_vxc.append(avg_train_vxc)
+            val_loss_vxc.append(avg_val_vxc)
+
             val_full_loss.append(avg_val_loss)
             test_loss_mae.append(avg_val_mae)
-            test_loss_exc.append(avg_val_exc)
 
             if run is not None:
                 run["train/full_loss"].append(avg_train_loss)
                 run["validation/full_loss"].append(avg_val_loss)
-                run["train/exc_loss"].append(avg_train_exc)
-                run["validation/exc_loss"].append(avg_val_exc)
+                run["train/vxc_loss"].append(avg_train_vxc)
+                run["validation/vxc_loss"].append(avg_val_vxc)
 
                 for db, errors_list in global_train_errors.items():
                     rmse_value = np.sqrt(np.mean(np.square(errors_list)))
@@ -565,16 +665,16 @@ def train(
                     run[f"validation/{db}_rmse"].append(rmse_value)
 
                 if hasattr(model.module, 'log_scale_rho'):
-                    scale_rho = torch.nn.ReLU()(model.module.log_scale_rho).item()+1
-                    scale_sigma = torch.nn.ReLU()(model.module.log_scale_sigma).item()+1
-                    scale_tau = torch.nn.ReLU()(model.module.log_scale_tau).item()+1
+                    scale_rho = torch.exp(model.module.log_scale_rho).item()
+                    scale_sigma = torch.exp(model.module.log_scale_sigma).item()
+                    scale_tau = torch.exp(model.module.log_scale_tau).item()
                     
                     run["scaling_params/rho"].append(scale_rho)
                     run["scaling_params/sigma"].append(scale_sigma)
                     run["scaling_params/tau"].append(scale_tau)
 
                     if hasattr(model.module, 'log_scale_lapl'):
-                        scale_lapl = torch.nn.ReLU()(model.module.log_scale_lapl).item()+1
+                        scale_lapl = torch.exp(model.module.log_scale_lapl).item()
                         run["scaling_params/lapl"].append(scale_lapl)
 
             print(f"\n--- Epoch {epoch + 1} Summary ---")
@@ -582,12 +682,12 @@ def train(
             print("Training Set Metrics:")
             train_fchem = loss_function(FCHEM_VALIDATION, global_train_errors, val=False)
             print(f"Global Train Fchem: {train_fchem:.4f}\n")
-            train_fchem_loss.append((1 - omega) * train_fchem / 50 + omega * train_loss_exc[-1] * 100)
+            train_fchem_loss.append((1 - omega) * train_fchem / 50 + omega * train_loss_vxc[-1] * 100)
 
             print("Validation Set Metrics:")
             val_fchem = loss_function(FCHEM_VALIDATION, global_val_errors, val=True)
             print(f"Global Validation Fchem: {val_fchem:.4f}\n")
-            test_fchem.append((1 - omega) * val_fchem / 15 + omega * test_loss_exc[-1] * 200)
+            test_fchem.append((1 - omega) * val_fchem / 15 + omega * val_loss_vxc[-1] * 200)
             
 
             val_loss_window.append(val_full_loss[-1])
@@ -619,7 +719,7 @@ def train(
 
 if __name__ == "__main__":
 
-    data, data_train, data_test = load_chk(path="checkpoints")
+    data, data_train, data_test, data_vxc_train, data_vxc_val = load_chk(path="checkpoints")
 
     local_rank = int(os.environ["LOCAL_RANK"])
     dist.init_process_group(backend="nccl")
@@ -666,6 +766,7 @@ if __name__ == "__main__":
         default="radamw",
         help="Optimizer to use",
     )
+    parser.add_option("--Lambda_grad", type=float, default=0.0, help="Coefficient for gradient regularization (smoothness penalty)")
 
     (Opts, args) = parser.parse_args()
 
@@ -680,6 +781,7 @@ if __name__ == "__main__":
         lr_predopt,
         weight_decay,
         optimizer_str,
+        lambda_grad,
     ) = (
         Opts.Name,
         Opts.N_preopt,
@@ -691,6 +793,7 @@ if __name__ == "__main__":
         Opts.LR_predopt,
         Opts.Weight_decay,
         Opts.Optimizer,
+        Opts.Lambda_grad,
     )
 
     xalpha = False
@@ -715,7 +818,7 @@ if __name__ == "__main__":
             base_model = pcPBEstar(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
 
         elif "PBE-L" in name:
-            base_model = pcPBELMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
+            base_model = pcPBELMLOptimizerV2(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
 
         else:
             base_model = pcPBEMLOptimizer(num_layers=num_layers, h_dim=h_dim, dropout=dropout, DFT=dft).to(device)
@@ -723,7 +826,7 @@ if __name__ == "__main__":
     elif dft == "XALPHA":
         base_model = MLOptimizer(num_layers, h_dim, nconstants, dropout, dft).to(device)
 
-    model = DDP(base_model, device_ids=[local_rank])
+    model = DDP(base_model, device_ids=[local_rank], find_unused_parameters=True)
 
     if local_rank == 0:
         print(FCHEM_VALIDATION)
@@ -777,6 +880,21 @@ if __name__ == "__main__":
         worker_init_fn=seed_worker,
     )
 
+    vxc_bs = 1
+    
+    vxc_train_set = VxcDataset(data_vxc_train)
+    vxc_train_sampler = DistributedSampler(vxc_train_set, shuffle=True)
+    vxc_train_loader = torch.utils.data.DataLoader(
+        vxc_train_set, batch_size=vxc_bs, num_workers=2, pin_memory=True,
+        sampler=vxc_train_sampler, collate_fn=vxc_collate_fn, worker_init_fn=seed_worker
+    )
+    vxc_test_set = VxcDataset(data_vxc_val)
+    vxc_test_sampler = DistributedSampler(vxc_test_set, shuffle=False)
+    vxc_test_loader = torch.utils.data.DataLoader(
+        vxc_test_set, batch_size=vxc_bs, num_workers=2, pin_memory=True,
+        sampler=vxc_test_sampler, collate_fn=vxc_collate_fn, worker_init_fn=seed_worker
+    )
+
     name += "_" + str(dropout)
 
     mae = nn.L1Loss()
@@ -785,6 +903,7 @@ if __name__ == "__main__":
 
     name += "_" + str(dropout)
 
+    set_scales_trainable(model, trainable=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr_predopt, betas=(0.9, 0.999))
 
     double_star = False
@@ -811,7 +930,8 @@ if __name__ == "__main__":
             "dropout": dropout,
             "weight_decay": weight_decay,
             "optimizer": optimizer_str,
-            "lr_train": lr_train
+            "lr_train": lr_train,
+            "lambda_grad": lambda_grad
         }
 
     train_loss_mse, train_loss_mae = predopt(
@@ -829,6 +949,7 @@ if __name__ == "__main__":
 
     true_constants_PBE = true_constants_PBE.to(device)
 
+    set_scales_trainable(model, trainable=True)
     optimizer = configure_optimizers(model=model, learning_rate=lr_train, optimizer_str=optimizer_str, weight_decay=weight_decay)
 
 
@@ -853,8 +974,6 @@ if __name__ == "__main__":
     ACCUM_ITER = 1
     VERBOSE = False
 
-    model = torch.compile(model)
-
     train_loss_mae, test_loss_mae, best_model_path = train(
         model,
         criterion,
@@ -863,10 +982,12 @@ if __name__ == "__main__":
         early_stopper,
         train_dataloader,
         test_dataloader,
+        vxc_train_loader, vxc_test_loader,
         run,
         n_epochs=N_EPOCHS,
         accum_iter=ACCUM_ITER,
         omega=omega,
+        lambda_grad=lambda_grad,
         verbose=VERBOSE,
         local_rank=local_rank
     )

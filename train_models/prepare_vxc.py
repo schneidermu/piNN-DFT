@@ -1,0 +1,121 @@
+import os
+import pickle
+import h5py
+import torch
+import numpy as np
+from pathlib import Path
+from sklearn.model_selection import train_test_split
+
+def load_vxc_from_h5(h5_path):
+    """
+    Loads Grid, Vrho, and Weights from an H5 file.
+    """
+    if not os.path.exists(h5_path):
+        return None
+
+    try:
+        with h5py.File(h5_path, 'r') as f:
+            # 1. Load Vrho (Target)
+            if 'vrho' not in f: 
+                print(f"Skipping {h5_path}: No 'vrho' dataset.")
+                return None
+            vrho_raw = f['vrho'][:]
+            
+            # Handle shape: (2, N) -> (N,)
+            # Vxc is intensive. For closed shell (like Ne), rows are identical.
+            # We average them to get a single 1D array matching the density grid.
+            if vrho_raw.ndim == 2:
+                vrho = np.mean(vrho_raw, axis=0)
+            else:
+                vrho = vrho_raw
+            
+            # Convert to Tensor
+            vrho = torch.tensor(vrho, dtype=torch.float32)
+
+            # 2. Load Weights (Integration weights)
+            if 'weights' not in f: return None
+            weights = torch.tensor(f['weights'][:], dtype=torch.float32)
+
+            # 3. Load Grid (Input features: rho, grad, tau, etc.)
+            if 'grid' not in f: return None
+            grid = torch.tensor(f['grid'][:], dtype=torch.float32)
+            
+            # 4. Check Shapes
+            if not (grid.shape[0] == vrho.shape[0] == weights.shape[0]):
+                print(f"Skipping {h5_path}: Shape mismatch G{grid.shape} V{vrho.shape} W{weights.shape}")
+                return None
+
+            return {
+                "Name": Path(h5_path).stem,
+                "Grid": grid,
+                "Vrho": vrho,
+                "Weights": weights
+            }
+    except Exception as e:
+        print(f"Error loading {h5_path}: {e}")
+        return None
+
+
+def prepare_vxc(h5_dir="h5_vrho", output_dir="checkpoints", test_size=0.1, random_state=42):
+    """
+    Scans directory, loads data, splits it, and saves pickles.
+    """
+    print(f"Scanning '{h5_dir}' for .h5 files...")
+    p = Path(h5_dir)
+    files = sorted(list(p.glob("*.h5")))
+    
+    if not files:
+        print("No .h5 files found! Please run gen_h5_with_vrho.py first.")
+        return
+
+    print(f"Found {len(files)} files. Loading into memory...")
+    
+    valid_data = []
+    for f in files:
+        data = load_vxc_from_h5(f)
+        if data is not None:
+            valid_data.append(data)
+            print(f"  Loaded: {data['Name']} (pts: {data['Grid'].shape[0]})")
+    
+    if not valid_data:
+        print("No valid data loaded.")
+        return
+
+    print(f"\nTotal loaded systems: {len(valid_data)}")
+
+    # Split Data
+    if len(valid_data) < 2:
+        print("Warning: Only 1 system found. Using it for both Train and Validation.")
+        train_data = valid_data
+        val_data = valid_data
+    else:
+        train_data, val_data = train_test_split(
+            valid_data, 
+            test_size=test_size, 
+            random_state=random_state,
+            shuffle=True
+        )
+
+    print(f"Split: {len(train_data)} Train, {len(val_data)} Validation.")
+
+    # Save Pickles
+    os.makedirs(output_dir, exist_ok=True)
+    
+    train_path = os.path.join(output_dir, "data_vxc_train.pickle")
+    val_path = os.path.join(output_dir, "data_vxc_val.pickle")
+
+    with open(train_path, "wb") as f:
+        pickle.dump(train_data, f)
+    
+    with open(val_path, "wb") as f:
+        pickle.dump(val_data, f)
+
+    print(f"\nSaved checkpoints:\n  {train_path}\n  {val_path}")
+
+
+if __name__ == "__main__":
+    prepare_vxc(
+        h5_dir="h5_vrho", 
+        output_dir="checkpoints", 
+        test_size=0.2
+    )

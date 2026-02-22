@@ -21,7 +21,7 @@ from dft_functionals.constants import (
 
 random.seed(42)
 
-device = torch.device("cpu")
+device = torch.device("cuda")
 
 sigmoid = torch.nn.Sigmoid()
 elu = torch.nn.ELU()
@@ -316,9 +316,9 @@ class pcPBEMLOptimizer(nn.Module):
         tau_beta = (tau_b_raw - tau_w_beta) / tau_tf_beta - 1
 
 
-        scale_rho = relu(self.log_scale_rho)+1
-        scale_sigma = relu(self.log_scale_sigma)+1
-        scale_tau = relu(self.log_scale_tau)+1
+        scale_rho = torch.exp(self.log_scale_rho)
+        scale_sigma = torch.exp(self.log_scale_sigma)
+        scale_tau = torch.exp(self.log_scale_tau)
 
 
         X = torch.tanh(torch.stack([n_alpha/scale_rho, n_beta/scale_rho, s_alpha/scale_sigma, s_norm/scale_sigma, s_beta/scale_sigma, tau_alpha/scale_tau, tau_beta/scale_tau], dim=1))
@@ -440,9 +440,9 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
         self.scaling_array = LLMGGA_SPIN_SCALING_MULTIPLIER.to(device)
 
         self.log_scale_rho = nn.Parameter(torch.zeros(1))
-        self.log_scale_sigma = nn.Parameter(torch.zeros(1))
-        self.log_scale_tau = nn.Parameter(torch.zeros(1))
-        self.log_scale_lapl = nn.Parameter(torch.zeros(1))
+        self.log_scale_sigma = nn.Parameter(torch.zeros(1)+10.0)
+        self.log_scale_tau = nn.Parameter(torch.zeros(1)+2.0)
+        self.log_scale_lapl = nn.Parameter(torch.zeros(1)+10.0)
         
         
     @staticmethod
@@ -504,10 +504,10 @@ class pcPBELMLOptimizer(pcPBEMLOptimizer):
             8 - beta reduced laplacian (q / (1+|q|))
             """
 
-            scale_rho = relu(self.log_scale_rho) + 1.0
-            scale_sigma = relu(self.log_scale_sigma) + 1.0
-            scale_alpha = relu(self.log_scale_tau) + 1.0
-            scale_q = relu(self.log_scale_lapl) + 1.0
+            scale_rho = torch.exp(self.log_scale_rho)
+            scale_sigma = torch.exp(self.log_scale_sigma)
+            scale_alpha = torch.exp(self.log_scale_tau)
+            scale_q = torch.exp(self.log_scale_lapl)
 
             rho_a = x[:, RHO_ALPHA_INDEX]
             rho_b = x[:, RHO_BETA_INDEX]
