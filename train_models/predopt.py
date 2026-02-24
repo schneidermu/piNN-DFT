@@ -96,6 +96,8 @@ def predopt(
                 device, non_blocking=True
             )[:, _ADAPTIVE_INDICES]
 
+            y_batch[:, [-1,-2]] = y_batch[:, [-1,-2]] - 1
+
             predictions = model(X_batch)[:, _ADAPTIVE_INDICES]
 
             loss = criterion(predictions, y_batch)

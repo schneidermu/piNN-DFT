@@ -38,8 +38,8 @@ true_constants_PBE = torch.Tensor(
             0.2195149727645171,
             0.8040,
             0.2195149727645171,
-            0.0,  # Index 26: G_NN_up (Neural network exchange correction, spin-up)
-            0.0,  # Index 27: G_NN_down (Neural network exchange correction, spin-down)
+            1,  # Index 26: G_NN_up (Neural network exchange correction, spin-up)
+            1,  # Index 27: G_NN_down (Neural network exchange correction, spin-down)
         ]
     ]
 )
