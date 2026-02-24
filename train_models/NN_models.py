@@ -8,6 +8,7 @@ density descriptors, subject to exact physical constraints.
 
 import sys
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import torch
@@ -179,7 +180,7 @@ class pcPBELMLOptimizerV2(nn.Module):
         nconstants_c: int = 2,
         dropout: float = 0.2,
         num_symm_blocks: int = 1,
-        DFT: str | None = None,
+        DFT: Optional[str] = None,
     ) -> None:
         super().__init__()
 
