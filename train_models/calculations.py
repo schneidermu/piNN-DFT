@@ -7,22 +7,25 @@ train_sbatch_template = """#! /bin/bash
 #SBATCH --job-name="NN_{functional}"
 #SBATCH --gpus=2
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=6
 #SBATCH --gpus-per-node=2
 #SBATCH --mail-user=schneider.mark14@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --output="../log/NN_PBE_final/{functional}_0.2_{omega:.5f}_RMSE_"%j.out
+#SBATCH --output="logs/{functional}_0.2_{omega:.5f}_RMSE_"%j.out
 #SBATCH --constraint="type_b|type_c"
 #SBATCH --time=3-0
 #SBATCH --exclude=cn-003
+
+MASTER_PORT=$(expr 10000 + $(echo -n $SLURM_JOBID | tail -c 4))
+MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 # Executable
-CUBLAS_WORKSPACE_CONFIG=:16:8 python predopt_train.py --Name {functional} --N_preopt 10 --N_train 200 --Batch_size {batch_size} --Dropout 0.2 --Omega {omega:.5f} --LR_predopt 0.01 --LR_train 0.00003"""
+CUBLAS_WORKSPACE_CONFIG=:16:8 torchrun --nproc_per_node=2 --rdzv_backend c10d --rdzv_endpoint $MASTER_ADDR:$MASTER_PORT predopt_train.py --name {functional} --n_predopt 2 --n_train 300 --batch_size {batch_size} --dropout 0.05 --omega {omega:.5f} --lr_predopt 0.01 --lr_train 0.00001 --weight_decay 0.0005 --optimizer radamw"""
 
 functionals = [
-    ("PBE_6_32", 1),
-    ("PBESTAR_6_32", 1),
-    ("PBESTARSTAR_6_32", 1),
-    ("XALPHA_6_128", 1),
+    ("PBE-L_6_64", 1),
+#    ("PBESTAR_6_32", 1),
+#    ("PBESTARSTAR_6_32", 1),
+#    ("XALPHA_6_128", 1),
 ]
 
 n = 9
@@ -32,7 +35,10 @@ omegas = list(np.roots(chop(taylor(lambda x: chebyt(n, x), 0, n))[::-1]) / 2 + 0
 ]
 
 omegas = np.array(omegas)
+omegas = omegas[omegas>0.9]
+#omegas = omegas[omegas<0.5]
 
+#omegas = omegas[omegas>0.999]
 
 calculation_job_ids = []
 

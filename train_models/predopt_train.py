@@ -14,6 +14,7 @@ import collections
 import os
 import pickle
 import random
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import neptune
@@ -739,8 +740,8 @@ def _save_checkpoint(
     val_fchem: float,
     val_full_loss: list,
     val_loss_window: collections.deque,
-    prev: str | None,
-    prev_best: str | None,
+    prev: Optional[str],
+    prev_best: Optional[str],
     best_model_dir: str,
 ) -> tuple:
     """
@@ -830,7 +831,7 @@ def train(
     device: torch.device = torch.device("cpu"),
     rung: str = "GGA",
     dft: str = "PBE",
-    dispersions: dict | None = None,
+    dispersions: Optional[dict] = None,
     batch_size: int = 3,
     lr_train: float = 1e-4,
     name: str = "",
