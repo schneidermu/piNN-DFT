@@ -16,7 +16,8 @@ import pickle
 import random
 
 import matplotlib.pyplot as plt
-import neptune
+import mlflow
+import mlflow.pytorch
 import numpy as np
 import torch
 import torch.distributed as dist
@@ -1067,7 +1068,7 @@ if __name__ == "__main__":
     base_model = pcPBELMLOptimizerV2(
         num_layers=num_layers, h_dim=h_dim, dropout=args.dropout, DFT="PBE"
     ).to(device)
-    model = DDP(base_model, device_ids=[local_rank], find_unused_parameters=False)
+    model = DDP(base_model, device_ids=[local_rank], find_unused_parameters=True)
 
     if local_rank == 0:
         print(FCHEM_VALIDATION)
