@@ -693,24 +693,29 @@ def _log_metrics(
     val_history["mae"].append(avg_val_mae)
     val_history["vxc"].append(avg_val_vxc)
 
-    if run is not None:
-        run["train/full_loss"].append(avg_train_loss)
-        run["validation/full_loss"].append(avg_val_loss)
-        run["train/vxc_loss"].append(avg_train_vxc)
-        run["validation/vxc_loss"].append(avg_val_vxc)
+    if mlflow.active_run() is not None:
+        # Log primary losses
+        mlflow.log_metric("train/full_loss", avg_train_loss, step=epoch)
+        mlflow.log_metric("validation/full_loss", avg_val_loss, step=epoch)
+        mlflow.log_metric("train/vxc_loss", avg_train_vxc, step=epoch)
+        mlflow.log_metric("validation/vxc_loss", avg_val_vxc, step=epoch)
 
+        # Log per-database RMSEs
         for db, errors_list in global_train_errors.items():
-            run[f"train/{db}_rmse"].append(np.sqrt(np.mean(np.square(errors_list))))
+            rmse = np.sqrt(np.mean(np.square(errors_list)))
+            mlflow.log_metric(f"train/{db}_rmse", rmse, step=epoch)
         for db, errors_list in global_val_errors.items():
-            run[f"validation/{db}_rmse"].append(np.sqrt(np.mean(np.square(errors_list))))
+            rmse = np.sqrt(np.mean(np.square(errors_list)))
+            mlflow.log_metric(f"validation/{db}_rmse", rmse, step=epoch)
 
+        # Log scaling parameters
         base_model = model.module if hasattr(model, "module") else model
         if hasattr(base_model, "log_scale_rho"):
-            run["scaling_params/rho"].append(torch.exp(base_model.log_scale_rho).item())
-            run["scaling_params/sigma"].append(torch.exp(base_model.log_scale_sigma).item())
-            run["scaling_params/tau"].append(torch.exp(base_model.log_scale_tau).item())
+            mlflow.log_metric("scaling_params/rho", torch.exp(base_model.log_scale_rho).item(), step=epoch)
+            mlflow.log_metric("scaling_params/sigma", torch.exp(base_model.log_scale_sigma).item(), step=epoch)
+            mlflow.log_metric("scaling_params/tau", torch.exp(base_model.log_scale_tau).item(), step=epoch)
         if hasattr(base_model, "log_scale_lapl"):
-            run["scaling_params/lapl"].append(torch.exp(base_model.log_scale_lapl).item())
+            mlflow.log_metric("scaling_params/lapl", torch.exp(base_model.log_scale_lapl).item(), step=epoch)
 
     print(f"\n--- Epoch {epoch + 1} Summary ---")
     print("Training Set Metrics:")
@@ -1091,25 +1096,45 @@ if __name__ == "__main__":
         generator=g,
     )
 
-    # 7. Neptune logging (rank 0 only)
+    # 7. MLFlow logging (rank 0 only)
     run = None
     if local_rank == 0:
         load_dotenv(find_dotenv())
-        api_token = os.getenv("NEPTUNE_API_TOKEN")
-        if api_token:
-            run = neptune.init_run(project="schneidermu/piNN-DFT", api_token=api_token)
-            run["parameters"] = {
-                "name":         name,
-                "num_layers":   num_layers,
-                "h_dim":        h_dim,
-                "dropout":      args.dropout,
-                "weight_decay": args.weight_decay,
-                "optimizer":    args.optimizer,
-                "lr_train":     args.lr_train,
-                "omega":        args.omega,
-            }
+        enable_mlflow = os.getenv("ENABLE_MLFLOW", "true").lower() in ("true", "1", "yes")
+
+        if enable_mlflow:
+            try:
+                # Configure tracking URI (defaults to ./mlruns/)
+                tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "./mlruns")
+                mlflow.set_tracking_uri(tracking_uri)
+                mlflow.set_experiment("piNN-DFT")
+
+                # Start run with descriptive name
+                run_name = f"{name}_omega_{args.omega:.3f}"
+                mlflow.start_run(run_name=run_name)
+
+                # Log all hyperparameters
+                mlflow.log_params({
+                    "name": name,
+                    "num_layers": num_layers,
+                    "h_dim": h_dim,
+                    "dropout": args.dropout,
+                    "weight_decay": args.weight_decay,
+                    "optimizer": args.optimizer,
+                    "lr_train": args.lr_train,
+                    "omega": args.omega,
+                    "n_predopt": args.n_predopt,
+                    "n_train": args.n_train,
+                    "batch_size": args.batch_size,
+                    "lr_predopt": args.lr_predopt,
+                    "vxc_batch_size": args.vxc_batch_size,
+                })
+
+                print(f"MLFlow tracking enabled. URI: {tracking_uri}, Experiment: piNN-DFT, Run: {run_name}")
+            except Exception as e:
+                print(f"Warning: MLFlow initialization failed: {e}. Logging disabled.")
         else:
-            print("Warning: NEPTUNE_API_TOKEN not set. Neptune logging disabled.")
+            print("MLFlow logging disabled (ENABLE_MLFLOW=false).")
 
     # 8. Pre-optimization phase (log-scale params frozen)
     set_scales_trainable(model, trainable=False)
@@ -1146,5 +1171,5 @@ if __name__ == "__main__":
 
     if local_rank == 0:
         print(f"Training complete. Best model saved at: {best_model_path}")
-        if run:
-            run.stop()
+        if mlflow.active_run() is not None:
+            mlflow.end_run()
