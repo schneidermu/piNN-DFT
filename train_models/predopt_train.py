@@ -730,6 +730,10 @@ def _log_metrics(
     train_history["fchem"].append((1 - omega) * train_fchem / _TRAIN_FCHEM_PLOT_SCALE + omega * avg_train_vxc * 100)
     val_history["fchem"].append(  (1 - omega) * val_fchem   / _VAL_FCHEM_PLOT_SCALE   + omega * avg_val_vxc   * 200)
 
+    # Track pure reaction loss (fchem) for plotting
+    train_history["reaction_loss"].append(train_fchem)
+    val_history["reaction_loss"].append(val_fchem)
+
     return train_fchem, val_fchem
 
 
@@ -815,6 +819,53 @@ def _plot_losses(
     plt.close(fig)
 
 
+def _plot_reaction_and_vxc_losses(
+    train_reaction_loss: list,
+    val_reaction_loss: list,
+    train_vxc_loss: list,
+    val_vxc_loss: list,
+) -> str:
+    """
+    Creates a 2-subplot figure showing reaction loss and vxc loss per epoch.
+
+    Args:
+        train_reaction_loss: List of training reaction (fchem) loss values per epoch.
+        val_reaction_loss: List of validation reaction (fchem) loss values per epoch.
+        train_vxc_loss: List of training vxc loss values per epoch.
+        val_vxc_loss: List of validation vxc loss values per epoch.
+
+    Returns:
+        Path to the saved plot file.
+    """
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 10), sharex=True)
+
+    # Subplot 1: Reaction Loss per Epoch
+    axes[0].plot(train_reaction_loss, label="Train Reaction Loss", linewidth=2)
+    axes[0].plot(val_reaction_loss, label="Validation Reaction Loss", linewidth=2)
+    axes[0].set_ylabel("Reaction Loss (kcal/mol)", fontsize=12)
+    axes[0].set_title("Reaction Loss per Epoch", fontsize=14, fontweight='bold')
+    axes[0].legend(fontsize=10)
+    axes[0].grid(True, alpha=0.3)
+
+    # Subplot 2: Vxc Loss per Epoch
+    axes[1].plot(train_vxc_loss, label="Train Vxc Loss", linewidth=2)
+    axes[1].plot(val_vxc_loss, label="Validation Vxc Loss", linewidth=2)
+    axes[1].set_xlabel("Epoch", fontsize=12)
+    axes[1].set_ylabel("Vxc Loss", fontsize=12)
+    axes[1].set_title("Vxc Loss per Epoch", fontsize=14, fontweight='bold')
+    axes[1].legend(fontsize=10)
+    axes[1].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    # Save to a temporary file
+    plot_path = "loss_plots.png"
+    plt.savefig(plot_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+    return plot_path
+
+
 # ---------------------------------------------------------------------------
 # Main training coordinator
 # ---------------------------------------------------------------------------
@@ -874,8 +925,8 @@ def train(
     Returns:
         (train_full_loss, val_full_loss, best_model_path)
     """
-    train_history = {"full_loss": [], "mae": [], "vxc": [], "fchem": []}
-    val_history   = {"full_loss": [], "mae": [], "vxc": [], "fchem": []}
+    train_history = {"full_loss": [], "mae": [], "vxc": [], "fchem": [], "reaction_loss": []}
+    val_history   = {"full_loss": [], "mae": [], "vxc": [], "fchem": [], "reaction_loss": []}
 
     prev, prev_best = None, None
     val_loss_window = collections.deque(maxlen=smoothing_window)
@@ -940,6 +991,19 @@ def train(
                 train_history["fchem"],     val_history["fchem"],
                 batch_size, lr_train, name, omega, _PLOT_DIR,
             )
+
+            # ---- MLflow artifact: reaction and vxc loss plots ----
+            if mlflow.active_run() is not None:
+                plot_path = _plot_reaction_and_vxc_losses(
+                    train_history["reaction_loss"],
+                    val_history["reaction_loss"],
+                    train_history["vxc"],
+                    val_history["vxc"],
+                )
+                mlflow.log_artifact(plot_path, artifact_path="plots")
+                # Clean up the temporary file
+                if os.path.exists(plot_path):
+                    os.remove(plot_path)
 
         if early_stopper.early_stop(avg_val_loss):
             if local_rank == 0:
