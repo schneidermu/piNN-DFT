@@ -19,6 +19,13 @@ import torch
 # c_arr[:, 12:15] equal params_a_beta4
 # c_arr[:, 15:18] equal params_a_a
 # c_arr[:, 18:21] equal params_a_alpha1
+# c_arr[:, 21] equals LDA_X_FACTOR
+# c_arr[:, 22] equals kappa_up (exchange spin-up)
+# c_arr[:, 23] equals mu_up (exchange spin-up)
+# c_arr[:, 24] equals kappa_down (exchange spin-down)
+# c_arr[:, 25] equals mu_down (exchange spin-down)
+# c_arr[:, 26] equals G_NN_up (NN exchange correction, spin-up)
+# c_arr[:, 27] equals G_NN_down (NN exchange correction, spin-down)
 
 
 # mbeta  = 0.06672455060314922
@@ -191,9 +198,24 @@ def lda_x_spin(rs, z, c_arr):
 
 
 def pbe_f0(s, c_arr):
+    """
+    PBE exchange enhancement factor with neural network correction.
+
+    F_x(s) = 1 + κ - κ/(1 + μs²/κ) + G_NN
+
+    Args:
+        s: Reduced density gradient
+        c_arr: Constants array (N, 28 or N, 24 after slicing)
+            c_arr[:, 22]: kappa
+            c_arr[:, 23]: mu
+            c_arr[:, 26]: G_NN (after gga_exchange slicing, becomes index 22)
+
+    Returns:
+        F_x(s): Exchange enhancement factor
+    """
     res_pbe_f0 = 1 + c_arr[:, 22] * (
         1 - c_arr[:, 22] / (c_arr[:, 22] + c_arr[:, 23] * s**2)
-    )
+    ) + c_arr[:, 24]  # NEW: Add G_NN term (index 24 after slicing [0-21, 22, 23, 26])
     return res_pbe_f0
 
 
@@ -204,16 +226,20 @@ def pbe_f(x, c_arr):
 
 
 def gga_exchange(func, rs, z, xs0, xs1, c_arr, enhancement=None):
-    if enhancement is None:
-        res_gga_exchange = lda_x_spin(rs, z, c_arr) * func(
-            xs0, c_arr[:, list(range(22)) + [22, 23]]
-        ) + lda_x_spin(rs, -z, c_arr) * func(xs1, c_arr[:, list(range(22)) + [24, 25]])
-    else:
-        res_gga_exchange = enhancement[:, 0] * lda_x_spin(rs, z, c_arr) * func(
-            xs0, c_arr[:, list(range(22)) + [22, 23]]
-        ) + enhancement[:, 1] * lda_x_spin(rs, -z, c_arr) * func(
-            xs1, c_arr[:, list(range(22)) + [24, 25]]
-        )
+    """
+    GGA exchange energy with spin-dependent neural network corrections.
+
+    Computes E_x^GGA = E_x^LDA,↑ * F_x(s_↑) + E_x^LDA,↓ * F_x(s_↓)
+    where F_x includes G_NN correction terms.
+
+    The constant array is sliced to pass spin-specific parameters:
+    - Spin-up: indices [0-21, 22, 23, 26] → (correlation, kappa_up, mu_up, G_NN_up)
+    - Spin-down: indices [0-21, 24, 25, 27] → (correlation, kappa_down, mu_down, G_NN_down)
+    """
+    res_gga_exchange = lda_x_spin(rs, z, c_arr) * func(
+        xs0, c_arr[:, list(range(22)) + [22, 23, 26]]  # spin-up: add G_NN_up (index 26)
+    ) + lda_x_spin(rs, -z, c_arr) * func(xs1, c_arr[:, list(range(22)) + [24, 25, 27]])  # spin-down: add G_NN_down (index 27)
+
     return res_gga_exchange
 
 

@@ -155,7 +155,7 @@ class pcPBELMLOptimizerV2(nn.Module):
 
     Output
     ------
-    Tensor of shape (N, 26) equal to predicted_factors * true_constants_PBE.
+    Tensor of shape (N, 28) equal to predicted_factors * true_constants_PBE.
     The 20 pass-through constants at indices 2–21 are returned unchanged.
 
     Args:
@@ -164,7 +164,7 @@ class pcPBELMLOptimizerV2(nn.Module):
             symmetrization blocks plus (num_layers // 2 - 1 - num_symm_blocks)
             post-symmetrization blocks.
         h_dim: Hidden dimension for all linear and residual layers.
-        nconstants_x: Exchange output constants (default 2: mu, kappa).
+        nconstants_x: Exchange output constants (default 3: mu, kappa, G_NN).
         nconstants_c: Correlation output constants (default 2: beta, gamma).
         dropout: Dropout probability in ResBlocks.
         num_symm_blocks: ResBlocks dedicated to spin symmetrization in the
@@ -176,7 +176,7 @@ class pcPBELMLOptimizerV2(nn.Module):
         self,
         num_layers: int,
         h_dim: int,
-        nconstants_x: int = 2,
+        nconstants_x: int = 3,  # (mu, kappa, G_NN) for exchange
         nconstants_c: int = 2,
         dropout: float = 0.2,
         num_symm_blocks: int = 1,
@@ -238,6 +238,11 @@ class pcPBELMLOptimizerV2(nn.Module):
     def shifted_elu(x: torch.Tensor) -> torch.Tensor:
         """ELU shifted so output ≥ 0. Used for mu and gamma constraint construction."""
         return nn.functional.elu(x) + 1.0
+
+    @staticmethod
+    def g_nn_activation(x: torch.Tensor) -> torch.Tensor:
+        """Maps ℝ → (-1, 1). G_NN correction term for exchange enhancement."""
+        return torch.tanh(x)
 
     # ------------------------------------------------------------------
     # Constraint-point constructors
@@ -409,6 +414,8 @@ class pcPBELMLOptimizerV2(nn.Module):
         params_x_down_real = self.x_output_layer(hidden_x_down_scaled)
         mu_up_real,   kappa_up_real   = params_x_up_real[:,   MU_EX_INDEX].view(-1, 1), params_x_up_real[:,   KAPPA_EX_INDEX].view(-1, 1)
         mu_down_real, kappa_down_real = params_x_down_real[:, MU_EX_INDEX].view(-1, 1), params_x_down_real[:, KAPPA_EX_INDEX].view(-1, 1)
+        g_nn_up_real   = params_x_up_real[:, 2].view(-1, 1)      # NEW: G_NN for spin-up
+        g_nn_down_real = params_x_down_real[:, 2].view(-1, 1)    # NEW: G_NN for spin-down
 
         # ---- Correlation: real values ----
         h_pre_symm         = self.c_symmetrization_blocks(self.c_input_layers(x_correlation_desc))
@@ -436,6 +443,8 @@ class pcPBELMLOptimizerV2(nn.Module):
         hidden_x_down_ueg = self.x_feature_extractor(x_exch_ueg_desc[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
         mu_up_at_constraint   = self.x_output_layer(hidden_x_up_ueg)[:,   MU_EX_INDEX].view(-1, 1)
         mu_down_at_constraint = self.x_output_layer(hidden_x_down_ueg)[:, MU_EX_INDEX].view(-1, 1)
+        g_nn_up_at_constraint   = self.x_output_layer(hidden_x_up_ueg)[:, 2].view(-1, 1)     # NEW: G_NN UEG constraint (spin-up)
+        g_nn_down_at_constraint = self.x_output_layer(hidden_x_down_ueg)[:, 2].view(-1, 1)   # NEW: G_NN UEG constraint (spin-down)
 
         # ---- Correlation UEG constraint (s→0) for beta ----
         tau_tf_rho_a = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
@@ -481,12 +490,14 @@ class pcPBELMLOptimizerV2(nn.Module):
         mu_down  = self.shifted_elu(mu_down_real   - mu_down_at_constraint)
         kappa_up   = self.kappa_activation(kappa_up_real)
         kappa_down = self.kappa_activation(kappa_down_real)
+        g_nn_up   = self.g_nn_activation(g_nn_up_real - g_nn_up_at_constraint)      # NEW: G_NN with UEG constraint
+        g_nn_down = self.g_nn_activation(g_nn_down_real - g_nn_down_at_constraint)  # NEW: G_NN with UEG constraint
 
-        # ---- Assemble 26-element output tensor ----
-        # Layout: [beta, gamma, <20 pass-through>, kappa_up, mu_up, kappa_down, mu_down]
+        # ---- Assemble 28-element output tensor ----
+        # Layout: [beta, gamma, <20 pass-through>, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down]
         constants_batch = true_constants_PBE.repeat(x.shape[0], 1).to(x.device)
         fill_tensor = torch.ones([x.shape[0], _N_FILL_CONSTANTS], device=x.device)
         final_tensor = torch.hstack(
-            [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down]
+            [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down]
         )
         return final_tensor * constants_batch

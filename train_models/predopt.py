@@ -57,8 +57,9 @@ def predopt(
     per-grid-point basis. This warm-starts the model near a physically
     meaningful solution before the main reaction-energy training phase.
 
-    Only the 6 adaptive constants are compared: beta (0), gamma (1),
-    kappa_up (22), mu_up (23), kappa_down (24), mu_down (25).
+    Only the 8 adaptive constants are compared: beta (0), gamma (1),
+    kappa_up (22), mu_up (23), kappa_down (24), mu_down (25),
+    G_NN_up (26), G_NN_down (27). Target values for G_NN are 0.0.
 
     Args:
         model: DDP-wrapped pcPBELMLOptimizerV2.
@@ -74,7 +75,7 @@ def predopt(
         (train_loss_mse, train_loss_mae): Per-epoch MSE and MAE losses (rank 0 only;
         other ranks return empty lists).
     """
-    _ADAPTIVE_INDICES = [0, 1, 22, 23, 24, 25]
+    _ADAPTIVE_INDICES = [0, 1, 22, 23, 24, 25, 26, 27]  # Added G_NN_up and G_NN_down
 
     train_loss_mse: list = []
     train_loss_mae: list = []
