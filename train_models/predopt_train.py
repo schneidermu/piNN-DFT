@@ -452,8 +452,6 @@ def _train_epoch(
         vxc_iter is returned so its state persists across epochs.
     """
     model.train()
-    train_loader.sampler.set_epoch(train_loader.sampler.epoch
-                                   if hasattr(train_loader.sampler, "epoch") else 0)
 
     epoch_loss_sum: float = 0.0
     epoch_mae_sum:  float = 0.0
@@ -943,7 +941,10 @@ def train(
     vxc_iter = iter(vxc_train_loader)
 
     for epoch in range(n_epochs):
-        train_loader.sampler.set_epoch(epoch)
+        if hasattr(train_loader, "sampler") and hasattr(train_loader.sampler, "set_epoch"):
+            train_loader.sampler.set_epoch(epoch)
+        if hasattr(vxc_train_loader, "sampler") and hasattr(vxc_train_loader.sampler, "set_epoch"):
+            vxc_train_loader.sampler.set_epoch(epoch)
 
         # ---- Training pass ----
         (train_loss_sum, train_mae_sum, train_vxc_sum,
