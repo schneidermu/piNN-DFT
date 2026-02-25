@@ -434,7 +434,6 @@ def _train_epoch(
     train_loader: torch.utils.data.DataLoader,
     vxc_train_loader: torch.utils.data.DataLoader,
     optimizer: torch.optim.Optimizer,
-    vxc_iter,
     omega: float,
     accum_iter: int,
     device: torch.device,
@@ -447,9 +446,7 @@ def _train_epoch(
     Runs one training epoch.
 
     Returns:
-        (epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum,
-         epoch_db_errors, vxc_iter)
-        vxc_iter is returned so its state persists across epochs.
+        (epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors)
     """
     model.train()
 
@@ -458,23 +455,20 @@ def _train_epoch(
     epoch_vxc_sum:  float = 0.0
     epoch_db_errors: dict = collections.defaultdict(list)
 
+    paired_loader = zip(train_loader, vxc_train_loader)
+    n_steps = min(len(train_loader), len(vxc_train_loader))
     progress_bar = tqdm(
-        train_loader,
+        paired_loader,
+        total=n_steps,
         disable=(local_rank != 0),
         mininterval=2.0,
         bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
     )
 
-    for batch_idx, (X_batch, y_batch) in enumerate(progress_bar):
+    for batch_idx, ((X_batch, y_batch), X_vxc) in enumerate(progress_bar):
         X_batch_grid = X_batch["Grid"].to(device, non_blocking=True)
         y_batch      = y_batch.to(device, non_blocking=True)
         current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
-
-        try:
-            X_vxc = next(vxc_iter)
-        except StopIteration:
-            vxc_iter = iter(vxc_train_loader)
-            X_vxc = next(vxc_iter)
 
         predictions = model(X_batch_grid)
         reaction_energy, _ = calculate_reaction_energy(
@@ -487,7 +481,7 @@ def _train_epoch(
 
         loss.backward()
 
-        if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == len(train_loader)):
+        if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == n_steps):
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
@@ -501,7 +495,7 @@ def _train_epoch(
             [], reaction_energy, [], [], y_batch, epoch_db_errors, current_bases
         )
 
-    return epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors, vxc_iter
+    return epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors
 
 
 def _validate_epoch(
@@ -528,17 +522,18 @@ def _validate_epoch(
     val_vxc_sum:      float = 0.0
     val_samples_count: int  = 0
     val_db_errors:    dict  = collections.defaultdict(list)
-    vxc_val_iter = iter(vxc_test_loader)
-
+    paired_loader = zip(test_loader, vxc_test_loader)
+    n_steps = min(len(test_loader), len(vxc_test_loader))
     progress_bar = tqdm(
-        test_loader,
+        paired_loader,
+        total=n_steps,
         disable=(local_rank != 0),
         mininterval=2.0,
         bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
     )
 
     with torch.no_grad(), torch.amp.autocast(device_type="cuda"):
-        for X_batch, y_batch in progress_bar:
+        for (X_batch, y_batch), X_vxc in progress_bar:
             X_batch_grid = X_batch["Grid"].to(device, non_blocking=True)
             y_batch      = y_batch.to(device, non_blocking=True)
             current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
@@ -547,12 +542,6 @@ def _validate_epoch(
             reaction_energy, _ = calculate_reaction_energy(
                 X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
             )
-
-            try:
-                X_vxc = next(vxc_val_iter)
-            except StopIteration:
-                vxc_val_iter = iter(vxc_test_loader)
-                X_vxc = next(vxc_val_iter)
 
             with torch.enable_grad():
                 loss_vxc_val = vxc_loss(model, X_vxc, device, rung=rung, dft=dft)
@@ -675,7 +664,7 @@ def _log_metrics(
         omega: Vxc loss weight (used for plot scaling).
         train_history: Dict of lists for tracking train metrics across epochs.
         val_history:   Dict of lists for tracking val metrics across epochs.
-        n_train_batches: Number of training batches per rank (for averaging).
+        n_train_batches: Number of training steps per rank (for averaging).
 
     Returns:
         (train_fchem, val_fchem): Weighted database RMSE sums for this epoch.
@@ -938,8 +927,6 @@ def train(
         os.makedirs(_BEST_MODEL_DIR, exist_ok=True)
         os.makedirs(_PLOT_DIR, exist_ok=True)
 
-    vxc_iter = iter(vxc_train_loader)
-
     for epoch in range(n_epochs):
         if hasattr(train_loader, "sampler") and hasattr(train_loader.sampler, "set_epoch"):
             train_loader.sampler.set_epoch(epoch)
@@ -948,9 +935,9 @@ def train(
 
         # ---- Training pass ----
         (train_loss_sum, train_mae_sum, train_vxc_sum,
-         train_db_errors, vxc_iter) = _train_epoch(
+         train_db_errors) = _train_epoch(
             model, train_loader, vxc_train_loader, optimizer,
-            vxc_iter, omega, accum_iter, device, rung, dft, dispersions, local_rank,
+            omega, accum_iter, device, rung, dft, dispersions, local_rank,
         )
         if scheduler:
             scheduler.step()
@@ -979,7 +966,7 @@ def train(
                 (avg_val_loss,   avg_val_mae,   avg_val_vxc),
                 global_train_errors, global_val_errors,
                 model, omega, train_history, val_history,
-                n_train_batches=len(train_loader),
+                n_train_batches=min(len(train_loader), len(vxc_train_loader)),
             )
 
             # ---- Checkpointing ----
