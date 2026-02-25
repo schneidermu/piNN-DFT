@@ -390,16 +390,19 @@ def vxc_loss(
     """
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     rho   = grid_raw[:, 4:6].clone().requires_grad_(True)
-    sigma = grid_raw[:, 6:9].clone().requires_grad_(True)
+    sigma = grid_raw[:, 6:9].clone()  # [σ_αα, σ_tot, σ_ββ] — h5_vrho convention; no grad needed
+    sigma_pbe = torch.stack(
+        [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]], dim=1
+    )  # convert σ_tot → σ_αβ for F_PBE
 
     target_vrho = X_batch["Vrho"].to(device)
     weights     = X_batch["Weights"].to(device)
 
-    model_input = torch.cat([rho, sigma, grid_raw[:, 9:]], dim=1)
+    model_input = torch.cat([rho, sigma, grid_raw[:, 9:]], dim=1)   # model uses σ_tot
     constants   = model(model_input)
 
     calc_data = get_local_energies(
-        {"Densities": rho, "Gradients": sigma, "Weights": weights},
+        {"Densities": rho, "Gradients": sigma_pbe, "Weights": weights},   # F_PBE uses σ_αβ
         constants, device, rung=rung, dft=dft, enhancement=None,
     )
 
