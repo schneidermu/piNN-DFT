@@ -101,7 +101,7 @@ PBE_VALIDATION_ERRORS = {
 # Training constants
 # ---------------------------------------------------------------------------
 
-_VXC_LOSS_SCALE: float = 1000.0        # scaling applied to vxc loss before blending
+_VXC_LOSS_SCALE: float = 1.0        # scaling applied to vxc loss before blending
 _WARMUP_EPOCHS: int = 5                 # linear LR warm-up duration
 _WARMUP_START_FACTOR: float = 0.001    # initial LR fraction at warm-up start
 _MIN_LR: float = 1e-6                  # cosine annealing lower bound
@@ -490,6 +490,7 @@ def _train_epoch(
         loss.backward()
 
         if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == len(train_loader)):
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
 
