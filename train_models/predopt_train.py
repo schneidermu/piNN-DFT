@@ -1242,7 +1242,7 @@ if __name__ == "__main__":
     true_constants_PBE = true_constants_PBE.to(device)
 
     # 9. Main training phase (all params trainable)
-    set_scales_trainable(model, trainable=True)
+    set_scales_trainable(model, trainable=False)
     optimizer = configure_optimizers(
         model=model, learning_rate=args.lr_train,
         optimizer_str=args.optimizer, weight_decay=args.weight_decay,
