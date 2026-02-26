@@ -26,6 +26,7 @@ from dotenv import find_dotenv, load_dotenv
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
+from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
@@ -460,8 +461,10 @@ def _train_epoch(
     epoch_db_errors: dict = collections.defaultdict(list)
     step_post_better: int = 0
     step_post_worse: int = 0
+    step_post_flat: int = 0
     step_diag_count: int = 0
     step_diag_delta_sum: float = 0.0
+    step_diag_delta_sq_sum: float = 0.0
 
     n_train = len(train_loader)
     n_vxc = len(vxc_train_loader)
@@ -510,28 +513,36 @@ def _train_epoch(
 
         loss.backward()
 
-        if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == n_steps):
+        do_step = ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == n_steps)
+        pre = None
+        if step_diag_count < probe_vxc_steps and do_step:
+            was_training = model.training
+            model.eval()
+            with torch.no_grad():
+                pre = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
+            model.train(was_training)
+
+        if do_step:
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
 
-        if step_diag_count < probe_vxc_steps:
+        if pre is not None:
+            was_training = model.training
             model.eval()
-            with torch.enable_grad():
-                pre = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
+            with torch.no_grad():
+                post = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
             model.train(was_training)
-
-            if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == n_steps):
-                model.eval()
-                with torch.enable_grad():
-                    post = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
-                model.train(was_training)
-                step_diag_count += 1
-                step_diag_delta_sum += (post - pre)
-                if post <= pre:
-                    step_post_better += 1
-                else:
-                    step_post_worse += 1
+            delta = post - pre
+            step_diag_count += 1
+            step_diag_delta_sum += delta
+            step_diag_delta_sq_sum += delta * delta
+            if delta < 0:
+                step_post_better += 1
+            elif delta > 0:
+                step_post_worse += 1
+            else:
+                step_post_flat += 1
 
         MAE = nn.functional.l1_loss(reaction_energy, y_batch).item()
         epoch_loss_sum += loss.item()
@@ -545,8 +556,10 @@ def _train_epoch(
     diag_dict = {
         "post_better": step_post_better,
         "post_worse": step_post_worse,
+        "post_flat": step_post_flat,
         "diag_count": step_diag_count,
         "diag_delta_sum": step_diag_delta_sum,
+        "diag_delta_sq_sum": step_diag_delta_sq_sum,
     }
     return epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors, diag_dict
 
@@ -684,8 +697,10 @@ def _sync_metrics(
         [
             float(train_diag.get("post_better", 0)),
             float(train_diag.get("post_worse", 0)),
+            float(train_diag.get("post_flat", 0)),
             float(train_diag.get("diag_count", 0)),
             float(train_diag.get("diag_delta_sum", 0.0)),
+            float(train_diag.get("diag_delta_sq_sum", 0.0)),
         ],
         device=device,
     )
@@ -693,8 +708,10 @@ def _sync_metrics(
     global_train_diag = {
         "post_better": int(metrics_diag[0].item()),
         "post_worse": int(metrics_diag[1].item()),
-        "diag_count": int(metrics_diag[2].item()),
-        "diag_delta_sum": float(metrics_diag[3].item()),
+        "post_flat": int(metrics_diag[2].item()),
+        "diag_count": int(metrics_diag[3].item()),
+        "diag_delta_sum": float(metrics_diag[4].item()),
+        "diag_delta_sq_sum": float(metrics_diag[5].item()),
     }
 
     # --- Per-database error sync ---
@@ -745,7 +762,7 @@ def _evaluate_vxc_probe(
     model.eval()
     loss_sum = 0.0
     steps = 0
-    with torch.enable_grad():
+    with torch.no_grad():
         for X_vxc in loader:
             loss = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False)
             loss_sum += loss.item()
@@ -1048,6 +1065,34 @@ def train(
         os.makedirs(_BEST_MODEL_DIR, exist_ok=True)
         os.makedirs(_PLOT_DIR, exist_ok=True)
 
+    # Fixed probe loaders (non-shuffled) to keep probe metrics comparable across epochs.
+    train_probe_loader = DataLoader(
+        vxc_train_loader.dataset,
+        batch_size=vxc_train_loader.batch_size,
+        num_workers=vxc_train_loader.num_workers,
+        pin_memory=vxc_train_loader.pin_memory,
+        sampler=DistributedSampler(
+            vxc_train_loader.dataset, num_replicas=world_size, rank=local_rank, shuffle=False
+        ),
+        collate_fn=vxc_train_loader.collate_fn,
+        worker_init_fn=vxc_train_loader.worker_init_fn,
+        generator=vxc_train_loader.generator,
+        drop_last=False,
+    )
+    val_probe_loader = DataLoader(
+        vxc_test_loader.dataset,
+        batch_size=vxc_test_loader.batch_size,
+        num_workers=vxc_test_loader.num_workers,
+        pin_memory=vxc_test_loader.pin_memory,
+        sampler=DistributedSampler(
+            vxc_test_loader.dataset, num_replicas=world_size, rank=local_rank, shuffle=False
+        ),
+        collate_fn=vxc_test_loader.collate_fn,
+        worker_init_fn=vxc_test_loader.worker_init_fn,
+        generator=vxc_test_loader.generator,
+        drop_last=False,
+    )
+
     for epoch in range(n_epochs):
         if hasattr(train_loader, "sampler") and hasattr(train_loader.sampler, "set_epoch"):
             train_loader.sampler.set_epoch(epoch)
@@ -1071,10 +1116,10 @@ def train(
         )
 
         train_probe_sum, train_probe_steps = _evaluate_vxc_probe(
-            model, vxc_train_loader, device, rung, dft, max_steps=probe_vxc_steps
+            model, train_probe_loader, device, rung, dft, max_steps=probe_vxc_steps
         )
         val_probe_sum, val_probe_steps = _evaluate_vxc_probe(
-            model, vxc_test_loader, device, rung, dft, max_steps=probe_vxc_steps
+            model, val_probe_loader, device, rung, dft, max_steps=probe_vxc_steps
         )
         probe_metrics = torch.tensor(
             [train_probe_sum, float(train_probe_steps), val_probe_sum, float(val_probe_steps)],
@@ -1104,22 +1149,28 @@ def train(
                 n_train_batches=max(len(train_loader), len(vxc_train_loader)),
             )
 
+            delta_mean = global_train_diag["diag_delta_sum"] / max(global_train_diag["diag_count"], 1)
+            delta_var = max(
+                global_train_diag["diag_delta_sq_sum"] / max(global_train_diag["diag_count"], 1) - delta_mean**2,
+                0.0,
+            )
+            delta_std = delta_var**0.5
             print(
                 f"Vxc probe (eval mode): train={train_probe_avg:.6f}, val={val_probe_avg:.6f} | "
                 f"step diagnostics: better={global_train_diag['post_better']}, "
                 f"worse={global_train_diag['post_worse']}, "
-                f"mean_post_minus_pre={global_train_diag['diag_delta_sum']/max(global_train_diag['diag_count'],1):.6e}"
+                f"flat={global_train_diag['post_flat']}, "
+                f"mean_post_minus_pre={delta_mean:.6e}, "
+                f"std_post_minus_pre={delta_std:.6e}"
             )
             if mlflow.active_run() is not None:
-                mlflow.log_metric("train/vxc_loss_evalmode", train_probe_avg, step=epoch)
-                mlflow.log_metric("validation/vxc_loss_evalmode", val_probe_avg, step=epoch)
+                mlflow.log_metric("train/vxc_train_probe_loss", train_probe_avg, step=epoch)
+                mlflow.log_metric("validation/vxc_val_probe_loss", val_probe_avg, step=epoch)
                 mlflow.log_metric("train/vxc_step_better", global_train_diag["post_better"], step=epoch)
                 mlflow.log_metric("train/vxc_step_worse", global_train_diag["post_worse"], step=epoch)
-                mlflow.log_metric(
-                    "train/vxc_step_delta_mean",
-                    global_train_diag["diag_delta_sum"] / max(global_train_diag["diag_count"], 1),
-                    step=epoch,
-                )
+                mlflow.log_metric("train/vxc_step_flat", global_train_diag["post_flat"], step=epoch)
+                mlflow.log_metric("train/vxc_step_delta_mean", delta_mean, step=epoch)
+                mlflow.log_metric("train/vxc_step_delta_std", delta_std, step=epoch)
 
             # ---- Checkpointing ----
             prev, prev_best = _save_checkpoint(
