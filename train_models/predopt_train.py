@@ -364,6 +364,7 @@ def vxc_loss(
     device: torch.device,
     rung: str = "GGA",
     dft: str = "PBE",
+    create_graph: bool = True,
 ) -> torch.Tensor:
     """
     Computes the physics-based Vrho loss using automatic differentiation.
@@ -386,7 +387,8 @@ def vxc_loss(
         dft: DFT functional identifier ("PBE").
 
     Returns:
-        Scalar loss tensor with gradient graph retained.
+        Scalar loss tensor. If create_graph=True, retains higher-order graph
+        needed for backprop through vrho derivatives.
     """
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     rho   = grid_raw[:, 4:6].clone().requires_grad_(True)
@@ -413,8 +415,8 @@ def vxc_loss(
         outputs=e_xc_pred,
         inputs=rho,
         grad_outputs=torch.ones_like(e_xc_pred),
-        create_graph=True,
-        retain_graph=True,
+        create_graph=create_graph,
+        retain_graph=create_graph,
     )[0]
     pred_vrho = (grads[:, 0] + grads[:, 1]) / 2.0
 
@@ -436,6 +438,8 @@ def _train_epoch(
     optimizer: torch.optim.Optimizer,
     omega: float,
     accum_iter: int,
+    grad_clip: float,
+    probe_vxc_steps: int,
     device: torch.device,
     rung: str,
     dft: str,
@@ -446,7 +450,7 @@ def _train_epoch(
     Runs one training epoch.
 
     Returns:
-        (epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors)
+        (epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors, diag_dict)
     """
     model.train()
 
@@ -454,6 +458,10 @@ def _train_epoch(
     epoch_mae_sum:  float = 0.0
     epoch_vxc_sum:  float = 0.0
     epoch_db_errors: dict = collections.defaultdict(list)
+    step_post_better: int = 0
+    step_post_worse: int = 0
+    step_diag_count: int = 0
+    step_diag_delta_sum: float = 0.0
 
     n_train = len(train_loader)
     n_vxc = len(vxc_train_loader)
@@ -494,15 +502,36 @@ def _train_epoch(
         )
 
         batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-        loss_vxc         = vxc_loss(model, X_vxc, device, rung=rung, dft=dft)
+        was_training = model.training
+        model.eval()
+        loss_vxc = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=True)
+        model.train(was_training)
         loss             = (1 - omega) * batch_fchem_loss + omega * loss_vxc * _VXC_LOSS_SCALE
 
         loss.backward()
 
         if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == n_steps):
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
+
+        if step_diag_count < probe_vxc_steps:
+            model.eval()
+            with torch.enable_grad():
+                pre = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
+            model.train(was_training)
+
+            if ((batch_idx + 1) % accum_iter == 0) or ((batch_idx + 1) == n_steps):
+                model.eval()
+                with torch.enable_grad():
+                    post = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
+                model.train(was_training)
+                step_diag_count += 1
+                step_diag_delta_sum += (post - pre)
+                if post <= pre:
+                    step_post_better += 1
+                else:
+                    step_post_worse += 1
 
         MAE = nn.functional.l1_loss(reaction_energy, y_batch).item()
         epoch_loss_sum += loss.item()
@@ -513,7 +542,13 @@ def _train_epoch(
             [], reaction_energy, [], [], y_batch, epoch_db_errors, current_bases
         )
 
-    return epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors
+    diag_dict = {
+        "post_better": step_post_better,
+        "post_worse": step_post_worse,
+        "diag_count": step_diag_count,
+        "diag_delta_sum": step_diag_delta_sum,
+    }
+    return epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors, diag_dict
 
 
 def _validate_epoch(
@@ -531,7 +566,7 @@ def _validate_epoch(
     Runs one validation epoch.
 
     Returns:
-        (val_loss_sum, val_mae_sum, val_vxc_sum, val_samples_count, val_db_errors)
+        (val_loss_sum, val_mae_sum, val_vxc_sum, val_samples_count, val_vxc_steps, val_db_errors)
     """
     model.eval()
 
@@ -539,6 +574,7 @@ def _validate_epoch(
     val_mae_sum:      float = 0.0
     val_vxc_sum:      float = 0.0
     val_samples_count: int  = 0
+    val_vxc_steps: int = 0
     val_db_errors:    dict  = collections.defaultdict(list)
 
     n_test = len(test_loader)
@@ -581,27 +617,29 @@ def _validate_epoch(
             )
 
             with torch.enable_grad():
-                loss_vxc_val = vxc_loss(model, X_vxc, device, rung=rung, dft=dft)
+                loss_vxc_val = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False)
 
             batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
             loss = (1 - omega) * batch_fchem_loss + omega * loss_vxc_val * _VXC_LOSS_SCALE
 
             curr_batch_size     = y_batch.size(0)
-            val_vxc_sum        += loss_vxc_val.item() * curr_batch_size
+            val_vxc_sum        += loss_vxc_val.item()
             val_loss_sum       += loss.item() * curr_batch_size
             val_mae_sum        += nn.functional.l1_loss(reaction_energy, y_batch).item() * curr_batch_size
             val_samples_count  += curr_batch_size
+            val_vxc_steps      += 1
 
             _, _, _, val_db_errors = make_total_db_errors(
                 [], reaction_energy, [], [], y_batch, val_db_errors, current_bases
             )
 
-    return val_loss_sum, val_mae_sum, val_vxc_sum, val_samples_count, val_db_errors
+    return val_loss_sum, val_mae_sum, val_vxc_sum, val_samples_count, val_vxc_steps, val_db_errors
 
 
 def _sync_metrics(
     train_sums: tuple,
     val_sums: tuple,
+    train_diag: dict,
     train_db_errors: dict,
     val_db_errors: dict,
     world_size: int,
@@ -613,7 +651,8 @@ def _sync_metrics(
 
     Args:
         train_sums: (loss_sum, mae_sum, vxc_sum) from _train_epoch.
-        val_sums:   (loss_sum, mae_sum, vxc_sum, n_samples) from _validate_epoch.
+        val_sums:   (loss_sum, mae_sum, vxc_sum, n_samples, n_vxc_steps) from _validate_epoch.
+        train_diag: Local step-diagnostic counters from _train_epoch.
         train_db_errors: Local per-database errors from training.
         val_db_errors:   Local per-database errors from validation.
         world_size: Number of DDP processes.
@@ -622,13 +661,12 @@ def _sync_metrics(
     Returns:
         (avg_train_loss, avg_train_mae, avg_train_vxc,
          avg_val_loss, avg_val_mae, avg_val_vxc,
-         global_train_errors, global_val_errors,
-         n_train_batches_per_rank)
+        global_train_errors, global_val_errors, global_train_diag)
         Note: avg_train_* are per-batch averages; avg_val_* are per-sample averages.
     """
     # --- Scalar sync ---
     train_loss_sum, train_mae_sum, train_vxc_sum = train_sums
-    val_loss_sum, val_mae_sum, val_vxc_sum, val_samples = val_sums
+    val_loss_sum, val_mae_sum, val_vxc_sum, val_samples, val_vxc_steps = val_sums
 
     metrics_train = torch.tensor(
         [train_loss_sum, train_mae_sum, train_vxc_sum], device=device
@@ -637,10 +675,27 @@ def _sync_metrics(
     total_train_loss, total_train_mae, total_train_vxc = (metrics_train / world_size).tolist()
 
     metrics_val = torch.tensor(
-        [val_loss_sum, val_mae_sum, val_vxc_sum, val_samples], device=device
+        [val_loss_sum, val_mae_sum, val_vxc_sum, val_samples, val_vxc_steps], device=device
     )
     dist.all_reduce(metrics_val, op=dist.ReduceOp.SUM)
-    total_val_loss, total_val_mae, total_val_vxc, total_val_samples = metrics_val.tolist()
+    total_val_loss, total_val_mae, total_val_vxc, total_val_samples, total_val_vxc_steps = metrics_val.tolist()
+
+    metrics_diag = torch.tensor(
+        [
+            float(train_diag.get("post_better", 0)),
+            float(train_diag.get("post_worse", 0)),
+            float(train_diag.get("diag_count", 0)),
+            float(train_diag.get("diag_delta_sum", 0.0)),
+        ],
+        device=device,
+    )
+    dist.all_reduce(metrics_diag, op=dist.ReduceOp.SUM)
+    global_train_diag = {
+        "post_better": int(metrics_diag[0].item()),
+        "post_worse": int(metrics_diag[1].item()),
+        "diag_count": int(metrics_diag[2].item()),
+        "diag_delta_sum": float(metrics_diag[3].item()),
+    }
 
     # --- Per-database error sync ---
     gathered_train = [None] * world_size
@@ -665,13 +720,40 @@ def _sync_metrics(
     avg_train_vxc  = total_train_vxc
 
     n = int(total_val_samples) if total_val_samples > 0 else 1
+    n_v = int(total_val_vxc_steps) if total_val_vxc_steps > 0 else 1
     avg_val_loss = total_val_loss / n
     avg_val_mae  = total_val_mae  / n
-    avg_val_vxc  = total_val_vxc  / n
+    avg_val_vxc  = total_val_vxc  / n_v
 
     return (avg_train_loss, avg_train_mae, avg_train_vxc,
             avg_val_loss, avg_val_mae, avg_val_vxc,
-            global_train_errors, global_val_errors)
+            global_train_errors, global_val_errors, global_train_diag)
+
+
+def _evaluate_vxc_probe(
+    model: nn.Module,
+    loader: torch.utils.data.DataLoader,
+    device: torch.device,
+    rung: str,
+    dft: str,
+    max_steps: int,
+) -> tuple:
+    """Computes deterministic eval-mode mean Vxc loss on up to max_steps batches."""
+    if max_steps <= 0:
+        return 0.0, 0
+    was_training = model.training
+    model.eval()
+    loss_sum = 0.0
+    steps = 0
+    with torch.enable_grad():
+        for X_vxc in loader:
+            loss = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False)
+            loss_sum += loss.item()
+            steps += 1
+            if steps >= max_steps:
+                break
+    model.train(was_training)
+    return loss_sum, steps
 
 
 def _log_metrics(
@@ -910,6 +992,8 @@ def train(
     run,
     n_epochs: int = 25,
     accum_iter: int = 1,
+    grad_clip: float = 1.0,
+    probe_vxc_steps: int = 20,
     omega: float = 0.067,
     smoothing_window: int = _DEFAULT_SMOOTHING_WINDOW,
     local_rank: int = 0,
@@ -972,27 +1056,41 @@ def train(
 
         # ---- Training pass ----
         (train_loss_sum, train_mae_sum, train_vxc_sum,
-         train_db_errors) = _train_epoch(
+         train_db_errors, train_diag) = _train_epoch(
             model, train_loader, vxc_train_loader, optimizer,
-            omega, accum_iter, device, rung, dft, dispersions, local_rank,
+            omega, accum_iter, grad_clip, probe_vxc_steps, device, rung, dft, dispersions, local_rank,
         )
         if scheduler:
             scheduler.step()
 
         # ---- Validation pass ----
         (val_loss_sum, val_mae_sum, val_vxc_sum,
-         val_samples_count, val_db_errors) = _validate_epoch(
+         val_samples_count, val_vxc_steps, val_db_errors) = _validate_epoch(
             model, test_loader, vxc_test_loader, omega,
             device, rung, dft, dispersions, local_rank,
         )
 
+        train_probe_sum, train_probe_steps = _evaluate_vxc_probe(
+            model, vxc_train_loader, device, rung, dft, max_steps=probe_vxc_steps
+        )
+        val_probe_sum, val_probe_steps = _evaluate_vxc_probe(
+            model, vxc_test_loader, device, rung, dft, max_steps=probe_vxc_steps
+        )
+        probe_metrics = torch.tensor(
+            [train_probe_sum, float(train_probe_steps), val_probe_sum, float(val_probe_steps)],
+            device=device,
+        )
+        dist.all_reduce(probe_metrics, op=dist.ReduceOp.SUM)
+        train_probe_avg = (probe_metrics[0] / max(probe_metrics[1], 1.0)).item()
+        val_probe_avg = (probe_metrics[2] / max(probe_metrics[3], 1.0)).item()
+
         # ---- DDP sync ----
         (avg_train_loss, avg_train_mae, avg_train_vxc,
          avg_val_loss, avg_val_mae, avg_val_vxc,
-         global_train_errors, global_val_errors) = _sync_metrics(
+         global_train_errors, global_val_errors, global_train_diag) = _sync_metrics(
             (train_loss_sum, train_mae_sum, train_vxc_sum),
-            (val_loss_sum, val_mae_sum, val_vxc_sum, val_samples_count),
-            train_db_errors, val_db_errors, world_size, device,
+            (val_loss_sum, val_mae_sum, val_vxc_sum, val_samples_count, val_vxc_steps),
+            train_diag, train_db_errors, val_db_errors, world_size, device,
         )
 
         if local_rank == 0:
@@ -1005,6 +1103,23 @@ def train(
                 model, omega, train_history, val_history,
                 n_train_batches=max(len(train_loader), len(vxc_train_loader)),
             )
+
+            print(
+                f"Vxc probe (eval mode): train={train_probe_avg:.6f}, val={val_probe_avg:.6f} | "
+                f"step diagnostics: better={global_train_diag['post_better']}, "
+                f"worse={global_train_diag['post_worse']}, "
+                f"mean_post_minus_pre={global_train_diag['diag_delta_sum']/max(global_train_diag['diag_count'],1):.6e}"
+            )
+            if mlflow.active_run() is not None:
+                mlflow.log_metric("train/vxc_loss_evalmode", train_probe_avg, step=epoch)
+                mlflow.log_metric("validation/vxc_loss_evalmode", val_probe_avg, step=epoch)
+                mlflow.log_metric("train/vxc_step_better", global_train_diag["post_better"], step=epoch)
+                mlflow.log_metric("train/vxc_step_worse", global_train_diag["post_worse"], step=epoch)
+                mlflow.log_metric(
+                    "train/vxc_step_delta_mean",
+                    global_train_diag["diag_delta_sum"] / max(global_train_diag["diag_count"], 1),
+                    step=epoch,
+                )
 
             # ---- Checkpointing ----
             prev, prev_best = _save_checkpoint(
@@ -1064,6 +1179,9 @@ def _build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--lr_train",       type=float, default=1e-4,   help="Learning rate for main training.")
     parser.add_argument("--lr_predopt",     type=float, default=2e-2,   help="Learning rate for pre-optimization.")
     parser.add_argument("--weight_decay",   type=float, default=1e-2,   help="AdamW weight decay.")
+    parser.add_argument("--grad_clip",      type=float, default=0.1,    help="Gradient clipping max-norm.")
+    parser.add_argument("--vxc_lr_scale",   type=float, default=0.3,    help="Multiplier applied to lr_train for main optimizer.")
+    parser.add_argument("--probe_vxc_steps", type=int, default=20,      help="Number of Vxc batches used for eval-mode probe per epoch.")
     parser.add_argument("--optimizer",      type=str,   default="radamw",
                         choices=["radamw", "adamw"],   help="Optimizer variant.")
     parser.add_argument("--vxc_batch_size", type=int,   default=1,      help="Batch size for Vxc DataLoader.")
@@ -1213,6 +1331,9 @@ if __name__ == "__main__":
                     "h_dim": h_dim,
                     "dropout": args.dropout,
                     "weight_decay": args.weight_decay,
+                    "grad_clip": args.grad_clip,
+                    "vxc_lr_scale": args.vxc_lr_scale,
+                    "probe_vxc_steps": args.probe_vxc_steps,
                     "optimizer": args.optimizer,
                     "lr_train": args.lr_train,
                     "omega": args.omega,
@@ -1244,7 +1365,7 @@ if __name__ == "__main__":
     # 9. Main training phase (all params trainable)
     set_scales_trainable(model, trainable=False)
     optimizer = configure_optimizers(
-        model=model, learning_rate=args.lr_train,
+        model=model, learning_rate=args.lr_train * args.vxc_lr_scale,
         optimizer_str=args.optimizer, weight_decay=args.weight_decay,
     )
     scheduler    = _build_scheduler(optimizer, args.n_train)
@@ -1256,7 +1377,7 @@ if __name__ == "__main__":
         train_loader=train_dataloader, test_loader=test_dataloader,
         vxc_train_loader=vxc_train_loader, vxc_test_loader=vxc_test_loader,
         run=run,
-        n_epochs=args.n_train, accum_iter=1, omega=args.omega,
+        n_epochs=args.n_train, accum_iter=1, grad_clip=args.grad_clip, probe_vxc_steps=args.probe_vxc_steps, omega=args.omega,
         local_rank=local_rank, device=device,
         rung="GGA", dft="PBE", dispersions=dispersions,
         batch_size=args.batch_size, lr_train=args.lr_train, name=name,
