@@ -455,17 +455,35 @@ def _train_epoch(
     epoch_vxc_sum:  float = 0.0
     epoch_db_errors: dict = collections.defaultdict(list)
 
-    paired_loader = zip(train_loader, vxc_train_loader)
-    n_steps = min(len(train_loader), len(vxc_train_loader))
+    n_train = len(train_loader)
+    n_vxc = len(vxc_train_loader)
+    if n_train == 0 or n_vxc == 0:
+        raise ValueError("Both train_loader and vxc_train_loader must be non-empty.")
+
+    n_steps = max(n_train, n_vxc)
+    train_iter = iter(train_loader)
+    vxc_iter = iter(vxc_train_loader)
     progress_bar = tqdm(
-        paired_loader,
+        range(n_steps),
         total=n_steps,
         disable=(local_rank != 0),
         mininterval=2.0,
         bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
     )
 
-    for batch_idx, ((X_batch, y_batch), X_vxc) in enumerate(progress_bar):
+    for batch_idx in progress_bar:
+        try:
+            X_batch, y_batch = next(train_iter)
+        except StopIteration:
+            train_iter = iter(train_loader)
+            X_batch, y_batch = next(train_iter)
+
+        try:
+            X_vxc = next(vxc_iter)
+        except StopIteration:
+            vxc_iter = iter(vxc_train_loader)
+            X_vxc = next(vxc_iter)
+
         X_batch_grid = X_batch["Grid"].to(device, non_blocking=True)
         y_batch      = y_batch.to(device, non_blocking=True)
         current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
@@ -522,10 +540,17 @@ def _validate_epoch(
     val_vxc_sum:      float = 0.0
     val_samples_count: int  = 0
     val_db_errors:    dict  = collections.defaultdict(list)
-    paired_loader = zip(test_loader, vxc_test_loader)
-    n_steps = min(len(test_loader), len(vxc_test_loader))
+
+    n_test = len(test_loader)
+    n_vxc = len(vxc_test_loader)
+    if n_test == 0 or n_vxc == 0:
+        raise ValueError("Both test_loader and vxc_test_loader must be non-empty.")
+
+    n_steps = max(n_test, n_vxc)
+    test_iter = iter(test_loader)
+    vxc_iter = iter(vxc_test_loader)
     progress_bar = tqdm(
-        paired_loader,
+        range(n_steps),
         total=n_steps,
         disable=(local_rank != 0),
         mininterval=2.0,
@@ -533,7 +558,19 @@ def _validate_epoch(
     )
 
     with torch.no_grad(), torch.amp.autocast(device_type="cuda"):
-        for (X_batch, y_batch), X_vxc in progress_bar:
+        for _ in progress_bar:
+            try:
+                X_batch, y_batch = next(test_iter)
+            except StopIteration:
+                test_iter = iter(test_loader)
+                X_batch, y_batch = next(test_iter)
+
+            try:
+                X_vxc = next(vxc_iter)
+            except StopIteration:
+                vxc_iter = iter(vxc_test_loader)
+                X_vxc = next(vxc_iter)
+
             X_batch_grid = X_batch["Grid"].to(device, non_blocking=True)
             y_batch      = y_batch.to(device, non_blocking=True)
             current_bases, _ = extend_bases(X_batch=X_batch, bases=[])
@@ -966,7 +1003,7 @@ def train(
                 (avg_val_loss,   avg_val_mae,   avg_val_vxc),
                 global_train_errors, global_val_errors,
                 model, omega, train_history, val_history,
-                n_train_batches=min(len(train_loader), len(vxc_train_loader)),
+                n_train_batches=max(len(train_loader), len(vxc_train_loader)),
             )
 
             # ---- Checkpointing ----
