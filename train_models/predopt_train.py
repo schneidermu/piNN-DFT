@@ -518,7 +518,8 @@ def _train_epoch(
         if step_diag_count < probe_vxc_steps and do_step:
             was_training = model.training
             model.eval()
-            with torch.no_grad():
+            # vxc_loss uses autograd.grad on rho, so grad tracking must be enabled.
+            with torch.enable_grad():
                 pre = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
             model.train(was_training)
 
@@ -530,7 +531,7 @@ def _train_epoch(
         if pre is not None:
             was_training = model.training
             model.eval()
-            with torch.no_grad():
+            with torch.enable_grad():
                 post = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False).item()
             model.train(was_training)
             delta = post - pre
@@ -762,7 +763,7 @@ def _evaluate_vxc_probe(
     model.eval()
     loss_sum = 0.0
     steps = 0
-    with torch.no_grad():
+    with torch.enable_grad():
         for X_vxc in loader:
             loss = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=False)
             loss_sum += loss.item()
