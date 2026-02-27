@@ -505,10 +505,8 @@ def _train_epoch(
         )
 
         batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-        was_training = model.training
-        model.eval()
+        # Main Vxc training loss must be computed in train mode (no eval-mode wrapper).
         loss_vxc = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=True)
-        model.train(was_training)
         loss             = (1 - omega) * batch_fchem_loss + omega * loss_vxc * _VXC_LOSS_SCALE
 
         loss.backward()
@@ -826,6 +824,7 @@ def _log_metrics(
         mlflow.log_metric("train/full_loss", avg_train_loss, step=epoch)
         mlflow.log_metric("validation/full_loss", avg_val_loss, step=epoch)
         mlflow.log_metric("train/vxc_loss", avg_train_vxc, step=epoch)
+        mlflow.log_metric("train/vxc_online_loss", avg_train_vxc, step=epoch)
         mlflow.log_metric("validation/vxc_loss", avg_val_vxc, step=epoch)
 
         # Log per-database RMSEs
