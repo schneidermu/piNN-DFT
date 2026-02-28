@@ -71,9 +71,9 @@ _BETA_SHIFT: float = 1.5    # beta_activation:  (sigmoid(...) + shift) / 2  → 
 # ---------------------------------------------------------------------------
 
 _LOG_SCALE_RHO_INIT: float = 0.0
-_LOG_SCALE_SIGMA_INIT: float = 10.0
-_LOG_SCALE_TAU_INIT: float = 2.0
-_LOG_SCALE_LAPL_INIT: float = 10.0
+_LOG_SCALE_SIGMA_INIT: float = 0.0
+_LOG_SCALE_TAU_INIT: float = 0.0
+_LOG_SCALE_LAPL_INIT: float = 0.0
 
 
 # ---------------------------------------------------------------------------
