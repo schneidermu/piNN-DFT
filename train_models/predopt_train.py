@@ -1236,6 +1236,12 @@ def _build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--optimizer",      type=str,   default="radamw",
                         choices=["radamw", "adamw"],   help="Optimizer variant.")
     parser.add_argument("--vxc_batch_size", type=int,   default=1,      help="Batch size for Vxc DataLoader.")
+    parser.add_argument("--preopt_vxc_weight", type=float, default=0.0,
+                        help="Auxiliary Vxc loss weight used during pre-optimization.")
+    parser.add_argument("--preopt_vxc_steps", type=int, default=0,
+                        help="Max Vxc batches per preopt epoch (0 disables preopt Vxc branch).")
+    parser.add_argument("--preopt_vxc_target", type=str, default="pbe", choices=["pbe"],
+                        help="Target for preopt Vxc branch.")
     return parser
 
 
@@ -1393,6 +1399,9 @@ if __name__ == "__main__":
                     "batch_size": args.batch_size,
                     "lr_predopt": args.lr_predopt,
                     "vxc_batch_size": args.vxc_batch_size,
+                    "preopt_vxc_weight": args.preopt_vxc_weight,
+                    "preopt_vxc_steps": args.preopt_vxc_steps,
+                    "preopt_vxc_target": args.preopt_vxc_target,
                 })
 
                 print(f"MLFlow tracking enabled. URI: {tracking_uri}, Experiment: piNN-DFT, Run: {run_name}")
@@ -1409,6 +1418,12 @@ if __name__ == "__main__":
     predopt(
         model, nn.MSELoss(), predopt_optimizer, predopt_dataloader,
         device, n_epochs=args.n_predopt, accum_iter=1, local_rank=local_rank,
+        vxc_loader=vxc_train_loader,
+        preopt_vxc_weight=args.preopt_vxc_weight,
+        preopt_vxc_steps=args.preopt_vxc_steps,
+        vxc_target_mode=args.preopt_vxc_target,
+        rung="GGA",
+        dft="PBE",
     )
 
     true_constants_PBE = true_constants_PBE.to(device)
