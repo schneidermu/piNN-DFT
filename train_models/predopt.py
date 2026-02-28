@@ -117,6 +117,16 @@ def predopt(
         vrho = (grads[:, 0] + grads[:, 1]) / 2.0
         return vrho, rho_tot
 
+    def _grid_to_model_input(grid: torch.Tensor) -> torch.Tensor:
+        """Converts Vxc grid format [N,13] to model descriptor input [N,9]."""
+        model_input = torch.cat([grid[:, 4:6], grid[:, 6:9], grid[:, 9:]], dim=1)
+        if model_input.shape[1] != 9:
+            raise ValueError(
+                f"Expected model input with 9 columns, got shape {tuple(model_input.shape)} "
+                f"from grid shape {tuple(grid.shape)}"
+            )
+        return model_input
+
     train_loss_mse: list = []
     train_loss_mae: list = []
 
@@ -162,7 +172,8 @@ def predopt(
                 )
                 target_vrho = target_vrho.detach()
 
-                pred_constants_vxc = model(grid_vxc)
+                model_input_vxc = _grid_to_model_input(grid_vxc)
+                pred_constants_vxc = model(model_input_vxc)
                 pred_vrho, rho_tot = _vrho_from_constants(
                     pred_constants_vxc, grid_vxc, weights_vxc, create_graph=True
                 )
