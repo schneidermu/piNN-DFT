@@ -156,7 +156,7 @@ def predopt(
                 grid_vxc = X_vxc["Grid"].to(device, non_blocking=True)
                 weights_vxc = X_vxc["Weights"].to(device, non_blocking=True)
 
-                pbe_constants = true_constants_PBE.to(device).unsqueeze(0).expand(grid_vxc.shape[0], -1)
+                pbe_constants = true_constants_PBE.to(device).reshape(1, -1).expand(grid_vxc.shape[0], -1)
                 target_vrho, _ = _vrho_from_constants(
                     pbe_constants, grid_vxc, weights_vxc, create_graph=False
                 )
