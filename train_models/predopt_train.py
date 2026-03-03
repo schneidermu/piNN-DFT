@@ -951,6 +951,8 @@ def _plot_reaction_and_vxc_losses(
     val_reaction_loss: list,
     train_vxc_loss: list,
     val_vxc_loss: list,
+    out_dir: str,
+    filename: str,
 ) -> str:
     """
     Creates a 2-subplot figure showing reaction loss and vxc loss per epoch.
@@ -960,9 +962,11 @@ def _plot_reaction_and_vxc_losses(
         val_reaction_loss: List of validation reaction (fchem) loss values per epoch.
         train_vxc_loss: List of training vxc loss values per epoch.
         val_vxc_loss: List of validation vxc loss values per epoch.
+        out_dir: Directory where the plot should be written.
+        filename: Output filename for the plot.
 
     Returns:
-        Path to the saved plot file.
+        Absolute path to the saved plot file.
     """
     fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 10), sharex=True)
 
@@ -985,8 +989,8 @@ def _plot_reaction_and_vxc_losses(
 
     plt.tight_layout()
 
-    # Save to a temporary file
-    plot_path = "loss_plots.png"
+    os.makedirs(out_dir, exist_ok=True)
+    plot_path = os.path.abspath(os.path.join(out_dir, filename))
     plt.savefig(plot_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
 
@@ -1194,11 +1198,27 @@ def train(
                     val_history["reaction_loss"],
                     train_history["vxc"],
                     val_history["vxc"],
+                    _PLOT_DIR,
+                    f"loss_plots_epoch_{epoch + 1}.png",
                 )
-                mlflow.log_artifact(plot_path, artifact_path="plots")
-                # Clean up the temporary file
-                if os.path.exists(plot_path):
-                    os.remove(plot_path)
+                try:
+                    if os.path.isfile(plot_path):
+                        mlflow.log_artifact(plot_path, artifact_path="plots")
+                        # Keep workspace clean; ignore cleanup races/errors.
+                        try:
+                            os.remove(plot_path)
+                        except OSError as cleanup_err:
+                            print(f"Warning: Could not remove temporary plot file {plot_path}: {cleanup_err}")
+                    else:
+                        print(
+                            f"Warning: Skipping MLflow artifact logging for epoch {epoch + 1}; "
+                            f"plot file not found at {plot_path}"
+                        )
+                except Exception as mlflow_err:
+                    print(
+                        f"Warning: MLflow artifact logging failed for epoch {epoch + 1} "
+                        f"at {plot_path}: {mlflow_err}"
+                    )
 
         if early_stopper.early_stop(avg_val_loss):
             if local_rank == 0:
