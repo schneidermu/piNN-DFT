@@ -109,6 +109,7 @@ _EARLY_STOP_PATIENCE: int = 300
 _DEFAULT_SMOOTHING_WINDOW: int = 10    # epochs before best-model tracking starts
 _BEST_MODEL_DIR: str = "best_models/"
 _PLOT_DIR: str = "./batch_fchem/"
+GRAD_DIAG_EVERY: int = 10              # sample gradient-conflict diagnostics every N train batches
 # Plotting scale factors (for visualization only, not training)
 _TRAIN_FCHEM_PLOT_SCALE: float = 50.0
 _VAL_FCHEM_PLOT_SCALE: float = 15.0
@@ -428,6 +429,56 @@ def vxc_loss(
     return loss_integral / (norm_factor + 1e-10)
 
 
+def _get_trainable_parameters(model: nn.Module) -> list:
+    """Returns trainable parameters from a bare or DDP-wrapped model."""
+    base_model = model.module if hasattr(model, "module") else model
+    return [param for param in base_model.parameters() if param.requires_grad]
+
+
+def _compute_grad_stats(
+    loss: torch.Tensor,
+    parameters: list,
+    retain_graph: bool,
+) -> tuple:
+    """Computes autograd gradients for one loss term and its global L2 norm."""
+    grads = torch.autograd.grad(
+        loss,
+        parameters,
+        retain_graph=retain_graph,
+        allow_unused=True,
+    )
+    norm_sq = loss.new_tensor(0.0)
+    grad_list = []
+    for grad in grads:
+        if grad is None:
+            grad_list.append(None)
+            continue
+        grad_detached = grad.detach()
+        grad_list.append(grad_detached)
+        norm_sq = norm_sq + torch.sum(grad_detached * grad_detached)
+    return grad_list, torch.sqrt(norm_sq).item()
+
+
+def _grad_cosine_similarity(reaction_grads: list, vxc_grads: list) -> float:
+    """Computes cosine similarity across flattened gradient vectors."""
+    if not reaction_grads or not vxc_grads:
+        return float("nan")
+
+    reaction_norm_sq = 0.0
+    vxc_norm_sq = 0.0
+    dot_product = 0.0
+    for grad_reaction, grad_vxc in zip(reaction_grads, vxc_grads):
+        if grad_reaction is None or grad_vxc is None:
+            continue
+        reaction_norm_sq += torch.sum(grad_reaction * grad_reaction).item()
+        vxc_norm_sq += torch.sum(grad_vxc * grad_vxc).item()
+        dot_product += torch.sum(grad_reaction * grad_vxc).item()
+
+    if reaction_norm_sq <= 0.0 or vxc_norm_sq <= 0.0:
+        return float("nan")
+    return dot_product / ((reaction_norm_sq ** 0.5) * (vxc_norm_sq ** 0.5))
+
+
 # ---------------------------------------------------------------------------
 # Training sub-functions
 # ---------------------------------------------------------------------------
@@ -465,6 +516,14 @@ def _train_epoch(
     step_diag_count: int = 0
     step_diag_delta_sum: float = 0.0
     step_diag_delta_sq_sum: float = 0.0
+    grad_diag_count: int = 0
+    gradnorm_reaction_sum: float = 0.0
+    gradnorm_vxc_sum: float = 0.0
+    gradcos_count: int = 0
+    gradcos_sum: float = 0.0
+    gradcos_negative_count: int = 0
+    gradcos_values: list = []
+    trainable_parameters = _get_trainable_parameters(model)
 
     n_train = len(train_loader)
     n_vxc = len(vxc_train_loader)
@@ -508,6 +567,29 @@ def _train_epoch(
         # Main Vxc training loss must be computed in train mode (no eval-mode wrapper).
         loss_vxc = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=True)
         loss             = (1 - omega) * batch_fchem_loss + omega * loss_vxc * _VXC_LOSS_SCALE
+
+        if trainable_parameters and (batch_idx % GRAD_DIAG_EVERY == 0):
+            reaction_grads, reaction_grad_norm = _compute_grad_stats(
+                batch_fchem_loss,
+                trainable_parameters,
+                retain_graph=True,
+            )
+            vxc_grads, vxc_grad_norm = _compute_grad_stats(
+                loss_vxc,
+                trainable_parameters,
+                retain_graph=True,
+            )
+            grad_cosine = _grad_cosine_similarity(reaction_grads, vxc_grads)
+
+            grad_diag_count += 1
+            gradnorm_reaction_sum += reaction_grad_norm
+            gradnorm_vxc_sum += vxc_grad_norm
+            gradcos_values.append(grad_cosine)
+            if not np.isnan(grad_cosine):
+                gradcos_count += 1
+                gradcos_sum += grad_cosine
+                if grad_cosine < 0.0:
+                    gradcos_negative_count += 1
 
         loss.backward()
 
@@ -559,6 +641,13 @@ def _train_epoch(
         "diag_count": step_diag_count,
         "diag_delta_sum": step_diag_delta_sum,
         "diag_delta_sq_sum": step_diag_delta_sq_sum,
+        "grad_diag_count": grad_diag_count,
+        "gradnorm_reaction_sum": gradnorm_reaction_sum,
+        "gradnorm_vxc_sum": gradnorm_vxc_sum,
+        "gradcos_count": gradcos_count,
+        "gradcos_sum": gradcos_sum,
+        "gradcos_negative_count": gradcos_negative_count,
+        "gradcos_values": gradcos_values,
     }
     return epoch_loss_sum, epoch_mae_sum, epoch_vxc_sum, epoch_db_errors, diag_dict
 
@@ -700,10 +789,23 @@ def _sync_metrics(
             float(train_diag.get("diag_count", 0)),
             float(train_diag.get("diag_delta_sum", 0.0)),
             float(train_diag.get("diag_delta_sq_sum", 0.0)),
+            float(train_diag.get("grad_diag_count", 0)),
+            float(train_diag.get("gradnorm_reaction_sum", 0.0)),
+            float(train_diag.get("gradnorm_vxc_sum", 0.0)),
+            float(train_diag.get("gradcos_count", 0)),
+            float(train_diag.get("gradcos_sum", 0.0)),
+            float(train_diag.get("gradcos_negative_count", 0)),
         ],
         device=device,
     )
     dist.all_reduce(metrics_diag, op=dist.ReduceOp.SUM)
+    gathered_gradcos = [None] * world_size
+    dist.all_gather_object(gathered_gradcos, train_diag.get("gradcos_values", []))
+    global_gradcos_values = []
+    for local_values in gathered_gradcos:
+        if local_values:
+            global_gradcos_values.extend(local_values)
+
     global_train_diag = {
         "post_better": int(metrics_diag[0].item()),
         "post_worse": int(metrics_diag[1].item()),
@@ -711,6 +813,13 @@ def _sync_metrics(
         "diag_count": int(metrics_diag[3].item()),
         "diag_delta_sum": float(metrics_diag[4].item()),
         "diag_delta_sq_sum": float(metrics_diag[5].item()),
+        "grad_diag_count": int(metrics_diag[6].item()),
+        "gradnorm_reaction_sum": float(metrics_diag[7].item()),
+        "gradnorm_vxc_sum": float(metrics_diag[8].item()),
+        "gradcos_count": int(metrics_diag[9].item()),
+        "gradcos_sum": float(metrics_diag[10].item()),
+        "gradcos_negative_count": int(metrics_diag[11].item()),
+        "gradcos_values": global_gradcos_values,
     }
 
     # --- Per-database error sync ---
@@ -777,6 +886,7 @@ def _log_metrics(
     epoch: int,
     train_metrics: tuple,
     val_metrics: tuple,
+    global_train_diag: dict,
     global_train_errors: dict,
     global_val_errors: dict,
     model: nn.Module,
@@ -811,10 +921,35 @@ def _log_metrics(
     avg_train_loss = avg_train_loss / n_train_batches if n_train_batches > 0 else 0
     avg_train_mae  = avg_train_mae  / n_train_batches if n_train_batches > 0 else 0
     avg_train_vxc  = avg_train_vxc  / n_train_batches if n_train_batches > 0 else 0
+    grad_diag_count = global_train_diag.get("grad_diag_count", 0)
+    gradcos_count = global_train_diag.get("gradcos_count", 0)
+    gradnorm_reaction_mean = (
+        global_train_diag.get("gradnorm_reaction_sum", 0.0) / grad_diag_count
+        if grad_diag_count > 0 else float("nan")
+    )
+    gradnorm_vxc_mean = (
+        global_train_diag.get("gradnorm_vxc_sum", 0.0) / grad_diag_count
+        if grad_diag_count > 0 else float("nan")
+    )
+    gradcos_mean = (
+        global_train_diag.get("gradcos_sum", 0.0) / gradcos_count
+        if gradcos_count > 0 else float("nan")
+    )
+    gradcos_frac_negative = (
+        global_train_diag.get("gradcos_negative_count", 0) / gradcos_count
+        if gradcos_count > 0 else float("nan")
+    )
+    finite_gradcos = [value for value in global_train_diag.get("gradcos_values", []) if not np.isnan(value)]
+    gradcos_median = float(np.median(finite_gradcos)) if finite_gradcos else float("nan")
 
     train_history["full_loss"].append(avg_train_loss)
     train_history["mae"].append(avg_train_mae)
     train_history["vxc"].append(avg_train_vxc)
+    train_history["gradnorm_reaction"].append(gradnorm_reaction_mean)
+    train_history["gradnorm_vxc"].append(gradnorm_vxc_mean)
+    train_history["gradcos_reaction_vxc"].append(gradcos_mean)
+    train_history["gradcos_reaction_vxc_median"].append(gradcos_median)
+    train_history["gradcos_reaction_vxc_frac_negative"].append(gradcos_frac_negative)
     val_history["full_loss"].append(avg_val_loss)
     val_history["mae"].append(avg_val_mae)
     val_history["vxc"].append(avg_val_vxc)
@@ -826,6 +961,11 @@ def _log_metrics(
         mlflow.log_metric("train/vxc_loss", avg_train_vxc, step=epoch)
         mlflow.log_metric("train/vxc_online_loss", avg_train_vxc, step=epoch)
         mlflow.log_metric("validation/vxc_loss", avg_val_vxc, step=epoch)
+        mlflow.log_metric("train/gradnorm_reaction", gradnorm_reaction_mean, step=epoch)
+        mlflow.log_metric("train/gradnorm_vxc", gradnorm_vxc_mean, step=epoch)
+        mlflow.log_metric("train/gradcos_reaction_vxc", gradcos_mean, step=epoch)
+        mlflow.log_metric("train/gradcos_reaction_vxc_median", gradcos_median, step=epoch)
+        mlflow.log_metric("train/gradcos_reaction_vxc_frac_negative", gradcos_frac_negative, step=epoch)
 
         # Log per-database RMSEs
         for db, errors_list in global_train_errors.items():
@@ -933,7 +1073,7 @@ def _plot_losses(
     name: str,
     omega: float,
     plot_dir: str,
-) -> None:
+) -> str:
     """Renders and saves the two-panel loss plot. Closes the figure to free memory."""
     fig, ax = plt.subplots(nrows=2, ncols=1, figsize=[3, 6], sharex=True)
     ax[0].plot(train_full_loss, label="Train Loss")
@@ -942,8 +1082,11 @@ def _plot_losses(
     ax[1].plot(test_fchem,       label="Validation Fchem")
     ax[0].legend()
     ax[1].legend()
-    plt.savefig(f"{plot_dir}bs_{batch_size}_lr_{lr_train}_{name}_{omega}.png")
+    os.makedirs(plot_dir, exist_ok=True)
+    plot_path = os.path.abspath(os.path.join(plot_dir, "latest_losses.png"))
+    plt.savefig(plot_path)
     plt.close(fig)
+    return plot_path
 
 
 def _plot_reaction_and_vxc_losses(
@@ -984,6 +1127,42 @@ def _plot_reaction_and_vxc_losses(
     axes[1].set_xlabel("Epoch", fontsize=12)
     axes[1].set_ylabel("Vxc Loss", fontsize=12)
     axes[1].set_title("Vxc Loss per Epoch", fontsize=14, fontweight='bold')
+    axes[1].legend(fontsize=10)
+    axes[1].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    os.makedirs(out_dir, exist_ok=True)
+    plot_path = os.path.abspath(os.path.join(out_dir, filename))
+    plt.savefig(plot_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+    return plot_path
+
+
+def _plot_grad_diagnostics(
+    train_gradnorm_reaction: list,
+    train_gradnorm_vxc: list,
+    train_gradcos_mean: list,
+    train_gradcos_median: list,
+    out_dir: str,
+    filename: str,
+) -> str:
+    """Creates a plot of gradient norm and cosine diagnostics over epochs."""
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 10), sharex=True)
+
+    axes[0].plot(train_gradnorm_reaction, label="Reaction Grad Norm", linewidth=2)
+    axes[0].plot(train_gradnorm_vxc, label="Vxc Grad Norm", linewidth=2)
+    axes[0].set_ylabel("Gradient Norm", fontsize=12)
+    axes[0].set_title("Training Gradient Norm Diagnostics", fontsize=14, fontweight='bold')
+    axes[0].legend(fontsize=10)
+    axes[0].grid(True, alpha=0.3)
+
+    axes[1].plot(train_gradcos_mean, label="Mean Cosine Similarity", linewidth=2)
+    axes[1].plot(train_gradcos_median, label="Median Cosine Similarity", linewidth=2)
+    axes[1].set_xlabel("Epoch", fontsize=12)
+    axes[1].set_ylabel("Cosine Similarity", fontsize=12)
+    axes[1].set_title("Training Gradient Cosine Diagnostics", fontsize=14, fontweight='bold')
     axes[1].legend(fontsize=10)
     axes[1].grid(True, alpha=0.3)
 
@@ -1058,7 +1237,11 @@ def train(
     Returns:
         (train_full_loss, val_full_loss, best_model_path)
     """
-    train_history = {"full_loss": [], "mae": [], "vxc": [], "fchem": [], "reaction_loss": []}
+    train_history = {
+        "full_loss": [], "mae": [], "vxc": [], "fchem": [], "reaction_loss": [],
+        "gradnorm_reaction": [], "gradnorm_vxc": [], "gradcos_reaction_vxc": [],
+        "gradcos_reaction_vxc_median": [], "gradcos_reaction_vxc_frac_negative": [],
+    }
     val_history   = {"full_loss": [], "mae": [], "vxc": [], "fchem": [], "reaction_loss": []}
 
     prev, prev_best = None, None
@@ -1148,6 +1331,7 @@ def train(
                 run, epoch,
                 (avg_train_loss, avg_train_mae, avg_train_vxc),
                 (avg_val_loss,   avg_val_mae,   avg_val_vxc),
+                global_train_diag,
                 global_train_errors, global_val_errors,
                 model, omega, train_history, val_history,
                 n_train_batches=max(len(train_loader), len(vxc_train_loader)),
@@ -1185,7 +1369,7 @@ def train(
             )
 
             # ---- Plotting ----
-            _plot_losses(
+            loss_plot_path = _plot_losses(
                 train_history["full_loss"], val_history["full_loss"],
                 train_history["fchem"],     val_history["fchem"],
                 batch_size, lr_train, name, omega, _PLOT_DIR,
@@ -1199,20 +1383,37 @@ def train(
                     train_history["vxc"],
                     val_history["vxc"],
                     _PLOT_DIR,
-                    f"loss_plots_epoch_{epoch + 1}.png",
+                    "latest_reaction_vxc_losses.png",
+                )
+                grad_plot_path = _plot_grad_diagnostics(
+                    train_history["gradnorm_reaction"],
+                    train_history["gradnorm_vxc"],
+                    train_history["gradcos_reaction_vxc"],
+                    train_history["gradcos_reaction_vxc_median"],
+                    _PLOT_DIR,
+                    "latest_grad_diagnostics.png",
                 )
                 try:
+                    if os.path.isfile(loss_plot_path):
+                        mlflow.log_artifact(loss_plot_path, artifact_path="plots")
+                    else:
+                        print(
+                            f"Warning: Skipping MLflow loss artifact logging for epoch {epoch + 1}; "
+                            f"plot file not found at {loss_plot_path}"
+                        )
                     if os.path.isfile(plot_path):
                         mlflow.log_artifact(plot_path, artifact_path="plots")
-                        # Keep workspace clean; ignore cleanup races/errors.
-                        try:
-                            os.remove(plot_path)
-                        except OSError as cleanup_err:
-                            print(f"Warning: Could not remove temporary plot file {plot_path}: {cleanup_err}")
                     else:
                         print(
                             f"Warning: Skipping MLflow artifact logging for epoch {epoch + 1}; "
                             f"plot file not found at {plot_path}"
+                        )
+                    if os.path.isfile(grad_plot_path):
+                        mlflow.log_artifact(grad_plot_path, artifact_path="plots")
+                    else:
+                        print(
+                            f"Warning: Skipping MLflow grad artifact logging for epoch {epoch + 1}; "
+                            f"plot file not found at {grad_plot_path}"
                         )
                 except Exception as mlflow_err:
                     print(
