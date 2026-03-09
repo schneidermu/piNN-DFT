@@ -188,3 +188,22 @@ def configure_optimizers(model, learning_rate, optimizer_str="radamw", weight_de
         raise ValueError(f"Unknown optimizer: {optimizer_str}")
 
     return optimizer
+
+
+def _grid_to_model_input(grid, fix_closed_shell_sigma=False):
+    rho = grid[:,4:6]
+    sigma = grid[:,6:9]
+    if fix_closed_shell_sigma:
+        sigma = _fix_sigma_tot_closed_shell(sigma)
+    return torch.cat([rho, sigma, grid[:,9:]], dim=1)
+
+
+def _fix_sigma_tot_closed_shell(sigma: torch.Tensor, rtol: float = 1e-6, atol: float = 1e-18) -> torch.Tensor:
+    """
+    Fixes degenerate H5 sigma convention where sigma_tot == sigma_aa == sigma_bb.
+    For closed-shell: rho_a=rho_b=rho/2 => (∇rho)^2 = 4*(∇rho_a)^2 = 4*sigma_aa.
+    """
+
+    sigma = sigma.clone()
+    sigma[:, 1] = 4.0 * sigma[:, 0]
+    return sigma

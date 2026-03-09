@@ -18,7 +18,6 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 import mlflow
-import mlflow.pytorch
 import numpy as np
 import torch
 import torch.distributed as dist
@@ -35,7 +34,7 @@ from NN_models import pcPBELMLOptimizerV2
 from predopt import DatasetPredopt, predopt, true_constants_PBE
 from prepare_data import load_chk
 from reaction_energy_calculation import calculate_reaction_energy, get_local_energies
-from utils import configure_optimizers, seed_worker, set_random_seed
+from utils import configure_optimizers, seed_worker, set_random_seed, _grid_to_model_input, _fix_sigma_tot_closed_shell
 
 set_random_seed(41)
 g = torch.Generator()
@@ -47,7 +46,7 @@ g.manual_seed(41)
 
 FCHEM_VALIDATION = {
     "ABDE4": 1,
-    "AE17": 0.25,
+    "AE17": 1,
     "DBH76": 1,
     "EA13": 1,
     "IP13": 1,
@@ -106,7 +105,7 @@ _VXC_LOSS_SCALE: float = 1.0        # scaling applied to vxc loss before blendin
 _WARMUP_EPOCHS: int = 5                 # linear LR warm-up duration
 _WARMUP_START_FACTOR: float = 0.001    # initial LR fraction at warm-up start
 _MIN_LR: float = 1e-6                  # cosine annealing lower bound
-_EARLY_STOP_PATIENCE: int = 50
+_EARLY_STOP_PATIENCE: int = 300
 _DEFAULT_SMOOTHING_WINDOW: int = 10    # epochs before best-model tracking starts
 _BEST_MODEL_DIR: str = "best_models/"
 _PLOT_DIR: str = "./batch_fchem/"
@@ -394,6 +393,7 @@ def vxc_loss(
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     rho   = grid_raw[:, 4:6].clone().requires_grad_(True)
     sigma = grid_raw[:, 6:9].clone()  # [σ_αα, σ_tot, σ_ββ] — h5_vrho convention; no grad needed
+    sigma = _fix_sigma_tot_closed_shell(sigma)
     sigma_pbe = torch.stack(
         [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]], dim=1
     )  # convert σ_tot → σ_αβ for F_PBE
@@ -522,7 +522,7 @@ def _train_epoch(
             model.train(was_training)
 
         if do_step:
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
+            #torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip)
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
 
