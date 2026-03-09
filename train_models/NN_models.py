@@ -486,6 +486,7 @@ class pcPBELMLOptimizerV2(nn.Module):
         # ---- Apply constraint activations ----
         beta     = self.beta_activation(beta_real  - beta_at_constraint)
         gamma    = self.shifted_elu(gamma_real     - gamma_at_constraint)
+        gamma = torch.clamp(gamma, min=1.0e-2)
         mu_up    = self.shifted_elu(mu_up_real     - mu_up_at_constraint)
         mu_down  = self.shifted_elu(mu_down_real   - mu_down_at_constraint)
         kappa_up   = self.kappa_activation(kappa_up_real)
@@ -500,4 +501,12 @@ class pcPBELMLOptimizerV2(nn.Module):
         final_tensor = torch.hstack(
             [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down]
         )
-        return final_tensor * constants_batch
+
+        final_constants = final_tensor * constants_batch
+
+        gamma_phys = torch.clamp(final_constants[:, 1:2], min=1.0e-2)
+        final_constants = torch.hstack(
+            [final_constants[:, :1], gamma_phys, final_constants[:, 2:]]
+        )
+
+        return final_constants
