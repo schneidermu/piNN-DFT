@@ -1560,8 +1560,12 @@ if __name__ == "__main__":
     name = args.name + "_" + str(args.dropout)  # e.g. PBE-L_8_32_0.6
 
     # 4. Build model
+    name_prefix = args.name.split("_")[0]   # e.g. "PBE-LGxGc", "PBE-LGx", "PBE-LGc", "PBE-L"
+    use_g_x = "Gx" in name_prefix
+    use_g_c = "Gc" in name_prefix
     base_model = pcPBELMLOptimizerV2(
-        num_layers=num_layers, h_dim=h_dim, dropout=args.dropout, DFT="PBE"
+        num_layers=num_layers, h_dim=h_dim, dropout=args.dropout, DFT="PBE",
+        use_g_x=use_g_x, use_g_c=use_g_c,
     ).to(device)
     model = DDP(base_model, device_ids=[local_rank], find_unused_parameters=True)
 

@@ -20,6 +20,7 @@ from dft_functionals.constants import (
     BETA_CORR_INDEX,
     EPS_RHO,
     EPS_SIGMA,
+    G_C_CORR_INDEX,
     GAMMA_CORR_INDEX,
     KAPPA_EX_INDEX,
     LAPL_ALPHA_INDEX,
@@ -119,7 +120,7 @@ class pcPBELMLOptimizerV2(nn.Module):
     """
     Physics-constrained PBE functional optimizer using LLMGGA + zeta descriptors.
 
-    The model learns to output 26 modified PBE constants as a function of local
+    The model learns to output modified PBE constants as a function of local
     density information. Constraints are enforced via a *difference construction*:
     each constrained parameter p is computed as
 
@@ -133,14 +134,14 @@ class pcPBELMLOptimizerV2(nn.Module):
     Exchange branch:
         Separate spin-up / spin-down paths sharing weights (weight-tied).
         Input: 3-dim LLMGGA exchange descriptors per spin channel (s, α, q).
-        Output: (mu, kappa) per spin channel.
+        Output: (mu, kappa[, G_NN]) per spin channel.
 
     Correlation branch:
         Input: 10-dim LLMGGA + zeta descriptors.
         Spin symmetrization is performed within the hidden layers by averaging
         the representation of the input and its spin-swapped counterpart.
         Output is fused with the symmetrized exchange hidden representation to
-        predict (beta, gamma).
+        predict (beta, gamma[, G_c_raw]).
 
     Constraints enforced
     --------------------
@@ -148,15 +149,14 @@ class pcPBELMLOptimizerV2(nn.Module):
     - beta:  beta_activation(beta_real - beta_UEG)    → 1 at UEG limit (s→0)
     - gamma: shifted_elu(gamma_real - gamma_rho_inf)  → 1 at high-density limit (ρ→∞)
     - kappa: kappa_activation(kappa_real)             → bounded in (0, 1)
-
-    Learnable log-scale parameters (log_scale_rho, log_scale_sigma, log_scale_tau,
-    log_scale_lapl) control descriptor normalization; they are initialized to
-    physically motivated values and are frozen during the pre-optimization phase.
+    - G_NN (if use_g_x): g_nn_activation(G_NN - G_NN_UEG) → 0 at UEG (tanh)
+    - G_c  (if use_g_c): shifted_elu(G_c_lagrange - 1) → 1 at UEG + high-density limits
 
     Output
     ------
-    Tensor of shape (N, 28) equal to predicted_factors * true_constants_PBE.
+    Tensor of shape (N, 29) equal to predicted_factors * true_constants_PBE.
     The 20 pass-through constants at indices 2–21 are returned unchanged.
+    Indices 26–27 are G_NN (1.0 if use_g_x=False), index 28 is G_c (1.0 if use_g_c=False).
 
     Args:
         num_layers: Total number of ResBlock layers. Exchange gets
@@ -164,12 +164,14 @@ class pcPBELMLOptimizerV2(nn.Module):
             symmetrization blocks plus (num_layers // 2 - 1 - num_symm_blocks)
             post-symmetrization blocks.
         h_dim: Hidden dimension for all linear and residual layers.
-        nconstants_x: Exchange output constants (default 3: mu, kappa, G_NN).
-        nconstants_c: Correlation output constants (default 2: beta, gamma).
+        nconstants_x: Exchange output constants. Overridden by use_g_x flag.
+        nconstants_c: Correlation output constants. Overridden by use_g_c flag.
         dropout: Dropout probability in ResBlocks.
         num_symm_blocks: ResBlocks dedicated to spin symmetrization in the
             correlation branch. Must satisfy num_symm_blocks < num_layers // 2 - 1.
         DFT: Reserved for future use.
+        use_g_x: If True, learn G_NN exchange correction at indices 26–27.
+        use_g_c: If True, learn G_c correlation correction at index 28.
     """
 
     def __init__(
@@ -181,8 +183,17 @@ class pcPBELMLOptimizerV2(nn.Module):
         dropout: float = 0.2,
         num_symm_blocks: int = 1,
         DFT: Optional[str] = None,
+        use_g_x: bool = True,
+        use_g_c: bool = False,
     ) -> None:
+        # Adjust layer sizes based on ablation flags before creating layers
+        if not use_g_x:
+            nconstants_x = 2   # only mu, kappa — no G_NN output neuron
+        if use_g_c:
+            nconstants_c = 3   # beta, gamma, G_c_raw
         super().__init__()
+        self.use_g_x = use_g_x
+        self.use_g_c = use_g_c
 
         # Spin scaling buffer — follows model.to(device) automatically
         self.register_buffer("scaling_array", LLMGGA_SPIN_SCALING_MULTIPLIER.float())
@@ -369,15 +380,51 @@ class pcPBELMLOptimizerV2(nn.Module):
     # Forward pass
     # ------------------------------------------------------------------
 
+    # ------------------------------------------------------------------
+    # G_c Lagrange correction (used when use_g_c=True)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _lagrange_correct_Gc(
+        G_c_real: torch.Tensor,
+        G_c_at_x1: torch.Tensor,
+        G_c_at_x2: torch.Tensor,
+        x_real: torch.Tensor,
+        x1: torch.Tensor,
+        x2: torch.Tensor,
+        delta: float = 1.0,
+    ) -> torch.Tensor:
+        """
+        2-point Lagrange polynomial correction ensuring G_c = 1 at x1 and x2.
+
+        At x = x1: distance to x1 is zero → c1 = 0 → result = f0 = 1 ✓
+        At x = x2: distance to x2 is zero → c0 = 0 → result = f1 = 1 ✓
+        """
+        d_sq_0  = torch.sum((x_real - x1) ** 2, dim=1, keepdim=True)
+        d_sq_1  = torch.sum((x_real - x2) ** 2, dim=1, keepdim=True)
+        d_sq_01 = torch.sum((x1     - x2) ** 2, dim=1, keepdim=True)
+
+        dis0  = torch.tanh(d_sq_0  / delta ** 2)
+        dis1  = torch.tanh(d_sq_1  / delta ** 2)
+        dis01 = torch.tanh(d_sq_01 / delta ** 2) + 1e-8
+
+        c0 = dis1 / dis01   # weight for constraint at x1 (sigma_zero)
+        c1 = dis0 / dis01   # weight for constraint at x2 (rho_inf)
+
+        f0 = G_c_real - G_c_at_x1 + 1.0
+        f1 = G_c_real - G_c_at_x2 + 1.0
+
+        return (f0 * c0 + f1 * c1) / (c0 + c1 + 1e-8)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
-        Computes the 26-element modified PBE constant tensor for a batch of
+        Computes the 29-element modified PBE constant tensor for a batch of
         grid points.
 
         The forward pass evaluates the network at three descriptor points per batch:
-          1. Real descriptors       → mu, beta, gamma, kappa values
-          2. UEG descriptors (s→0)  → constraint anchors for mu and beta
-          3. High-density limit     → constraint anchor for gamma
+          1. Real descriptors       → mu, beta, gamma, kappa (+ G_NN if use_g_x, + G_c if use_g_c)
+          2. UEG descriptors (s→0)  → constraint anchors for mu, beta (+ G_NN if use_g_x, + G_c if use_g_c)
+          3. High-density limit     → constraint anchor for gamma (+ G_c if use_g_c)
 
         Each constrained parameter is computed as activation(real - anchor),
         satisfying the physical constraint independent of network weights.
@@ -386,9 +433,11 @@ class pcPBELMLOptimizerV2(nn.Module):
             x: Raw DFT grid tensor of shape (N, 9).
 
         Returns:
-            Tensor of shape (N, 26): modified_factors * true_constants_PBE.
+            Tensor of shape (N, 29): modified_factors * true_constants_PBE.
             Indices 0,1 are beta, gamma; indices 2–21 pass through unchanged;
-            indices 22–25 are kappa_up, mu_up, kappa_down, mu_down.
+            indices 22–25 are kappa_up, mu_up, kappa_down, mu_down;
+            indices 26–27 are G_NN_up/down (1.0 if use_g_x=False);
+            index 28 is G_c (1.0 if use_g_c=False).
         """
         # ---- Descriptors at real density ----
         x_correlation_desc     = self.get_density_descriptors(x)
@@ -414,8 +463,9 @@ class pcPBELMLOptimizerV2(nn.Module):
         params_x_down_real = self.x_output_layer(hidden_x_down_scaled)
         mu_up_real,   kappa_up_real   = params_x_up_real[:,   MU_EX_INDEX].view(-1, 1), params_x_up_real[:,   KAPPA_EX_INDEX].view(-1, 1)
         mu_down_real, kappa_down_real = params_x_down_real[:, MU_EX_INDEX].view(-1, 1), params_x_down_real[:, KAPPA_EX_INDEX].view(-1, 1)
-        g_nn_up_real   = params_x_up_real[:, 2].view(-1, 1)      # NEW: G_NN for spin-up
-        g_nn_down_real = params_x_down_real[:, 2].view(-1, 1)    # NEW: G_NN for spin-down
+        if self.use_g_x:
+            g_nn_up_real   = params_x_up_real[:, 2].view(-1, 1)
+            g_nn_down_real = params_x_down_real[:, 2].view(-1, 1)
 
         # ---- Correlation: real values ----
         h_pre_symm         = self.c_symmetrization_blocks(self.c_input_layers(x_correlation_desc))
@@ -426,6 +476,8 @@ class pcPBELMLOptimizerV2(nn.Module):
         params_c_real = self.c_output_layer(torch.cat([hidden_c, hidden_x_symm], dim=1))
         beta_real  = params_c_real[:, BETA_CORR_INDEX].view(-1, 1)
         gamma_real = params_c_real[:, GAMMA_CORR_INDEX].view(-1, 1)
+        if self.use_g_c:
+            G_c_real = params_c_real[:, 2].view(-1, 1)
 
         # ---- Exchange UEG constraint (s→0, τ→τ_TF) ----
         rho_a = x[:, RHO_ALPHA_INDEX]
@@ -441,10 +493,13 @@ class pcPBELMLOptimizerV2(nn.Module):
         x_exch_ueg_desc   = self.get_density_descriptors(self.scaling_array * raw_ueg_exch_input)
         hidden_x_up_ueg   = self.x_feature_extractor(x_exch_ueg_desc[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX]])
         hidden_x_down_ueg = self.x_feature_extractor(x_exch_ueg_desc[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
-        mu_up_at_constraint   = self.x_output_layer(hidden_x_up_ueg)[:,   MU_EX_INDEX].view(-1, 1)
-        mu_down_at_constraint = self.x_output_layer(hidden_x_down_ueg)[:, MU_EX_INDEX].view(-1, 1)
-        g_nn_up_at_constraint   = self.x_output_layer(hidden_x_up_ueg)[:, 2].view(-1, 1)     # NEW: G_NN UEG constraint (spin-up)
-        g_nn_down_at_constraint = self.x_output_layer(hidden_x_down_ueg)[:, 2].view(-1, 1)   # NEW: G_NN UEG constraint (spin-down)
+        x_out_up_ueg   = self.x_output_layer(hidden_x_up_ueg)
+        x_out_down_ueg = self.x_output_layer(hidden_x_down_ueg)
+        mu_up_at_constraint   = x_out_up_ueg[:,   MU_EX_INDEX].view(-1, 1)
+        mu_down_at_constraint = x_out_down_ueg[:, MU_EX_INDEX].view(-1, 1)
+        if self.use_g_x:
+            g_nn_up_at_constraint   = x_out_up_ueg[:,   2].view(-1, 1)
+            g_nn_down_at_constraint = x_out_down_ueg[:, 2].view(-1, 1)
 
         # ---- Correlation UEG constraint (s→0) for beta ----
         tau_tf_rho_a = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
@@ -467,9 +522,12 @@ class pcPBELMLOptimizerV2(nn.Module):
         h_pre_symm_beta         = self.c_symmetrization_blocks(self.c_input_layers(x_corr_ueg_desc))
         h_pre_symm_swapped_beta = self.c_symmetrization_blocks(self.c_input_layers(x_corr_ueg_desc_swapped))
         h_c_ueg = self.c_post_symm_blocks((h_pre_symm_beta + h_pre_symm_swapped_beta) / 2.0)
-        beta_at_constraint = self.c_output_layer(
+        c_out_at_sigma_zero = self.c_output_layer(
             torch.cat([h_c_ueg, hidden_x_symm_for_beta], dim=1)
-        )[:, BETA_CORR_INDEX].view(-1, 1)
+        )
+        beta_at_constraint = c_out_at_sigma_zero[:, BETA_CORR_INDEX].view(-1, 1)
+        if self.use_g_c:
+            G_c_at_sigma_zero = c_out_at_sigma_zero[:, 2].view(-1, 1)
 
         # ---- High-density constraint (ρ→∞) for gamma ----
         x_corr_rho_inf         = self.all_rho_inf(x_correlation_desc)
@@ -479,27 +537,45 @@ class pcPBELMLOptimizerV2(nn.Module):
         h_c_constr_gamma = self.c_post_symm_blocks(
             (h_pre_symm_rho_inf + h_pre_symm_swapped_rho_inf) / 2.0
         )
-        gamma_at_constraint = self.c_output_layer(
+        c_out_at_rho_inf = self.c_output_layer(
             torch.cat([h_c_constr_gamma, hidden_x_symm], dim=1)
-        )[:, GAMMA_CORR_INDEX].view(-1, 1)
+        )
+        gamma_at_constraint = c_out_at_rho_inf[:, GAMMA_CORR_INDEX].view(-1, 1)
+        if self.use_g_c:
+            G_c_at_rho_inf = c_out_at_rho_inf[:, 2].view(-1, 1)
 
         # ---- Apply constraint activations ----
         beta     = self.beta_activation(beta_real  - beta_at_constraint)
         gamma    = self.shifted_elu(gamma_real     - gamma_at_constraint)
-        gamma = torch.clamp(gamma, min=1.0e-2)
+        gamma    = torch.clamp(gamma, min=1.0e-2)
         mu_up    = self.shifted_elu(mu_up_real     - mu_up_at_constraint)
         mu_down  = self.shifted_elu(mu_down_real   - mu_down_at_constraint)
         kappa_up   = self.kappa_activation(kappa_up_real)
         kappa_down = self.kappa_activation(kappa_down_real)
-        g_nn_up   = self.g_nn_activation(g_nn_up_real - g_nn_up_at_constraint)      # NEW: G_NN with UEG constraint
-        g_nn_down = self.g_nn_activation(g_nn_down_real - g_nn_down_at_constraint)  # NEW: G_NN with UEG constraint
 
-        # ---- Assemble 28-element output tensor ----
-        # Layout: [beta, gamma, <20 pass-through>, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down]
+        if self.use_g_x:
+            g_nn_up   = self.g_nn_activation(g_nn_up_real   - g_nn_up_at_constraint)
+            g_nn_down = self.g_nn_activation(g_nn_down_real - g_nn_down_at_constraint)
+            g_x_part = torch.hstack([g_nn_up, g_nn_down])
+        else:
+            g_x_part = torch.ones((x.shape[0], 2), device=x.device)
+
+        if self.use_g_c:
+            G_c_lagrange = self._lagrange_correct_Gc(
+                G_c_real, G_c_at_sigma_zero, G_c_at_rho_inf,
+                x_correlation_desc, x_corr_ueg_desc, x_corr_rho_inf,
+            )
+            g_c_part = self.shifted_elu(G_c_lagrange - 1.0)
+        else:
+            g_c_part = torch.ones((x.shape[0], 1), device=x.device)
+
+        # ---- Assemble 29-element output tensor ----
+        # Layout: [beta, gamma, <20 pass-through>, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down, G_c]
+        # (N, 1+1+20+1+1+1+1+2+1) = (N, 29) ✓
         constants_batch = true_constants_PBE.repeat(x.shape[0], 1).to(x.device)
         fill_tensor = torch.ones([x.shape[0], _N_FILL_CONSTANTS], device=x.device)
         final_tensor = torch.hstack(
-            [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down]
+            [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down, g_x_part, g_c_part]
         )
 
         final_constants = final_tensor * constants_batch

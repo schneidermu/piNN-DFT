@@ -40,6 +40,7 @@ true_constants_PBE = torch.Tensor(
             0.2195149727645171,
             1,  # Index 26: G_NN_up (Neural network exchange correction, spin-up)
             1,  # Index 27: G_NN_down (Neural network exchange correction, spin-down)
+            1,  # Index 28: G_c (Neural network correlation correction factor)
         ]
     ]
 )
@@ -111,5 +112,6 @@ LLMGGA_SPIN_SCALING_MULTIPLIER = torch.tensor([2, 2, 4, 4, 4, 2, 2, 2, 2])
 LLMGGA_ZETA_DESCRIPTOR_DIMENSIONALITY = LLMGGA_DESCRIPTOR_DIMENSIONALITY + 1  # 10
 BETA_CORR_INDEX = 0
 GAMMA_CORR_INDEX = 1
+G_C_CORR_INDEX = 28
 MU_EX_INDEX = 0
 KAPPA_EX_INDEX = 1
