@@ -143,9 +143,7 @@ def predopt(
                 device, non_blocking=True
             )[:, _ADAPTIVE_INDICES]
 
-            _base = getattr(model, "module", model)
-            if getattr(_base, "use_g_x", True):
-                y_batch[:, [6, 7]] = y_batch[:, [6, 7]] - 1  # G_NN target: 1→0 (only when learned)
+            y_batch[:, [6, 7]] = y_batch[:, [6, 7]] - 1  # G_NN_up/down targets: 1→0
 
             predictions = model(X_batch)[:, _ADAPTIVE_INDICES]
 

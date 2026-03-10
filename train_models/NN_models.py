@@ -558,7 +558,7 @@ class pcPBELMLOptimizerV2(nn.Module):
             g_nn_down = self.g_nn_activation(g_nn_down_real - g_nn_down_at_constraint)
             g_x_part = torch.hstack([g_nn_up, g_nn_down])
         else:
-            g_x_part = torch.ones((x.shape[0], 2), device=x.device)
+            g_x_part = torch.zeros((x.shape[0], 2), device=x.device)
 
         if self.use_g_c:
             G_c_lagrange = self._lagrange_correct_Gc(
