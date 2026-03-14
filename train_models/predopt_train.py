@@ -101,7 +101,7 @@ PBE_VALIDATION_ERRORS = {
 # Training constants
 # ---------------------------------------------------------------------------
 
-_VXC_LOSS_SCALE: float = 1.0        # scaling applied to vxc loss before blending
+_VXC_LOSS_SCALE: float = 100.0        # scaling applied to vxc loss before blending
 _WARMUP_EPOCHS: int = 5                 # linear LR warm-up duration
 _WARMUP_START_FACTOR: float = 0.001    # initial LR fraction at warm-up start
 _MIN_LR: float = 1e-6                  # cosine annealing lower bound
@@ -112,7 +112,7 @@ _PLOT_DIR: str = "./batch_fchem/"
 GRAD_DIAG_EVERY: int = 10              # sample gradient-conflict diagnostics every N train batches
 # Plotting scale factors (for visualization only, not training)
 _TRAIN_FCHEM_PLOT_SCALE: float = 50.0
-_VAL_FCHEM_PLOT_SCALE: float = 15.0
+_VAL_FCHEM_PLOT_SCALE: float = 50.0
 
 
 # ---------------------------------------------------------------------------
@@ -566,19 +566,23 @@ def _train_epoch(
         batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
         # Main Vxc training loss must be computed in train mode (no eval-mode wrapper).
         loss_vxc = vxc_loss(model, X_vxc, device, rung=rung, dft=dft, create_graph=True)
-        loss             = (1 - omega) * batch_fchem_loss + omega * loss_vxc * _VXC_LOSS_SCALE
+
+        weighted_fchem_loss = (1 - omega) * batch_fchem_loss
+        weighted_vxc_loss   = omega * loss_vxc * _VXC_LOSS_SCALE
+        loss = weighted_fchem_loss + weighted_vxc_loss
 
         if trainable_parameters and (batch_idx % GRAD_DIAG_EVERY == 0):
             reaction_grads, reaction_grad_norm = _compute_grad_stats(
-                batch_fchem_loss,
+                weighted_fchem_loss,
                 trainable_parameters,
                 retain_graph=True,
             )
             vxc_grads, vxc_grad_norm = _compute_grad_stats(
-                loss_vxc,
+                weighted_vxc_loss,
                 trainable_parameters,
                 retain_graph=True,
             )
+            
             grad_cosine = _grad_cosine_similarity(reaction_grads, vxc_grads)
 
             grad_diag_count += 1
