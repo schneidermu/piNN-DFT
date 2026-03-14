@@ -139,10 +139,6 @@ def configure_optimizers(model, learning_rate, optimizer_str="radamw", weight_de
         for pn, p in m.named_parameters():
             fpn = "%s.%s" % (mn, pn) if mn else pn  # full param name
 
-            if pn.startswith("log_scale"):
-                # all custom scaling parameters will not be decayed
-                no_decay.add(fpn)
-    
             if pn.endswith("bias"):
                 # all biases will not be decayed
                 no_decay.add(fpn)

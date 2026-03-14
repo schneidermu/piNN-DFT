@@ -68,16 +68,6 @@ _BETA_SCALE: float = 8.0    # beta_activation:  sigmoid(scale · x)
 _BETA_SHIFT: float = 1.5    # beta_activation:  (sigmoid(...) + shift) / 2  → (0.75, 1.25)
 
 # ---------------------------------------------------------------------------
-# Log-scale parameter initializations
-# ---------------------------------------------------------------------------
-
-_LOG_SCALE_RHO_INIT: float = 0.0
-_LOG_SCALE_SIGMA_INIT: float = 0.0
-_LOG_SCALE_TAU_INIT: float = 0.0
-_LOG_SCALE_LAPL_INIT: float = 0.0
-
-
-# ---------------------------------------------------------------------------
 # Building blocks
 # ---------------------------------------------------------------------------
 
@@ -198,12 +188,6 @@ class pcPBELMLOptimizerV2(nn.Module):
         # Spin scaling buffer — follows model.to(device) automatically
         self.register_buffer("scaling_array", LLMGGA_SPIN_SCALING_MULTIPLIER.float())
 
-        # Learnable descriptor normalization scales (log-space for positivity)
-        self.log_scale_rho   = nn.Parameter(torch.full((1,), _LOG_SCALE_RHO_INIT))
-        self.log_scale_sigma = nn.Parameter(torch.full((1,), _LOG_SCALE_SIGMA_INIT))
-        self.log_scale_tau   = nn.Parameter(torch.full((1,), _LOG_SCALE_TAU_INIT))
-        self.log_scale_lapl  = nn.Parameter(torch.full((1,), _LOG_SCALE_LAPL_INIT))
-
         # --- Correlation branch ---
         self.c_input_layers = nn.Sequential(
             nn.Linear(LLMGGA_ZETA_DESCRIPTOR_DIMENSIONALITY, h_dim, bias=False),
@@ -290,7 +274,7 @@ class pcPBELMLOptimizerV2(nn.Module):
         Returns descriptor tensor at the high-density limit (ρ_α = ρ_β → ∞).
 
         Used to enforce the gamma constraint: γ → 1 as ρ → ∞. The normalized
-        density descriptor approaches 1 as ρ^(1/3)/scale_rho → ∞ via tanh → 1.
+        density descriptor approaches 1 as ρ^(1/3) → ∞ via tanh → 1.
 
         Args:
             x: Normalized descriptor tensor of shape (N, 10).
@@ -313,15 +297,15 @@ class pcPBELMLOptimizerV2(nn.Module):
         Descriptor 9 (zeta) is already in [-1, 1] by definition.
 
         Descriptor layout:
-            0: n_α  = tanh(ρ_α^(1/3) / scale_rho)
-            1: n_β  = tanh(ρ_β^(1/3) / scale_rho)
-            2: s_α  = tanh(|∇ρ_α| / (2·kF·ρ_α) / scale_sigma)
-            3: s_tot = tanh(|∇ρ| / (2·kF·ρ) / scale_sigma)
-            4: s_β  = tanh(|∇ρ_β| / (2·kF·ρ_β) / scale_sigma)
-            5: α_α  = tanh(clamp((τ_α - τ_W_α) / τ_TF_α - 1, ≥-1) / scale_tau)
-            6: α_β  = tanh(clamp((τ_β - τ_W_β) / τ_TF_β - 1, ≥-1) / scale_tau)
-            7: q_α  = tanh(∇²ρ_α / (_C_LAPL · ρ_α^(5/3)) / scale_lapl)
-            8: q_β  = tanh(∇²ρ_β / (_C_LAPL · ρ_β^(5/3)) / scale_lapl)
+            0: n_α  = tanh(ρ_α^(1/3))
+            1: n_β  = tanh(ρ_β^(1/3))
+            2: s_α  = tanh(|∇ρ_α| / (2·kF·ρ_α))
+            3: s_tot = tanh(|∇ρ| / (2·kF·ρ))
+            4: s_β  = tanh(|∇ρ_β| / (2·kF·ρ_β))
+            5: α_α  = tanh(clamp((τ_α - τ_W_α) / τ_TF_α - 1, ≥-1))
+            6: α_β  = tanh(clamp((τ_β - τ_W_β) / τ_TF_β - 1, ≥-1))
+            7: q_α  = tanh(∇²ρ_α / (_C_LAPL · ρ_α^(5/3)))
+            8: q_β  = tanh(∇²ρ_β / (_C_LAPL · ρ_β^(5/3)))
             9: ζ   = (ρ_α - ρ_β) / (ρ_α + ρ_β)
 
         Args:
@@ -331,11 +315,6 @@ class pcPBELMLOptimizerV2(nn.Module):
         Returns:
             Descriptor tensor of shape (N, 10).
         """
-        scale_rho   = torch.exp(self.log_scale_rho)
-        scale_sigma = torch.exp(self.log_scale_sigma)
-        scale_alpha = torch.exp(self.log_scale_tau)
-        scale_q     = torch.exp(self.log_scale_lapl)
-
         rho_a     = x[:, RHO_ALPHA_INDEX]
         rho_b     = x[:, RHO_BETA_INDEX]
         sigma_a   = x[:, S_ALPHA_INDEX]
@@ -347,25 +326,25 @@ class pcPBELMLOptimizerV2(nn.Module):
         lapl_b    = x[:, LAPL_BETA_INDEX]
 
         # Density normalization: ρ^(1/3)
-        n_alpha = (rho_a + EPS_RHO) ** (1.0 / 3.0) / scale_rho
-        n_beta  = (rho_b + EPS_RHO) ** (1.0 / 3.0) / scale_rho
+        n_alpha = (rho_a + EPS_RHO) ** (1.0 / 3.0)
+        n_beta  = (rho_b + EPS_RHO) ** (1.0 / 3.0)
 
         # Reduced gradient: s = |∇ρ| / (2·kF·ρ), kF = _C_FERMI·ρ^(1/3)
-        s_alpha = torch.sqrt(sigma_a   + EPS_SIGMA) / (rho_a          + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0 / scale_sigma
-        s_norm  = torch.sqrt(sigma_tot + EPS_SIGMA) / (rho_a + rho_b  + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0 / scale_sigma
-        s_beta  = torch.sqrt(sigma_b   + EPS_SIGMA) / (rho_b          + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0 / scale_sigma
+        s_alpha = torch.sqrt(sigma_a   + EPS_SIGMA) / (rho_a          + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
+        s_norm  = torch.sqrt(sigma_tot + EPS_SIGMA) / (rho_a + rho_b  + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
+        s_beta  = torch.sqrt(sigma_b   + EPS_SIGMA) / (rho_b          + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
 
         # Iso-orbital indicator: α = (τ - τ_W) / τ_TF, centered at UEG (α_UEG=1 → α-1=0)
         tau_tf_alpha = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
         tau_tf_beta  = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
         tau_w_alpha  = sigma_a / (8.0 * (rho_a + EPS_RHO))
         tau_w_beta   = sigma_b / (8.0 * (rho_b + EPS_RHO))
-        alpha_alpha = torch.clamp((tau_a - tau_w_alpha) / (tau_tf_alpha + EPS_RHO) - 1.0, min=-1.0) / scale_alpha
-        alpha_beta  = torch.clamp((tau_b - tau_w_beta)  / (tau_tf_beta  + EPS_RHO) - 1.0, min=-1.0) / scale_alpha
+        alpha_alpha = torch.clamp((tau_a - tau_w_alpha) / (tau_tf_alpha + EPS_RHO) - 1.0, min=-1.0)
+        alpha_beta  = torch.clamp((tau_b - tau_w_beta)  / (tau_tf_beta  + EPS_RHO) - 1.0, min=-1.0)
 
         # Reduced Laplacian: q = ∇²ρ / (_C_LAPL · ρ^(5/3))
-        q_alpha = lapl_a / (_C_LAPL * (rho_a + EPS_RHO) ** (5.0 / 3.0)) / scale_q
-        q_beta  = lapl_b / (_C_LAPL * (rho_b + EPS_RHO) ** (5.0 / 3.0)) / scale_q
+        q_alpha = lapl_a / (_C_LAPL * (rho_a + EPS_RHO) ** (5.0 / 3.0))
+        q_beta  = lapl_b / (_C_LAPL * (rho_b + EPS_RHO) ** (5.0 / 3.0))
 
         # Spin polarization (already in [-1, 1], not passed through tanh)
         zeta = (rho_a - rho_b) / (rho_a + rho_b + EPS_RHO)

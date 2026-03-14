@@ -117,30 +117,6 @@ _VAL_FCHEM_PLOT_SCALE: float = 50.0
 
 
 # ---------------------------------------------------------------------------
-# Utility: trainable log-scale toggle
-# ---------------------------------------------------------------------------
-
-def set_scales_trainable(model: nn.Module, trainable: bool = True) -> None:
-    """
-    Toggles the trainability of the descriptor log-scale parameters.
-
-    During pre-optimization these are frozen so that the network learns to
-    reproduce PBE constants without distorting the descriptor normalization.
-    They are unfrozen for the main training phase.
-
-    Args:
-        model: DDP-wrapped or bare pcPBELMLOptimizerV2 model.
-        trainable: Whether to enable gradient computation for scale params.
-    """
-    base_model = model.module if hasattr(model, "module") else model
-    for p in [base_model.log_scale_rho, base_model.log_scale_sigma,
-              base_model.log_scale_tau, base_model.log_scale_lapl]:
-        p.requires_grad = trainable
-    status = "ENABLED" if trainable else "DISABLED"
-    print(f"--- Scale Parameter Training: {status} ---")
-
-
-# ---------------------------------------------------------------------------
 # Dataset classes
 # ---------------------------------------------------------------------------
 
@@ -961,7 +937,7 @@ def _log_metrics(
         val_metrics:   (avg_loss, avg_mae, avg_vxc) per-sample averages.
         global_train_errors: Aggregated per-database training errors.
         global_val_errors:   Aggregated per-database validation errors.
-        model: DDP-wrapped model (for reading log_scale params).
+        model: DDP-wrapped model.
         omega: Vxc loss weight (used for plot scaling).
         train_history: Dict of lists for tracking train metrics across epochs.
         val_history:   Dict of lists for tracking val metrics across epochs.
@@ -1030,15 +1006,6 @@ def _log_metrics(
         for db, errors_list in global_val_errors.items():
             rmse = np.sqrt(np.mean(np.square(errors_list)))
             mlflow.log_metric(f"validation/{db}_rmse", rmse, step=epoch)
-
-        # Log scaling parameters
-        base_model = model.module if hasattr(model, "module") else model
-        if hasattr(base_model, "log_scale_rho"):
-            mlflow.log_metric("scaling_params/rho", torch.exp(base_model.log_scale_rho).item(), step=epoch)
-            mlflow.log_metric("scaling_params/sigma", torch.exp(base_model.log_scale_sigma).item(), step=epoch)
-            mlflow.log_metric("scaling_params/tau", torch.exp(base_model.log_scale_tau).item(), step=epoch)
-        if hasattr(base_model, "log_scale_lapl"):
-            mlflow.log_metric("scaling_params/lapl", torch.exp(base_model.log_scale_lapl).item(), step=epoch)
 
     print(f"\n--- Epoch {epoch + 1} Summary ---")
     print("Training Set Metrics:")
@@ -1694,8 +1661,7 @@ if __name__ == "__main__":
         else:
             print("MLFlow logging disabled (ENABLE_MLFLOW=false).")
 
-    # 8. Pre-optimization phase (log-scale params frozen)
-    set_scales_trainable(model, trainable=False)
+    # 8. Pre-optimization phase
     predopt_optimizer = torch.optim.Adam(
         model.parameters(), lr=args.lr_predopt, betas=(0.9, 0.999)
     )
@@ -1712,8 +1678,7 @@ if __name__ == "__main__":
 
     true_constants_PBE = true_constants_PBE.to(device)
 
-    # 9. Main training phase (all params trainable)
-    set_scales_trainable(model, trainable=False)
+    # 9. Main training phase
     optimizer = configure_optimizers(
         model=model, learning_rate=args.lr_train * args.vxc_lr_scale,
         optimizer_str=args.optimizer, weight_decay=args.weight_decay,
