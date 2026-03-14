@@ -11,6 +11,7 @@ Usage (distributed, 2 GPUs):
 
 import argparse
 import collections
+import copy
 import os
 import pickle
 import random
@@ -156,25 +157,76 @@ class VxcDataset(torch.utils.data.Dataset):
         return self.data[idx]
 
 
-class AugmentedDataset(torch.utils.data.Dataset):
+def _variant_suffix_from_path(path: str) -> str:
+    file_name_no_ext = os.path.splitext(os.path.basename(path))[0]
+    if "__" in file_name_no_ext:
+        _, suffix = file_name_no_ext.split("__", 1)
+        return suffix
+    return "default"
+
+
+def _variant_suffix_from_reaction(reaction: dict) -> str:
+    component_paths = reaction.get("component_paths", [])
+    if not component_paths:
+        raise ValueError("Reaction variant is missing component_paths.")
+    suffixes = {_variant_suffix_from_path(path) for path in component_paths}
+    if len(suffixes) != 1:
+        raise ValueError(f"Inconsistent augmentation suffixes detected: {sorted(suffixes)}")
+    return next(iter(suffixes))
+
+
+def _canonical_variant(group: list[dict]) -> dict:
+    suffix_map = {_variant_suffix_from_reaction(reaction): reaction for reaction in group}
+    chosen_suffix = "default" if "default" in suffix_map else min(suffix_map)
+    return suffix_map[chosen_suffix]
+
+
+class EpochSampledAugmentedDataset(torch.utils.data.Dataset):
     """
-    Dataset that returns one randomly chosen grid augmentation per reaction
-    at each access. This prevents the model from overfitting to a single
-    integration grid per molecule.
+    Dataset that samples one augmentation variant per base reaction once at the
+    start of each epoch, then keeps that materialization fixed for the full epoch.
 
     Args:
         data: Dict mapping base reaction key → list of augmented reaction dicts.
+        base_seed: Shared seed used to make epoch resampling reproducible.
+    """
+
+    def __init__(self, data: dict, base_seed: int = 41) -> None:
+        self.reaction_groups = list(data.values())
+        self.base_seed = base_seed
+        self.sampled_reactions: list[dict] = []
+        self.resample(epoch=0)
+
+    def resample(self, epoch: int) -> None:
+        generator = random.Random(self.base_seed + epoch)
+        self.sampled_reactions = [
+            group[generator.randrange(len(group))]
+            for group in self.reaction_groups
+        ]
+
+    def __len__(self) -> int:
+        return len(self.sampled_reactions)
+
+    def __getitem__(self, idx: int):
+        chosen = self.sampled_reactions[idx]
+        return copy.deepcopy(chosen), chosen["Energy"]
+
+
+class CanonicalVariantDataset(torch.utils.data.Dataset):
+    """
+    Dataset that uses one deterministic augmentation variant per base reaction.
+    Validation remains stable across epochs and runs.
     """
 
     def __init__(self, data: dict) -> None:
-        self.reaction_groups = list(data.values())
+        self.reactions = [_canonical_variant(group) for group in data.values()]
 
     def __len__(self) -> int:
-        return len(self.reaction_groups)
+        return len(self.reactions)
 
     def __getitem__(self, idx: int):
-        chosen = random.choice(self.reaction_groups[idx])
-        return chosen, chosen["Energy"]
+        chosen = self.reactions[idx]
+        return copy.deepcopy(chosen), chosen["Energy"]
 
 
 class EarlyStopper:
@@ -1285,6 +1337,8 @@ def train(
     )
 
     for epoch in range(n_epochs):
+        if hasattr(train_loader, "dataset") and hasattr(train_loader.dataset, "resample"):
+            train_loader.dataset.resample(epoch)
         if hasattr(train_loader, "sampler") and hasattr(train_loader.sampler, "set_epoch"):
             train_loader.sampler.set_epoch(epoch)
         if hasattr(vxc_train_loader, "sampler") and hasattr(vxc_train_loader.sampler, "set_epoch"):
@@ -1494,6 +1548,7 @@ def _build_dataloaders(
     batch_size: int,
     vxc_batch_size: int,
     generator: torch.Generator,
+    base_seed: int = 41,
 ) -> tuple:
     """
     Constructs and returns all DataLoaders needed for training.
@@ -1502,7 +1557,7 @@ def _build_dataloaders(
         (train_dataloader, test_dataloader, predopt_dataloader,
          vxc_train_loader, vxc_test_loader)
     """
-    train_set    = AugmentedDataset(data=data_train)
+    train_set    = EpochSampledAugmentedDataset(data=data_train, base_seed=base_seed)
     train_sampler = DistributedSampler(train_set, shuffle=True)
     train_dataloader = torch.utils.data.DataLoader(
         train_set, batch_size=batch_size, num_workers=4, pin_memory=True,
@@ -1510,7 +1565,7 @@ def _build_dataloaders(
         collate_fn=collate_fn, worker_init_fn=seed_worker,
     )
 
-    test_set    = AugmentedDataset(data=data_test)
+    test_set    = CanonicalVariantDataset(data=data_test)
     test_sampler = DistributedSampler(test_set, shuffle=False)
     test_dataloader = torch.utils.data.DataLoader(
         test_set, batch_size=batch_size, num_workers=4, pin_memory=True,
@@ -1590,7 +1645,7 @@ if __name__ == "__main__":
      vxc_train_loader, vxc_test_loader) = _build_dataloaders(
         data_train, data_test, data_vxc_train, data_vxc_val, data,
         batch_size=args.batch_size, vxc_batch_size=args.vxc_batch_size,
-        generator=g,
+        generator=g, base_seed=41,
     )
 
     # 7. MLFlow logging (rank 0 only)
