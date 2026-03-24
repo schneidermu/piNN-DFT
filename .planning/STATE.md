@@ -56,5 +56,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-24 00:00
-Stopped at: Project initialization complete; Phase 1 is ready for discuss/plan
-Resume file: None
+Stopped at: Phase 1 context gathered
+Resume file: .planning/phases/01-experiment-contract-foundation/01-CONTEXT.md
+
