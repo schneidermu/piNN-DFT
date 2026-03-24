@@ -88,11 +88,19 @@ def _compute_tables(
     functional_npz: Path,
     lda_npz: Path,
     ref_ccsd_npz: Path,
+    systems: list[str] | None = None,
 ) -> dict:
     iodens = _load_iodens()
 
     with np.load(functional_npz) as functional_data, np.load(lda_npz) as lda_data, np.load(ref_ccsd_npz) as ref_data:
         files = list(lda_data.files)
+        if systems is not None:
+            requested = [system for system in systems if system in lda_data.files]
+            if not requested:
+                raise KeyError(
+                    f"None of the requested systems are available in the LDA reference: {systems}"
+                )
+            files = requested
         if not files:
             raise ValueError("LDA reference file contains no systems")
 
@@ -161,7 +169,11 @@ def _compute_tables(
     return summary
 
 
-def run_avrane_reduction(experiment_root: Path, functional: str) -> tuple[dict, list[str], dict[str, str]]:
+def run_avrane_reduction(
+    experiment_root: Path,
+    functional: str,
+    systems: list[str] | None = None,
+) -> tuple[dict, list[str], dict[str, str]]:
     reference_paths = resolve_reference_paths()
     _assert_references_available(reference_paths)
 
@@ -172,7 +184,12 @@ def run_avrane_reduction(experiment_root: Path, functional: str) -> tuple[dict, 
 
     functional_npz = build_functional_npz(functional, calc_dir, dens_dir)
     lda_npz = ensure_experiment_lda_npz(dens_dir, reference_paths)
-    metrics = _compute_tables(functional_npz, lda_npz, reference_paths["ref_ccsd"])
+    metrics = _compute_tables(
+        functional_npz,
+        lda_npz,
+        reference_paths["ref_ccsd"],
+        systems=systems,
+    )
 
     metrics_path = experiment_root / "reports" / "avrane_metrics.json"
     metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")

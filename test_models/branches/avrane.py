@@ -15,10 +15,14 @@ def finalize_avrane_branch(experiment: Experiment) -> None:
     resolved_reference_paths = {
         key: str(value) for key, value in resolve_reference_paths().items()
     }
+    subset_molecules = (
+        experiment.manifest.smoke_avrane_molecules if experiment.manifest.smoke else None
+    )
     wait_for_slurm_jobs(branch.job_ids)
     metrics, reduction_artifacts, reference_paths = run_avrane_reduction(
         experiment.root,
         experiment.manifest.generated_functional_name,
+        systems=subset_molecules,
     )
     artifacts.extend(reduction_artifacts)
     experiment.set_reference_paths(reference_paths)
@@ -29,11 +33,7 @@ def finalize_avrane_branch(experiment: Experiment) -> None:
             {
                 "functional": experiment.manifest.generated_functional_name,
                 "job_ids": branch.job_ids,
-                "subset_molecules": (
-                    experiment.manifest.smoke_avrane_molecules
-                    if experiment.manifest.smoke
-                    else None
-                ),
+                "subset_molecules": subset_molecules,
                 "include_atoms": False,
                 "reference_paths": reference_paths,
                 "metrics": metrics,
@@ -99,9 +99,14 @@ def run_avrane_branch(experiment: Experiment, wait: bool = True) -> None:
         )
 
         if wait:
+            subset_molecules = (
+                experiment.manifest.smoke_avrane_molecules if experiment.manifest.smoke else None
+            )
             wait_for_slurm_jobs(job_ids)
             metrics, reduction_artifacts, reference_paths = run_avrane_reduction(
-                experiment.root, functional
+                experiment.root,
+                functional,
+                systems=subset_molecules,
             )
             artifacts.extend(reduction_artifacts)
             experiment.set_reference_paths(reference_paths)
