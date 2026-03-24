@@ -15,7 +15,10 @@ def _parse_wtmad_value(text: str) -> float | None:
     for line in text.splitlines():
         if "WTMAD" not in line.upper():
             continue
-        match = re.search(r"(-?\d+(?:\.\d+)?)", line)
+        match = re.search(r"WTMAD2?\s*=\s*(-?\d+(?:\.\d+)?)", line, re.IGNORECASE)
+        if match:
+            return float(match.group(1))
+        match = re.search(r"WTMAD-?2?\s*[:=]\s*(-?\d+(?:\.\d+)?)", line, re.IGNORECASE)
         if match:
             return float(match.group(1))
     return None
