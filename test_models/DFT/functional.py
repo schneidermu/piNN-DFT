@@ -80,7 +80,7 @@ class NN_FUNCTIONAL:
         lowered = name.lower()
         if "xalpha" in lowered:
             return "NN_XALPHA"
-        if "pbe-l" in lowered or "pbel" in lowered:
+        if "pbe-l" in lowered or "pbel" in lowered or "nn_l" in lowered:
             return "NN_PBE-L"
         if "star_star" in lowered or "doublestar" in lowered or "double_star" in lowered:
             return "NN_PBE_star_star"
