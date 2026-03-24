@@ -33,16 +33,6 @@ SCRIPT_TEMPLATE = """#! /bin/bash
 python -m script --System {system_name} --NFinal {nfinal} --Functional {functional} --OutputDir "{output_dir}"{checkpoint_args}
 """
 
-DISPERSION_TEMPLATE = """#! /bin/bash
-#SBATCH --job-name="D3 {system_name}"
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
-#SBATCH --hint=nomultithread
-#SBATCH --output="{log_dir}/D3BJ_{system_name}_%j.out"
-# Executable
-python -m script --Dispersion True --System {system_name} --NFinal {nfinal} --OutputDir "{output_dir}"
-"""
-
 
 def filter_system_names(system_names: list[str], subset_prefixes: list[str] | None) -> list[str]:
     if not subset_prefixes:
@@ -113,17 +103,6 @@ def generate_jobs(
             )
             created_jobs.append(slurm_path)
 
-        dispersion_path = job_dir / "calculate_system_dispersion.slurm"
-        write_slurm_file(
-            dispersion_path,
-            DISPERSION_TEMPLATE.format(
-                system_name=system_name,
-                log_dir=log_dir.as_posix(),
-                nfinal=nfinal,
-                output_dir=output_dir.as_posix(),
-            ),
-        )
-        created_jobs.append(dispersion_path)
     return created_jobs
 
 
@@ -140,21 +119,6 @@ def submit_jobs(
         print(slurm_path)
         job_ids.append(run_sbatch(slurm_path))
     return job_ids
-
-
-def submit_dispersion_jobs(
-    *,
-    jobs_root: Path | None = None,
-    subset_prefixes: list[str] | None = None,
-) -> list[str]:
-    ensure_runtime_directories()
-    job_ids = []
-    for system_name in filter_system_names(normalize_gif_layout(), subset_prefixes):
-        slurm_path = build_job_dir(system_name, jobs_root=jobs_root) / "calculate_system_dispersion.slurm"
-        print(slurm_path)
-        job_ids.append(run_sbatch(slurm_path))
-    return job_ids
-
 
 if __name__ == "__main__":
     parser = OptionParser()
@@ -199,7 +163,6 @@ if __name__ == "__main__":
             subset_prefixes=subset_prefixes,
         )
     elif mode == "D3":
-        submit_dispersion_jobs(
-            jobs_root=jobs_root,
-            subset_prefixes=subset_prefixes,
+        raise RuntimeError(
+            "Dispersion submissions are disabled; the experiment runner uses precomputed dispersion data."
         )
