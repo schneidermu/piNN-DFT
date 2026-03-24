@@ -96,7 +96,7 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
         )
         mf.define_xc_(model.eval_xc, "MGGA")
     mf.conv_tol = 1e-6
-    mf.conv_tol_grad = 1e-3
+    mf.conv_tol_grad = 5e-3
 
     scf_data = {"latest_delta_e": None, "latest_g_norm": None}
 
@@ -147,7 +147,7 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
 def calculate_non_nn_functional_energy(mf, functional_name, system_name=None):
     mf.xc = functional_name
     mf.conv_tol = 1e-6
-    mf.conv_tol_grad = 1e-3
+    mf.conv_tol_grad = 5e-3
     scf_data = {"latest_delta_e": None, "latest_g_norm": None}
 
     def log_convergence(env):
