@@ -33,12 +33,13 @@ def NN_PBE_model(*args, **kwargs):
     return _unsupported("NN_PBE_model")
 
 
-def NN_PBE_L_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE"):
+def NN_PBE_L_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE", **kwargs):
     return TRAIN_MODELS.pcPBELMLOptimizerV2(
         num_layers=num_layers,
         h_dim=h_dim,
         dropout=dropout,
         DFT=DFT,
+        **kwargs,
     )
 
 

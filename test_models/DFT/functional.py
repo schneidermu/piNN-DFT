@@ -65,11 +65,15 @@ class NN_FUNCTIONAL:
             path_to_model_state_dict = (
                 dir_path + "/" + relative_path_to_model_state_dict[resolved_model_key]
             )
-        model = nn_model[resolved_model_key]()
-        print(path_to_model_state_dict)
-        model.load_state_dict(
-            torch.load(path_to_model_state_dict, map_location=torch.device("cpu"))
+        state_dict = torch.load(
+            path_to_model_state_dict,
+            map_location=torch.device("cpu"),
         )
+        model = nn_model[resolved_model_key](
+            **self._infer_model_kwargs(resolved_model_key, state_dict)
+        )
+        print(path_to_model_state_dict)
+        model.load_state_dict(state_dict)
         model.eval()
         self.name = name
         self.model_key = resolved_model_key
@@ -87,6 +91,34 @@ class NN_FUNCTIONAL:
         if re.search(r"(^|[_-])star($|[_-])", lowered):
             return "NN_PBE_star"
         return "NN_PBE"
+
+    @staticmethod
+    def _infer_model_kwargs(model_key, state_dict):
+        if model_key != "NN_PBE-L":
+            return {}
+
+        h_dim = state_dict["x_feature_extractor.0.weight"].shape[0]
+        x_out_dim = state_dict["x_output_layer.bias"].shape[0]
+        c_out_dim = state_dict["c_output_layer.bias"].shape[0]
+
+        symm_blocks = {
+            key.split(".")[1]
+            for key in state_dict
+            if key.startswith("c_symmetrization_blocks.") and ".fc.0.weight" in key
+        }
+        post_symm_blocks = {
+            key.split(".")[1]
+            for key in state_dict
+            if key.startswith("c_post_symm_blocks.") and ".fc.0.weight" in key
+        }
+        num_layers = 2 * (1 + len(symm_blocks) + len(post_symm_blocks))
+
+        return {
+            "num_layers": num_layers,
+            "h_dim": h_dim,
+            "use_g_x": x_out_dim > 2,
+            "use_g_c": c_out_dim > 2,
+        }
 
     def create_features_from_rhos(self, features, device):
         rho_only_a, grad_a_x, grad_a_y, grad_a_z, _, tau_a = torch.unsqueeze(
