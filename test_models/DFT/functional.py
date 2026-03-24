@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -56,18 +57,36 @@ for name in list(nn_model.keys()):
 
 class NN_FUNCTIONAL:
 
-    def __init__(self, name):
-        path_to_model_state_dict = (
-            dir_path + "/" + relative_path_to_model_state_dict[name]
-        )
-        model = nn_model[name]()
+    def __init__(self, name, checkpoint_path=None, model_key=None):
+        resolved_model_key = model_key or self._infer_model_key(name)
+        if checkpoint_path:
+            path_to_model_state_dict = str(Path(checkpoint_path).resolve())
+        else:
+            path_to_model_state_dict = (
+                dir_path + "/" + relative_path_to_model_state_dict[resolved_model_key]
+            )
+        model = nn_model[resolved_model_key]()
         print(path_to_model_state_dict)
         model.load_state_dict(
             torch.load(path_to_model_state_dict, map_location=torch.device("cpu"))
         )
         model.eval()
         self.name = name
+        self.model_key = resolved_model_key
         self.model = model
+
+    @staticmethod
+    def _infer_model_key(name):
+        lowered = name.lower()
+        if "xalpha" in lowered:
+            return "NN_XALPHA"
+        if "pbe-l" in lowered or "pbel" in lowered:
+            return "NN_PBE-L"
+        if "star_star" in lowered or "doublestar" in lowered or "double_star" in lowered:
+            return "NN_PBE_star_star"
+        if re.search(r"(^|[_-])star($|[_-])", lowered):
+            return "NN_PBE_star"
+        return "NN_PBE"
 
     def create_features_from_rhos(self, features, device):
         rho_only_a, grad_a_x, grad_a_y, grad_a_z, _, tau_a = torch.unsqueeze(
@@ -200,8 +219,8 @@ class NN_FUNCTIONAL:
             dim=0,
         ).T
 
-        if "NN_PBE" in self.name:
-            if "star_star" in self.name:
+        if "NN_PBE" in self.model_key:
+            if "star_star" in self.model_key:
                 vxc = F_PBE(
                     functional_densities,
                     functional_gradients,
@@ -213,10 +232,10 @@ class NN_FUNCTIONAL:
                 vxc = F_PBE(
                     functional_densities, functional_gradients, constants, "cpu"
                 )
-        elif "NN_XALPHA" in self.name:
+        elif "NN_XALPHA" in self.model_key:
             vxc = F_XALPHA(functional_densities, constants)
         else:
-            raise NameError(f"Invalid functional name: {self.name}")
+            raise NameError(f"Invalid functional name: {self.model_key}")
 
         local_xc = vxc * (feature_dict["rho_a"] + feature_dict["rho_b"])
 
@@ -361,8 +380,8 @@ class NN_FUNCTIONAL:
             dim=0,
         ).T
 
-        if "PBE" in self.name:
-            if "star_star" in self.name:
+        if "PBE" in self.model_key:
+            if "star_star" in self.model_key:
                 vxc = F_PBE(
                     functional_densities,
                     functional_gradients,

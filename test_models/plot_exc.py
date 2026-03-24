@@ -6,6 +6,7 @@ import pylibxc as xc
 import torch
 
 import DFT as DFT
+from common import RESULTS_DIR, ensure_runtime_directories
 from pcNN_mol.dft_pcnn import model as Nagai_model
 
 buf = StringIO()
@@ -183,4 +184,5 @@ tuples = [
 
 data = np.array([df[x][y] for x, y in tuples])
 
-np.save("Results/exc.npy", data)
+ensure_runtime_directories()
+np.save(RESULTS_DIR / "exc.npy", data)

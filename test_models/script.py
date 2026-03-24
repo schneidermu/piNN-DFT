@@ -1,11 +1,14 @@
 from optparse import OptionParser
+from pathlib import Path
 
 import dftd3.pyscf as disp
 from DFT.functional import NN_FUNCTIONAL
 from DFT.numint import RKS_with_Laplacian, UKS_with_Laplacian
 from pcNN_mol.dft_pcnn import model as Nagai_model
 from pyscf import dft, gto, lib
-from pyscf.scf import addons, diis
+from pyscf.scf import diis
+
+from common import GIF_DIR, RESULTS_DIR, TEST_MODELS_ROOT, ensure_dir, ensure_runtime_directories
 
 PROBLEMATIC_SYSTEMS = [
     "G21EA-14-EA_14",
@@ -22,7 +25,8 @@ PROBLEMATIC_SYSTEMS = [
 
 
 def get_coords_charge_spin(system_name):
-    with open(f"GIF/{system_name}/{system_name}.gif_", "r") as file:
+    gif_path = GIF_DIR / system_name / f"{system_name}.gif_"
+    with gif_path.open("r") as file:
         coords = ""
 
         lines = file.readlines()
@@ -85,7 +89,11 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
     if functional_name == "Nagai":
         mf.define_xc_(Nagai_model.eval_xc, "MGGA")
     else:
-        model = NN_FUNCTIONAL(functional_name)
+        model = NN_FUNCTIONAL(
+            functional_name,
+            checkpoint_path=CHECKPOINT_PATH,
+            model_key=MODEL_KEY,
+        )
         mf.define_xc_(model.eval_xc, "MGGA")
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 1e-3
@@ -119,9 +127,9 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
         latest_g_norm = scf_data["latest_g_norm"]
 
         if latest_delta_e is not None:
-            with open("./non_converged_systems_gmtkn55.log", "a") as file:
+            with open(TEST_MODELS_ROOT / "non_converged_systems_gmtkn55.log", "a") as file:
                 log_line = (
-                    f"{functional}-{system_name}: Not converged. "
+                    f"{functional_name}-{system_name}: Not converged. "
                     f"Last dE = {latest_delta_e:.2e}, |g| = {latest_g_norm:.2e}\n"
                 )
                 file.write(log_line)
@@ -136,7 +144,7 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
     return energy + d3_energy
 
 
-def calculate_non_nn_functional_energy(mf, functional_name):
+def calculate_non_nn_functional_energy(mf, functional_name, system_name=None):
     mf.xc = functional_name
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 1e-3
@@ -155,9 +163,9 @@ def calculate_non_nn_functional_energy(mf, functional_name):
         latest_g_norm = scf_data["latest_g_norm"]
 
         if latest_delta_e is not None:
-            with open("./non_converged_systems_gmtkn55.log", "a") as file:
+            with open(TEST_MODELS_ROOT / "non_converged_systems_gmtkn55.log", "a") as file:
                 log_line = (
-                    f"{functional}-{system_name}: Not converged. "
+                    f"{functional_name}-{system_name}: Not converged. "
                     f"Last dE = {latest_delta_e:.2e}, |g| = {latest_g_norm:.2e}\n"
                 )
                 file.write(log_line)
@@ -170,6 +178,8 @@ def calculate_non_nn_functional_energy(mf, functional_name):
 
 
 def main(system_name, functional, NFinal):
+    output_dir = ensure_dir(OUTPUT_DIR)
+    ensure_runtime_directories()
 
     lib.num_threads(4)
     print("\n\n", system_name, "\n\n")
@@ -193,24 +203,32 @@ def main(system_name, functional, NFinal):
         print(E)
         corrected_energy = "ERROR"
     finally:
-        with open(f"Results/EnergyList_{NFinal}_{functional}.txt", "a") as file:
+        output_path = output_dir / f"EnergyList_{NFinal}_{functional}.txt"
+        with output_path.open("a") as file:
             file.write(f"{system_name}.gif_ {corrected_energy}\n")
 
 
 def test_non_nn_functional(system_name, non_nn_functional, NFinal):
+    output_dir = ensure_dir(OUTPUT_DIR)
+    ensure_runtime_directories()
     print("Number of threads:", lib.num_threads())
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
 
     _, mf = initialize_molecule(coords, charge, spin)
 
-    energy = calculate_non_nn_functional_energy(mf, non_nn_functional)
+    energy = calculate_non_nn_functional_energy(
+        mf, non_nn_functional, system_name=system_name
+    )
 
-    with open(f"Results/EnergyList_{NFinal}_{functional}.txt", "a") as file:
+    output_path = output_dir / f"EnergyList_{NFinal}_{non_nn_functional}.txt"
+    with output_path.open("a") as file:
         file.write(f"{system_name}.gif_ {energy}\n")
 
 
-def calculate_dispersions():
+def calculate_dispersions(system_name):
+    output_dir = ensure_dir(OUTPUT_DIR)
+    ensure_runtime_directories()
     print("Number of threads:", lib.num_threads())
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
@@ -219,10 +237,15 @@ def calculate_dispersions():
     d3_PBE = disp.DFTD3Dispersion(molecule, xc="PBE", version="d3bj")
     d3_PBE0_energy = d3_PBE0.kernel()[0]
     d3_PBE_energy = d3_PBE.kernel()[0]
-    with open(f"Results/DispersionList_PBE0.txt", "a") as file:
+    with (output_dir / "DispersionList_PBE0.txt").open("a") as file:
         file.write(f"{system_name}.gif_ {d3_PBE0_energy}\n")
-    with open(f"Results/DispersionList_PBE.txt", "a") as file:
+    with (output_dir / "DispersionList_PBE.txt").open("a") as file:
         file.write(f"{system_name}.gif_ {d3_PBE_energy}\n")
+
+
+OUTPUT_DIR = RESULTS_DIR
+CHECKPOINT_PATH = None
+MODEL_KEY = None
 
 
 if __name__ == "__main__":
@@ -238,16 +261,22 @@ if __name__ == "__main__":
     parser.add_option(
         "--NFinal", type=int, default=30, help="Number of systems to select"
     )
+    parser.add_option("--OutputDir", type=str, default=str(RESULTS_DIR))
+    parser.add_option("--CheckpointPath", type=str, default="")
+    parser.add_option("--ModelKey", type=str, default="")
 
     (Opts, args) = parser.parse_args()
 
     system_name = Opts.System
     functional = Opts.Functional
-    dispersion = Opts.Dispersion
+    dispersion = str(Opts.Dispersion).lower() in {"1", "true", "yes"}
     NFinal = Opts.NFinal
+    OUTPUT_DIR = Path(Opts.OutputDir)
+    CHECKPOINT_PATH = Opts.CheckpointPath or None
+    MODEL_KEY = Opts.ModelKey or None
 
     if dispersion:
-        calculate_dispersions()
+        calculate_dispersions(system_name)
     elif "NN" in functional or functional == "Nagai":
         main(system_name, functional, NFinal)
     else:

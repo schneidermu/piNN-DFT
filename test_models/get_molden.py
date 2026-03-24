@@ -1,5 +1,7 @@
 import os
 from optparse import OptionParser
+import subprocess
+from pathlib import Path
 
 from DFT.functional import NN_FUNCTIONAL
 from DFT.numint import RKS_with_Laplacian
@@ -8,6 +10,8 @@ from pyscf import gto, lib, scf
 from pyscf.gto.basis import parse_gaussian
 from pyscf.scf import diis
 from pyscf.tools import wfn_format
+
+from common import GBS_PATH, MOLDEN_DIR, TEST_MODELS_ROOT
 
 PROBLEMATIC_SYSTEMS = [
     "Li2",
@@ -25,6 +29,8 @@ PROBLEMATIC_SYSTEMS = [
     "F +5",
 ]
 
+MULTIWFN_CMD = os.environ.get("MULTIWFN_CMD", "Multiwfn")
+
 def main():
     lib.num_threads(4)
     parser = OptionParser()
@@ -37,12 +43,18 @@ def main():
         default="PBE0",
         help="Functional to calculate densities",
     )
+    parser.add_option("--ExperimentRoot", type=str, default="")
+    parser.add_option("--CheckpointPath", type=str, default="")
+    parser.add_option("--ModelKey", type=str, default="")
 
     (Opts, args) = parser.parse_args()
     molecule_name = Opts.Molecule
     atom_name = Opts.Atom
     charge = Opts.Charge
     functional = Opts.Functional
+    experiment_root = Path(Opts.ExperimentRoot).resolve() if Opts.ExperimentRoot else None
+    checkpoint_path = Opts.CheckpointPath or None
+    model_key = Opts.ModelKey or None
 
     # Initialize molecule
     mol = gto.Mole()
@@ -52,22 +64,22 @@ def main():
         raise Exception("System not provided")
 
     if molecule_name:
-        mol.atom = f"./molden/{molecule_name}.xyz"
+        mol.atom = str(MOLDEN_DIR / f"{molecule_name}.xyz")
     else:
         mol.atom = f"{atom_name} 0 0 0"
 
     mol.unit = "B"
 
     mol.basis = {
-        "H": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "H"),
-        "B": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "B"),
-        "C": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "C"),
-        "O": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "O"),
-        "F": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "F"),
-        "N": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "N"),
-        "Li": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "Li"),
-        "Be": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "Be"),
-        "Ne": parse_gaussian.load("./aug-cc-pwcv5z.gbs", "Ne"),
+        "H": parse_gaussian.load(str(GBS_PATH), "H"),
+        "B": parse_gaussian.load(str(GBS_PATH), "B"),
+        "C": parse_gaussian.load(str(GBS_PATH), "C"),
+        "O": parse_gaussian.load(str(GBS_PATH), "O"),
+        "F": parse_gaussian.load(str(GBS_PATH), "F"),
+        "N": parse_gaussian.load(str(GBS_PATH), "N"),
+        "Li": parse_gaussian.load(str(GBS_PATH), "Li"),
+        "Be": parse_gaussian.load(str(GBS_PATH), "Be"),
+        "Ne": parse_gaussian.load(str(GBS_PATH), "Ne"),
     }
     mol.symmetry = False
     mol.spin = 0
@@ -87,7 +99,11 @@ def main():
         mf.xc = functional
         functional += "_pyscf"
     else:
-        model = NN_FUNCTIONAL(functional)
+        model = NN_FUNCTIONAL(
+            functional,
+            checkpoint_path=checkpoint_path,
+            model_key=model_key,
+        )
         mf.define_xc_(model.eval_xc, "MGGA")
 
     scf_data = {"latest_delta_e": None, "latest_g_norm": None}
@@ -136,7 +152,7 @@ def main():
         latest_g_norm = scf_data["latest_g_norm"]
 
         if latest_delta_e is not None:
-            with open("./non_converged_systems_density.log", "a") as file:
+            with open(TEST_MODELS_ROOT / "non_converged_systems_density.log", "a") as file:
                 log_line = (
                     f"{functional}-{molecule_name if molecule_name else atom_name}: Not converged. "
                     f"Last dE = {latest_delta_e:.2e}, |g| = {latest_g_norm:.2e}\n"
@@ -145,8 +161,14 @@ def main():
                 print(f"Logged: {log_line.strip()}")
 
     if molecule_name:
-        CALC_DIR = "../den_mol_or/calc"
-        GRID_DIR = "../den_mol_or/grids"
+        if experiment_root:
+            calc_root = experiment_root / "outputs" / "avrane" / "den_mol_or" / "calc"
+            grid_root = TEST_MODELS_ROOT.parent / "den_mol_or" / "grids"
+        else:
+            calc_root = TEST_MODELS_ROOT.parent / "den_mol_or" / "calc"
+            grid_root = TEST_MODELS_ROOT.parent / "den_mol_or" / "grids"
+        CALC_DIR = calc_root
+        GRID_DIR = grid_root
         FUNCTIONAL_DIR = os.path.join(CALC_DIR, functional)
         MOLECULE_DIR = os.path.join(FUNCTIONAL_DIR, molecule_name)
         PBE0_DIR = os.path.join(GRID_DIR, f"grid_{molecule_name}")
@@ -154,7 +176,10 @@ def main():
         OUTPUT_DIR = os.path.join(MOLECULE_DIR, "calc.out")
         os.makedirs(MOLECULE_DIR, exist_ok=True)
     else:
-        CALC_DIR = "../denrho/dtestin"
+        if experiment_root:
+            CALC_DIR = experiment_root / "outputs" / "avrane" / "denrho" / "dtestin"
+        else:
+            CALC_DIR = TEST_MODELS_ROOT.parent / "denrho" / "dtestin"
         FUNCTIONAL_DIR = os.path.join(CALC_DIR, functional.replace("_pyscf", ""))
         INPUT_DIR = os.path.join(
             FUNCTIONAL_DIR,
@@ -162,7 +187,7 @@ def main():
         )
 
     if not os.path.exists(FUNCTIONAL_DIR):
-        os.mkdir(FUNCTIONAL_DIR)
+        os.makedirs(FUNCTIONAL_DIR, exist_ok=True)
 
     print(f"Saving to {INPUT_DIR}")
     with open(INPUT_DIR, "w") as file:
@@ -171,8 +196,36 @@ def main():
         )
 
     if molecule_name:
-        command = f'echo "5 1 100 {PBE0_DIR} {os.path.join(MOLECULE_DIR, "rho")} 5 2 100 {PBE0_DIR} {os.path.join(MOLECULE_DIR, "grad")} 5 3 100 {PBE0_DIR} {os.path.join   (MOLECULE_DIR, "lapl")} q" | tr " " "\n" | /home/xray/schneiderm/Multiwfn38/Multiwfn  {INPUT_DIR} &>> {OUTPUT_DIR}'
-        os.system(command)
+        multiwfn_input = "\n".join(
+            [
+                "5",
+                "1",
+                "100",
+                str(PBE0_DIR),
+                os.path.join(MOLECULE_DIR, "rho"),
+                "5",
+                "2",
+                "100",
+                str(PBE0_DIR),
+                os.path.join(MOLECULE_DIR, "grad"),
+                "5",
+                "3",
+                "100",
+                str(PBE0_DIR),
+                os.path.join(MOLECULE_DIR, "lapl"),
+                "q",
+                "",
+            ]
+        )
+        with open(OUTPUT_DIR, "a") as output_file:
+            subprocess.run(
+                [MULTIWFN_CMD, str(INPUT_DIR)],
+                input=multiwfn_input,
+                text=True,
+                stdout=output_file,
+                stderr=subprocess.STDOUT,
+                check=True,
+            )
 
 
 if __name__ == "__main__":
