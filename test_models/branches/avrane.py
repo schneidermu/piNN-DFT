@@ -8,6 +8,52 @@ from experiment import Experiment
 from run_molden import generate_jobs, submit_jobs
 
 
+def finalize_avrane_branch(experiment: Experiment) -> None:
+    branch_name = "avrane"
+    branch = experiment.manifest.branches[branch_name]
+    artifacts = list(branch.artifacts)
+    resolved_reference_paths = {
+        key: str(value) for key, value in resolve_reference_paths().items()
+    }
+    wait_for_slurm_jobs(branch.job_ids)
+    metrics, reduction_artifacts, reference_paths = run_avrane_reduction(
+        experiment.root,
+        experiment.manifest.generated_functional_name,
+    )
+    artifacts.extend(reduction_artifacts)
+    experiment.set_reference_paths(reference_paths)
+
+    branch_report = experiment.reports_dir / "avrane.json"
+    branch_report.write_text(
+        json.dumps(
+            {
+                "functional": experiment.manifest.generated_functional_name,
+                "job_ids": branch.job_ids,
+                "subset_molecules": (
+                    experiment.manifest.smoke_avrane_molecules
+                    if experiment.manifest.smoke
+                    else None
+                ),
+                "include_atoms": False,
+                "reference_paths": reference_paths,
+                "metrics": metrics,
+                "output_dir": str(experiment.branch_output_dir(branch_name)),
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    artifacts.append(str(branch_report))
+    experiment.set_branch_status(
+        branch_name,
+        "complete",
+        message="avRANE branch finished.",
+        job_ids=branch.job_ids,
+        artifacts=artifacts,
+        metrics=metrics,
+    )
+
+
 def run_avrane_branch(experiment: Experiment, wait: bool = True) -> None:
     branch_name = "avrane"
     functional = experiment.manifest.generated_functional_name

@@ -54,6 +54,42 @@ def _run_interface_analysis(experiment: Experiment) -> tuple[dict, list[str]]:
     return metrics, [str(analysis_path), str(energy_file)]
 
 
+def finalize_wtmad_branch(experiment: Experiment) -> None:
+    branch_name = "wtmad"
+    branch = experiment.manifest.branches[branch_name]
+    artifacts = list(branch.artifacts)
+    wait_for_slurm_jobs(branch.job_ids)
+    metrics, analysis_artifacts = _run_interface_analysis(experiment)
+    artifacts.extend(analysis_artifacts)
+    branch_report = experiment.reports_dir / "wtmad.json"
+    branch_report.write_text(
+        json.dumps(
+            {
+                "functional": experiment.manifest.generated_functional_name,
+                "job_ids": branch.job_ids,
+                "subset_prefixes": (
+                    experiment.manifest.smoke_wtmad_databases
+                    if experiment.manifest.smoke
+                    else None
+                ),
+                "metrics": metrics,
+                "output_dir": str(experiment.branch_output_dir(branch_name)),
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    artifacts.append(str(branch_report))
+    experiment.set_branch_status(
+        branch_name,
+        "complete",
+        message="WTMAD branch finished.",
+        job_ids=branch.job_ids,
+        artifacts=artifacts,
+        metrics=metrics,
+    )
+
+
 def run_wtmad_branch(experiment: Experiment, wait: bool = True) -> None:
     branch_name = "wtmad"
     functional = experiment.manifest.generated_functional_name
