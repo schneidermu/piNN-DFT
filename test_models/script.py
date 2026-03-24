@@ -277,7 +277,7 @@ if __name__ == "__main__":
 
     if dispersion:
         calculate_dispersions(system_name)
-    elif "NN" in functional or functional == "Nagai":
+    elif CHECKPOINT_PATH or MODEL_KEY or "NN" in functional or functional == "Nagai":
         main(system_name, functional, NFinal)
     else:
         test_non_nn_functional(system_name, functional, NFinal)

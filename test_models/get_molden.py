@@ -93,18 +93,20 @@ def main():
     else:
         mf = scf.RKS(mol)
 
+    use_checkpoint_functional = bool(checkpoint_path or model_key)
+
     if functional == "Nagai":
         mf.define_xc_(Nagai_model.eval_xc, "MGGA")
-    elif "NN" not in functional:
-        mf.xc = functional
-        functional += "_pyscf"
-    else:
+    elif use_checkpoint_functional or "NN" in functional:
         model = NN_FUNCTIONAL(
             functional,
             checkpoint_path=checkpoint_path,
             model_key=model_key,
         )
         mf.define_xc_(model.eval_xc, "MGGA")
+    else:
+        mf.xc = functional
+        functional += "_pyscf"
 
     scf_data = {"latest_delta_e": None, "latest_g_norm": None}
 
