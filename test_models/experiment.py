@@ -10,7 +10,7 @@ from threading import Lock
 
 from common import EXPERIMENTS_DIR, ensure_dir, ensure_runtime_directories
 
-SMOKE_WTMAD_DATABASES = ("BH76-5", "SIE4X4")
+SMOKE_WTMAD_DATABASES = ("BH76-5", "SIE4x4-15")
 SMOKE_AVRANE_MOLECULES = ("H2", "N2")
 
 

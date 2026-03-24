@@ -37,11 +37,13 @@ def run_avrane_branch(experiment: Experiment, wait: bool = True) -> None:
             subset_molecules=subset_molecules,
             checkpoint_path=experiment.manifest.checkpoint_copy,
             model_key=experiment.manifest.model_key,
+            include_atoms=False,
         )
         job_ids = submit_jobs(
             functional,
             jobs_root=branch_jobs_dir,
             subset_molecules=subset_molecules,
+            include_atoms=False,
         )
         experiment.set_branch_status(
             branch_name,
@@ -67,6 +69,7 @@ def run_avrane_branch(experiment: Experiment, wait: bool = True) -> None:
                     "functional": functional,
                     "job_ids": job_ids,
                     "subset_molecules": subset_molecules,
+                    "include_atoms": False,
                     "reference_paths": reference_paths,
                     "metrics": metrics,
                     "output_dir": str(branch_output_dir),
@@ -100,6 +103,7 @@ def run_avrane_branch(experiment: Experiment, wait: bool = True) -> None:
                 {
                     "functional": functional,
                     "job_ids": job_ids,
+                    "include_atoms": False,
                     "reference_paths": resolved_reference_paths,
                     "metrics": {},
                     "error": str(exc),

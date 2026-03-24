@@ -85,6 +85,7 @@ def generate_jobs(
     subset_molecules: list[str] | None = None,
     checkpoint_path: str | None = None,
     model_key: str | None = None,
+    include_atoms: bool = True,
 ) -> list[Path]:
     ensure_runtime_directories()
     job_dir = build_job_dir(jobs_root)
@@ -108,22 +109,23 @@ def generate_jobs(
         )
         created_jobs.append(slurm_file)
 
-    for atom, charge in ATOMS:
-        slurm_file = job_dir / f"get_molden_{functional}_{atom}_plus_{charge}.slurm"
-        write_job(
-            slurm_file,
-            ATOM_TEMPLATE.format(
-                functional=functional,
-                atom=atom,
-                charge=charge,
-                log_dir=atom_log_dir.as_posix(),
-                experiment_root=experiment_root.as_posix(),
-                checkpoint_args=build_checkpoint_args(
-                    functional, checkpoint_path, model_key
+    if include_atoms:
+        for atom, charge in ATOMS:
+            slurm_file = job_dir / f"get_molden_{functional}_{atom}_plus_{charge}.slurm"
+            write_job(
+                slurm_file,
+                ATOM_TEMPLATE.format(
+                    functional=functional,
+                    atom=atom,
+                    charge=charge,
+                    log_dir=atom_log_dir.as_posix(),
+                    experiment_root=experiment_root.as_posix(),
+                    checkpoint_args=build_checkpoint_args(
+                        functional, checkpoint_path, model_key
+                    ),
                 ),
-            ),
-        )
-        created_jobs.append(slurm_file)
+            )
+            created_jobs.append(slurm_file)
 
     return created_jobs
 
@@ -133,6 +135,7 @@ def submit_jobs(
     *,
     jobs_root: Path | None = None,
     subset_molecules: list[str] | None = None,
+    include_atoms: bool = True,
 ) -> list[str]:
     job_dir = build_job_dir(jobs_root)
     job_ids = []
@@ -141,9 +144,10 @@ def submit_jobs(
         slurm_file = job_dir / f"get_molden_{functional}_{molecule}.slurm"
         job_ids.append(run_sbatch(slurm_file))
 
-    for atom, charge in ATOMS:
-        slurm_file = job_dir / f"get_molden_{functional}_{atom}_plus_{charge}.slurm"
-        job_ids.append(run_sbatch(slurm_file))
+    if include_atoms:
+        for atom, charge in ATOMS:
+            slurm_file = job_dir / f"get_molden_{functional}_{atom}_plus_{charge}.slurm"
+            job_ids.append(run_sbatch(slurm_file))
 
     return job_ids
 
@@ -163,6 +167,7 @@ if __name__ == "__main__":
     parser.add_option("--CheckpointPath", type=str, default="")
     parser.add_option("--ModelKey", type=str, default="")
     parser.add_option("--Mode", type=str, default="generate")
+    parser.add_option("--IncludeAtoms", type=str, default="True")
     (Opts, args) = parser.parse_args()
 
     subset_molecules = [value for value in Opts.SubsetMolecules.split(",") if value]
@@ -170,6 +175,7 @@ if __name__ == "__main__":
     molecule_logs_dir = Path(Opts.MoleculeLogsDir) if Opts.MoleculeLogsDir else None
     atom_logs_dir = Path(Opts.AtomLogsDir) if Opts.AtomLogsDir else None
     experiment_root = Path(Opts.ExperimentRoot) if Opts.ExperimentRoot else Path.cwd()
+    include_atoms = str(Opts.IncludeAtoms).lower() in {"1", "true", "yes"}
 
     if Opts.Mode.lower().startswith("gen"):
         generate_jobs(
@@ -181,10 +187,12 @@ if __name__ == "__main__":
             subset_molecules=subset_molecules,
             checkpoint_path=Opts.CheckpointPath or None,
             model_key=Opts.ModelKey or None,
+            include_atoms=include_atoms,
         )
     else:
         submit_jobs(
             Opts.Functional,
             jobs_root=jobs_root,
             subset_molecules=subset_molecules,
+            include_atoms=include_atoms,
         )
