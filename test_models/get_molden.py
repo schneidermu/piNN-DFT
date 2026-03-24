@@ -88,7 +88,7 @@ def main():
     mol.verbose = 4
     print(mol._atom)
 
-    if "PBE-L" in functional:
+    if (model_key and "PBE-L" in model_key) or "PBE-L" in functional:
         mf = RKS_with_Laplacian(mol)
     else:
         mf = scf.RKS(mol)

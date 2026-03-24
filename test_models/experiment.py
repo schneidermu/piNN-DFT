@@ -22,9 +22,17 @@ def slugify(value: str) -> str:
 
 def infer_model_key(checkpoint_path: Path) -> str:
     stem = checkpoint_path.stem.lower()
+    path_str = str(checkpoint_path).lower()
     if "xalpha" in stem:
         return "NN_XALPHA"
-    if "pbe-l" in stem or "pbel" in stem:
+    if (
+        "pbe-l" in stem
+        or "pbel" in stem
+        or "nn_l" in stem
+        or "pbe-l" in path_str
+        or "nn_pbe-l" in path_str
+        or "nn_l" in path_str
+    ):
         return "NN_PBE-L"
     if "star_star" in stem or "doublestar" in stem or "double_star" in stem:
         return "NN_PBE_star_star"

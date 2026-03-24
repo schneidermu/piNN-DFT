@@ -57,9 +57,11 @@ def filter_molecules(molecules: list[str], subset_names: list[str] | None) -> li
 
 
 def build_checkpoint_args(functional: str, checkpoint_path: str | None, model_key: str | None) -> str:
-    if functional == "Nagai" or "NN" not in functional:
-        return ""
     if not checkpoint_path or not model_key:
+        return ""
+    if functional == "Nagai":
+        return ""
+    if functional in {"PBE", "PBE0", "XAlpha", "r2SCAN", "SCAN", "TPSS"}:
         return ""
     return f' --CheckpointPath "{checkpoint_path}" --ModelKey "{model_key}"'
 

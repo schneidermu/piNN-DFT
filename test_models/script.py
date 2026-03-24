@@ -185,9 +185,7 @@ def main(system_name, functional, NFinal):
     print("\n\n", system_name, "\n\n")
     coords, charge, spin = get_coords_charge_spin(system_name)
 
-    lapl = False
-    if "PBE-L" in functional:
-        lapl = True
+    lapl = bool((MODEL_KEY and "PBE-L" in MODEL_KEY) or "PBE-L" in functional)
 
     _, mf = initialize_molecule(coords, charge, spin, lapl=lapl)
     dm0 = None
