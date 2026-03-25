@@ -7,6 +7,7 @@ density descriptors, subject to exact physical constraints.
 """
 
 import sys
+import math
 from pathlib import Path
 from typing import Optional
 
@@ -233,6 +234,18 @@ class pcPBELMLOptimizerV2(nn.Module):
     def shifted_elu(x: torch.Tensor) -> torch.Tensor:
         """ELU shifted so output ≥ 0. Used for mu and gamma constraint construction."""
         return nn.functional.elu(x) + 1.0
+
+    @staticmethod
+    def gamma_activation(x: torch.Tensor, floor: float = 0.1) -> torch.Tensor:
+        """
+        Smooth lower-bounded activation for the gamma factor.
+
+        Constructed by shifting ELU left and up so that:
+        - gamma_activation(0) = 1
+        - gamma_activation(x) >= floor for all x
+        """
+        shift = math.log(1.0 - floor)
+        return nn.functional.elu(x + shift) + (1.0 + floor)
 
     @staticmethod
     def g_nn_activation(x: torch.Tensor) -> torch.Tensor:
@@ -525,8 +538,7 @@ class pcPBELMLOptimizerV2(nn.Module):
 
         # ---- Apply constraint activations ----
         beta     = self.beta_activation(beta_real  - beta_at_constraint)
-        gamma    = self.shifted_elu(gamma_real     - gamma_at_constraint)
-        gamma    = torch.clamp(gamma, min=1.0e-2)
+        gamma    = self.gamma_activation(gamma_real - gamma_at_constraint)
         mu_up    = self.shifted_elu(mu_up_real     - mu_up_at_constraint)
         mu_down  = self.shifted_elu(mu_down_real   - mu_down_at_constraint)
         kappa_up   = self.kappa_activation(kappa_up_real)
@@ -558,10 +570,5 @@ class pcPBELMLOptimizerV2(nn.Module):
         )
 
         final_constants = final_tensor * constants_batch
-
-        gamma_phys = torch.clamp(final_constants[:, 1:2], min=1.0e-2)
-        final_constants = torch.hstack(
-            [final_constants[:, :1], gamma_phys, final_constants[:, 2:]]
-        )
 
         return final_constants
