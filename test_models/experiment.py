@@ -77,6 +77,7 @@ class ExperimentManifest:
     generated_functional_name: str
     model_key: str
     smoke: bool
+    include_atoms: bool
     smoke_wtmad_databases: list[str]
     smoke_avrane_molecules: list[str]
     reference_paths: dict[str, str]
@@ -169,7 +170,12 @@ class Experiment:
         return "pending"
 
 
-def create_experiment(checkpoint: str, experiment_name: str, smoke: bool) -> Experiment:
+def create_experiment(
+    checkpoint: str,
+    experiment_name: str,
+    smoke: bool,
+    include_atoms: bool = False,
+) -> Experiment:
     ensure_runtime_directories()
 
     checkpoint_path = Path(checkpoint).resolve()
@@ -199,6 +205,7 @@ def create_experiment(checkpoint: str, experiment_name: str, smoke: bool) -> Exp
         ),
         model_key=infer_model_key(checkpoint_path),
         smoke=smoke,
+        include_atoms=include_atoms,
         smoke_wtmad_databases=list(SMOKE_WTMAD_DATABASES),
         smoke_avrane_molecules=list(SMOKE_AVRANE_MOLECULES),
         reference_paths={},
@@ -233,6 +240,7 @@ def load_experiment(manifest_path: str) -> Experiment:
         generated_functional_name=payload["generated_functional_name"],
         model_key=payload["model_key"],
         smoke=payload["smoke"],
+        include_atoms=payload.get("include_atoms", False),
         smoke_wtmad_databases=payload["smoke_wtmad_databases"],
         smoke_avrane_molecules=payload["smoke_avrane_molecules"],
         reference_paths=payload.get("reference_paths", {}),

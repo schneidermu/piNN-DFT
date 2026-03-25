@@ -30,7 +30,7 @@ def main() -> None:
             )
     if experiment.manifest.branches["avrane"].status == "running":
         try:
-            finalize_avrane_branch(experiment)
+            finalize_avrane_branch(experiment, include_atoms=experiment.manifest.include_atoms)
         except Exception as exc:
             branch = experiment.manifest.branches["avrane"]
             experiment.set_branch_status(

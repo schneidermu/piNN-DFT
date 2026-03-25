@@ -33,6 +33,7 @@ def write_reports(experiment: Experiment) -> None:
         "checkpoint_source": experiment.manifest.checkpoint_source,
         "checkpoint_copy": experiment.manifest.checkpoint_copy,
         "smoke": experiment.manifest.smoke,
+        "include_atoms": experiment.manifest.include_atoms,
         "reference_paths": experiment.manifest.reference_paths,
         "paths": asdict(experiment.manifest.paths),
         "branches": {
@@ -50,6 +51,7 @@ def write_reports(experiment: Experiment) -> None:
         f"- Checkpoint source: `{experiment.manifest.checkpoint_source}`",
         f"- Checkpoint copy: `{experiment.manifest.checkpoint_copy}`",
         f"- Smoke mode: `{experiment.manifest.smoke}`",
+        f"- Include atoms: `{experiment.manifest.include_atoms}`",
         f"- Reference paths: `{json.dumps(experiment.manifest.reference_paths, sort_keys=True)}`",
         "",
         "## WTMAD-2",

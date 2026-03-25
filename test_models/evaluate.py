@@ -36,6 +36,33 @@ def submit_finalizer_job(experiment) -> tuple[Path, str]:
     return slurm_path, job_id
 
 
+def _parse_branches(raw_value: str) -> set[str]:
+    selected = {
+        value.strip().lower()
+        for value in raw_value.split(",")
+        if value.strip()
+    }
+    if not selected or "all" in selected:
+        return {"wtmad", "avrane"}
+    invalid = selected - {"wtmad", "avrane"}
+    if invalid:
+        raise ValueError(f"Unknown branches requested: {', '.join(sorted(invalid))}")
+    return selected
+
+
+def _mark_unselected_branches(experiment, selected_branches: set[str]) -> None:
+    for branch_name in experiment.manifest.branches:
+        if branch_name not in selected_branches:
+            experiment.set_branch_status(
+                branch_name,
+                "complete",
+                message="Skipped by evaluate.py branch selection.",
+                job_ids=[],
+                artifacts=[],
+                metrics={},
+            )
+
+
 def main() -> None:
     parser = ArgumentParser(description="Run staged piNN-DFT evaluation experiments.")
     parser.add_argument("checkpoint", help="Path to the checkpoint to evaluate")
@@ -55,19 +82,40 @@ def main() -> None:
         action="store_true",
         help="Deprecated alias; waiting now happens in a finalize SLURM job by default",
     )
+    parser.add_argument(
+        "--branches",
+        default="all",
+        help="Comma-separated branches to run: all, avrane, wtmad",
+    )
+    parser.add_argument(
+        "--include-atoms",
+        action="store_true",
+        help="For avRANE runs, also generate atomic density jobs/artifacts for Max RMSD or MaxNE workflows",
+    )
     args = parser.parse_args()
 
     experiment = create_experiment(
         checkpoint=args.checkpoint,
         experiment_name=args.experiment_name,
         smoke=args.smoke,
+        include_atoms=args.include_atoms,
     )
+    selected_branches = _parse_branches(args.branches)
+    _mark_unselected_branches(experiment, selected_branches)
 
     wait_for_completion = args.inline_wait
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    branch_jobs = []
+    if "wtmad" in selected_branches:
+        branch_jobs.append(("wtmad", run_wtmad_branch, (experiment, wait_for_completion)))
+    if "avrane" in selected_branches:
+        branch_jobs.append(
+            ("avrane", run_avrane_branch, (experiment, wait_for_completion, args.include_atoms))
+        )
+
+    with ThreadPoolExecutor(max_workers=max(1, len(branch_jobs))) as executor:
         futures = [
-            executor.submit(run_wtmad_branch, experiment, wait_for_completion),
-            executor.submit(run_avrane_branch, experiment, wait_for_completion),
+            executor.submit(branch_fn, *branch_args)
+            for _, branch_fn, branch_args in branch_jobs
         ]
         for future in as_completed(futures):
             future.result()
