@@ -298,6 +298,18 @@ class pcPBELMLOptimizerV2(nn.Module):
         ones = torch.ones(x.shape[0], 2, device=x.device)
         return torch.cat([ones, x[:, S_ALPHA_INDEX:]], dim=1)
 
+    @staticmethod
+    def all_s_inf(x: torch.Tensor) -> torch.Tensor:
+        """
+        Returns descriptor tensor in the rapidly-varying limit with all reduced
+        gradient descriptors saturated to their tanh limit of 1.
+
+        This is used as an exact anchor for G_c so the correlation correction
+        factor returns to 1 as s -> inf.
+        """
+        ones_s = torch.ones(x.shape[0], 3, device=x.device)
+        return torch.cat([x[:, :2], ones_s, x[:, TAU_ALPHA_INDEX:]], dim=1)
+
     # ------------------------------------------------------------------
     # Descriptor computation
     # ------------------------------------------------------------------
@@ -373,7 +385,7 @@ class pcPBELMLOptimizerV2(nn.Module):
     # ------------------------------------------------------------------
 
     # ------------------------------------------------------------------
-    # G_c Lagrange correction (used when use_g_c=True)
+    # G_c exact-limit correction (used when use_g_c=True)
     # ------------------------------------------------------------------
 
     @staticmethod
@@ -381,42 +393,50 @@ class pcPBELMLOptimizerV2(nn.Module):
         G_c_real: torch.Tensor,
         G_c_at_x1: torch.Tensor,
         G_c_at_x2: torch.Tensor,
+        G_c_at_x3: torch.Tensor,
         x_real: torch.Tensor,
         x1: torch.Tensor,
         x2: torch.Tensor,
+        x3: torch.Tensor,
         delta: float = 1.0,
     ) -> torch.Tensor:
         """
-        2-point Lagrange polynomial correction ensuring G_c = 1 at x1 and x2.
-
-        At x = x1: distance to x1 is zero → c1 = 0 → result = f0 = 1 ✓
-        At x = x2: distance to x2 is zero → c0 = 0 → result = f1 = 1 ✓
+        3-point distance-weighted correction ensuring G_c = 1 at x1, x2, and x3.
         """
         d_sq_0  = torch.sum((x_real - x1) ** 2, dim=1, keepdim=True)
         d_sq_1  = torch.sum((x_real - x2) ** 2, dim=1, keepdim=True)
+        d_sq_2  = torch.sum((x_real - x3) ** 2, dim=1, keepdim=True)
         d_sq_01 = torch.sum((x1     - x2) ** 2, dim=1, keepdim=True)
+        d_sq_02 = torch.sum((x1     - x3) ** 2, dim=1, keepdim=True)
+        d_sq_12 = torch.sum((x2     - x3) ** 2, dim=1, keepdim=True)
 
         dis0  = torch.tanh(d_sq_0  / delta ** 2)
         dis1  = torch.tanh(d_sq_1  / delta ** 2)
+        dis2  = torch.tanh(d_sq_2  / delta ** 2)
         dis01 = torch.tanh(d_sq_01 / delta ** 2) + 1e-8
+        dis02 = torch.tanh(d_sq_02 / delta ** 2) + 1e-8
+        dis12 = torch.tanh(d_sq_12 / delta ** 2) + 1e-8
 
-        c0 = dis1 / dis01   # weight for constraint at x1 (sigma_zero)
-        c1 = dis0 / dis01   # weight for constraint at x2 (rho_inf)
+        c0 = (dis1 * dis2) / (dis01 * dis02)  # weight for constraint at x1 (sigma_zero)
+        c1 = (dis0 * dis2) / (dis01 * dis12)  # weight for constraint at x2 (rho_inf)
+        c2 = (dis0 * dis1) / (dis02 * dis12)  # weight for constraint at x3 (s_inf)
 
         f0 = G_c_real - G_c_at_x1 + 1.0
         f1 = G_c_real - G_c_at_x2 + 1.0
+        f2 = G_c_real - G_c_at_x3 + 1.0
 
-        return (f0 * c0 + f1 * c1) / (c0 + c1 + 1e-8)
+        return (f0 * c0 + f1 * c1 + f2 * c2) / (c0 + c1 + c2 + 1e-8)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Computes the 29-element modified PBE constant tensor for a batch of
         grid points.
 
-        The forward pass evaluates the network at three descriptor points per batch:
+        The forward pass evaluates the network at four descriptor points per batch:
           1. Real descriptors       → mu, beta, gamma, kappa (+ G_NN if use_g_x, + G_c if use_g_c)
           2. UEG descriptors (s→0)  → constraint anchors for mu, beta (+ G_NN if use_g_x, + G_c if use_g_c)
           3. High-density limit     → constraint anchor for gamma (+ G_c if use_g_c)
+          4. Rapidly-varying limit  → constraint anchor for G_c as s→∞
 
         Each constrained parameter is computed as activation(real - anchor),
         satisfying the physical constraint independent of network weights.
@@ -536,6 +556,20 @@ class pcPBELMLOptimizerV2(nn.Module):
         if self.use_g_c:
             G_c_at_rho_inf = c_out_at_rho_inf[:, 2].view(-1, 1)
 
+        # ---- Rapidly-varying limit (s→∞) for G_c ----
+        x_corr_s_inf         = self.all_s_inf(x_correlation_desc)
+        x_corr_s_inf_swapped = self.all_s_inf(x_corr_desc_swapped)
+        h_pre_symm_s_inf         = self.c_symmetrization_blocks(self.c_input_layers(x_corr_s_inf))
+        h_pre_symm_swapped_s_inf = self.c_symmetrization_blocks(self.c_input_layers(x_corr_s_inf_swapped))
+        h_c_constr_s_inf = self.c_post_symm_blocks(
+            (h_pre_symm_s_inf + h_pre_symm_swapped_s_inf) / 2.0
+        )
+        c_out_at_s_inf = self.c_output_layer(
+            torch.cat([h_c_constr_s_inf, hidden_x_symm], dim=1)
+        )
+        if self.use_g_c:
+            G_c_at_s_inf = c_out_at_s_inf[:, 2].view(-1, 1)
+
         # ---- Apply constraint activations ----
         beta     = self.beta_activation(beta_real  - beta_at_constraint)
         gamma    = self.gamma_activation(gamma_real - gamma_at_constraint)
@@ -553,8 +587,8 @@ class pcPBELMLOptimizerV2(nn.Module):
 
         if self.use_g_c:
             G_c_lagrange = self._lagrange_correct_Gc(
-                G_c_real, G_c_at_sigma_zero, G_c_at_rho_inf,
-                x_correlation_desc, x_corr_ueg_desc, x_corr_rho_inf,
+                G_c_real, G_c_at_sigma_zero, G_c_at_rho_inf, G_c_at_s_inf,
+                x_correlation_desc, x_corr_ueg_desc, x_corr_rho_inf, x_corr_s_inf,
             )
             g_c_part = self.shifted_elu(G_c_lagrange - 1.0)
         else:

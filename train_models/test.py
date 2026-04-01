@@ -137,6 +137,20 @@ def _rho_inf_input(N: int = 4) -> torch.Tensor:
     return torch.stack([rho, rho, sigma, 2 * sigma, sigma, tau, tau, lapl, lapl], dim=1)
 
 
+def _s_inf_input(N: int = 4) -> torch.Tensor:
+    """
+    Rapidly-varying limit proxy input for the G_c s -> inf constraint.
+
+    Very small density with very large sigma drives the tanhed reduced-gradient
+    descriptors to 1 while keeping the point distinct from the other G_c anchors.
+    """
+    rho = torch.full((N,), 1e-6)
+    sigma = torch.full((N,), 1e12)
+    tau = _C_TF * (rho + EPS_RHO) ** (5.0 / 3.0) * 2.0
+    lapl = torch.zeros(N)
+    return torch.stack([rho, rho, sigma, 2 * sigma, sigma, tau, tau, lapl, lapl], dim=1)
+
+
 def _random_input(N: int = 8, seed: int = 42) -> torch.Tensor:
     """Physically plausible random input (N, 9)."""
     torch.manual_seed(seed)
@@ -174,6 +188,7 @@ _N     = len(_RHO_A)
 _X_UEG_EXCH = _ueg_exchange_input(_RHO_A, _RHO_B)
 _X_UEG_CORR = _ueg_corr_input(_RHO_A, _RHO_B)
 _X_RHO_INF  = _rho_inf_input(_N)
+_X_S_INF    = _s_inf_input(_N)
 _X_RAND     = _random_input(8)
 
 
@@ -293,6 +308,19 @@ def test_gc_one_at_rho_inf(model_info):
     torch.testing.assert_close(
         out[:, IDX_GC], torch.ones(_N), atol=ATOL, rtol=0,
         msg="G_c must be 1 at the high-density (rho → ∞) constraint point",
+    )
+
+
+def test_gc_one_at_s_inf(model_info):
+    """G_c = 1.0 at the rapidly-varying limit proxy where s -> ∞ (use_g_c only)."""
+    m, _, use_g_c = model_info
+    if not use_g_c:
+        pytest.skip("use_g_c=False — G_c is a fixed baseline (1.0)")
+    with torch.no_grad():
+        out = m(_X_S_INF)
+    torch.testing.assert_close(
+        out[:, IDX_GC], torch.ones(_N), atol=ATOL, rtol=0,
+        msg="G_c must equal 1 at the s -> ∞ constraint point",
     )
 
 

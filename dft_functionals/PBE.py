@@ -164,7 +164,12 @@ def fH(rs, z, t, c_arr, device):
 
 
 def PBE_C(rs, z, xt, c_arr, device):
-    res_PBE_C = f_pw(rs, z, c_arr) + fH(rs, z, tt(rs, z, xt), c_arr, device)
+    h_term = fH(rs, z, tt(rs, z, xt), c_arr, device)
+    if c_arr.shape[1] > 28:
+        g_c = c_arr[:, 28]
+    else:
+        g_c = torch.ones_like(h_term)
+    res_PBE_C = f_pw(rs, z, c_arr) + g_c * h_term
     return res_PBE_C
 
 
