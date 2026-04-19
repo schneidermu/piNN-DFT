@@ -49,21 +49,38 @@ def backsplit(reaction, calc_reaction_data):
     return splitted_data
 
 
-def integration(reaction, splitted_calc_reaction_data, dispersions=dict()):
+def integrate_xc_energy(calc_reaction_data):
+    """Integrate only the XC contribution over one unsplit grid."""
+    return torch.sum(
+        calc_reaction_data["Local_energies"]
+        * (
+            calc_reaction_data["Densities"][:, 0]
+            + calc_reaction_data["Densities"][:, 1]
+        )
+        * calc_reaction_data["Weights"]
+    )
+
+
+def integration(
+    reaction,
+    splitted_calc_reaction_data,
+    dispersions=None,
+    add_hf_energies: bool = True,
+    add_dispersion=None,
+):
+    if dispersions is None:
+        dispersions = {}
+    if add_dispersion is None:
+        add_dispersion = add_hf_energies
+
     molecule_energies = dict()
     for i, component in enumerate(reaction["Components"]):
-        molecule_energies[component + str(i)] = (
-            torch.sum(
-                splitted_calc_reaction_data[component]["Local_energies"]
-                * (
-                    splitted_calc_reaction_data[component]["Densities"][:, 0]
-                    + splitted_calc_reaction_data[component]["Densities"][:, 1]
-                )
-                * (splitted_calc_reaction_data[component]["Weights"])
-            )
-            + reaction["HF_energies"][i]
+        molecule_energies[component + str(i)] = integrate_xc_energy(
+            splitted_calc_reaction_data[component]
         )
-        if dispersions:
+        if add_hf_energies:
+            molecule_energies[component + str(i)] += reaction["HF_energies"][i]
+        if add_dispersion and dispersions:
             dispersion_val = torch.tensor(dispersions.get(component, 0), device=splitted_calc_reaction_data[component]["Local_energies"].device)
             molecule_energies[component + str(i)] += dispersion_val
 
@@ -88,7 +105,7 @@ def get_energy_reaction(reaction, molecule_energies):
 
 
 def calculate_reaction_energy(
-    reaction, constants, device, rung, dft, dispersions=dict(), enhancement=None
+    reaction, constants, device, rung, dft, dispersions=None, enhancement=None
 ):
     local_energies = get_local_energies(reaction, constants, device, rung, dft, enhancement=enhancement)
     if local_energies["Local_energies"].isnan().any():
@@ -100,6 +117,17 @@ def calculate_reaction_energy(
     reaction_energy_kcal = get_energy_reaction(reaction, molecule_energies)
     del molecule_energies, splitted_calc_reaction_data
     return reaction_energy_kcal, local_energies["Local_energies"]
+
+
+def calculate_xc_energy(reaction, constants, device, rung, dft, enhancement=None):
+    """Calculate only integrated E_xc for one unsplit grid; no HF, dispersion, or backsplit."""
+    local_energies = get_local_energies(reaction, constants, device, rung, dft, enhancement=enhancement)
+    if local_energies["Local_energies"].isnan().any():
+        print(local_energies["Local_energies"].isnan().sum())
+        torch.save(local_energies["Local_energies"], "local_energies.pt")
+        raise Exception()
+    xc_energy = integrate_xc_energy(local_energies)
+    return xc_energy, local_energies["Local_energies"]
 
 
 def test_energy_PBE(test_grid, constants):

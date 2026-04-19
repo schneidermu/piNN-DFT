@@ -23,7 +23,7 @@ from dataset import collate_fn, fast_collate_fn_predopt
 from NN_models import pcPBELMLOptimizerV2
 from predopt import DatasetPredopt, predopt
 from prepare_data import load_chk
-from reaction_energy_calculation import calculate_reaction_energy, get_local_energies
+from reaction_energy_calculation import calculate_reaction_energy, calculate_xc_energy, get_local_energies
 from utils import (
     _fix_sigma_tot_closed_shell,
     _grid_to_model_input,
@@ -145,6 +145,9 @@ def vxc_collate_fn(batch: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tens
         "Grid": torch.cat([item["Grid"] for item in batch], dim=0),
         "Vrho": torch.cat([item["Vrho"] for item in batch], dim=0),
         "Weights": torch.cat([item["Weights"] for item in batch], dim=0),
+        "E_xc": torch.stack([item["E_xc"] for item in batch], dim=0),
+        "Names": [item["Name"] for item in batch],
+        "GridLengths": torch.tensor([item["Grid"].shape[0] for item in batch], dtype=torch.long),
     }
 
 
@@ -444,6 +447,26 @@ def batch_fchem(
     return torch.sum(torch.stack(values)) / len(values)
 
 
+def batch_exc(
+    system_names: List[str],
+    pred_exc: torch.Tensor,
+    ref_exc: torch.Tensor,
+) -> torch.Tensor:
+    err_dict: Dict[str, List[List[torch.Tensor]]] = {}
+    for system_name, pred, ref in zip(system_names, pred_exc, ref_exc):
+        err_dict.setdefault(system_name, [[], []])
+        err_dict[system_name][0].append(pred)
+        err_dict[system_name][1].append(ref)
+
+    values = []
+    for preds, refs in err_dict.values():
+        system_predictions = torch.stack(preds)
+        system_ref = torch.stack(refs)
+        mse = nn.functional.mse_loss(system_predictions, system_ref)
+        values.append(torch.sqrt(1e-20 + mse))
+    return torch.sum(torch.stack(values)) / len(values)
+
+
 def update_db_errors(
     total_database_errors: Dict[str, List[float]],
     current_bases: List[str],
@@ -453,6 +476,17 @@ def update_db_errors(
     for base, error in zip(current_bases, reaction_energy.detach() - y_batch.detach()):
         total_database_errors.setdefault(base, [])
         total_database_errors[base].append(float(torch.abs(error).item()))
+
+
+def update_exc_errors(
+    total_exc_errors: Dict[str, List[float]],
+    system_names: List[str],
+    pred_exc: torch.Tensor,
+    ref_exc: torch.Tensor,
+) -> None:
+    for system_name, error in zip(system_names, pred_exc.detach() - ref_exc.detach()):
+        total_exc_errors.setdefault(system_name, [])
+        total_exc_errors[system_name].append(float(torch.abs(error).item()))
 
 
 def compute_fchem_from_errors(total_database_errors: Dict[str, List[float]]) -> Tuple[float, Dict[str, float]]:
@@ -466,6 +500,21 @@ def compute_fchem_from_errors(total_database_errors: Dict[str, List[float]]) -> 
         per_db[db] = rmse
         total += FCHEM_VALIDATION.get(db, 1) * rmse
     return total, per_db
+
+
+def compute_exc_from_errors(total_exc_errors: Dict[str, List[float]]) -> Tuple[float, Dict[str, float]]:
+    per_system = {}
+    values = []
+    for system_name in sorted(total_exc_errors):
+        errors = np.asarray(total_exc_errors[system_name], dtype=np.float64)
+        if errors.size == 0:
+            continue
+        rmse = float(np.sqrt(np.mean(np.square(errors))))
+        per_system[system_name] = rmse
+        values.append(rmse)
+    if not values:
+        return 0.0, per_system
+    return float(np.mean(values)), per_system
 
 
 def vxc_loss(
@@ -515,6 +564,47 @@ def vxc_loss(
     loss_integral = torch.sum(rho_total_detached * weights * diff_sq)
     norm_factor = torch.sum(rho_total_detached * weights)
     return loss_integral / (norm_factor + 1e-10)
+
+
+def exc_loss(
+    model: nn.Module,
+    X_batch: Dict[str, torch.Tensor],
+    device: torch.device,
+    rung: str = "GGA",
+    dft: str = "PBE",
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    grid_raw = X_batch["Grid"].to(device).clone().detach()
+    weights = X_batch["Weights"].to(device)
+    target_exc = X_batch["E_xc"].to(device)
+    lengths = X_batch["GridLengths"].to(device)
+
+    pred_exc_values = []
+    start = 0
+    for length in lengths.tolist():
+        stop = start + int(length)
+        grid_system = grid_raw[start:stop]
+        weights_system = weights[start:stop]
+        rho = grid_system[:, 4:6]
+        sigma = _fix_sigma_tot_closed_shell(grid_system[:, 6:9].clone())
+        sigma_pbe = torch.stack(
+            [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]], dim=1
+        )
+        model_input = _grid_to_model_input(grid_system, fix_closed_shell_sigma=True)
+        constants = model(model_input)
+        pred_exc, _ = calculate_xc_energy(
+            {"Densities": rho, "Gradients": sigma_pbe, "Weights": weights_system},
+            constants,
+            device,
+            rung=rung,
+            dft=dft,
+            enhancement=None,
+        )
+        pred_exc_values.append(pred_exc)
+        start = stop
+
+    pred_exc_batch = torch.stack(pred_exc_values)
+    loss = batch_exc(list(X_batch["Names"]), pred_exc_batch, target_exc)
+    return loss, pred_exc_batch, target_exc
 
 
 def get_trainable_parameters(model: nn.Module) -> List[torch.nn.Parameter]:
@@ -598,11 +688,41 @@ def allreduce_parameter_grads(parameters: List[torch.nn.Parameter], world_size: 
         parameter.grad.div_(world_size)
 
 
+def resolve_objective_params(params: Dict[str, Any]) -> Dict[str, Any]:
+    resolved = dict(params)
+    global_strategy = resolved.get("gradient_merge_strategy", "sum")
+    resolved.setdefault("reaction_gradient_merge_strategy", global_strategy)
+    resolved.setdefault("vxc_gradient_merge_strategy", global_strategy)
+    resolved.setdefault("exc_gradient_merge_strategy", global_strategy)
+    resolved.setdefault("exc_loss_scale", 0.0)
+    resolved.setdefault("exc_grad_clip", "none")
+    resolved.setdefault("exc_grad_scale", 1.0)
+    return resolved
+
+
+def add_objective_gradients(
+    parameters: List[torch.nn.Parameter],
+    weighted_loss: torch.Tensor,
+    merge_strategy: str,
+    grad_clip,
+    grad_scale: float = 1.0,
+) -> None:
+    grads = compute_grad_list(weighted_loss, parameters)
+    if merge_strategy == "clip_then_sum":
+        clip_value = None if grad_clip == "none" else float(grad_clip)
+        grads, _ = clip_gradient_list_by_global_norm(grads, clip_value)
+    elif merge_strategy != "sum":
+        raise ValueError(f"Unsupported gradient merge strategy: {merge_strategy}")
+    grads = scale_gradient_list(grads, float(grad_scale))
+    add_gradient_list_to_parameters(parameters, grads)
+
+
 def suggest_params(trial: Any) -> Dict[str, Any]:
     return {
         "lr_train": trial.suggest_float("lr_train", 1e-4, 1e-3, log=True),
         "accum_iter": trial.suggest_categorical("accum_iter", [1, 2, 3]),
         "vxc_loss_scale": trial.suggest_categorical("vxc_loss_scale", [50, 100, 150, 200]),
+        "exc_loss_scale": trial.suggest_categorical("exc_loss_scale", [0.0, 1.0, 5.0, 10.0]),
         "reaction_grad_scale": trial.suggest_categorical(
             "reaction_grad_scale", [0.1, 0.3, 0.5, 0.7, 1.0]
         ),
@@ -610,8 +730,13 @@ def suggest_params(trial: Any) -> Dict[str, Any]:
             "reaction_grad_clip", ["none", 100.0, 300.0, 1000.0]
         ),
         "vxc_grad_clip": trial.suggest_categorical("vxc_grad_clip", [1.0, 2.0, 3.0, 5.0]),
+        "exc_grad_clip": trial.suggest_categorical("exc_grad_clip", ["none", 1.0, 2.0, 5.0]),
+        "exc_grad_scale": trial.suggest_categorical("exc_grad_scale", [0.1, 0.3, 0.5, 1.0]),
         "gradient_merge_strategy": trial.suggest_categorical(
             "gradient_merge_strategy", ["sum", "clip_then_sum"]
+        ),
+        "exc_gradient_merge_strategy": trial.suggest_categorical(
+            "exc_gradient_merge_strategy", ["sum", "clip_then_sum"]
         ),
     }
 
@@ -742,11 +867,13 @@ def train_one_epoch(
     world_size: int,
     epoch: int,
 ) -> Tuple[Dict[str, float], Dict[str, List[float]], bool]:
+    params = resolve_objective_params(params)
     model.train()
     trainable_parameters = get_trainable_parameters(model)
     optimizer.zero_grad(set_to_none=True)
 
     train_db_errors: Dict[str, List[float]] = collections.defaultdict(list)
+    train_exc_errors: Dict[str, List[float]] = collections.defaultdict(list)
     n_train = len(train_loader)
     n_vxc = len(vxc_train_loader)
     if n_train == 0 or n_vxc == 0:
@@ -759,6 +886,7 @@ def train_one_epoch(
     loss_sum = 0.0
     reaction_loss_sum = 0.0
     vxc_loss_sum = 0.0
+    exc_loss_sum = 0.0
     mae_sum = 0.0
     optimizer_steps = 0
     failed = False
@@ -791,47 +919,74 @@ def train_one_epoch(
         )
         reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
         vxc_term = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=True)
+        exc_term, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
 
         weighted_reaction_loss = OMEGA * reaction_loss / params["accum_iter"]
         weighted_vxc_loss = OMEGA * params["vxc_loss_scale"] * vxc_term / params["accum_iter"]
-        full_loss = weighted_reaction_loss + weighted_vxc_loss
+        weighted_exc_loss = OMEGA * params["exc_loss_scale"] * exc_term / params["accum_iter"]
+        full_loss = weighted_reaction_loss + weighted_vxc_loss + weighted_exc_loss
 
-        microbatch_failed = not torch.isfinite(reaction_energy).all() or not torch.isfinite(full_loss)
+        microbatch_failed = (
+            not torch.isfinite(reaction_energy).all()
+            or not torch.isfinite(pred_exc).all()
+            or not torch.isfinite(full_loss)
+        )
         microbatch_failed = sync_failure(microbatch_failed, device)
         if microbatch_failed:
             failed = True
             break
 
         do_step = ((batch_idx + 1) % params["accum_iter"] == 0) or ((batch_idx + 1) == n_steps)
-        if params["gradient_merge_strategy"] == "sum":
+        strategies = [
+            params["reaction_gradient_merge_strategy"],
+            params["vxc_gradient_merge_strategy"],
+            params["exc_gradient_merge_strategy"],
+        ]
+        manual_merge = any(strategy != "sum" for strategy in strategies)
+        if not manual_merge:
             sync_context = nullcontext() if do_step else model.no_sync()
             with sync_context:
                 full_loss.backward()
         else:
-            reaction_grads = compute_grad_list(weighted_reaction_loss, trainable_parameters)
-            reaction_clip = None if params["reaction_grad_clip"] == "none" else float(params["reaction_grad_clip"])
-            reaction_grads, _ = clip_gradient_list_by_global_norm(reaction_grads, reaction_clip)
-            reaction_grads = scale_gradient_list(
-                reaction_grads,
-                float(params["reaction_grad_scale"]),
+            add_objective_gradients(
+                trainable_parameters,
+                weighted_reaction_loss,
+                params["reaction_gradient_merge_strategy"],
+                params["reaction_grad_clip"],
+                params["reaction_grad_scale"],
             )
-
-            vxc_grads = compute_grad_list(weighted_vxc_loss, trainable_parameters)
-            vxc_grads, _ = clip_gradient_list_by_global_norm(vxc_grads, float(params["vxc_grad_clip"]))
-
-            add_gradient_list_to_parameters(trainable_parameters, reaction_grads)
-            add_gradient_list_to_parameters(trainable_parameters, vxc_grads)
+            add_objective_gradients(
+                trainable_parameters,
+                weighted_vxc_loss,
+                params["vxc_gradient_merge_strategy"],
+                params["vxc_grad_clip"],
+                1.0,
+            )
+            if float(params["exc_loss_scale"]) != 0.0:
+                add_objective_gradients(
+                    trainable_parameters,
+                    weighted_exc_loss,
+                    params["exc_gradient_merge_strategy"],
+                    params["exc_grad_clip"],
+                    params["exc_grad_scale"],
+                )
 
         update_db_errors(train_db_errors, current_bases, reaction_energy, y_batch)
-        loss_sum += float((OMEGA * reaction_loss + OMEGA * params["vxc_loss_scale"] * vxc_term).item())
+        update_exc_errors(train_exc_errors, list(X_vxc["Names"]), pred_exc, ref_exc)
+        loss_sum += float((
+            OMEGA * reaction_loss
+            + OMEGA * params["vxc_loss_scale"] * vxc_term
+            + OMEGA * params["exc_loss_scale"] * exc_term
+        ).item())
         reaction_loss_sum += float(reaction_loss.item())
         vxc_loss_sum += float(vxc_term.item())
+        exc_loss_sum += float(exc_term.item())
         mae_sum += float(nn.functional.l1_loss(reaction_energy, y_batch).item())
 
         if not do_step:
             continue
 
-        if params["gradient_merge_strategy"] == "clip_then_sum":
+        if manual_merge:
             allreduce_parameter_grads(trainable_parameters, world_size)
 
         step_failed = not grads_are_finite(trainable_parameters)
@@ -849,7 +1004,7 @@ def train_one_epoch(
         return {}, {}, True
 
     scalar_tensor = torch.tensor(
-        [loss_sum, reaction_loss_sum, vxc_loss_sum, mae_sum, float(n_steps), float(optimizer_steps)],
+        [loss_sum, reaction_loss_sum, vxc_loss_sum, exc_loss_sum, mae_sum, float(n_steps), float(optimizer_steps)],
         device=device,
     )
     dist.all_reduce(scalar_tensor, op=dist.ReduceOp.SUM)
@@ -861,13 +1016,23 @@ def train_one_epoch(
             global_errors[db].extend(errs)
     train_fchem, train_per_db = compute_fchem_from_errors(global_errors)
 
+    gathered_exc_errors = gather_object(dict(train_exc_errors), world_size)
+    global_exc_errors: Dict[str, List[float]] = collections.defaultdict(list)
+    for local_dict in gathered_exc_errors:
+        for system_name, errs in local_dict.items():
+            global_exc_errors[system_name].extend(errs)
+    train_exc, train_per_system_exc = compute_exc_from_errors(global_exc_errors)
+
     metrics = {
-        "train_full_loss": float(scalar_tensor[0].item() / max(scalar_tensor[4].item(), 1.0)),
-        "train_reaction_loss": float(scalar_tensor[1].item() / max(scalar_tensor[4].item(), 1.0)),
-        "train_vxc": float(scalar_tensor[2].item() / max(scalar_tensor[4].item(), 1.0)),
-        "train_mae": float(scalar_tensor[3].item() / max(scalar_tensor[4].item(), 1.0)),
+        "train_full_loss": float(scalar_tensor[0].item() / max(scalar_tensor[5].item(), 1.0)),
+        "train_reaction_loss": float(scalar_tensor[1].item() / max(scalar_tensor[5].item(), 1.0)),
+        "train_vxc": float(scalar_tensor[2].item() / max(scalar_tensor[5].item(), 1.0)),
+        "train_exc_loss": float(scalar_tensor[3].item() / max(scalar_tensor[5].item(), 1.0)),
+        "train_mae": float(scalar_tensor[4].item() / max(scalar_tensor[5].item(), 1.0)),
         "train_fchem": train_fchem,
-        "optimizer_steps": int(scalar_tensor[5].item()),
+        "train_exc": train_exc,
+        "train_per_system_exc_rmse": train_per_system_exc,
+        "optimizer_steps": int(scalar_tensor[6].item()),
     }
     return metrics, dict(train_per_db), False
 
@@ -881,9 +1046,11 @@ def validate_one_epoch(
     dispersions: Dict[str, float],
     world_size: int,
 ) -> Tuple[Dict[str, float], Dict[str, float], bool]:
+    params = resolve_objective_params(params)
     model.eval()
 
     val_db_errors: Dict[str, List[float]] = collections.defaultdict(list)
+    val_exc_errors: Dict[str, List[float]] = collections.defaultdict(list)
     n_val = len(val_loader)
     n_vxc = len(vxc_val_loader)
     if n_val == 0 or n_vxc == 0:
@@ -895,6 +1062,7 @@ def validate_one_epoch(
 
     reaction_loss_sum = 0.0
     vxc_loss_sum_value = 0.0
+    exc_loss_sum_value = 0.0
     full_loss_sum = 0.0
     mae_sum = 0.0
     sample_count = 0
@@ -933,18 +1101,30 @@ def validate_one_epoch(
 
         with torch.enable_grad():
             loss_vxc_val = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=False)
+            loss_exc_val, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
 
-        batch_failed = not torch.isfinite(reaction_energy).all() or not torch.isfinite(loss_vxc_val)
+        batch_failed = (
+            not torch.isfinite(reaction_energy).all()
+            or not torch.isfinite(loss_vxc_val)
+            or not torch.isfinite(pred_exc).all()
+            or not torch.isfinite(loss_exc_val)
+        )
         batch_failed = sync_failure(batch_failed, device)
         if batch_failed:
             failed = True
             break
 
         update_db_errors(val_db_errors, current_bases, reaction_energy, y_batch)
+        update_exc_errors(val_exc_errors, list(X_vxc["Names"]), pred_exc, ref_exc)
         curr_batch_size = int(y_batch.size(0))
         reaction_loss_sum += float(reaction_loss.item()) * curr_batch_size
         vxc_loss_sum_value += float(loss_vxc_val.item())
-        full_loss_sum += float((OMEGA * reaction_loss + OMEGA * params["vxc_loss_scale"] * loss_vxc_val).item()) * curr_batch_size
+        exc_loss_sum_value += float(loss_exc_val.item())
+        full_loss_sum += float((
+            OMEGA * reaction_loss
+            + OMEGA * params["vxc_loss_scale"] * loss_vxc_val
+            + OMEGA * params["exc_loss_scale"] * loss_exc_val
+        ).item()) * curr_batch_size
         mae_sum += float(mae.item()) * curr_batch_size
         sample_count += curr_batch_size
         vxc_step_count += 1
@@ -953,7 +1133,15 @@ def validate_one_epoch(
         return {}, {}, True
 
     scalar_tensor = torch.tensor(
-        [reaction_loss_sum, vxc_loss_sum_value, full_loss_sum, mae_sum, float(sample_count), float(vxc_step_count)],
+        [
+            reaction_loss_sum,
+            vxc_loss_sum_value,
+            exc_loss_sum_value,
+            full_loss_sum,
+            mae_sum,
+            float(sample_count),
+            float(vxc_step_count),
+        ],
         device=device,
     )
     dist.all_reduce(scalar_tensor, op=dist.ReduceOp.SUM)
@@ -965,14 +1153,24 @@ def validate_one_epoch(
             global_errors[db].extend(errs)
     val_fchem, val_per_db = compute_fchem_from_errors(global_errors)
 
-    total_samples = max(int(scalar_tensor[4].item()), 1)
-    total_vxc_steps = max(int(scalar_tensor[5].item()), 1)
+    gathered_exc_errors = gather_object(dict(val_exc_errors), world_size)
+    global_exc_errors: Dict[str, List[float]] = collections.defaultdict(list)
+    for local_dict in gathered_exc_errors:
+        for system_name, errs in local_dict.items():
+            global_exc_errors[system_name].extend(errs)
+    val_exc, val_per_system_exc = compute_exc_from_errors(global_exc_errors)
+
+    total_samples = max(int(scalar_tensor[5].item()), 1)
+    total_vxc_steps = max(int(scalar_tensor[6].item()), 1)
     metrics = {
         "val_reaction_loss": float(scalar_tensor[0].item() / total_samples),
         "val_vxc": float(scalar_tensor[1].item() / total_vxc_steps),
-        "val_full_loss": float(scalar_tensor[2].item() / total_samples),
-        "val_mae": float(scalar_tensor[3].item() / total_samples),
+        "val_exc_loss": float(scalar_tensor[2].item() / total_vxc_steps),
+        "val_full_loss": float(scalar_tensor[3].item() / total_samples),
+        "val_mae": float(scalar_tensor[4].item() / total_samples),
         "val_fchem": val_fchem,
+        "val_exc": val_exc,
+        "val_per_system_exc_rmse": val_per_system_exc,
     }
     metrics["val_joint_score"] = max(metrics["val_fchem"] / 50.0, metrics["val_vxc"] / 1.0)
     return metrics, dict(val_per_db), False
@@ -1090,6 +1288,7 @@ def run_trial(
     epoch_history: List[Dict[str, Any]] = []
     min_val_fchem_any_epoch = math.inf
     min_val_vxc_any_epoch = math.inf
+    min_val_exc_any_epoch = math.inf
     best_val_full_loss_any_epoch = math.inf
     current_selected_key = None
     selected_checkpoint_path = None
@@ -1105,6 +1304,7 @@ def run_trial(
     for epoch in range(args.n_train):
         epoch_number = epoch + 1
         effective_params = resolve_epoch_params(params, epoch_number=epoch_number, n_train=args.n_train)
+        effective_params = resolve_objective_params(effective_params)
         train_dataset = loaders["train_loader"].dataset
         if hasattr(train_dataset, "resample"):
             train_dataset.resample(epoch)
@@ -1147,12 +1347,16 @@ def run_trial(
             "epoch": epoch_number,
             "train_fchem": train_metrics["train_fchem"],
             "train_vxc": train_metrics["train_vxc"],
+            "train_exc": train_metrics["train_exc"],
+            "train_exc_loss": train_metrics["train_exc_loss"],
             "train_full_loss": train_metrics["train_full_loss"],
             "train_reaction_loss": train_metrics["train_reaction_loss"],
             "train_mae": train_metrics["train_mae"],
             "optimizer_steps": train_metrics["optimizer_steps"],
             "val_fchem": val_metrics["val_fchem"],
             "val_vxc": val_metrics["val_vxc"],
+            "val_exc": val_metrics["val_exc"],
+            "val_exc_loss": val_metrics["val_exc_loss"],
             "val_full_loss": val_metrics["val_full_loss"],
             "val_reaction_loss": val_metrics["val_reaction_loss"],
             "val_mae": val_metrics["val_mae"],
@@ -1160,20 +1364,29 @@ def run_trial(
             "learning_rate": float(optimizer.param_groups[0]["lr"]),
             "val_per_database_rmse": val_per_db,
             "train_per_database_rmse": train_per_db,
+            "val_per_system_exc_rmse": val_metrics["val_per_system_exc_rmse"],
+            "train_per_system_exc_rmse": train_metrics["train_per_system_exc_rmse"],
             "phase_name": effective_params.get("phase_name", "static"),
             "phase_start_epoch": int(effective_params.get("phase_start_epoch", 1)),
             "phase_end_epoch": int(effective_params.get("phase_end_epoch", args.n_train)),
             "effective_gradient_merge_strategy": effective_params["gradient_merge_strategy"],
+            "effective_reaction_gradient_merge_strategy": effective_params["reaction_gradient_merge_strategy"],
+            "effective_vxc_gradient_merge_strategy": effective_params["vxc_gradient_merge_strategy"],
             "effective_accum_iter": int(effective_params["accum_iter"]),
             "effective_reaction_grad_clip": effective_params["reaction_grad_clip"],
             "effective_reaction_grad_scale": float(effective_params["reaction_grad_scale"]),
             "effective_vxc_grad_clip": float(effective_params["vxc_grad_clip"]),
             "effective_vxc_loss_scale": float(effective_params["vxc_loss_scale"]),
+            "effective_exc_loss_scale": float(effective_params["exc_loss_scale"]),
+            "effective_exc_grad_clip": effective_params["exc_grad_clip"],
+            "effective_exc_grad_scale": float(effective_params["exc_grad_scale"]),
+            "effective_exc_gradient_merge_strategy": effective_params["exc_gradient_merge_strategy"],
         }
         epoch_history.append(row)
 
         min_val_fchem_any_epoch = min(min_val_fchem_any_epoch, row["val_fchem"])
         min_val_vxc_any_epoch = min(min_val_vxc_any_epoch, row["val_vxc"])
+        min_val_exc_any_epoch = min(min_val_exc_any_epoch, row["val_exc"])
         best_val_full_loss_any_epoch = min(best_val_full_loss_any_epoch, row["val_full_loss"])
 
         candidate_key = checkpoint_row_key(row)
@@ -1188,6 +1401,7 @@ def run_trial(
                 f"train_fchem={row['train_fchem']:.8f} "
                 f"val_fchem={row['val_fchem']:.8f} "
                 f"val_vxc={row['val_vxc']:.8f} "
+                f"val_exc={row['val_exc']:.8f} "
                 f"joint_score={row['val_joint_score']:.8f}"
             )
 
@@ -1209,9 +1423,11 @@ def run_trial(
         "selected_train_fchem": float(selected["train_fchem"]),
         "selected_val_fchem": float(selected["val_fchem"]),
         "selected_val_vxc": float(selected["val_vxc"]),
+        "selected_val_exc": float(selected["val_exc"]),
         "selected_phase_name": selected.get("phase_name"),
         "min_val_fchem_any_epoch": float(min_val_fchem_any_epoch),
         "min_val_vxc_any_epoch": float(min_val_vxc_any_epoch),
+        "min_val_exc_any_epoch": float(min_val_exc_any_epoch),
         "best_val_full_loss_any_epoch": float(best_val_full_loss_any_epoch),
         "epoch_history": epoch_history,
         "selected_checkpoint_path": str(selected_checkpoint_path) if selected_checkpoint_path is not None else None,
@@ -1341,8 +1557,10 @@ def main() -> None:
                     trial.set_user_attr("selected_joint_score", trial_result["selected_joint_score"])
                     trial.set_user_attr("selected_val_fchem", trial_result["selected_val_fchem"])
                     trial.set_user_attr("selected_val_vxc", trial_result["selected_val_vxc"])
+                    trial.set_user_attr("selected_val_exc", trial_result["selected_val_exc"])
                     trial.set_user_attr("min_val_fchem_any_epoch", trial_result["min_val_fchem_any_epoch"])
                     trial.set_user_attr("min_val_vxc_any_epoch", trial_result["min_val_vxc_any_epoch"])
+                    trial.set_user_attr("min_val_exc_any_epoch", trial_result["min_val_exc_any_epoch"])
                     trial.set_user_attr("best_val_full_loss_any_epoch", trial_result["best_val_full_loss_any_epoch"])
                     trial.set_user_attr("shared_preopt_checkpoint_path", str(shared_preopt_checkpoint))
                     if trial_result.get("selected_checkpoint_path") is not None:
@@ -1356,7 +1574,8 @@ def main() -> None:
                     print(
                         f"Completed trial {trial.number}: selected_epoch={trial_result['selected_epoch']} "
                         f"selected_val_fchem={trial_result['selected_val_fchem']:.8f} "
-                        f"selected_val_vxc={trial_result['selected_val_vxc']:.8f}"
+                        f"selected_val_vxc={trial_result['selected_val_vxc']:.8f} "
+                        f"selected_val_exc={trial_result['selected_val_exc']:.8f}"
                     )
             dist.barrier()
 

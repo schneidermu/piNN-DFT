@@ -5,7 +5,30 @@ import h5py
 import torch
 import numpy as np
 from pathlib import Path
-from sklearn.model_selection import train_test_split
+try:
+    from sklearn.model_selection import train_test_split
+except ModuleNotFoundError:
+    train_test_split = None
+
+
+def split_train_val(data, test_size, random_state):
+    if train_test_split is not None:
+        return train_test_split(
+            data,
+            test_size=test_size,
+            random_state=random_state,
+            shuffle=True,
+        )
+
+    rng = np.random.default_rng(random_state)
+    indices = np.arange(len(data))
+    rng.shuffle(indices)
+    n_val = int(np.ceil(len(data) * test_size))
+    n_val = min(max(n_val, 1), len(data) - 1)
+    val_indices = set(indices[:n_val].tolist())
+    train_data = [item for idx, item in enumerate(data) if idx not in val_indices]
+    val_data = [item for idx, item in enumerate(data) if idx in val_indices]
+    return train_data, val_data
 
 def load_vxc_from_h5(h5_path):
     """
@@ -97,12 +120,7 @@ def prepare_vxc(h5_dir="h5_vrho", output_dir="checkpoints", test_size=0.1, rando
         train_data = valid_data
         val_data = valid_data
     else:
-        train_data, val_data = train_test_split(
-            valid_data, 
-            test_size=test_size, 
-            random_state=random_state,
-            shuffle=True
-        )
+        train_data, val_data = split_train_val(valid_data, test_size, random_state)
 
     print(f"Split: {len(train_data)} Train, {len(val_data)} Validation.")
 
