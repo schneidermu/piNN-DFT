@@ -1,5 +1,6 @@
 import os
 import pickle
+import argparse
 import h5py
 import torch
 import numpy as np
@@ -8,7 +9,7 @@ from sklearn.model_selection import train_test_split
 
 def load_vxc_from_h5(h5_path):
     """
-    Loads Grid, Vrho, and Weights from an H5 file.
+    Loads Grid, Vrho, Weights, and exact E_xc from an H5 file.
     """
     if not os.path.exists(h5_path):
         return None
@@ -39,8 +40,14 @@ def load_vxc_from_h5(h5_path):
             # 3. Load Grid (Input features: rho, grad, tau, etc.)
             if 'grid' not in f: return None
             grid = torch.tensor(f['grid'][:], dtype=torch.float32)
+
+            # 4. Load exact integrated exchange-correlation energy.
+            if 'E_xc' not in f:
+                print(f"Skipping {h5_path}: No 'E_xc' dataset.")
+                return None
+            e_xc = torch.tensor(float(f['E_xc'][()]), dtype=torch.float32)
             
-            # 4. Check Shapes
+            # 5. Check Shapes
             if not (grid.shape[0] == vrho.shape[0] == weights.shape[0]):
                 print(f"Skipping {h5_path}: Shape mismatch G{grid.shape} V{vrho.shape} W{weights.shape}")
                 return None
@@ -49,7 +56,8 @@ def load_vxc_from_h5(h5_path):
                 "Name": Path(h5_path).stem,
                 "Grid": grid,
                 "Vrho": vrho,
-                "Weights": weights
+                "Weights": weights,
+                "E_xc": e_xc,
             }
     except Exception as e:
         print(f"Error loading {h5_path}: {e}")
@@ -114,8 +122,16 @@ def prepare_vxc(h5_dir="h5_vrho", output_dir="checkpoints", test_size=0.1, rando
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--h5-dir", default="h5_vrho_from_mrks")
+    parser.add_argument("--output-dir", default="checkpoints")
+    parser.add_argument("--test-size", type=float, default=0.2)
+    parser.add_argument("--random-state", type=int, default=42)
+    args = parser.parse_args()
+
     prepare_vxc(
-        h5_dir="h5_vrho", 
-        output_dir="checkpoints", 
-        test_size=0.2
+        h5_dir=args.h5_dir,
+        output_dir=args.output_dir,
+        test_size=args.test_size,
+        random_state=args.random_state,
     )
