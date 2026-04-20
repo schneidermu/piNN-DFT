@@ -70,6 +70,8 @@ MEAN_WEIGHT = sum(
     FCHEM_VALIDATION[db] * FREQ_WEIGHTS[db] for db in FCHEM_VALIDATION
 ) / len(FCHEM_VALIDATION)
 
+HARTREE2KCAL = 627.5095
+
 
 class VxcDataset(Dataset):
     def __init__(self, data_list: list) -> None:
@@ -464,7 +466,7 @@ def batch_exc(
         system_ref = torch.stack(refs)
         mse = nn.functional.mse_loss(system_predictions, system_ref)
         values.append(torch.sqrt(1e-20 + mse))
-    return torch.sum(torch.stack(values)) / len(values)
+    return HARTREE2KCAL * torch.sum(torch.stack(values)) / len(values)
 
 
 def update_db_errors(
@@ -486,7 +488,7 @@ def update_exc_errors(
 ) -> None:
     for system_name, error in zip(system_names, pred_exc.detach() - ref_exc.detach()):
         total_exc_errors.setdefault(system_name, [])
-        total_exc_errors[system_name].append(float(torch.abs(error).item()))
+        total_exc_errors[system_name].append(float(torch.abs(error).item()) * HARTREE2KCAL)
 
 
 def compute_fchem_from_errors(total_database_errors: Dict[str, List[float]]) -> Tuple[float, Dict[str, float]]:
@@ -921,9 +923,9 @@ def train_one_epoch(
         vxc_term = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=True)
         exc_term, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
 
-        weighted_reaction_loss = OMEGA * reaction_loss / params["accum_iter"]
+        weighted_reaction_loss = reaction_loss / params["accum_iter"]
         weighted_vxc_loss = OMEGA * params["vxc_loss_scale"] * vxc_term / params["accum_iter"]
-        weighted_exc_loss = OMEGA * params["exc_loss_scale"] * exc_term / params["accum_iter"]
+        weighted_exc_loss = params["exc_loss_scale"] * exc_term / params["accum_iter"]
         full_loss = weighted_reaction_loss + weighted_vxc_loss + weighted_exc_loss
 
         microbatch_failed = (
@@ -974,9 +976,9 @@ def train_one_epoch(
         update_db_errors(train_db_errors, current_bases, reaction_energy, y_batch)
         update_exc_errors(train_exc_errors, list(X_vxc["Names"]), pred_exc, ref_exc)
         loss_sum += float((
-            OMEGA * reaction_loss
+            reaction_loss
             + OMEGA * params["vxc_loss_scale"] * vxc_term
-            + OMEGA * params["exc_loss_scale"] * exc_term
+            + params["exc_loss_scale"] * exc_term
         ).item())
         reaction_loss_sum += float(reaction_loss.item())
         vxc_loss_sum += float(vxc_term.item())
@@ -1121,9 +1123,9 @@ def validate_one_epoch(
         vxc_loss_sum_value += float(loss_vxc_val.item())
         exc_loss_sum_value += float(loss_exc_val.item())
         full_loss_sum += float((
-            OMEGA * reaction_loss
+            reaction_loss
             + OMEGA * params["vxc_loss_scale"] * loss_vxc_val
-            + OMEGA * params["exc_loss_scale"] * loss_exc_val
+            + params["exc_loss_scale"] * loss_exc_val
         ).item()) * curr_batch_size
         mae_sum += float(mae.item()) * curr_batch_size
         sample_count += curr_batch_size
