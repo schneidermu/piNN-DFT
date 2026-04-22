@@ -926,34 +926,6 @@ def train_one_epoch(
         grid = reaction_batch["Grid"].to(device, non_blocking=True)
         y_batch = y_batch.to(device, non_blocking=True)
 
-        predictions = model(grid)
-        reaction_energy, _ = calculate_reaction_energy(
-            reaction_batch,
-            predictions,
-            device,
-            rung="GGA",
-            dft="PBE",
-            dispersions=dispersions,
-        )
-        reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-        vxc_term = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=True)
-        exc_term, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
-
-        weighted_reaction_loss = reaction_loss / params["accum_iter"]
-        weighted_vxc_loss = OMEGA * params["vxc_loss_scale"] * vxc_term / params["accum_iter"]
-        weighted_exc_loss = params["exc_loss_scale"] * exc_term / params["accum_iter"]
-        full_loss = weighted_reaction_loss + weighted_vxc_loss + weighted_exc_loss
-
-        microbatch_failed = (
-            not torch.isfinite(reaction_energy).all()
-            or not torch.isfinite(pred_exc).all()
-            or not torch.isfinite(full_loss)
-        )
-        microbatch_failed = sync_failure(microbatch_failed, device)
-        if microbatch_failed:
-            failed = True
-            break
-
         do_step = ((batch_idx + 1) % params["accum_iter"] == 0) or ((batch_idx + 1) == n_steps)
         strategies = [
             params["reaction_gradient_merge_strategy"],
@@ -962,11 +934,59 @@ def train_one_epoch(
         ]
         manual_merge = any(strategy != "sum" for strategy in strategies)
         if not manual_merge:
+            predictions = model(grid)
+            reaction_energy, _ = calculate_reaction_energy(
+                reaction_batch,
+                predictions,
+                device,
+                rung="GGA",
+                dft="PBE",
+                dispersions=dispersions,
+            )
+            reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
+            vxc_term = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=True)
+            exc_term, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
+
+            weighted_reaction_loss = reaction_loss / params["accum_iter"]
+            weighted_vxc_loss = OMEGA * params["vxc_loss_scale"] * vxc_term / params["accum_iter"]
+            weighted_exc_loss = params["exc_loss_scale"] * exc_term / params["accum_iter"]
+            full_loss = weighted_reaction_loss + weighted_vxc_loss + weighted_exc_loss
+
+            microbatch_failed = (
+                not torch.isfinite(reaction_energy).all()
+                or not torch.isfinite(pred_exc).all()
+                or not torch.isfinite(full_loss)
+            )
+            microbatch_failed = sync_failure(microbatch_failed, device)
+            if microbatch_failed:
+                failed = True
+                break
+
             sync_context = nullcontext() if do_step else model.no_sync()
             with sync_context:
                 full_loss.backward()
         else:
-            objective_grads = [
+            predictions = model(grid)
+            reaction_energy, _ = calculate_reaction_energy(
+                reaction_batch,
+                predictions,
+                device,
+                rung="GGA",
+                dft="PBE",
+                dispersions=dispersions,
+            )
+            reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
+            weighted_reaction_loss = reaction_loss / params["accum_iter"]
+            microbatch_failed = (
+                not torch.isfinite(reaction_energy).all()
+                or not torch.isfinite(weighted_reaction_loss)
+            )
+            microbatch_failed = sync_failure(microbatch_failed, device)
+            if microbatch_failed:
+                failed = True
+                break
+            add_gradient_list_to_parameters(
+                trainable_parameters,
                 prepare_objective_gradients(
                     trainable_parameters,
                     weighted_reaction_loss,
@@ -974,6 +994,17 @@ def train_one_epoch(
                     params["reaction_grad_clip"],
                     params["reaction_grad_scale"],
                 ),
+            )
+
+            vxc_term = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=True)
+            weighted_vxc_loss = OMEGA * params["vxc_loss_scale"] * vxc_term / params["accum_iter"]
+            microbatch_failed = not torch.isfinite(weighted_vxc_loss)
+            microbatch_failed = sync_failure(microbatch_failed, device)
+            if microbatch_failed:
+                failed = True
+                break
+            add_gradient_list_to_parameters(
+                trainable_parameters,
                 prepare_objective_gradients(
                     trainable_parameters,
                     weighted_vxc_loss,
@@ -981,19 +1012,30 @@ def train_one_epoch(
                     params["vxc_grad_clip"],
                     1.0,
                 ),
-            ]
+            )
+
+            exc_term, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
+            weighted_exc_loss = params["exc_loss_scale"] * exc_term / params["accum_iter"]
+            full_loss = weighted_reaction_loss + weighted_vxc_loss + weighted_exc_loss
+            microbatch_failed = (
+                not torch.isfinite(pred_exc).all()
+                or not torch.isfinite(full_loss)
+            )
+            microbatch_failed = sync_failure(microbatch_failed, device)
+            if microbatch_failed:
+                failed = True
+                break
             if float(params["exc_loss_scale"]) != 0.0:
-                objective_grads.append(
+                add_gradient_list_to_parameters(
+                    trainable_parameters,
                     prepare_objective_gradients(
                         trainable_parameters,
                         weighted_exc_loss,
                         params["exc_gradient_merge_strategy"],
                         params["exc_grad_clip"],
                         params["exc_grad_scale"],
-                    )
+                    ),
                 )
-            for grads in objective_grads:
-                add_gradient_list_to_parameters(trainable_parameters, grads)
 
         update_db_errors(train_db_errors, current_bases, reaction_energy, y_batch)
         update_exc_errors(train_exc_errors, list(X_vxc["Names"]), pred_exc, ref_exc)
