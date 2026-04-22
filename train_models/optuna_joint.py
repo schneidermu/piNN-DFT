@@ -702,6 +702,22 @@ def resolve_objective_params(params: Dict[str, Any]) -> Dict[str, Any]:
     return resolved
 
 
+def prepare_objective_gradients(
+    parameters: List[torch.nn.Parameter],
+    weighted_loss: torch.Tensor,
+    merge_strategy: str,
+    grad_clip,
+    grad_scale: float = 1.0,
+) -> List[Optional[torch.Tensor]]:
+    grads = compute_grad_list(weighted_loss, parameters)
+    if merge_strategy == "clip_then_sum":
+        clip_value = None if grad_clip == "none" else float(grad_clip)
+        grads, _ = clip_gradient_list_by_global_norm(grads, clip_value)
+    elif merge_strategy != "sum":
+        raise ValueError(f"Unsupported gradient merge strategy: {merge_strategy}")
+    return scale_gradient_list(grads, float(grad_scale))
+
+
 def add_objective_gradients(
     parameters: List[torch.nn.Parameter],
     weighted_loss: torch.Tensor,
@@ -709,13 +725,13 @@ def add_objective_gradients(
     grad_clip,
     grad_scale: float = 1.0,
 ) -> None:
-    grads = compute_grad_list(weighted_loss, parameters)
-    if merge_strategy == "clip_then_sum":
-        clip_value = None if grad_clip == "none" else float(grad_clip)
-        grads, _ = clip_gradient_list_by_global_norm(grads, clip_value)
-    elif merge_strategy != "sum":
-        raise ValueError(f"Unsupported gradient merge strategy: {merge_strategy}")
-    grads = scale_gradient_list(grads, float(grad_scale))
+    grads = prepare_objective_gradients(
+        parameters,
+        weighted_loss,
+        merge_strategy,
+        grad_clip,
+        grad_scale,
+    )
     add_gradient_list_to_parameters(parameters, grads)
 
 
@@ -950,28 +966,34 @@ def train_one_epoch(
             with sync_context:
                 full_loss.backward()
         else:
-            add_objective_gradients(
-                trainable_parameters,
-                weighted_reaction_loss,
-                params["reaction_gradient_merge_strategy"],
-                params["reaction_grad_clip"],
-                params["reaction_grad_scale"],
-            )
-            add_objective_gradients(
-                trainable_parameters,
-                weighted_vxc_loss,
-                params["vxc_gradient_merge_strategy"],
-                params["vxc_grad_clip"],
-                1.0,
-            )
-            if float(params["exc_loss_scale"]) != 0.0:
-                add_objective_gradients(
+            objective_grads = [
+                prepare_objective_gradients(
                     trainable_parameters,
-                    weighted_exc_loss,
-                    params["exc_gradient_merge_strategy"],
-                    params["exc_grad_clip"],
-                    params["exc_grad_scale"],
+                    weighted_reaction_loss,
+                    params["reaction_gradient_merge_strategy"],
+                    params["reaction_grad_clip"],
+                    params["reaction_grad_scale"],
+                ),
+                prepare_objective_gradients(
+                    trainable_parameters,
+                    weighted_vxc_loss,
+                    params["vxc_gradient_merge_strategy"],
+                    params["vxc_grad_clip"],
+                    1.0,
+                ),
+            ]
+            if float(params["exc_loss_scale"]) != 0.0:
+                objective_grads.append(
+                    prepare_objective_gradients(
+                        trainable_parameters,
+                        weighted_exc_loss,
+                        params["exc_gradient_merge_strategy"],
+                        params["exc_grad_clip"],
+                        params["exc_grad_scale"],
+                    )
                 )
+            for grads in objective_grads:
+                add_gradient_list_to_parameters(trainable_parameters, grads)
 
         update_db_errors(train_db_errors, current_bases, reaction_energy, y_batch)
         update_exc_errors(train_exc_errors, list(X_vxc["Names"]), pred_exc, ref_exc)
