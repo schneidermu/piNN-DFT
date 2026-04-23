@@ -200,6 +200,4 @@ def _fix_sigma_tot_closed_shell(sigma: torch.Tensor, rtol: float = 1e-6, atol: f
     For closed-shell: rho_a=rho_b=rho/2 => (∇rho)^2 = 4*(∇rho_a)^2 = 4*sigma_aa.
     """
 
-    sigma = sigma.clone()
-    sigma[:, 1] = 4.0 * sigma[:, 0]
-    return sigma
+    return torch.stack([sigma[:, 0], 4.0 * sigma[:, 0], sigma[:, 2]], dim=1)

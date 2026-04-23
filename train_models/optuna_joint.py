@@ -537,8 +537,7 @@ def vxc_loss(
     target_vrho = X_batch["Vrho"].to(device)
     weights = X_batch["Weights"].to(device)
 
-    model_input = _grid_to_model_input(grid_raw, fix_closed_shell_sigma=True)
-    model_input[:, 0:2] = rho
+    model_input = torch.cat([rho, sigma, grid_raw[:, 9:]], dim=1)
     constants = model(model_input)
 
     calc_data = get_local_energies(
@@ -591,7 +590,7 @@ def exc_loss(
         sigma_pbe = torch.stack(
             [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]], dim=1
         )
-        model_input = _grid_to_model_input(grid_system, fix_closed_shell_sigma=True)
+        model_input = torch.cat([rho, sigma, grid_system[:, 9:]], dim=1)
         constants = model(model_input)
         pred_exc, _ = calculate_xc_energy(
             {"Densities": rho, "Gradients": sigma_pbe, "Weights": weights_system},
