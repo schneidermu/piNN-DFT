@@ -941,6 +941,7 @@ def train_one_epoch(
                 rung="GGA",
                 dft="PBE",
                 dispersions=dispersions,
+                return_local_energies=False,
             )
             reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
             vxc_term = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=True)
@@ -973,6 +974,7 @@ def train_one_epoch(
                 rung="GGA",
                 dft="PBE",
                 dispersions=dispersions,
+                return_local_energies=False,
             )
             reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
             weighted_reaction_loss = reaction_loss / params["accum_iter"]
@@ -1047,6 +1049,10 @@ def train_one_epoch(
         vxc_loss_sum += float(vxc_term.item())
         exc_loss_sum += float(exc_term.item())
         mae_sum += float(nn.functional.l1_loss(reaction_energy, y_batch).item())
+        del full_loss
+        del weighted_reaction_loss, weighted_vxc_loss, weighted_exc_loss
+        del reaction_loss, vxc_term, exc_term, reaction_energy, pred_exc, ref_exc
+        del predictions, grid, y_batch
 
         if not do_step:
             continue
@@ -1160,6 +1166,7 @@ def validate_one_epoch(
                 rung="GGA",
                 dft="PBE",
                 dispersions=dispersions,
+                return_local_energies=False,
             )
             reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
             mae = nn.functional.l1_loss(reaction_energy, y_batch)

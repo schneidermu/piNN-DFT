@@ -588,7 +588,7 @@ def _train_epoch(
 
         predictions = model(X_batch_grid)
         reaction_energy, _ = calculate_reaction_energy(
-            X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
+            X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions, return_local_energies=False
         )
 
         batch_fchem_loss = batch_fchem(current_bases, reaction_energy, y_batch)
@@ -746,7 +746,7 @@ def _validate_epoch(
 
             predictions = model(X_batch_grid)
             reaction_energy, _ = calculate_reaction_energy(
-                X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions
+                X_batch, predictions, device, rung=rung, dft=dft, dispersions=dispersions, return_local_energies=False
             )
 
             with torch.enable_grad():

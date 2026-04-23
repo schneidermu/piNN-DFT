@@ -14,8 +14,7 @@ F_XALPHA = SVWN3.F_XALPHA
 f_svwn3 = SVWN3.f_svwn3
 
 
-def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE", enhancement=None):
-    calc_reaction_data = {}
+def compute_local_energy_tensors(reaction, constants, device, rung="GGA", dft="PBE", enhancement=None):
     densities = reaction["Densities"].to(device, non_blocking=True)
     if rung == "LDA":
         if dft == "SVWN3":
@@ -26,15 +25,37 @@ def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE", enhan
         gradients = (reaction["Gradients"]).to(device, non_blocking=True)
         if dft == "PBE":
             local_energies = F_PBE(densities, gradients, constants, device, enhancement=enhancement)
+    weights = reaction["Weights"].to(device, non_blocking=True)
+    return local_energies, densities, weights
 
+
+def get_local_energies(reaction, constants, device, rung="GGA", dft="PBE", enhancement=None):
+    calc_reaction_data = {}
+    local_energies, densities, weights = compute_local_energy_tensors(
+        reaction,
+        constants,
+        device,
+        rung,
+        dft,
+        enhancement=enhancement,
+    )
     calc_reaction_data["Local_energies"] = local_energies
     calc_reaction_data["Densities"] = densities
-    calc_reaction_data["Weights"] = reaction["Weights"].to(device, non_blocking=True)
+    calc_reaction_data["Weights"] = weights
     del local_energies, densities
     return calc_reaction_data
 
 
 def backsplit(reaction, calc_reaction_data):
+    return backsplit_tensors(
+        reaction,
+        calc_reaction_data["Local_energies"],
+        calc_reaction_data["Weights"],
+        calc_reaction_data["Densities"],
+    )
+
+
+def backsplit_tensors(reaction, local_energies, weights, densities):
     backsplit_ind = reaction["backsplit_ind"].type(torch.int)
     splitted_data = dict()
     stop = 0
@@ -43,8 +64,9 @@ def backsplit(reaction, calc_reaction_data):
         splitted_data[component] = dict()
         start = stop
         stop = backsplit_ind[i]
-        for elem in ("Local_energies", "Weights", "Densities"):
-            splitted_data[component][elem] = calc_reaction_data[elem][start:stop]
+        splitted_data[component]["Local_energies"] = local_energies[start:stop]
+        splitted_data[component]["Weights"] = weights[start:stop]
+        splitted_data[component]["Densities"] = densities[start:stop]
     del backsplit_ind, start, stop
     return splitted_data
 
@@ -105,29 +127,47 @@ def get_energy_reaction(reaction, molecule_energies):
 
 
 def calculate_reaction_energy(
-    reaction, constants, device, rung, dft, dispersions=None, enhancement=None
+    reaction, constants, device, rung, dft, dispersions=None, enhancement=None, return_local_energies=True
 ):
-    local_energies = get_local_energies(reaction, constants, device, rung, dft, enhancement=enhancement)
-    if local_energies["Local_energies"].isnan().any():
-        print(local_energies["Local_energies"].isnan().sum())
-        torch.save(local_energies["Local_energies"], "local_energies.pt")
+    local_energies, densities, weights = compute_local_energy_tensors(
+        reaction,
+        constants,
+        device,
+        rung,
+        dft,
+        enhancement=enhancement,
+    )
+    if local_energies.isnan().any():
+        print(local_energies.isnan().sum())
+        torch.save(local_energies, "local_energies.pt")
         raise Exception()
-    splitted_calc_reaction_data = backsplit(reaction, local_energies)
+    splitted_calc_reaction_data = backsplit_tensors(reaction, local_energies, weights, densities)
     molecule_energies = integration(reaction, splitted_calc_reaction_data, dispersions)
     reaction_energy_kcal = get_energy_reaction(reaction, molecule_energies)
-    del molecule_energies, splitted_calc_reaction_data
-    return reaction_energy_kcal, local_energies["Local_energies"]
+    del molecule_energies, splitted_calc_reaction_data, densities, weights
+    if return_local_energies:
+        return reaction_energy_kcal, local_energies
+    del local_energies
+    return reaction_energy_kcal, None
 
 
 def calculate_xc_energy(reaction, constants, device, rung, dft, enhancement=None):
     """Calculate only integrated E_xc for one unsplit grid; no HF, dispersion, or backsplit."""
-    local_energies = get_local_energies(reaction, constants, device, rung, dft, enhancement=enhancement)
-    if local_energies["Local_energies"].isnan().any():
-        print(local_energies["Local_energies"].isnan().sum())
-        torch.save(local_energies["Local_energies"], "local_energies.pt")
+    local_energies, densities, weights = compute_local_energy_tensors(
+        reaction,
+        constants,
+        device,
+        rung,
+        dft,
+        enhancement=enhancement,
+    )
+    if local_energies.isnan().any():
+        print(local_energies.isnan().sum())
+        torch.save(local_energies, "local_energies.pt")
         raise Exception()
-    xc_energy = integrate_xc_energy(local_energies)
-    return xc_energy, local_energies["Local_energies"]
+    xc_energy = torch.sum(local_energies * (densities[:, 0] + densities[:, 1]) * weights)
+    del densities, weights
+    return xc_energy, local_energies
 
 
 def test_energy_PBE(test_grid, constants):
