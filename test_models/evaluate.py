@@ -92,6 +92,11 @@ def main() -> None:
         action="store_true",
         help="For avRANE runs, also generate atomic density jobs/artifacts for Max RMSD or MaxNE workflows",
     )
+    parser.add_argument(
+        "--MultiwfnCmd",
+        default="",
+        help="Path to the Multiwfn executable for avRANE molecule post-processing",
+    )
     args = parser.parse_args()
 
     experiment = create_experiment(
@@ -109,7 +114,16 @@ def main() -> None:
         branch_jobs.append(("wtmad", run_wtmad_branch, (experiment, wait_for_completion)))
     if "avrane" in selected_branches:
         branch_jobs.append(
-            ("avrane", run_avrane_branch, (experiment, wait_for_completion, args.include_atoms))
+            (
+                "avrane",
+                run_avrane_branch,
+                (
+                    experiment,
+                    wait_for_completion,
+                    args.include_atoms,
+                    args.MultiwfnCmd or None,
+                ),
+            )
         )
 
     with ThreadPoolExecutor(max_workers=max(1, len(branch_jobs))) as executor:

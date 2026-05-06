@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -18,6 +19,19 @@ NORMALIZERS = {
     "GRD": 0.092398036,
     "LR": 1.445110833,
 }
+
+
+def resolve_multiwfn_cmd(cmd: str) -> str:
+    path = Path(cmd).expanduser()
+    if path.parent != Path("."):
+        if path.exists():
+            return str(path)
+    elif shutil.which(cmd):
+        return cmd
+    raise FileNotFoundError(
+        "Multiwfn executable was not found. Install Multiwfn on this node, add it to "
+        "PATH, or set MULTIWFN_CMD=/path/to/Multiwfn before running MaxNE reduction."
+    )
 
 
 def resolve_maxne_reference_paths() -> dict[str, Path]:
@@ -43,7 +57,7 @@ def _assert_maxne_references_available(reference_paths: dict[str, Path]) -> None
 
 def _run_multiwfn_for_mode(wfn_path: Path, template_path: Path, suffix: str) -> Path:
     result = subprocess.run(
-        [MULTIWFN_CMD, str(wfn_path.name)],
+        [resolve_multiwfn_cmd(MULTIWFN_CMD), str(wfn_path.name)],
         cwd=wfn_path.parent,
         input=template_path.read_text(encoding="utf-8"),
         text=True,

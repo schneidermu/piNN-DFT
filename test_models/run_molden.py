@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from optparse import OptionParser
 from pathlib import Path
 
@@ -36,7 +37,7 @@ MOLECULE_TEMPLATE = """#! /bin/bash
 #SBATCH --cpus-per-task=2
 #SBATCH --output="{log_dir}/{functional}_{molecule}_%j.out"
 # Executable
-python -m get_molden --Functional '{functional}' --Molecule {molecule} --ExperimentRoot "{experiment_root}"{checkpoint_args}
+python -m get_molden --Functional '{functional}' --Molecule {molecule} --ExperimentRoot "{experiment_root}"{checkpoint_args}{multiwfn_args}
 """
 
 ATOM_TEMPLATE = """#! /bin/bash
@@ -45,7 +46,7 @@ ATOM_TEMPLATE = """#! /bin/bash
 #SBATCH --cpus-per-task=2
 #SBATCH --output="{log_dir}/{functional}_{atom}_+{charge}_%j.out"
 # Executable
-python -m get_molden --Functional '{functional}' --Atom {atom} --Charge {charge} --ExperimentRoot "{experiment_root}"{checkpoint_args}
+python -m get_molden --Functional '{functional}' --Atom {atom} --Charge {charge} --ExperimentRoot "{experiment_root}"{checkpoint_args}{multiwfn_args}
 """
 
 
@@ -64,6 +65,13 @@ def build_checkpoint_args(functional: str, checkpoint_path: str | None, model_ke
     if functional in {"PBE", "PBE0", "XAlpha", "r2SCAN", "SCAN", "TPSS"}:
         return ""
     return f' --CheckpointPath "{checkpoint_path}" --ModelKey "{model_key}"'
+
+
+def build_multiwfn_args(multiwfn_cmd: str | None) -> str:
+    cmd = multiwfn_cmd or os.environ.get("MULTIWFN_CMD")
+    if not cmd:
+        return ""
+    return f' --MultiwfnCmd "{cmd}"'
 
 
 def build_job_dir(jobs_root: Path | None = None) -> Path:
@@ -85,6 +93,7 @@ def generate_jobs(
     subset_molecules: list[str] | None = None,
     checkpoint_path: str | None = None,
     model_key: str | None = None,
+    multiwfn_cmd: str | None = None,
     include_atoms: bool = True,
 ) -> list[Path]:
     ensure_runtime_directories()
@@ -105,6 +114,7 @@ def generate_jobs(
                 checkpoint_args=build_checkpoint_args(
                     functional, checkpoint_path, model_key
                 ),
+                multiwfn_args=build_multiwfn_args(multiwfn_cmd),
             ),
         )
         created_jobs.append(slurm_file)
@@ -123,6 +133,7 @@ def generate_jobs(
                     checkpoint_args=build_checkpoint_args(
                         functional, checkpoint_path, model_key
                     ),
+                    multiwfn_args=build_multiwfn_args(multiwfn_cmd),
                 ),
             )
             created_jobs.append(slurm_file)
@@ -166,6 +177,7 @@ if __name__ == "__main__":
     parser.add_option("--SubsetMolecules", type=str, default="")
     parser.add_option("--CheckpointPath", type=str, default="")
     parser.add_option("--ModelKey", type=str, default="")
+    parser.add_option("--MultiwfnCmd", type=str, default="")
     parser.add_option("--Mode", type=str, default="generate")
     parser.add_option("--IncludeAtoms", type=str, default="True")
     (Opts, args) = parser.parse_args()
@@ -187,6 +199,7 @@ if __name__ == "__main__":
             subset_molecules=subset_molecules,
             checkpoint_path=Opts.CheckpointPath or None,
             model_key=Opts.ModelKey or None,
+            multiwfn_cmd=Opts.MultiwfnCmd or None,
             include_atoms=include_atoms,
         )
     else:

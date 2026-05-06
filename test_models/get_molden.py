@@ -1,5 +1,6 @@
 import os
 from optparse import OptionParser
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -29,7 +30,21 @@ PROBLEMATIC_SYSTEMS = [
     "F +5",
 ]
 
-MULTIWFN_CMD = os.environ.get("MULTIWFN_CMD", "Multiwfn")
+DEFAULT_MULTIWFN_CMD = os.environ.get("MULTIWFN_CMD", "Multiwfn")
+
+
+def resolve_multiwfn_cmd(cmd: str) -> str:
+    path = Path(cmd).expanduser()
+    if path.parent != Path("."):
+        if path.exists():
+            return str(path)
+    elif shutil.which(cmd):
+        return cmd
+    raise FileNotFoundError(
+        "Multiwfn executable was not found. Install Multiwfn on this node, add it to "
+        "PATH, set MULTIWFN_CMD=/path/to/Multiwfn, or pass "
+        "--MultiwfnCmd /path/to/Multiwfn when generating/running molden jobs."
+    )
 
 def main():
     lib.num_threads(4)
@@ -46,6 +61,7 @@ def main():
     parser.add_option("--ExperimentRoot", type=str, default="")
     parser.add_option("--CheckpointPath", type=str, default="")
     parser.add_option("--ModelKey", type=str, default="")
+    parser.add_option("--MultiwfnCmd", type=str, default=DEFAULT_MULTIWFN_CMD)
 
     (Opts, args) = parser.parse_args()
     molecule_name = Opts.Molecule
@@ -55,6 +71,7 @@ def main():
     experiment_root = Path(Opts.ExperimentRoot).resolve() if Opts.ExperimentRoot else None
     checkpoint_path = Opts.CheckpointPath or None
     model_key = Opts.ModelKey or None
+    multiwfn_cmd = Opts.MultiwfnCmd
 
     # Initialize molecule
     mol = gto.Mole()
@@ -64,6 +81,7 @@ def main():
         raise Exception("System not provided")
 
     if molecule_name:
+        multiwfn_cmd = resolve_multiwfn_cmd(multiwfn_cmd)
         mol.atom = str(MOLDEN_DIR / f"{molecule_name}.xyz")
     else:
         mol.atom = f"{atom_name} 0 0 0"
@@ -221,7 +239,7 @@ def main():
         )
         with open(OUTPUT_DIR, "a") as output_file:
             subprocess.run(
-                [MULTIWFN_CMD, str(INPUT_DIR)],
+                [multiwfn_cmd, str(INPUT_DIR)],
                 input=multiwfn_input,
                 text=True,
                 stdout=output_file,

@@ -71,6 +71,7 @@ def run_avrane_branch(
     experiment: Experiment,
     wait: bool = True,
     include_atoms: bool = False,
+    multiwfn_cmd: str | None = None,
 ) -> None:
     branch_name = "avrane"
     functional = experiment.manifest.generated_functional_name
@@ -104,6 +105,7 @@ def run_avrane_branch(
             subset_molecules=subset_molecules,
             checkpoint_path=experiment.manifest.checkpoint_copy,
             model_key=experiment.manifest.model_key,
+            multiwfn_cmd=multiwfn_cmd,
             include_atoms=include_atoms,
         )
         job_ids = submit_jobs(
