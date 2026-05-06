@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import pickle
 from pathlib import Path
 
 import h5py
@@ -30,6 +31,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--json-name", default="mrks_pbe0_d3bj.json")
     parser.add_argument("--csv-name", default="mrks_pbe0_d3bj.csv")
+    parser.add_argument("--pickle-name", default="dispersions_mrks.pickle")
     return parser.parse_args()
 
 
@@ -94,6 +96,7 @@ def main() -> None:
 
     json_path = output_dir / args.json_name
     csv_path = output_dir / args.csv_name
+    pickle_path = output_dir / args.pickle_name
 
     with json_path.open("w", encoding="utf-8") as handle:
         json.dump(results, handle, indent=2, sort_keys=True)
@@ -104,8 +107,12 @@ def main() -> None:
         for system_name, energy in sorted(results.items()):
             writer.writerow([system_name, f"{energy:.12f}"])
 
+    with pickle_path.open("wb") as handle:
+        pickle.dump(results, handle)
+
     print(f"Wrote {json_path}")
     print(f"Wrote {csv_path}")
+    print(f"Wrote {pickle_path}")
 
 
 if __name__ == "__main__":

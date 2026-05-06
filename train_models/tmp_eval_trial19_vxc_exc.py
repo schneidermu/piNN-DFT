@@ -3,7 +3,7 @@ import json
 import pickle
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ from torch import nn
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-from NN_models import pcPBELMLOptimizerV2
+from NN_models import pcPBEMLOptimizerLegacy, pcPBELMLOptimizerV2
 from reaction_energy_calculation import calculate_xc_energy, get_local_energies
 from utils import (
     _fix_sigma_tot_closed_shell,
@@ -19,6 +19,7 @@ from utils import (
 )
 
 HARTREE2KCAL = 627.5095
+DEFAULT_MRKS_DISPERSIONS = Path(__file__).resolve().parent / "dispersions" / "dispersions_mrks.pickle"
 
 
 class VxcDataset(Dataset):
@@ -51,6 +52,14 @@ def parse_model_name(name: str) -> Tuple[int, int, bool, bool]:
 
 
 def build_model(args: argparse.Namespace, device: torch.device) -> nn.Module:
+    if getattr(args, "model_type", "current") == "legacy":
+        _, num_layers, h_dim = args.name.split("_")
+        return pcPBEMLOptimizerLegacy(
+            num_layers=int(num_layers),
+            h_dim=int(h_dim),
+            dropout=args.dropout,
+            DFT="PBE",
+        ).to(device)
     num_layers, h_dim, use_g_x, use_g_c = parse_model_name(args.name)
     return pcPBELMLOptimizerV2(
         num_layers=num_layers,
@@ -76,14 +85,25 @@ def load_state_dict_into_model(
         if clean_key.startswith("log_scale"):
             continue
         cleaned[clean_key] = value
-    cleaned["scaling_array"] = model.scaling_array
+    if hasattr(model, "scaling_array"):
+        cleaned["scaling_array"] = model.scaling_array
     missing, unexpected = model.load_state_dict(cleaned, strict=False)
     allowed_missing: List[str] = []
+    if not hasattr(model, "scaling_array"):
+        allowed_missing = []
     unexpected_without_allowed = [name for name in unexpected if not name.startswith("log_scale")]
     if missing != allowed_missing or unexpected_without_allowed:
         raise RuntimeError(
             f"Unexpected checkpoint mismatch. Missing={missing}, Unexpected={unexpected_without_allowed}"
         )
+
+
+def build_eval_model_input(model: nn.Module, grid_raw: torch.Tensor, rho: torch.Tensor, sigma: torch.Tensor) -> torch.Tensor:
+    if getattr(model, "legacy_input_dim", None) == 7:
+        return torch.cat([rho, sigma, grid_raw[:, 9:11]], dim=1)
+    model_input = _grid_to_model_input(grid_raw, fix_closed_shell_sigma=True)
+    model_input[:, 0:2] = rho
+    return model_input
 
 
 def batch_exc(
@@ -124,8 +144,7 @@ def vxc_loss(
     target_vrho = X_batch["Vrho"].to(device)
     weights = X_batch["Weights"].to(device)
 
-    model_input = _grid_to_model_input(grid_raw, fix_closed_shell_sigma=True)
-    model_input[:, 0:2] = rho
+    model_input = build_eval_model_input(model, grid_raw, rho, sigma)
     constants = model(model_input)
 
     calc_data = get_local_energies(
@@ -161,6 +180,8 @@ def exc_loss(
     device: torch.device,
     rung: str = "GGA",
     dft: str = "PBE",
+    dispersions: Optional[Dict[str, float]] = None,
+    include_mrks_dispersion: bool = False,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     weights = X_batch["Weights"].to(device)
@@ -173,12 +194,13 @@ def exc_loss(
         stop = start + int(length)
         grid_system = grid_raw[start:stop]
         weights_system = weights[start:stop]
+        system_name = X_batch["Names"][len(pred_exc_values)]
         rho = grid_system[:, 4:6]
         sigma = _fix_sigma_tot_closed_shell(grid_system[:, 6:9].clone())
         sigma_pbe = torch.stack(
             [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]], dim=1
         )
-        model_input = _grid_to_model_input(grid_system, fix_closed_shell_sigma=True)
+        model_input = build_eval_model_input(model, grid_system, rho, sigma)
         constants = model(model_input)
         pred_exc, _ = calculate_xc_energy(
             {"Densities": rho, "Gradients": sigma_pbe, "Weights": weights_system},
@@ -187,6 +209,9 @@ def exc_loss(
             rung=rung,
             dft=dft,
             enhancement=None,
+            dispersions=dispersions,
+            system_name=system_name,
+            add_dispersion=include_mrks_dispersion,
         )
         pred_exc_values.append(pred_exc)
         start = stop
@@ -196,7 +221,13 @@ def exc_loss(
     return loss, pred_exc_batch, target_exc
 
 
-def evaluate_split(model, data_path, device, batch_size):
+def load_mrks_dispersions(path: Union[str, Path]) -> Dict[str, float]:
+    with Path(path).open("rb") as handle:
+        raw = pickle.load(handle)
+    return {key: float(value) for key, value in raw.items()}
+
+
+def evaluate_split(model, data_path, device, batch_size, dispersions=None, include_mrks_dispersion: bool = False):
     with Path(data_path).open("rb") as handle:
         data = pickle.load(handle)
 
@@ -214,7 +245,15 @@ def evaluate_split(model, data_path, device, batch_size):
     for batch in loader:
         with torch.enable_grad():
             loss_vxc = vxc_loss(model, batch, device, rung="GGA", dft="PBE", create_graph=False)
-            loss_exc, pred_exc, ref_exc = exc_loss(model, batch, device, rung="GGA", dft="PBE")
+            loss_exc, pred_exc, ref_exc = exc_loss(
+                model,
+                batch,
+                device,
+                rung="GGA",
+                dft="PBE",
+                dispersions=dispersions,
+                include_mrks_dispersion=include_mrks_dispersion,
+            )
 
         if not torch.isfinite(loss_vxc) or not torch.isfinite(loss_exc):
             raise RuntimeError(f"Non-finite loss for batch {batch['Names']}")
@@ -250,19 +289,28 @@ def main():
     parser.add_argument("--train-pickle", required=True)
     parser.add_argument("--val-pickle", required=True)
     parser.add_argument("--name", default="PBE-LGxGc_6_64")
+    parser.add_argument("--model-type", choices=["current", "legacy"], default="current")
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--output", default="trial19_vxc_exc_eval.json")
+    parser.add_argument("--include-mrks-dispersion", action="store_true")
+    parser.add_argument("--mrks-dispersions-pickle", default=str(DEFAULT_MRKS_DISPERSIONS))
     args = parser.parse_args()
 
     device = torch.device("cpu")
-    model = build_model(SimpleNamespace(name=args.name, dropout=0.0), device)
+    model = build_model(SimpleNamespace(name=args.name, dropout=0.0, model_type=args.model_type), device)
     load_state_dict_into_model(model, Path(args.checkpoint), device)
     model.eval()
+    dispersions = load_mrks_dispersions(args.mrks_dispersions_pickle) if args.include_mrks_dispersion else None
 
     result = {
         "checkpoint": str(Path(args.checkpoint).resolve()),
-        "train": evaluate_split(model, args.train_pickle, device, args.batch_size),
-        "val": evaluate_split(model, args.val_pickle, device, args.batch_size),
+        "include_mrks_dispersion": bool(args.include_mrks_dispersion),
+        "train": evaluate_split(
+            model, args.train_pickle, device, args.batch_size, dispersions=dispersions, include_mrks_dispersion=args.include_mrks_dispersion
+        ),
+        "val": evaluate_split(
+            model, args.val_pickle, device, args.batch_size, dispersions=dispersions, include_mrks_dispersion=args.include_mrks_dispersion
+        ),
     }
 
     output_path = Path(args.output)

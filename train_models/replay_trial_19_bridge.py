@@ -6,9 +6,11 @@ from pathlib import Path
 from optuna_joint import (
     init_distributed,
     load_chk,
+    load_mrks_dispersions,
     run_or_reuse_preoptimization,
     run_trial,
     set_random_seed,
+    DEFAULT_MRKS_DISPERSIONS,
 )
 
 
@@ -142,6 +144,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--val-vxc-target", type=float, default=1.1)
     parser.add_argument("--val-fchem-soft-cap", type=float, default=90.0)
     parser.add_argument("--save-selected-checkpoints", action="store_true", default=True)
+    parser.add_argument("--include-mrks-dispersion", action="store_true")
+    parser.add_argument("--mrks-dispersions-pickle", type=str, default=str(DEFAULT_MRKS_DISPERSIONS))
     return parser.parse_args()
 
 
@@ -165,6 +169,11 @@ def main() -> None:
 
     with (Path(__file__).resolve().parent / "dispersions" / "dispersions.pickle").open("rb") as handle:
         dispersions = pickle.load(handle)
+    mrks_dispersions = (
+        load_mrks_dispersions(args.mrks_dispersions_pickle)
+        if args.include_mrks_dispersion
+        else None
+    )
 
     data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(path=args.checkpoints_dir)
     shared_preopt_checkpoint = run_or_reuse_preoptimization(
@@ -191,6 +200,7 @@ def main() -> None:
         local_rank=local_rank,
         world_size=world_size,
         dispersions=dispersions,
+        mrks_dispersions=mrks_dispersions,
         output_dir=output_dir,
         rank0=rank0,
         epoch_selector=select_last_epoch,

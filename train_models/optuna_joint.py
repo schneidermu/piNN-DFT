@@ -71,6 +71,7 @@ MEAN_WEIGHT = sum(
 ) / len(FCHEM_VALIDATION)
 
 HARTREE2KCAL = 627.5095
+DEFAULT_MRKS_DISPERSIONS = Path(__file__).resolve().parent / "dispersions" / "dispersions_mrks.pickle"
 
 
 class VxcDataset(Dataset):
@@ -180,6 +181,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--preopt-vxc-weight", type=float, default=0.0)
     parser.add_argument("--preopt-vxc-steps", type=int, default=0)
     parser.add_argument("--preopt-vxc-target", type=str, default="pbe", choices=["pbe"])
+    parser.add_argument("--include-mrks-dispersion", action="store_true")
+    parser.add_argument("--mrks-dispersions-pickle", type=str, default=str(DEFAULT_MRKS_DISPERSIONS))
     return parser.parse_args()
 
 
@@ -254,6 +257,12 @@ def load_state_dict_into_model(
         raise RuntimeError(
             f"Unexpected checkpoint mismatch. Missing={missing}, Unexpected={unexpected_without_allowed}"
         )
+
+
+def load_mrks_dispersions(path: str) -> Dict[str, float]:
+    with Path(path).open("rb") as handle:
+        raw = pickle.load(handle)
+    return {key: float(value) for key, value in raw.items()}
 
 
 def build_scheduler(optimizer: torch.optim.Optimizer, n_train: int):
@@ -573,6 +582,8 @@ def exc_loss(
     device: torch.device,
     rung: str = "GGA",
     dft: str = "PBE",
+    dispersions: Optional[Dict[str, float]] = None,
+    include_mrks_dispersion: bool = False,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     weights = X_batch["Weights"].to(device)
@@ -585,6 +596,7 @@ def exc_loss(
         stop = start + int(length)
         grid_system = grid_raw[start:stop]
         weights_system = weights[start:stop]
+        system_name = X_batch["Names"][len(pred_exc_values)]
         rho = grid_system[:, 4:6]
         sigma = _fix_sigma_tot_closed_shell(grid_system[:, 6:9].clone())
         sigma_pbe = torch.stack(
@@ -599,6 +611,9 @@ def exc_loss(
             rung=rung,
             dft=dft,
             enhancement=None,
+            dispersions=dispersions,
+            system_name=system_name,
+            add_dispersion=include_mrks_dispersion,
         )
         pred_exc_values.append(pred_exc)
         start = stop
@@ -881,6 +896,8 @@ def train_one_epoch(
     params: Dict[str, Any],
     device: torch.device,
     dispersions: Dict[str, float],
+    mrks_dispersions: Optional[Dict[str, float]],
+    include_mrks_dispersion: bool,
     world_size: int,
     epoch: int,
 ) -> Tuple[Dict[str, float], Dict[str, List[float]], bool]:
@@ -981,7 +998,15 @@ def train_one_epoch(
             ),
         )
 
-        exc_term, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
+        exc_term, pred_exc, ref_exc = exc_loss(
+            model,
+            X_vxc,
+            device,
+            rung="GGA",
+            dft="PBE",
+            dispersions=mrks_dispersions,
+            include_mrks_dispersion=include_mrks_dispersion,
+        )
         weighted_exc_loss = params["exc_loss_scale"] * exc_term / params["accum_iter"]
         full_loss = weighted_reaction_loss + weighted_vxc_loss + weighted_exc_loss
         microbatch_failed = (
@@ -1081,6 +1106,8 @@ def validate_one_epoch(
     params: Dict[str, Any],
     device: torch.device,
     dispersions: Dict[str, float],
+    mrks_dispersions: Optional[Dict[str, float]],
+    include_mrks_dispersion: bool,
     world_size: int,
 ) -> Tuple[Dict[str, float], Dict[str, float], bool]:
     params = resolve_objective_params(params)
@@ -1139,7 +1166,15 @@ def validate_one_epoch(
 
         with torch.enable_grad():
             loss_vxc_val = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=False)
-            loss_exc_val, pred_exc, ref_exc = exc_loss(model, X_vxc, device, rung="GGA", dft="PBE")
+            loss_exc_val, pred_exc, ref_exc = exc_loss(
+                model,
+                X_vxc,
+                device,
+                rung="GGA",
+                dft="PBE",
+                dispersions=mrks_dispersions,
+                include_mrks_dispersion=include_mrks_dispersion,
+            )
 
         batch_failed = (
             not torch.isfinite(reaction_energy).all()
@@ -1289,6 +1324,7 @@ def run_trial(
     local_rank: int,
     world_size: int,
     dispersions: Dict[str, float],
+    mrks_dispersions: Optional[Dict[str, float]],
     output_dir: Path,
     rank0: bool,
     epoch_selector: Optional[Callable[[List[Dict[str, Any]]], Dict[str, Any]]] = None,
@@ -1359,6 +1395,8 @@ def run_trial(
             params=effective_params,
             device=device,
             dispersions=dispersions,
+            mrks_dispersions=mrks_dispersions,
+            include_mrks_dispersion=bool(getattr(args, "include_mrks_dispersion", False)),
             world_size=world_size,
             epoch=epoch,
         )
@@ -1373,6 +1411,8 @@ def run_trial(
             params=effective_params,
             device=device,
             dispersions=dispersions,
+            mrks_dispersions=mrks_dispersions,
+            include_mrks_dispersion=bool(getattr(args, "include_mrks_dispersion", False)),
             world_size=world_size,
         )
         if val_failed:
@@ -1526,6 +1566,11 @@ def main() -> None:
 
     with (Path(__file__).resolve().parent / "dispersions" / "dispersions.pickle").open("rb") as handle:
         dispersions = pickle.load(handle)
+    mrks_dispersions = (
+        load_mrks_dispersions(args.mrks_dispersions_pickle)
+        if args.include_mrks_dispersion
+        else None
+    )
 
     data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(path=args.checkpoints_dir)
     shared_preopt_checkpoint = run_or_reuse_preoptimization(
@@ -1582,6 +1627,7 @@ def main() -> None:
                 local_rank=local_rank,
                 world_size=world_size,
                 dispersions=dispersions,
+                mrks_dispersions=mrks_dispersions,
                 output_dir=output_dir,
                 rank0=rank0,
             )

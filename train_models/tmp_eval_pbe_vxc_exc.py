@@ -16,6 +16,7 @@ from reaction_energy_calculation import calculate_xc_energy, get_local_energies
 from utils import _fix_sigma_tot_closed_shell
 
 HARTREE2KCAL = 627.5095
+DEFAULT_MRKS_DISPERSIONS = Path(__file__).resolve().parent / "dispersions" / "dispersions_mrks.pickle"
 
 
 class VxcDataset(Dataset):
@@ -115,6 +116,8 @@ def pbe_exc_loss(
     device: torch.device,
     rung: str = "GGA",
     dft: str = "PBE",
+    dispersions: Dict[str, float] = None,
+    include_mrks_dispersion: bool = False,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     weights = X_batch["Weights"].to(device)
@@ -127,6 +130,7 @@ def pbe_exc_loss(
         stop = start + int(length)
         grid_system = grid_raw[start:stop]
         weights_system = weights[start:stop]
+        system_name = X_batch["Names"][len(pred_exc_values)]
         rho = grid_system[:, 4:6]
         sigma = _fix_sigma_tot_closed_shell(grid_system[:, 6:9].clone())
         sigma_pbe = torch.stack(
@@ -140,6 +144,9 @@ def pbe_exc_loss(
             rung=rung,
             dft=dft,
             enhancement=None,
+            dispersions=dispersions,
+            system_name=system_name,
+            add_dispersion=include_mrks_dispersion,
         )
         pred_exc_values.append(pred_exc)
         start = stop
@@ -149,7 +156,19 @@ def pbe_exc_loss(
     return loss, pred_exc_batch, target_exc
 
 
-def evaluate_split(data_path: str, device: torch.device, batch_size: int) -> Dict[str, Any]:
+def load_mrks_dispersions(path: str) -> Dict[str, float]:
+    with Path(path).open("rb") as handle:
+        raw = pickle.load(handle)
+    return {key: float(value) for key, value in raw.items()}
+
+
+def evaluate_split(
+    data_path: str,
+    device: torch.device,
+    batch_size: int,
+    dispersions: Dict[str, float] = None,
+    include_mrks_dispersion: bool = False,
+) -> Dict[str, Any]:
     with Path(data_path).open("rb") as handle:
         data = pickle.load(handle)
 
@@ -167,7 +186,14 @@ def evaluate_split(data_path: str, device: torch.device, batch_size: int) -> Dic
     for batch in loader:
         with torch.enable_grad():
             loss_vxc = pbe_vxc_loss(batch, device, rung="GGA", dft="PBE")
-            loss_exc, pred_exc, ref_exc = pbe_exc_loss(batch, device, rung="GGA", dft="PBE")
+            loss_exc, pred_exc, ref_exc = pbe_exc_loss(
+                batch,
+                device,
+                rung="GGA",
+                dft="PBE",
+                dispersions=dispersions,
+                include_mrks_dispersion=include_mrks_dispersion,
+            )
 
         if not torch.isfinite(loss_vxc) or not torch.isfinite(loss_exc):
             raise RuntimeError(f"Non-finite loss for batch {batch['Names']}")
@@ -203,9 +229,12 @@ def main() -> None:
     parser.add_argument("--val-pickle", required=True)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--output", default="pbe_new_vxc_exc_eval.json")
+    parser.add_argument("--include-mrks-dispersion", action="store_true")
+    parser.add_argument("--mrks-dispersions-pickle", default=str(DEFAULT_MRKS_DISPERSIONS))
     args = parser.parse_args()
 
     device = torch.device("cpu")
+    dispersions = load_mrks_dispersions(args.mrks_dispersions_pickle) if args.include_mrks_dispersion else None
     result = {
         "functional": "PBE",
         "constant_overrides": {
@@ -213,8 +242,13 @@ def main() -> None:
             "27_G_NN_down": 0.0,
             "28_G_c": 1.0,
         },
-        "train": evaluate_split(args.train_pickle, device, args.batch_size),
-        "val": evaluate_split(args.val_pickle, device, args.batch_size),
+        "include_mrks_dispersion": bool(args.include_mrks_dispersion),
+        "train": evaluate_split(
+            args.train_pickle, device, args.batch_size, dispersions=dispersions, include_mrks_dispersion=args.include_mrks_dispersion
+        ),
+        "val": evaluate_split(
+            args.val_pickle, device, args.batch_size, dispersions=dispersions, include_mrks_dispersion=args.include_mrks_dispersion
+        ),
     }
 
     output_path = Path(args.output)

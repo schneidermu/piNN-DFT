@@ -151,8 +151,18 @@ def calculate_reaction_energy(
     return reaction_energy_kcal, None
 
 
-def calculate_xc_energy(reaction, constants, device, rung, dft, enhancement=None):
-    """Calculate only integrated E_xc for one unsplit grid; no HF, dispersion, or backsplit."""
+def calculate_xc_energy(
+    reaction,
+    constants,
+    device,
+    rung,
+    dft,
+    enhancement=None,
+    dispersions=None,
+    system_name=None,
+    add_dispersion: bool = False,
+):
+    """Calculate integrated E_xc for one unsplit grid, with optional standalone dispersion."""
     local_energies, densities, weights = compute_local_energy_tensors(
         reaction,
         constants,
@@ -166,11 +176,15 @@ def calculate_xc_energy(reaction, constants, device, rung, dft, enhancement=None
         torch.save(local_energies, "local_energies.pt")
         raise Exception()
     xc_energy = torch.sum(local_energies * (densities[:, 0] + densities[:, 1]) * weights)
+    if add_dispersion and dispersions and system_name is not None:
+        dispersion_val = torch.tensor(
+            float(dispersions.get(system_name, 0.0)),
+            device=local_energies.device,
+            dtype=local_energies.dtype,
+        )
+        xc_energy = xc_energy + dispersion_val
     del densities, weights
     return xc_energy, local_energies
-
-
-def test_energy_PBE(test_grid, constants):
     local_energies = F_PBE(test_grid["Densities"], test_grid["Gradients"], constants)
     local_scaled_energies = (
         local_energies
