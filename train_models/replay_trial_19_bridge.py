@@ -146,6 +146,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--save-selected-checkpoints", action="store_true", default=True)
     parser.add_argument("--include-mrks-dispersion", action="store_true")
     parser.add_argument("--mrks-dispersions-pickle", type=str, default=str(DEFAULT_MRKS_DISPERSIONS))
+    parser.add_argument(
+        "--no-reaction-dispersion",
+        action="store_true",
+        help="Do not add precomputed D3 dispersion corrections in reaction-energy training/validation.",
+    )
     return parser.parse_args()
 
 
@@ -167,8 +172,11 @@ def main() -> None:
     local_rank, world_size, device, rank0 = init_distributed()
     set_random_seed(args.seed + args.trial_number)
 
-    with (Path(__file__).resolve().parent / "dispersions" / "dispersions.pickle").open("rb") as handle:
-        dispersions = pickle.load(handle)
+    if args.no_reaction_dispersion:
+        dispersions = {}
+    else:
+        with (Path(__file__).resolve().parent / "dispersions" / "dispersions.pickle").open("rb") as handle:
+            dispersions = pickle.load(handle)
     mrks_dispersions = (
         load_mrks_dispersions(args.mrks_dispersions_pickle)
         if args.include_mrks_dispersion
