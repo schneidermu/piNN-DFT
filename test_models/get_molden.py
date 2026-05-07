@@ -214,6 +214,8 @@ def main():
         wfn_format.write_mo(
             file, mol, mf.mo_coeff, mo_energy=mf.mo_energy, mo_occ=mf.mo_occ
         )
+    if not os.path.exists(INPUT_DIR) or os.path.getsize(INPUT_DIR) == 0:
+        raise FileNotFoundError(f"Failed to write non-empty WFN file: {INPUT_DIR}")
 
     if molecule_name:
         multiwfn_input = "\n".join(
@@ -239,11 +241,12 @@ def main():
         )
         with open(OUTPUT_DIR, "a") as output_file:
             subprocess.run(
-                [multiwfn_cmd, str(INPUT_DIR)],
+                [multiwfn_cmd, os.path.basename(INPUT_DIR)],
                 input=multiwfn_input,
                 text=True,
                 stdout=output_file,
                 stderr=subprocess.STDOUT,
+                cwd=MOLECULE_DIR,
                 check=True,
             )
 
