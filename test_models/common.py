@@ -78,6 +78,65 @@ def run_sbatch(slurm_path: Path, extra_args: list[str] | None = None) -> str:
     return result.stdout.strip()
 
 
+FAILED_SLURM_STATES = {
+    "BOOT_FAIL",
+    "CANCELLED",
+    "DEADLINE",
+    "FAILED",
+    "NODE_FAIL",
+    "OUT_OF_MEMORY",
+    "PREEMPTED",
+    "REVOKED",
+    "TIMEOUT",
+}
+
+
+def _exit_code_failed(exit_code: str) -> bool:
+    status = exit_code.split(":", 1)[0]
+    return bool(status and status != "0")
+
+
+def _assert_slurm_jobs_succeeded(job_ids: list[str]) -> None:
+    result = subprocess.run(
+        [
+            "sacct",
+            "-n",
+            "-P",
+            "-j",
+            ",".join(job_ids),
+            "--format=JobIDRaw,State,ExitCode",
+        ],
+        cwd=TEST_MODELS_ROOT,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or "sacct status check failed")
+    if not result.stdout.strip():
+        return
+
+    failed_rows = []
+    for line in result.stdout.splitlines():
+        fields = line.split("|")
+        if len(fields) < 3:
+            continue
+        job_id, state, exit_code = fields[:3]
+        normalized_state = state.split()[0]
+        if (
+            normalized_state in FAILED_SLURM_STATES
+            or _exit_code_failed(exit_code)
+        ):
+            failed_rows.append(
+                f"{job_id}: state={state}, exit_code={exit_code}"
+            )
+
+    if failed_rows:
+        details = "; ".join(failed_rows[:10])
+        if len(failed_rows) > 10:
+            details += f"; ... {len(failed_rows) - 10} more"
+        raise RuntimeError(f"SLURM jobs did not complete successfully: {details}")
+
+
 def wait_for_slurm_jobs(job_ids: Iterable[str], poll_interval_seconds: int = 15) -> None:
     normalized = [job_id for job_id in job_ids if job_id]
     if not normalized:
@@ -93,5 +152,6 @@ def wait_for_slurm_jobs(job_ids: Iterable[str], poll_interval_seconds: int = 15)
         if result.returncode != 0:
             raise RuntimeError(result.stderr.strip() or "squeue polling failed")
         if not result.stdout.strip():
+            _assert_slurm_jobs_succeeded(normalized)
             return
         time.sleep(poll_interval_seconds)
