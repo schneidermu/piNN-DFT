@@ -56,9 +56,23 @@ def _read_mwfn_directory(functional_dir: Path) -> dict[str, np.ndarray]:
 
 
 def _build_npz_from_functional_dir(functional_dir: Path, target_npz: Path) -> Path:
+    if not functional_dir.exists():
+        raise FileNotFoundError(f"Functional density directory does not exist: {functional_dir}")
     arrays = _read_mwfn_directory(functional_dir)
     if not arrays:
-        raise FileNotFoundError(f"No density grids found under {functional_dir}")
+        molecule_dirs = sorted(path for path in functional_dir.iterdir() if path.is_dir())
+        previews = []
+        for molecule_dir in molecule_dirs[:10]:
+            entries = sorted(path.name for path in molecule_dir.iterdir())[:8]
+            previews.append(f"{molecule_dir.name}: {entries or 'empty'}")
+        if not molecule_dirs:
+            previews.append("no molecule directories found")
+        detail = "; ".join(previews)
+        raise FileNotFoundError(
+            "No complete density grids found under "
+            f"{functional_dir}. Expected rho, grad, and lapl in each molecule "
+            f"directory. Found: {detail}"
+        )
     np.savez_compressed(target_npz, **arrays)
     return target_npz
 
