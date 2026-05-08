@@ -63,9 +63,13 @@ def normalize_gif_layout() -> list[str]:
     return system_names
 
 
-def run_sbatch(slurm_path: Path) -> str:
+def run_sbatch(slurm_path: Path, extra_args: list[str] | None = None) -> str:
+    command = ["sbatch", "--parsable"]
+    if extra_args:
+        command.extend(extra_args)
+    command.append(str(slurm_path))
     result = subprocess.run(
-        ["sbatch", "--parsable", str(slurm_path)],
+        command,
         check=True,
         cwd=TEST_MODELS_ROOT,
         text=True,

@@ -19,6 +19,13 @@ python -m finalize_experiment --Manifest "{manifest_path}"
 """
 
 
+def _branch_job_ids(experiment) -> list[str]:
+    job_ids: list[str] = []
+    for branch in experiment.manifest.branches.values():
+        job_ids.extend(job_id for job_id in branch.job_ids if job_id)
+    return job_ids
+
+
 def submit_finalizer_job(experiment) -> tuple[Path, str]:
     jobs_dir = ensure_dir(experiment.jobs_dir / "orchestration")
     logs_dir = ensure_dir(experiment.logs_dir / "orchestration")
@@ -32,7 +39,13 @@ def submit_finalizer_job(experiment) -> tuple[Path, str]:
         ),
         encoding="utf-8",
     )
-    job_id = run_sbatch(slurm_path)
+    dependency_job_ids = _branch_job_ids(experiment)
+    sbatch_args = (
+        [f"--dependency=afterany:{':'.join(dependency_job_ids)}"]
+        if dependency_job_ids
+        else []
+    )
+    job_id = run_sbatch(slurm_path, extra_args=sbatch_args)
     return slurm_path, job_id
 
 
