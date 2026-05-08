@@ -23,6 +23,44 @@ PROBLEMATIC_SYSTEMS = [
     "W4-11-132-cl",
 ]
 
+DISPERSION_CORRECTION_CHOICES = {"none", "pbe0-d3bj", "pbe-d3bj"}
+
+
+def normalize_dispersion_correction(value):
+    normalized = str(value or "none").lower().replace("_", "-")
+    if normalized in {"false", "0", "no"}:
+        normalized = "none"
+    elif normalized in {"true", "1", "yes"}:
+        normalized = "pbe0-d3bj"
+    if normalized not in DISPERSION_CORRECTION_CHOICES:
+        raise ValueError(
+            f"Unknown dispersion correction '{value}'. "
+            f"Expected one of: {', '.join(sorted(DISPERSION_CORRECTION_CHOICES))}"
+        )
+    return normalized
+
+
+def dispersion_output_suffix(dispersion_correction):
+    return dispersion_correction.replace("-", "_")
+
+
+def energy_list_path(output_dir, nfinal, functional, dispersion_correction):
+    return output_dir / (
+        f"EnergyList_{nfinal}_{functional}"
+        f"__disp_{dispersion_output_suffix(dispersion_correction)}.txt"
+    )
+
+
+def calculate_dispersion_energy(molecule, dispersion_correction):
+    if dispersion_correction == "none":
+        return 0.0
+    dispersion_xc = {
+        "pbe0-d3bj": "PBE0",
+        "pbe-d3bj": "PBE",
+    }[dispersion_correction]
+    d3 = disp.DFTD3Dispersion(molecule, xc=dispersion_xc, version="d3bj")
+    return d3.kernel()[0]
+
 
 def get_coords_charge_spin(system_name):
     gif_path = GIF_DIR / system_name / f"{system_name}.gif_"
@@ -83,7 +121,13 @@ def get_PBE0_density(mf):
     return mf, dm0
 
 
-def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None):
+def calculate_functional_energy(
+    mf,
+    functional_name,
+    dm0=None,
+    system_name=None,
+    dispersion_correction="none",
+):
     print(functional_name)
 
     if functional_name == "Nagai":
@@ -135,16 +179,19 @@ def calculate_functional_energy(mf, functional_name, dm0=None, system_name=None)
                 file.write(log_line)
                 print(f"Logged: {log_line.strip()}")
 
-    d3 = disp.DFTD3Dispersion(mf.mol, xc="PBE0", version="d3bj")
-    d3_energy = d3.kernel()[0]
-
-    if functional_name == "Nagai":
-        d3_energy = 0  # D3 is not used in Nagai et al. paper
+    d3_energy = 0.0
+    if functional_name != "Nagai":
+        d3_energy = calculate_dispersion_energy(mf.mol, dispersion_correction)
 
     return energy + d3_energy
 
 
-def calculate_non_nn_functional_energy(mf, functional_name, system_name=None):
+def calculate_non_nn_functional_energy(
+    mf,
+    functional_name,
+    system_name=None,
+    dispersion_correction="none",
+):
     mf.xc = functional_name
     mf.conv_tol = 1e-6
     mf.conv_tol_grad = 5e-3
@@ -171,13 +218,12 @@ def calculate_non_nn_functional_energy(mf, functional_name, system_name=None):
                 file.write(log_line)
                 print(f"Logged: {log_line.strip()}")
 
-    d3 = disp.DFTD3Dispersion(mf.mol, xc=functional_name, version="d3bj")
-    d3_energy = d3.kernel()[0]
+    d3_energy = calculate_dispersion_energy(mf.mol, dispersion_correction)
 
     return energy + d3_energy
 
 
-def main(system_name, functional, NFinal):
+def main(system_name, functional, NFinal, dispersion_correction="none"):
     output_dir = ensure_dir(OUTPUT_DIR)
     ensure_runtime_directories()
 
@@ -195,18 +241,27 @@ def main(system_name, functional, NFinal):
     print(f"\n\n{functional} calculation \n\n")
     try:
         corrected_energy = calculate_functional_energy(
-            mf, functional, dm0=dm0, system_name=system_name
+            mf,
+            functional,
+            dm0=dm0,
+            system_name=system_name,
+            dispersion_correction=dispersion_correction,
         )
     except Exception as E:
         print(E)
         corrected_energy = "ERROR"
     finally:
-        output_path = output_dir / f"EnergyList_{NFinal}_{functional}.txt"
+        output_path = energy_list_path(output_dir, NFinal, functional, dispersion_correction)
         with output_path.open("a") as file:
             file.write(f"{system_name}.gif_ {corrected_energy}\n")
 
 
-def test_non_nn_functional(system_name, non_nn_functional, NFinal):
+def test_non_nn_functional(
+    system_name,
+    non_nn_functional,
+    NFinal,
+    dispersion_correction="none",
+):
     output_dir = ensure_dir(OUTPUT_DIR)
     ensure_runtime_directories()
     print("Number of threads:", lib.num_threads())
@@ -216,10 +271,18 @@ def test_non_nn_functional(system_name, non_nn_functional, NFinal):
     _, mf = initialize_molecule(coords, charge, spin)
 
     energy = calculate_non_nn_functional_energy(
-        mf, non_nn_functional, system_name=system_name
+        mf,
+        non_nn_functional,
+        system_name=system_name,
+        dispersion_correction=dispersion_correction,
     )
 
-    output_path = output_dir / f"EnergyList_{NFinal}_{non_nn_functional}.txt"
+    output_path = energy_list_path(
+        output_dir,
+        NFinal,
+        non_nn_functional,
+        dispersion_correction,
+    )
     with output_path.open("a") as file:
         file.write(f"{system_name}.gif_ {energy}\n")
 
@@ -255,6 +318,12 @@ if __name__ == "__main__":
     parser.add_option(
         "--Dispersion", type=str, default=False, help="D3 Dispersion calculation"
     )
+    parser.add_option(
+        "--DispersionCorrection",
+        type=str,
+        default="none",
+        help="Post-SCF dispersion correction for energy output: none, pbe0-d3bj, or pbe-d3bj",
+    )
     parser.add_option("--System", type=str, help="System to calculate")
     parser.add_option(
         "--NFinal", type=int, default=30, help="Number of systems to select"
@@ -268,6 +337,7 @@ if __name__ == "__main__":
     system_name = Opts.System
     functional = Opts.Functional
     dispersion = str(Opts.Dispersion).lower() in {"1", "true", "yes"}
+    dispersion_correction = normalize_dispersion_correction(Opts.DispersionCorrection)
     NFinal = Opts.NFinal
     OUTPUT_DIR = Path(Opts.OutputDir)
     CHECKPOINT_PATH = Opts.CheckpointPath or None
@@ -276,6 +346,11 @@ if __name__ == "__main__":
     if dispersion:
         calculate_dispersions(system_name)
     elif CHECKPOINT_PATH or MODEL_KEY or "NN" in functional or functional == "Nagai":
-        main(system_name, functional, NFinal)
+        main(system_name, functional, NFinal, dispersion_correction=dispersion_correction)
     else:
-        test_non_nn_functional(system_name, functional, NFinal)
+        test_non_nn_functional(
+            system_name,
+            functional,
+            NFinal,
+            dispersion_correction=dispersion_correction,
+        )

@@ -28,9 +28,9 @@ SCRIPT_TEMPLATE = """#! /bin/bash
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --hint=nomultithread
-#SBATCH --output="{log_dir}/{functional}_{system_name}_%j.out"
+#SBATCH --output="{log_dir}/{functional}_{dispersion_slug}_{system_name}_%j.out"
 # Executable
-python -m script --System {system_name} --NFinal {nfinal} --Functional {functional} --OutputDir "{output_dir}"{checkpoint_args}
+python -m script --System {system_name} --NFinal {nfinal} --Functional {functional} --OutputDir "{output_dir}" --DispersionCorrection {dispersion_correction}{checkpoint_args}
 """
 
 
@@ -56,6 +56,10 @@ def build_checkpoint_args(
     return f' --CheckpointPath "{checkpoint_path}" --ModelKey "{model_key}"'
 
 
+def dispersion_slug(dispersion_correction: str) -> str:
+    return dispersion_correction.lower().replace("-", "_")
+
+
 def build_job_dir(system_name: str, jobs_root: Path | None = None) -> Path:
     base_dir = jobs_root or (GENERATED_JOBS_DIR / "energy")
     return ensure_dir(base_dir / system_name)
@@ -76,6 +80,7 @@ def generate_jobs(
     explicit_functionals: list[str] | None = None,
     checkpoint_path: str | None = None,
     model_key: str | None = None,
+    dispersion_correction: str = "none",
 ) -> list[Path]:
     ensure_runtime_directories()
     log_dir = ensure_dir(log_dir or ENERGY_LOG_DIR)
@@ -87,12 +92,17 @@ def generate_jobs(
     for system_name in system_names:
         job_dir = build_job_dir(system_name, jobs_root=jobs_root)
         for functional in functionals:
-            slurm_path = job_dir / f"calculate_system_energy_{functional}.slurm"
+            slurm_path = (
+                job_dir
+                / f"calculate_system_energy_{functional}__disp_{dispersion_slug(dispersion_correction)}.slurm"
+            )
             write_slurm_file(
                 slurm_path,
                 SCRIPT_TEMPLATE.format(
                     system_name=system_name,
                     functional=functional,
+                    dispersion_correction=dispersion_correction,
+                    dispersion_slug=dispersion_slug(dispersion_correction),
                     log_dir=log_dir.as_posix(),
                     nfinal=nfinal,
                     output_dir=output_dir.as_posix(),
@@ -111,11 +121,15 @@ def submit_jobs(
     *,
     jobs_root: Path | None = None,
     subset_prefixes: list[str] | None = None,
+    dispersion_correction: str = "none",
 ) -> list[str]:
     ensure_runtime_directories()
     job_ids = []
     for system_name in filter_system_names(normalize_gif_layout(), subset_prefixes):
-        slurm_path = build_job_dir(system_name, jobs_root=jobs_root) / f"calculate_system_energy_{functional}.slurm"
+        slurm_path = (
+            build_job_dir(system_name, jobs_root=jobs_root)
+            / f"calculate_system_energy_{functional}__disp_{dispersion_slug(dispersion_correction)}.slurm"
+        )
         print(slurm_path)
         job_ids.append(run_sbatch(slurm_path))
     return job_ids
@@ -135,6 +149,7 @@ if __name__ == "__main__":
     parser.add_option("--Subset", type="string", default="")
     parser.add_option("--CheckpointPath", type="string", default="")
     parser.add_option("--ModelKey", type="string", default="")
+    parser.add_option("--DispersionCorrection", type="string", default="none")
     parser.add_option("--AllFunctionals", action="store_true", default=False)
 
     (Opts, args) = parser.parse_args()
@@ -155,12 +170,14 @@ if __name__ == "__main__":
             explicit_functionals=None if Opts.AllFunctionals else [Opts.Functional],
             checkpoint_path=Opts.CheckpointPath or None,
             model_key=Opts.ModelKey or None,
+            dispersion_correction=Opts.DispersionCorrection,
         )
     elif mode == "CE":
         submit_jobs(
             Opts.Functional,
             jobs_root=jobs_root,
             subset_prefixes=subset_prefixes,
+            dispersion_correction=Opts.DispersionCorrection,
         )
     elif mode == "D3":
         raise RuntimeError(

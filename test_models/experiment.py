@@ -76,6 +76,7 @@ class ExperimentManifest:
     checkpoint_copy: str
     generated_functional_name: str
     model_key: str
+    wtmad_dispersion_correction: str
     smoke: bool
     include_atoms: bool
     smoke_wtmad_databases: list[str]
@@ -175,6 +176,7 @@ def create_experiment(
     experiment_name: str,
     smoke: bool,
     include_atoms: bool = False,
+    wtmad_dispersion_correction: str = "none",
 ) -> Experiment:
     ensure_runtime_directories()
 
@@ -204,6 +206,7 @@ def create_experiment(
             experiment_name, checkpoint_path
         ),
         model_key=infer_model_key(checkpoint_path),
+        wtmad_dispersion_correction=wtmad_dispersion_correction,
         smoke=smoke,
         include_atoms=include_atoms,
         smoke_wtmad_databases=list(SMOKE_WTMAD_DATABASES),
@@ -239,6 +242,10 @@ def load_experiment(manifest_path: str) -> Experiment:
         checkpoint_copy=payload["checkpoint_copy"],
         generated_functional_name=payload["generated_functional_name"],
         model_key=payload["model_key"],
+        wtmad_dispersion_correction=payload.get(
+            "wtmad_dispersion_correction",
+            "pbe0-d3bj",
+        ),
         smoke=payload["smoke"],
         include_atoms=payload.get("include_atoms", False),
         smoke_wtmad_databases=payload["smoke_wtmad_databases"],

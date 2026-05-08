@@ -101,6 +101,12 @@ def main() -> None:
         help="Comma-separated branches to run: all, avrane, wtmad",
     )
     parser.add_argument(
+        "--wtmad-dispersion-correction",
+        default="none",
+        choices=("none", "pbe0-d3bj", "pbe-d3bj"),
+        help="Post-SCF dispersion correction for WTMAD-2 energies",
+    )
+    parser.add_argument(
         "--include-atoms",
         action="store_true",
         help="For avRANE runs, also generate atomic density jobs/artifacts for Max RMSD or MaxNE workflows",
@@ -117,6 +123,7 @@ def main() -> None:
         experiment_name=args.experiment_name,
         smoke=args.smoke,
         include_atoms=args.include_atoms,
+        wtmad_dispersion_correction=args.wtmad_dispersion_correction,
     )
     selected_branches = _parse_branches(args.branches)
     _mark_unselected_branches(experiment, selected_branches)
@@ -124,7 +131,17 @@ def main() -> None:
     wait_for_completion = args.inline_wait
     branch_jobs = []
     if "wtmad" in selected_branches:
-        branch_jobs.append(("wtmad", run_wtmad_branch, (experiment, wait_for_completion)))
+        branch_jobs.append(
+            (
+                "wtmad",
+                run_wtmad_branch,
+                (
+                    experiment,
+                    wait_for_completion,
+                    args.wtmad_dispersion_correction,
+                ),
+            )
+        )
     if "avrane" in selected_branches:
         branch_jobs.append(
             (
