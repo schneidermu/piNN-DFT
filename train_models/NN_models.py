@@ -1,9 +1,10 @@
 """
 Neural network models for physics-constrained PBE functional optimization.
 
-The sole model exported by this module is `pcPBELMLOptimizerV2`, which learns
+The main model exported by this module is `pcPBELMLOptimizerV2`, which learns
 to output locally-modified PBE parameters as a function of LLMGGA + zeta
-density descriptors, subject to exact physical constraints.
+density descriptors, subject to exact physical constraints. Log-augmented
+variants preserve the same constraint construction with expanded descriptors.
 """
 
 import sys
@@ -59,6 +60,15 @@ _C_LAPL: float = 4.0 * (3.0 * np.pi**2) ** (2.0 / 3.0)
 
 # Number of pass-through PBE constants at indices 2–21 of the 26-element output
 _N_FILL_CONSTANTS: int = 20
+
+# Appended log-feature indices used by pcPBELMLOptimizerV2Log.
+LOG_RHO_ALPHA_INDEX: int = 10
+LOG_RHO_BETA_INDEX: int = 11
+LOG_S_ALPHA_INDEX: int = 12
+LOG_S_TOTAL_INDEX: int = 13
+LOG_S_BETA_INDEX: int = 14
+LOG_TAU_ALPHA_INDEX: int = 15
+LOG_TAU_BETA_INDEX: int = 16
 
 # ---------------------------------------------------------------------------
 # Activation scales
@@ -147,7 +157,7 @@ class pcPBELMLOptimizerV2(nn.Module):
     ------
     Tensor of shape (N, 29) equal to predicted_factors * true_constants_PBE.
     The 20 pass-through constants at indices 2–21 are returned unchanged.
-    Indices 26–27 are G_NN (1.0 if use_g_x=False), index 28 is G_c (1.0 if use_g_c=False).
+    Indices 26–27 are G_NN (0.0 if use_g_x=False), index 28 is G_c (1.0 if use_g_c=False).
 
     Args:
         num_layers: Total number of ResBlock layers. Exchange gets
@@ -448,7 +458,7 @@ class pcPBELMLOptimizerV2(nn.Module):
             Tensor of shape (N, 29): modified_factors * true_constants_PBE.
             Indices 0,1 are beta, gamma; indices 2–21 pass through unchanged;
             indices 22–25 are kappa_up, mu_up, kappa_down, mu_down;
-            indices 26–27 are G_NN_up/down (1.0 if use_g_x=False);
+            indices 26–27 are G_NN_up/down (0.0 if use_g_x=False);
             index 28 is G_c (1.0 if use_g_c=False).
         """
         # ---- Descriptors at real density ----
@@ -529,6 +539,270 @@ class pcPBELMLOptimizerV2(nn.Module):
         x_exch_ueg_for_corr  = self.get_density_descriptors(self.scaling_array * raw_ueg_corr_input)
         hidden_x_up_for_beta   = self.x_feature_extractor(x_exch_ueg_for_corr[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX]])
         hidden_x_down_for_beta = self.x_feature_extractor(x_exch_ueg_for_corr[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
+        hidden_x_symm_for_beta = (hidden_x_up_for_beta + hidden_x_down_for_beta) / 2.0
+
+        h_pre_symm_beta         = self.c_symmetrization_blocks(self.c_input_layers(x_corr_ueg_desc))
+        h_pre_symm_swapped_beta = self.c_symmetrization_blocks(self.c_input_layers(x_corr_ueg_desc_swapped))
+        h_c_ueg = self.c_post_symm_blocks((h_pre_symm_beta + h_pre_symm_swapped_beta) / 2.0)
+        c_out_at_sigma_zero = self.c_output_layer(
+            torch.cat([h_c_ueg, hidden_x_symm_for_beta], dim=1)
+        )
+        beta_at_constraint = c_out_at_sigma_zero[:, BETA_CORR_INDEX].view(-1, 1)
+        if self.use_g_c:
+            G_c_at_sigma_zero = c_out_at_sigma_zero[:, 2].view(-1, 1)
+
+        # ---- High-density constraint (ρ→∞) for gamma ----
+        x_corr_rho_inf         = self.all_rho_inf(x_correlation_desc)
+        x_corr_rho_inf_swapped = self.all_rho_inf(x_corr_desc_swapped)
+        h_pre_symm_rho_inf         = self.c_symmetrization_blocks(self.c_input_layers(x_corr_rho_inf))
+        h_pre_symm_swapped_rho_inf = self.c_symmetrization_blocks(self.c_input_layers(x_corr_rho_inf_swapped))
+        h_c_constr_gamma = self.c_post_symm_blocks(
+            (h_pre_symm_rho_inf + h_pre_symm_swapped_rho_inf) / 2.0
+        )
+        c_out_at_rho_inf = self.c_output_layer(
+            torch.cat([h_c_constr_gamma, hidden_x_symm], dim=1)
+        )
+        gamma_at_constraint = c_out_at_rho_inf[:, GAMMA_CORR_INDEX].view(-1, 1)
+        if self.use_g_c:
+            G_c_at_rho_inf = c_out_at_rho_inf[:, 2].view(-1, 1)
+
+        # ---- Rapidly-varying limit (s→∞) for G_c ----
+        x_corr_s_inf         = self.all_s_inf(x_correlation_desc)
+        x_corr_s_inf_swapped = self.all_s_inf(x_corr_desc_swapped)
+        h_pre_symm_s_inf         = self.c_symmetrization_blocks(self.c_input_layers(x_corr_s_inf))
+        h_pre_symm_swapped_s_inf = self.c_symmetrization_blocks(self.c_input_layers(x_corr_s_inf_swapped))
+        h_c_constr_s_inf = self.c_post_symm_blocks(
+            (h_pre_symm_s_inf + h_pre_symm_swapped_s_inf) / 2.0
+        )
+        c_out_at_s_inf = self.c_output_layer(
+            torch.cat([h_c_constr_s_inf, hidden_x_symm], dim=1)
+        )
+        if self.use_g_c:
+            G_c_at_s_inf = c_out_at_s_inf[:, 2].view(-1, 1)
+
+        # ---- Apply constraint activations ----
+        beta     = self.beta_activation(beta_real  - beta_at_constraint)
+        gamma    = self.gamma_activation(gamma_real - gamma_at_constraint)
+        mu_up    = self.shifted_elu(mu_up_real     - mu_up_at_constraint)
+        mu_down  = self.shifted_elu(mu_down_real   - mu_down_at_constraint)
+        kappa_up   = self.kappa_activation(kappa_up_real)
+        kappa_down = self.kappa_activation(kappa_down_real)
+
+        if self.use_g_x:
+            g_nn_up   = self.g_nn_activation(g_nn_up_real   - g_nn_up_at_constraint)
+            g_nn_down = self.g_nn_activation(g_nn_down_real - g_nn_down_at_constraint)
+            g_x_part = torch.hstack([g_nn_up, g_nn_down])
+        else:
+            g_x_part = torch.zeros((x.shape[0], 2), device=x.device)
+
+        if self.use_g_c:
+            G_c_lagrange = self._lagrange_correct_Gc(
+                G_c_real, G_c_at_sigma_zero, G_c_at_rho_inf, G_c_at_s_inf,
+                x_correlation_desc, x_corr_ueg_desc, x_corr_rho_inf, x_corr_s_inf,
+            )
+            g_c_part = self.shifted_elu(G_c_lagrange - 1.0)
+        else:
+            g_c_part = torch.ones((x.shape[0], 1), device=x.device)
+
+        # ---- Assemble 29-element output tensor ----
+        # Layout: [beta, gamma, <20 pass-through>, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down, G_c]
+        # (N, 1+1+20+1+1+1+1+2+1) = (N, 29) ✓
+        constants_batch = true_constants_PBE.repeat(x.shape[0], 1).to(x.device)
+        fill_tensor = torch.ones([x.shape[0], _N_FILL_CONSTANTS], device=x.device)
+        final_tensor = torch.hstack(
+            [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down, g_x_part, g_c_part]
+        )
+
+        final_constants = final_tensor * constants_batch
+
+        return final_constants
+
+
+class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
+    """
+    Log-augmented pcPBELMLOptimizerV2.
+
+    This model preserves the exact difference-construction constraints from
+    pcPBELMLOptimizerV2 while concatenating log(raw + 1e-5) density-regime
+    features to the existing bounded descriptors.
+    """
+
+    def __init__(
+        self,
+        num_layers: int,
+        h_dim: int,
+        nconstants_x: int = 3,
+        nconstants_c: int = 2,
+        dropout: float = 0.2,
+        num_symm_blocks: int = 1,
+        DFT: Optional[str] = None,
+        use_g_x: bool = True,
+        use_g_c: bool = False,
+    ) -> None:
+        super().__init__(
+            num_layers=num_layers,
+            h_dim=h_dim,
+            nconstants_x=nconstants_x,
+            nconstants_c=nconstants_c,
+            dropout=dropout,
+            num_symm_blocks=num_symm_blocks,
+            DFT=DFT,
+            use_g_x=use_g_x,
+            use_g_c=use_g_c,
+        )
+
+        self.c_input_layers[0] = nn.Linear(17, h_dim, bias=False)
+        if isinstance(self.x_feature_extractor, nn.Sequential):
+            self.x_feature_extractor[0] = nn.Linear(6, h_dim, bias=False)
+
+    def get_density_descriptors(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Computes 17 descriptors: the parent 10 tanh/zeta descriptors followed
+        by log-transformed raw density, gradient, and kinetic-energy features.
+
+        Appended layout:
+            10: log(ρ_α + 1e-5)
+            11: log(ρ_β + 1e-5)
+            12: log(σ_αα + 1e-5)
+            13: log(σ_tot + 1e-5)
+            14: log(σ_ββ + 1e-5)
+            15: log(τ_α + 1e-5)
+            16: log(τ_β + 1e-5)
+        """
+        orig_desc = super().get_density_descriptors(x)
+        log_features = torch.log(x[:, :7] + 1e-5)
+        return torch.cat([orig_desc, log_features], dim=1)
+
+    @staticmethod
+    def all_rho_inf(x: torch.Tensor) -> torch.Tensor:
+        """
+        High-density descriptor mock for the 17-dimensional descriptor tensor.
+        """
+        x_rho_inf = x.clone()
+        x_rho_inf[:, :2] = 1.0
+        x_rho_inf[:, [LOG_RHO_ALPHA_INDEX, LOG_RHO_BETA_INDEX]] = math.log(1e4)
+        return x_rho_inf
+
+    @staticmethod
+    def all_s_inf(x: torch.Tensor) -> torch.Tensor:
+        """
+        Rapidly-varying descriptor mock for the 17-dimensional descriptor tensor.
+        """
+        x_s_inf = x.clone()
+        x_s_inf[:, S_ALPHA_INDEX:S_BETA_INDEX + 1] = 1.0
+        x_s_inf[:, [LOG_S_ALPHA_INDEX, LOG_S_TOTAL_INDEX, LOG_S_BETA_INDEX]] = math.log(1e12)
+        return x_s_inf
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Computes the 29-element modified PBE constant tensor for a batch of
+        grid points, preserving the parent class's exact constraint subtraction
+        logic with log-augmented descriptors.
+        """
+        # ---- Descriptors at real density ----
+        x_correlation_desc     = self.get_density_descriptors(x)
+        x_exchange_desc_scaled = self.get_density_descriptors(self.scaling_array * x)
+
+        # Spin-swapped correlation descriptors (zeta negated to preserve antisymmetry)
+        swapped_indices = LLMGGA_SPIN_INVERTED_SLICE + [
+            9,
+            LOG_RHO_BETA_INDEX,
+            LOG_RHO_ALPHA_INDEX,
+            LOG_S_BETA_INDEX,
+            LOG_S_TOTAL_INDEX,
+            LOG_S_ALPHA_INDEX,
+            LOG_TAU_BETA_INDEX,
+            LOG_TAU_ALPHA_INDEX,
+        ]
+        x_corr_desc_swapped = x_correlation_desc[:, swapped_indices].clone()
+        x_corr_desc_swapped = torch.cat(
+            [x_corr_desc_swapped[:, :-8], -x_corr_desc_swapped[:, -8:-7], x_corr_desc_swapped[:, -7:]], dim=1
+        )
+
+        x_up_feature_indices = [
+            S_ALPHA_INDEX,
+            TAU_ALPHA_INDEX,
+            LAPL_ALPHA_INDEX,
+            LOG_S_ALPHA_INDEX,
+            LOG_TAU_ALPHA_INDEX,
+            LOG_RHO_ALPHA_INDEX,
+        ]
+        x_down_feature_indices = [
+            S_BETA_INDEX,
+            TAU_BETA_INDEX,
+            LAPL_BETA_INDEX,
+            LOG_S_BETA_INDEX,
+            LOG_TAU_BETA_INDEX,
+            LOG_RHO_BETA_INDEX,
+        ]
+
+        # ---- Exchange: real values ----
+        hidden_x_up_scaled   = self.x_feature_extractor(
+            x_exchange_desc_scaled[:, x_up_feature_indices]
+        )
+        hidden_x_down_scaled = self.x_feature_extractor(
+            x_exchange_desc_scaled[:, x_down_feature_indices]
+        )
+        hidden_x_symm = (hidden_x_up_scaled + hidden_x_down_scaled) / 2.0
+
+        params_x_up_real   = self.x_output_layer(hidden_x_up_scaled)
+        params_x_down_real = self.x_output_layer(hidden_x_down_scaled)
+        mu_up_real,   kappa_up_real   = params_x_up_real[:,   MU_EX_INDEX].view(-1, 1), params_x_up_real[:,   KAPPA_EX_INDEX].view(-1, 1)
+        mu_down_real, kappa_down_real = params_x_down_real[:, MU_EX_INDEX].view(-1, 1), params_x_down_real[:, KAPPA_EX_INDEX].view(-1, 1)
+        if self.use_g_x:
+            g_nn_up_real   = params_x_up_real[:, 2].view(-1, 1)
+            g_nn_down_real = params_x_down_real[:, 2].view(-1, 1)
+
+        # ---- Correlation: real values ----
+        h_pre_symm         = self.c_symmetrization_blocks(self.c_input_layers(x_correlation_desc))
+        h_pre_symm_swapped = self.c_symmetrization_blocks(self.c_input_layers(x_corr_desc_swapped))
+        h_post_symm = (h_pre_symm + h_pre_symm_swapped) / 2.0
+        hidden_c    = self.c_post_symm_blocks(h_post_symm)
+
+        params_c_real = self.c_output_layer(torch.cat([hidden_c, hidden_x_symm], dim=1))
+        beta_real  = params_c_real[:, BETA_CORR_INDEX].view(-1, 1)
+        gamma_real = params_c_real[:, GAMMA_CORR_INDEX].view(-1, 1)
+        if self.use_g_c:
+            G_c_real = params_c_real[:, 2].view(-1, 1)
+
+        # ---- Exchange UEG constraint (s→0, τ→τ_TF) ----
+        rho_a = x[:, RHO_ALPHA_INDEX]
+        rho_b = x[:, RHO_BETA_INDEX]
+        zeros = torch.zeros_like(rho_a)
+
+        tau_tf_2rho_a = _C_TF * (2.0 * rho_a + EPS_RHO) ** (5.0 / 3.0)
+        tau_tf_2rho_b = _C_TF * (2.0 * rho_b + EPS_RHO) ** (5.0 / 3.0)
+        raw_ueg_exch_input = torch.stack(
+            [rho_a, rho_b, zeros, zeros, zeros, tau_tf_2rho_a / 2.0, tau_tf_2rho_b / 2.0, zeros, zeros],
+            dim=1,
+        )
+        x_exch_ueg_desc   = self.get_density_descriptors(self.scaling_array * raw_ueg_exch_input)
+        hidden_x_up_ueg   = self.x_feature_extractor(x_exch_ueg_desc[:, x_up_feature_indices])
+        hidden_x_down_ueg = self.x_feature_extractor(x_exch_ueg_desc[:, x_down_feature_indices])
+        x_out_up_ueg   = self.x_output_layer(hidden_x_up_ueg)
+        x_out_down_ueg = self.x_output_layer(hidden_x_down_ueg)
+        mu_up_at_constraint   = x_out_up_ueg[:,   MU_EX_INDEX].view(-1, 1)
+        mu_down_at_constraint = x_out_down_ueg[:, MU_EX_INDEX].view(-1, 1)
+        if self.use_g_x:
+            g_nn_up_at_constraint   = x_out_up_ueg[:,   2].view(-1, 1)
+            g_nn_down_at_constraint = x_out_down_ueg[:, 2].view(-1, 1)
+
+        # ---- Correlation UEG constraint (s→0) for beta ----
+        tau_tf_rho_a = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
+        tau_tf_rho_b = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+        raw_ueg_corr_input = torch.stack(
+            [rho_a, rho_b, zeros, zeros, zeros, tau_tf_rho_a, tau_tf_rho_b, zeros, zeros],
+            dim=1,
+        )
+        x_corr_ueg_desc = self.get_density_descriptors(raw_ueg_corr_input)
+        x_corr_ueg_desc_swapped = x_corr_ueg_desc[:, swapped_indices].clone()
+        x_corr_ueg_desc_swapped = torch.cat(
+            [x_corr_ueg_desc_swapped[:, :-8], -x_corr_ueg_desc_swapped[:, -8:-7], x_corr_ueg_desc_swapped[:, -7:]], dim=1
+        )
+
+        x_exch_ueg_for_corr  = self.get_density_descriptors(self.scaling_array * raw_ueg_corr_input)
+        hidden_x_up_for_beta   = self.x_feature_extractor(x_exch_ueg_for_corr[:, x_up_feature_indices])
+        hidden_x_down_for_beta = self.x_feature_extractor(x_exch_ueg_for_corr[:, x_down_feature_indices])
         hidden_x_symm_for_beta = (hidden_x_up_for_beta + hidden_x_down_for_beta) / 2.0
 
         h_pre_symm_beta         = self.c_symmetrization_blocks(self.c_input_layers(x_corr_ueg_desc))

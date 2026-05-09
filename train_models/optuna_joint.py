@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.distributed import DistributedSampler
 
 from dataset import collate_fn, fast_collate_fn_predopt
-from NN_models import pcPBELMLOptimizerV2
+from NN_models import pcPBELMLOptimizerV2, pcPBELMLOptimizerV2Log
 from predopt import DatasetPredopt, predopt
 from prepare_data import load_chk
 from reaction_energy_calculation import calculate_reaction_energy, calculate_xc_energy, get_local_energies
@@ -168,6 +168,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--shared-preopt-checkpoint", type=str, default=None)
     parser.add_argument("--force-preopt", action="store_true")
     parser.add_argument("--name", type=str, default="PBE-LGxGc_6_64")
+    parser.add_argument("--model-type", type=str, default="base", choices=["base", "log"])
     parser.add_argument("--n-predopt", type=int, default=3)
     parser.add_argument("--n-train", type=int, default=80)
     parser.add_argument("--batch-size", type=int, default=1)
@@ -231,7 +232,8 @@ def parse_model_name(name: str) -> Tuple[int, int, bool, bool]:
 
 def build_model(args: argparse.Namespace, device: torch.device) -> nn.Module:
     num_layers, h_dim, use_g_x, use_g_c = parse_model_name(args.name)
-    return pcPBELMLOptimizerV2(
+    model_cls = pcPBELMLOptimizerV2Log if getattr(args, "model_type", "base") == "log" else pcPBELMLOptimizerV2
+    return model_cls(
         num_layers=num_layers,
         h_dim=h_dim,
         dropout=args.dropout,
@@ -787,6 +789,7 @@ def resolve_shared_preopt_checkpoint(args: argparse.Namespace, output_dir: Path)
 def preopt_metadata(args: argparse.Namespace) -> Dict[str, Any]:
     return {
         "name": args.name,
+        "model_type": getattr(args, "model_type", "base"),
         "dropout": args.dropout,
         "n_predopt": args.n_predopt,
         "lr_predopt": args.lr_predopt,

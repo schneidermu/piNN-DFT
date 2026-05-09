@@ -127,6 +127,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--shared-preopt-checkpoint", type=str, default=None)
     parser.add_argument("--force-preopt", action="store_true")
     parser.add_argument("--name", type=str, default="PBE-LGxGc_6_64")
+    parser.add_argument("--model-type", type=str, default="base", choices=["base", "log"])
     parser.add_argument("--n-predopt", type=int, default=2)
     parser.add_argument("--n-train", type=int, default=500)
     parser.add_argument("--batch-size", type=int, default=1)

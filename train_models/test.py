@@ -14,7 +14,7 @@ Coverage
 6.  High-density constraint      — gamma = true_gamma as rho → ∞.
 7.  G_c rho_inf constraint       — G_c = 1.0     as rho → ∞ (use_g_c=True only).
 8.  Pass-through constants       — indices 2–21 always equal true_constants_PBE.
-9.  Disabled-flag baselines      — G_NN = 1 when use_g_x=False; G_c = 1 when use_g_c=False.
+9.  Disabled-flag baselines      — G_NN = 0 when use_g_x=False; G_c = 1 when use_g_c=False.
 10. Spin symmetry (correlation)  — beta, gamma, G_c invariant under spin swap.
 11. Spin symmetry (exchange)     — mu, kappa, G_NN swap under spin swap.
 """
@@ -143,12 +143,14 @@ def _s_inf_input(N: int = 4) -> torch.Tensor:
 
     Very small density with very large sigma drives the tanhed reduced-gradient
     descriptors to 1 while keeping the point distinct from the other G_c anchors.
+    The three sigma columns are equal so log-augmented descriptor variants also
+    match their all_s_inf anchor exactly.
     """
     rho = torch.full((N,), 1e-6)
     sigma = torch.full((N,), 1e12)
     tau = _C_TF * (rho + EPS_RHO) ** (5.0 / 3.0) * 2.0
     lapl = torch.zeros(N)
-    return torch.stack([rho, rho, sigma, 2 * sigma, sigma, tau, tau, lapl, lapl], dim=1)
+    return torch.stack([rho, rho, sigma, sigma, sigma, tau, tau, lapl, lapl], dim=1)
 
 
 def _random_input(N: int = 8, seed: int = 42) -> torch.Tensor:
@@ -233,7 +235,7 @@ def test_gnn_up_zero_at_ueg_exchange(model_info):
     """G_NN_up = tanh(0) * 1 = 0 at UEG exchange point (use_g_x only)."""
     m, use_g_x, _ = model_info
     if not use_g_x:
-        pytest.skip("use_g_x=False — G_NN is a fixed baseline (1.0)")
+        pytest.skip("use_g_x=False — G_NN is a fixed additive baseline (0.0)")
     with torch.no_grad():
         out = m(_X_UEG_EXCH)
     torch.testing.assert_close(
@@ -246,7 +248,7 @@ def test_gnn_down_zero_at_ueg_exchange(model_info):
     """G_NN_down = tanh(0) * 1 = 0 at UEG exchange point (use_g_x only)."""
     m, use_g_x, _ = model_info
     if not use_g_x:
-        pytest.skip("use_g_x=False — G_NN is a fixed baseline (1.0)")
+        pytest.skip("use_g_x=False — G_NN is a fixed additive baseline (0.0)")
     with torch.no_grad():
         out = m(_X_UEG_EXCH)
     torch.testing.assert_close(
@@ -344,15 +346,15 @@ def test_fill_constants_unchanged(model_info):
 # 9. Disabled-flag baselines
 # ---------------------------------------------------------------------------
 
-def test_gnn_is_one_when_disabled(model_info):
-    """When use_g_x=False, G_NN_up and G_NN_down must be 1.0 everywhere."""
+def test_gnn_is_zero_when_disabled(model_info):
+    """When use_g_x=False, G_NN_up and G_NN_down must be 0.0 everywhere."""
     m, use_g_x, _ = model_info
     if use_g_x:
         pytest.skip("use_g_x=True — G_NN is a learned quantity")
     with torch.no_grad():
         out = m(_X_RAND)
-    torch.testing.assert_close(out[:, IDX_GNN_UP],   torch.ones(8), atol=ATOL, rtol=0)
-    torch.testing.assert_close(out[:, IDX_GNN_DOWN],  torch.ones(8), atol=ATOL, rtol=0)
+    torch.testing.assert_close(out[:, IDX_GNN_UP], torch.zeros(8), atol=ATOL, rtol=0)
+    torch.testing.assert_close(out[:, IDX_GNN_DOWN], torch.zeros(8), atol=ATOL, rtol=0)
 
 
 def test_gc_is_one_when_disabled(model_info):
@@ -431,7 +433,7 @@ def test_gnn_swaps_under_spin_exchange(model_info):
     """G_NN_up(x) == G_NN_down(x_swap) and vice versa (use_g_x only)."""
     m, use_g_x, _ = model_info
     if not use_g_x:
-        pytest.skip("use_g_x=False — G_NN is a fixed 1.0 (swap is trivially satisfied)")
+        pytest.skip("use_g_x=False — G_NN is a fixed additive 0.0 (swap is trivially satisfied)")
     x_swap = _spin_swap(_X_RAND)
     with torch.no_grad():
         out      = m(_X_RAND)
