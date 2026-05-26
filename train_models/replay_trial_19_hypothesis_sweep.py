@@ -12,7 +12,6 @@ from optuna_joint import (
     run_trial,
     set_random_seed,
 )
-from replay_trial_19_bridge import last_epoch_checkpoint_key, select_last_epoch
 
 
 HYPOTHESES = {
@@ -214,6 +213,106 @@ HYPOTHESES = {
             {"name": "wide_finish", "start_epoch": 721, "end_epoch": 900, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 8, "exc_loss_scale": 2.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
         ],
     },
+    "h11_wide_h8_guarded": {
+        "lr_train": 1.8e-4,
+        "accum_iter": 4,
+        "gradient_merge_strategy": "clip_then_sum",
+        "reaction_grad_clip": 200.0,
+        "reaction_grad_scale": 0.30,
+        "vxc_grad_clip": 2.0,
+        "vxc_loss_scale": 100,
+        "exc_loss_scale": 1.5,
+        "exc_grad_clip": 2.0,
+        "exc_grad_scale": 1.0,
+        "exc_gradient_merge_strategy": "clip_then_sum",
+        "epoch_schedule": [
+            {"name": "wide_guard_anchor", "start_epoch": 1, "end_epoch": 160, "params": {"accum_iter": 4, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 200.0, "reaction_grad_scale": 0.30, "vxc_grad_clip": 2.0, "vxc_loss_scale": 100, "exc_loss_scale": 1.5, "exc_grad_clip": 2.0, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_guard_joint", "start_epoch": 161, "end_epoch": 340, "params": {"accum_iter": 3, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 300.0, "reaction_grad_scale": 0.65, "vxc_grad_clip": 1.5, "vxc_loss_scale": 65, "exc_loss_scale": 2.0, "exc_grad_clip": 1.5, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_guard_drive", "start_epoch": 341, "end_epoch": 540, "params": {"accum_iter": 2, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 500.0, "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 30, "exc_loss_scale": 2.5, "exc_grad_clip": 1.0, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_guard_exc", "start_epoch": 541, "end_epoch": 720, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 0.85, "vxc_grad_clip": 1.0, "vxc_loss_scale": 15, "exc_loss_scale": 3.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+            {"name": "wide_guard_finish", "start_epoch": 721, "end_epoch": 900, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 12, "exc_loss_scale": 2.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+        ],
+    },
+    "h12_wide_exc_guard": {
+        "lr_train": 1.6e-4,
+        "accum_iter": 4,
+        "gradient_merge_strategy": "clip_then_sum",
+        "reaction_grad_clip": 200.0,
+        "reaction_grad_scale": 0.30,
+        "vxc_grad_clip": 2.0,
+        "vxc_loss_scale": 75,
+        "exc_loss_scale": 2.0,
+        "exc_grad_clip": 1.5,
+        "exc_grad_scale": 1.0,
+        "exc_gradient_merge_strategy": "clip_then_sum",
+        "epoch_schedule": [
+            {"name": "wide_exc_anchor", "start_epoch": 1, "end_epoch": 140, "params": {"accum_iter": 4, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 200.0, "reaction_grad_scale": 0.30, "vxc_grad_clip": 2.0, "vxc_loss_scale": 75, "exc_loss_scale": 2.0, "exc_grad_clip": 1.5, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_exc_joint", "start_epoch": 141, "end_epoch": 320, "params": {"accum_iter": 3, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 300.0, "reaction_grad_scale": 0.65, "vxc_grad_clip": 1.5, "vxc_loss_scale": 50, "exc_loss_scale": 2.5, "exc_grad_clip": 1.0, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_exc_drive", "start_epoch": 321, "end_epoch": 520, "params": {"accum_iter": 2, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 500.0, "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 25, "exc_loss_scale": 3.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_exc_repair", "start_epoch": 521, "end_epoch": 700, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 0.85, "vxc_grad_clip": 1.0, "vxc_loss_scale": 15, "exc_loss_scale": 4.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+            {"name": "wide_exc_finish", "start_epoch": 701, "end_epoch": 900, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 12, "exc_loss_scale": 2.5, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+        ],
+    },
+    "h13_wide_h4_fchem_tail": {
+        "lr_train": 1.8e-4,
+        "accum_iter": 3,
+        "gradient_merge_strategy": "clip_then_sum",
+        "reaction_grad_clip": "none",
+        "reaction_grad_scale": 0.50,
+        "vxc_grad_clip": 3.0,
+        "vxc_loss_scale": 100,
+        "exc_loss_scale": 1.0,
+        "exc_grad_clip": "none",
+        "exc_grad_scale": 1.0,
+        "exc_gradient_merge_strategy": "sum",
+        "epoch_schedule": [
+            {"name": "h4_anchor", "start_epoch": 1, "end_epoch": 100, "params": {"accum_iter": 3, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 0.50, "vxc_grad_clip": 3.0, "vxc_loss_scale": 100, "exc_loss_scale": 1.0, "exc_grad_clip": "none", "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "sum"}},
+            {"name": "h4_joint", "start_epoch": 101, "end_epoch": 240, "params": {"accum_iter": 2, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 0.80, "vxc_grad_clip": 2.0, "vxc_loss_scale": 60, "exc_loss_scale": 1.5, "exc_grad_clip": "none", "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "sum"}},
+            {"name": "h4_balanced_drive", "start_epoch": 241, "end_epoch": 430, "params": {"accum_iter": 2, "gradient_merge_strategy": "sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 2.0, "vxc_loss_scale": 30, "exc_loss_scale": 1.5, "exc_grad_clip": "none", "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "sum"}},
+            {"name": "clipped_fchem_tail", "start_epoch": 431, "end_epoch": 650, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 18, "exc_loss_scale": 2.5, "exc_grad_clip": 1.0, "exc_grad_scale": 1.0}},
+            {"name": "guarded_finish", "start_epoch": 651, "end_epoch": 850, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 12, "exc_loss_scale": 2.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+        ],
+    },
+    "h14_wide_low_decay_fchem": {
+        "lr_train": 2.0e-4,
+        "accum_iter": 3,
+        "gradient_merge_strategy": "clip_then_sum",
+        "reaction_grad_clip": 300.0,
+        "reaction_grad_scale": 0.40,
+        "vxc_grad_clip": 3.0,
+        "vxc_loss_scale": 75,
+        "exc_loss_scale": 1.5,
+        "exc_grad_clip": 2.0,
+        "exc_grad_scale": 1.0,
+        "exc_gradient_merge_strategy": "clip_then_sum",
+        "epoch_schedule": [
+            {"name": "wide_low_decay_anchor", "start_epoch": 1, "end_epoch": 120, "params": {"accum_iter": 3, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 300.0, "reaction_grad_scale": 0.40, "vxc_grad_clip": 3.0, "vxc_loss_scale": 75, "exc_loss_scale": 1.5, "exc_grad_clip": 2.0, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_low_decay_joint", "start_epoch": 121, "end_epoch": 300, "params": {"accum_iter": 3, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 300.0, "reaction_grad_scale": 0.80, "vxc_grad_clip": 2.0, "vxc_loss_scale": 50, "exc_loss_scale": 2.0, "exc_grad_clip": 1.5, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_low_decay_drive", "start_epoch": 301, "end_epoch": 500, "params": {"accum_iter": 2, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 500.0, "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.5, "vxc_loss_scale": 25, "exc_loss_scale": 2.0, "exc_grad_clip": 1.0, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wide_low_decay_repair", "start_epoch": 501, "end_epoch": 670, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 12, "exc_loss_scale": 3.0, "exc_grad_clip": 1.0, "exc_grad_scale": 1.0}},
+            {"name": "wide_low_decay_finish", "start_epoch": 671, "end_epoch": 850, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 10, "exc_loss_scale": 2.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+        ],
+    },
+    "h15_wider_h8_guarded": {
+        "lr_train": 1.2e-4,
+        "accum_iter": 4,
+        "gradient_merge_strategy": "clip_then_sum",
+        "reaction_grad_clip": 200.0,
+        "reaction_grad_scale": 0.30,
+        "vxc_grad_clip": 2.0,
+        "vxc_loss_scale": 75,
+        "exc_loss_scale": 1.5,
+        "exc_grad_clip": 2.0,
+        "exc_grad_scale": 1.0,
+        "exc_gradient_merge_strategy": "clip_then_sum",
+        "epoch_schedule": [
+            {"name": "wider_anchor", "start_epoch": 1, "end_epoch": 160, "params": {"accum_iter": 4, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 200.0, "reaction_grad_scale": 0.30, "vxc_grad_clip": 2.0, "vxc_loss_scale": 75, "exc_loss_scale": 1.5, "exc_grad_clip": 2.0, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wider_joint", "start_epoch": 161, "end_epoch": 340, "params": {"accum_iter": 3, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 300.0, "reaction_grad_scale": 0.65, "vxc_grad_clip": 1.5, "vxc_loss_scale": 50, "exc_loss_scale": 2.0, "exc_grad_clip": 1.5, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wider_drive", "start_epoch": 341, "end_epoch": 540, "params": {"accum_iter": 2, "gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": 500.0, "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 25, "exc_loss_scale": 2.5, "exc_grad_clip": 1.0, "exc_grad_scale": 1.0, "exc_gradient_merge_strategy": "clip_then_sum"}},
+            {"name": "wider_exc_repair", "start_epoch": 541, "end_epoch": 720, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 0.85, "vxc_grad_clip": 1.0, "vxc_loss_scale": 15, "exc_loss_scale": 3.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+            {"name": "wider_finish", "start_epoch": 721, "end_epoch": 900, "params": {"accum_iter": 2, "reaction_gradient_merge_strategy": "sum", "vxc_gradient_merge_strategy": "clip_then_sum", "exc_gradient_merge_strategy": "clip_then_sum", "reaction_grad_clip": "none", "reaction_grad_scale": 1.0, "vxc_grad_clip": 1.0, "vxc_loss_scale": 12, "exc_loss_scale": 2.0, "exc_grad_clip": 0.75, "exc_grad_scale": 1.0}},
+        ],
+    },
 }
 
 
@@ -248,6 +347,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mrks-dispersions-pickle", type=str, default=str(DEFAULT_MRKS_DISPERSIONS))
     parser.add_argument("--no-reaction-dispersion", action="store_true")
     return parser.parse_args()
+
+
+def select_last_epoch(epoch_history):
+    if not epoch_history:
+        raise ValueError("Cannot select the last epoch from empty history.")
+    return epoch_history[-1]
+
+
+def last_epoch_checkpoint_key(row):
+    return (-int(row["epoch"]),)
 
 
 def main() -> None:
