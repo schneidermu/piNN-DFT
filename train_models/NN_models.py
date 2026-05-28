@@ -245,6 +245,10 @@ class pcPBELMLOptimizerV2(nn.Module):
         """ELU shifted so output ≥ 0. Used for mu and gamma constraint construction."""
         return nn.functional.elu(x) + 1.0
 
+    def activate_g_c(self, G_c_lagrange: torch.Tensor) -> torch.Tensor:
+        """Default Trial 19 G_c activation: exact anchor at 1, unbounded above."""
+        return self.shifted_elu(G_c_lagrange - 1.0)
+
     @staticmethod
     def gamma_activation(x: torch.Tensor, floor: float = 0.1) -> torch.Tensor:
         """
@@ -600,7 +604,7 @@ class pcPBELMLOptimizerV2(nn.Module):
                 G_c_real, G_c_at_sigma_zero, G_c_at_rho_inf, G_c_at_s_inf,
                 x_correlation_desc, x_corr_ueg_desc, x_corr_rho_inf, x_corr_s_inf,
             )
-            g_c_part = self.shifted_elu(G_c_lagrange - 1.0)
+            g_c_part = self.activate_g_c(G_c_lagrange)
         else:
             g_c_part = torch.ones((x.shape[0], 1), device=x.device)
 
@@ -616,6 +620,27 @@ class pcPBELMLOptimizerV2(nn.Module):
         final_constants = final_tensor * constants_batch
 
         return final_constants
+
+
+class pcPBELMLOptimizerV2GcSveluMirror(pcPBELMLOptimizerV2):
+    """
+    Trial 19-compatible architecture with mirrored shifted-ELU G_c.
+
+    This keeps the descriptor network, Lagrange exact-limit construction, and
+    current PBE_C formula unchanged, but replaces
+
+        G_c = shifted_elu(G_c_lagrange - 1)
+
+    with
+
+        G_c = 2 - shifted_elu(G_c_lagrange - 1)
+
+    so the exact anchor remains G_c=1 while the current f_pw + G_c*H form
+    cannot amplify the positive H term with G_c > 1.
+    """
+
+    def activate_g_c(self, G_c_lagrange: torch.Tensor) -> torch.Tensor:
+        return 2.0 - self.shifted_elu(G_c_lagrange - 1.0)
 
 
 class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
@@ -864,7 +889,7 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
                 G_c_real, G_c_at_sigma_zero, G_c_at_rho_inf, G_c_at_s_inf,
                 x_correlation_desc, x_corr_ueg_desc, x_corr_rho_inf, x_corr_s_inf,
             )
-            g_c_part = self.shifted_elu(G_c_lagrange - 1.0)
+            g_c_part = self.activate_g_c(G_c_lagrange)
         else:
             g_c_part = torch.ones((x.shape[0], 1), device=x.device)
 
