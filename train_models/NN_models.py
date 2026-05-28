@@ -633,14 +633,14 @@ class pcPBELMLOptimizerV2GcSveluMirror(pcPBELMLOptimizerV2):
 
     with
 
-        G_c = 2 - shifted_elu(G_c_lagrange - 1)
+        G_c = 2 - shifted_elu(|G_c_lagrange - 1|)
 
     so the exact anchor remains G_c=1 while the current f_pw + G_c*H form
     cannot amplify the positive H term with G_c > 1.
     """
 
     def activate_g_c(self, G_c_lagrange: torch.Tensor) -> torch.Tensor:
-        return 2.0 - self.shifted_elu(G_c_lagrange - 1.0)
+        return 2.0 - self.shifted_elu(torch.abs(G_c_lagrange - 1.0))
 
 
 class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
