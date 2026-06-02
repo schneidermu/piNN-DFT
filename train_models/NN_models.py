@@ -665,6 +665,56 @@ class pcPBELMLOptimizerV2GcSoftplusMirror(pcPBELMLOptimizerV2):
         ) / sharpness
         return 1.0 - penalty
 
+class pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha(pcPBELMLOptimizerV2GcSoftplusMirror):
+    """
+    Smooth bounded-G_c architecture with a less saturating alpha descriptor.
+
+    This is a single-variable descriptor ablation. It keeps the Trial 19
+    architecture and the smooth mirrored-softplus G_c activation unchanged,
+    but replaces tanh(alpha - 1) with an r2SCAN-inspired regularized indicator
+    followed by a centered rational map:
+
+        alpha_bar = (tau - tau_W) / (tau_TF + eta * tau_W)
+        alpha_desc = (alpha_bar - 1) / (alpha_bar + 1)
+
+    The descriptor preserves the existing exact-limit anchor values:
+    alpha=0 -> -1, alpha=1 -> 0, and alpha->inf -> 1. Compared with tanh, it
+    retains substantially more resolution in the chemically relevant
+    alpha=3..10 range.
+    """
+
+    R2SCAN_ALPHA_ETA = 1.0e-3
+
+    def get_density_descriptors(self, x: torch.Tensor) -> torch.Tensor:
+        descriptors = super().get_density_descriptors(x)
+
+        rho_a = x[:, RHO_ALPHA_INDEX]
+        rho_b = x[:, RHO_BETA_INDEX]
+        sigma_a = x[:, S_ALPHA_INDEX]
+        sigma_b = x[:, S_BETA_INDEX]
+        tau_a = x[:, TAU_ALPHA_INDEX]
+        tau_b = x[:, TAU_BETA_INDEX]
+
+        tau_tf_alpha = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
+        tau_tf_beta = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+        tau_w_alpha = sigma_a / (8.0 * (rho_a + EPS_RHO))
+        tau_w_beta = sigma_b / (8.0 * (rho_b + EPS_RHO))
+
+        alpha_bar_alpha = torch.clamp(
+            (tau_a - tau_w_alpha) / (tau_tf_alpha + self.R2SCAN_ALPHA_ETA * tau_w_alpha + EPS_RHO),
+            min=0.0,
+        )
+        alpha_bar_beta = torch.clamp(
+            (tau_b - tau_w_beta) / (tau_tf_beta + self.R2SCAN_ALPHA_ETA * tau_w_beta + EPS_RHO),
+            min=0.0,
+        )
+
+        descriptors = descriptors.clone()
+        descriptors[:, TAU_ALPHA_INDEX] = (alpha_bar_alpha - 1.0) / (alpha_bar_alpha + 1.0)
+        descriptors[:, TAU_BETA_INDEX] = (alpha_bar_beta - 1.0) / (alpha_bar_beta + 1.0)
+        return descriptors
+
+
 class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
     """
     Log-augmented pcPBELMLOptimizerV2.

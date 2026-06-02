@@ -23,6 +23,7 @@ from dataset import collate_fn, fast_collate_fn_predopt
 from NN_models import (
     pcPBELMLOptimizerV2,
     pcPBELMLOptimizerV2GcSoftplusMirror,
+    pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha,
     pcPBELMLOptimizerV2GcSveluMirror,
     pcPBELMLOptimizerV2Log,
 )
@@ -173,7 +174,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--shared-preopt-checkpoint", type=str, default=None)
     parser.add_argument("--force-preopt", action="store_true")
     parser.add_argument("--name", type=str, default="PBE-LGxGc_6_64")
-    parser.add_argument("--model-type", type=str, default="base", choices=["base", "log", "gc_svelu_mirror", "gc_softplus_mirror"])
+    parser.add_argument("--model-type", type=str, default="base", choices=["base", "log", "gc_svelu_mirror", "gc_softplus_mirror", "gc_softplus_mirror_r2scan_alpha"])
     parser.add_argument("--n-predopt", type=int, default=3)
     parser.add_argument("--n-train", type=int, default=80)
     parser.add_argument("--batch-size", type=int, default=1)
@@ -243,6 +244,7 @@ def build_model(args: argparse.Namespace, device: torch.device) -> nn.Module:
         "log": pcPBELMLOptimizerV2Log,
         "gc_svelu_mirror": pcPBELMLOptimizerV2GcSveluMirror,
         "gc_softplus_mirror": pcPBELMLOptimizerV2GcSoftplusMirror,
+        "gc_softplus_mirror_r2scan_alpha": pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha,
     }
     model_cls = model_classes[model_type]
     return model_cls(

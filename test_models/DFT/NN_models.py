@@ -40,9 +40,12 @@ def NN_PBE_L_model(
     DFT="PBE",
     gc_svelu_mirror=False,
     gc_softplus_mirror=False,
+    gc_softplus_mirror_r2scan_alpha=False,
     **kwargs,
 ):
-    if gc_softplus_mirror:
+    if gc_softplus_mirror_r2scan_alpha:
+        model_class = TRAIN_MODELS.pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha
+    elif gc_softplus_mirror:
         model_class = TRAIN_MODELS.pcPBELMLOptimizerV2GcSoftplusMirror
     elif gc_svelu_mirror:
         model_class = TRAIN_MODELS.pcPBELMLOptimizerV2GcSveluMirror
