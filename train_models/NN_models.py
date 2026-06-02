@@ -643,6 +643,28 @@ class pcPBELMLOptimizerV2GcSveluMirror(pcPBELMLOptimizerV2):
         return 2.0 - self.shifted_elu(torch.abs(G_c_lagrange - 1.0))
 
 
+class pcPBELMLOptimizerV2GcSoftplusMirror(pcPBELMLOptimizerV2):
+    """
+    Trial 19-compatible architecture with smooth mirrored-softplus G_c.
+
+    The symmetric penalty is infinitely differentiable, equals zero at the
+    exact PBE anchor, and approaches |G_c_lagrange - 1| away from the anchor.
+    Therefore G_c remains bounded above by 1 while retaining an unbounded
+    negative range without the cusp introduced by an absolute value.
+    """
+
+    G_C_SOFTPLUS_SHARPNESS = 4.0
+
+    def activate_g_c(self, G_c_lagrange: torch.Tensor) -> torch.Tensor:
+        delta = G_c_lagrange - 1.0
+        sharpness = self.G_C_SOFTPLUS_SHARPNESS
+        penalty = (
+            nn.functional.softplus(sharpness * delta)
+            + nn.functional.softplus(-sharpness * delta)
+            - 2.0 * math.log(2.0)
+        ) / sharpness
+        return 1.0 - penalty
+
 class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
     """
     Log-augmented pcPBELMLOptimizerV2.

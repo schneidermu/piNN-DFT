@@ -39,13 +39,15 @@ def NN_PBE_L_model(
     dropout=0.0,
     DFT="PBE",
     gc_svelu_mirror=False,
+    gc_softplus_mirror=False,
     **kwargs,
 ):
-    model_class = (
-        TRAIN_MODELS.pcPBELMLOptimizerV2GcSveluMirror
-        if gc_svelu_mirror
-        else TRAIN_MODELS.pcPBELMLOptimizerV2
-    )
+    if gc_softplus_mirror:
+        model_class = TRAIN_MODELS.pcPBELMLOptimizerV2GcSoftplusMirror
+    elif gc_svelu_mirror:
+        model_class = TRAIN_MODELS.pcPBELMLOptimizerV2GcSveluMirror
+    else:
+        model_class = TRAIN_MODELS.pcPBELMLOptimizerV2
     return model_class(
         num_layers=num_layers,
         h_dim=h_dim,

@@ -123,6 +123,7 @@ class NN_FUNCTIONAL:
             "use_g_x": x_out_dim > 2,
             "use_g_c": c_out_dim > 2,
             "gc_svelu_mirror": "gc_svelu_mirror" in checkpoint_path.lower(),
+            "gc_softplus_mirror": "gc_softplus_mirror" in checkpoint_path.lower(),
         }
 
     def create_features_from_rhos(self, features, device):
