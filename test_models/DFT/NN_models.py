@@ -33,8 +33,20 @@ def NN_PBE_model(*args, **kwargs):
     return _unsupported("NN_PBE_model")
 
 
-def NN_PBE_L_model(num_layers=6, h_dim=32, dropout=0.0, DFT="PBE", **kwargs):
-    return TRAIN_MODELS.pcPBELMLOptimizerV2(
+def NN_PBE_L_model(
+    num_layers=6,
+    h_dim=32,
+    dropout=0.0,
+    DFT="PBE",
+    gc_svelu_mirror=False,
+    **kwargs,
+):
+    model_class = (
+        TRAIN_MODELS.pcPBELMLOptimizerV2GcSveluMirror
+        if gc_svelu_mirror
+        else TRAIN_MODELS.pcPBELMLOptimizerV2
+    )
+    return model_class(
         num_layers=num_layers,
         h_dim=h_dim,
         dropout=dropout,

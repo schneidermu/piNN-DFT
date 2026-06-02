@@ -70,7 +70,11 @@ class NN_FUNCTIONAL:
             map_location=torch.device("cpu"),
         )
         model = nn_model[resolved_model_key](
-            **self._infer_model_kwargs(resolved_model_key, state_dict)
+            **self._infer_model_kwargs(
+                resolved_model_key,
+                state_dict,
+                path_to_model_state_dict,
+            )
         )
         print(path_to_model_state_dict)
         model.load_state_dict(state_dict)
@@ -93,7 +97,7 @@ class NN_FUNCTIONAL:
         return "NN_PBE"
 
     @staticmethod
-    def _infer_model_kwargs(model_key, state_dict):
+    def _infer_model_kwargs(model_key, state_dict, checkpoint_path=""):
         if model_key != "NN_PBE-L":
             return {}
 
@@ -118,6 +122,7 @@ class NN_FUNCTIONAL:
             "h_dim": h_dim,
             "use_g_x": x_out_dim > 2,
             "use_g_c": c_out_dim > 2,
+            "gc_svelu_mirror": "gc_svelu_mirror" in checkpoint_path.lower(),
         }
 
     def create_features_from_rhos(self, features, device):
