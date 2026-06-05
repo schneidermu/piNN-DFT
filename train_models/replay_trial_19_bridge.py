@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 import pickle
 from pathlib import Path
@@ -116,6 +117,34 @@ TRIAL_19_PARAMS = {
 }
 
 
+TRIAL_19_PHASE_NAMES = tuple(phase["name"] for phase in TRIAL_19_PARAMS["epoch_schedule"])
+
+
+def build_trial_19_params(extend_phase=None, extend_epochs=0):
+    params = copy.deepcopy(TRIAL_19_PARAMS)
+    if extend_epochs < 0:
+        raise ValueError("--extend-epochs must be non-negative.")
+    if extend_epochs == 0:
+        return params
+    if extend_phase is None:
+        raise ValueError("--extend-phase is required when --extend-epochs is non-zero.")
+
+    found_phase = False
+    downstream_shift = 0
+    for phase in params["epoch_schedule"]:
+        if downstream_shift:
+            phase["start_epoch"] += downstream_shift
+            phase["end_epoch"] += downstream_shift
+        if phase["name"] == extend_phase:
+            phase["end_epoch"] += extend_epochs
+            downstream_shift += extend_epochs
+            found_phase = True
+
+    if not found_phase:
+        raise ValueError(f"Unknown Trial 19 phase for extension: {extend_phase}")
+    return params
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Replay Trial 19 bridge schedule and save the final checkpoint.",
@@ -130,6 +159,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-type", type=str, default="base", choices=["base", "log", "gc_svelu_mirror", "gc_softplus_mirror", "gc_softplus_mirror_r2scan_alpha"])
     parser.add_argument("--n-predopt", type=int, default=2)
     parser.add_argument("--n-train", type=int, default=500)
+    parser.add_argument("--extend-phase", type=str, default=None, choices=TRIAL_19_PHASE_NAMES)
+    parser.add_argument("--extend-epochs", type=int, default=0)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
     parser.add_argument("--lr-predopt", type=float, default=1e-2)
@@ -167,6 +198,13 @@ def last_epoch_checkpoint_key(row):
 
 def main() -> None:
     args = parse_args()
+    trial_19_params = build_trial_19_params(args.extend_phase, args.extend_epochs)
+    schedule_end_epoch = trial_19_params["epoch_schedule"][-1]["end_epoch"]
+    if args.n_train < schedule_end_epoch:
+        raise ValueError(
+            f"--n-train={args.n_train} is shorter than the Trial 19 schedule end epoch "
+            f"{schedule_end_epoch}."
+        )
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -198,7 +236,7 @@ def main() -> None:
 
     result = run_trial(
         trial_number=args.trial_number,
-        params=TRIAL_19_PARAMS,
+        params=trial_19_params,
         args=args,
         shared_preopt_checkpoint=Path(shared_preopt_checkpoint),
         data_train=data_train,
@@ -230,7 +268,7 @@ def main() -> None:
         )
         print(f"Selected checkpoint: {result.get('selected_checkpoint_path')}")
         print(f"History path: {result.get('history_path')}")
-        print(f"Params: {json.dumps(TRIAL_19_PARAMS, sort_keys=True)}")
+        print(f"Params: {json.dumps(trial_19_params, sort_keys=True)}")
 
 
 if __name__ == "__main__":
