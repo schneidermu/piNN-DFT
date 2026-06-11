@@ -120,6 +120,83 @@ TRIAL_19_PARAMS = {
 TRIAL_19_PHASE_NAMES = tuple(phase["name"] for phase in TRIAL_19_PARAMS["epoch_schedule"])
 
 
+MICRO_SCHEDULE_PRESETS = {
+    "sum_repair_plus15_finish_minus15": {
+        "duration_deltas": {"sum_repair": 15, "fchem_finish": -15},
+    },
+    "fchem_polish_plus20_finish_minus20": {
+        "duration_deltas": {"fchem_polish": 20, "fchem_finish": -20},
+    },
+    "finish_vxc7": {
+        "param_overrides": {"fchem_finish": {"vxc_loss_scale": 7}},
+    },
+    "drive12_finish7": {
+        "param_overrides": {
+            "fchem_drive": {"vxc_loss_scale": 12},
+            "fchem_finish": {"vxc_loss_scale": 7},
+        },
+    },
+    "clip_minus10_sum_plus10": {
+        "duration_deltas": {"clip_drive": -10, "sum_repair": 10},
+    },
+}
+MICRO_SCHEDULE_PRESET_NAMES = tuple(MICRO_SCHEDULE_PRESETS)
+
+
+def _apply_duration_deltas(params, duration_deltas):
+    phases = params["epoch_schedule"]
+    durations = {
+        phase["name"]: phase["end_epoch"] - phase["start_epoch"] + 1
+        for phase in phases
+    }
+    for phase_name, delta in duration_deltas.items():
+        if phase_name not in durations:
+            raise ValueError(f"Unknown Trial 19 phase in duration delta: {phase_name}")
+        durations[phase_name] += delta
+        if durations[phase_name] <= 0:
+            raise ValueError(f"Non-positive duration for phase {phase_name}: {durations[phase_name]}")
+
+    original_total = sum(
+        phase["end_epoch"] - phase["start_epoch"] + 1
+        for phase in phases
+    )
+    new_total = sum(durations.values())
+    if new_total != original_total:
+        raise ValueError(
+            f"Micro schedule duration deltas must preserve total epochs: "
+            f"{new_total} != {original_total}"
+        )
+
+    start_epoch = 1
+    for phase in phases:
+        duration = durations[phase["name"]]
+        phase["start_epoch"] = start_epoch
+        phase["end_epoch"] = start_epoch + duration - 1
+        start_epoch = phase["end_epoch"] + 1
+
+
+def _apply_param_overrides(params, param_overrides):
+    phases_by_name = {phase["name"]: phase for phase in params["epoch_schedule"]}
+    for phase_name, overrides in param_overrides.items():
+        if phase_name not in phases_by_name:
+            raise ValueError(f"Unknown Trial 19 phase in param override: {phase_name}")
+        phases_by_name[phase_name]["params"].update(overrides)
+
+
+def apply_micro_schedule_preset(params, preset_name):
+    if preset_name is None:
+        return params
+    if preset_name not in MICRO_SCHEDULE_PRESETS:
+        raise ValueError(f"Unknown Trial 19 micro schedule preset: {preset_name}")
+
+    preset = MICRO_SCHEDULE_PRESETS[preset_name]
+    if preset.get("duration_deltas"):
+        _apply_duration_deltas(params, preset["duration_deltas"])
+    if preset.get("param_overrides"):
+        _apply_param_overrides(params, preset["param_overrides"])
+    return params
+
+
 def build_trial_19_params(extend_phase=None, extend_epochs=0):
     params = copy.deepcopy(TRIAL_19_PARAMS)
     if extend_epochs < 0:
@@ -145,6 +222,13 @@ def build_trial_19_params(extend_phase=None, extend_epochs=0):
     return params
 
 
+def resolve_trial_19_params(args):
+    if args.micro_schedule_preset and args.extend_epochs:
+        raise ValueError("--micro-schedule-preset cannot be combined with --extend-epochs.")
+    params = build_trial_19_params(args.extend_phase, args.extend_epochs)
+    return apply_micro_schedule_preset(params, args.micro_schedule_preset)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Replay Trial 19 bridge schedule and save the final checkpoint.",
@@ -161,6 +245,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-train", type=int, default=500)
     parser.add_argument("--extend-phase", type=str, default=None, choices=TRIAL_19_PHASE_NAMES)
     parser.add_argument("--extend-epochs", type=int, default=0)
+    parser.add_argument("--micro-schedule-preset", type=str, default=None, choices=MICRO_SCHEDULE_PRESET_NAMES)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
     parser.add_argument("--lr-predopt", type=float, default=1e-2)
@@ -198,7 +283,7 @@ def last_epoch_checkpoint_key(row):
 
 def main() -> None:
     args = parse_args()
-    trial_19_params = build_trial_19_params(args.extend_phase, args.extend_epochs)
+    trial_19_params = resolve_trial_19_params(args)
     schedule_end_epoch = trial_19_params["epoch_schedule"][-1]["end_epoch"]
     if args.n_train < schedule_end_epoch:
         raise ValueError(
