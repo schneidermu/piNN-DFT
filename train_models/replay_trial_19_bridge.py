@@ -127,6 +127,9 @@ MICRO_SCHEDULE_PRESETS = {
     "fchem_polish_plus20_finish_minus20": {
         "duration_deltas": {"fchem_polish": 20, "fchem_finish": -20},
     },
+    "fchem_polish_plus10_finish_minus10": {
+        "duration_deltas": {"fchem_polish": 10, "fchem_finish": -10},
+    },
     "finish_vxc7": {
         "param_overrides": {"fchem_finish": {"vxc_loss_scale": 7}},
     },
