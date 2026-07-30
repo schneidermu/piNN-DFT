@@ -130,6 +130,48 @@ MICRO_SCHEDULE_PRESETS = {
     "fchem_polish_plus10_finish_minus10": {
         "duration_deltas": {"fchem_polish": 10, "fchem_finish": -10},
     },
+    "exc_repair_compressed": {
+        "duration_deltas": {"sum_repair": 10, "fchem_polish": 10, "fchem_drive": 20, "fchem_finish": -40},
+        "param_overrides": {
+            "sum_repair": {"reaction_grad_scale": 0.9, "vxc_loss_scale": 50, "exc_loss_scale": 1.5},
+            "fchem_polish": {"gradient_merge_strategy": "clip_then_sum", "reaction_grad_scale": 0.75, "vxc_loss_scale": 35, "exc_loss_scale": 3.0, "exc_grad_clip": 2.0, "exc_gradient_merge_strategy": "clip_then_sum"},
+            "fchem_drive": {"reaction_grad_scale": 1.0, "vxc_loss_scale": 20, "exc_loss_scale": 1.5},
+            "fchem_finish": {"vxc_loss_scale": 7},
+        },
+    },
+    "exc_repair_compressed_smooth": {
+        "duration_deltas": {"sum_repair": 10, "fchem_polish": 10, "fchem_drive": 20, "fchem_finish": -40},
+        "param_overrides": {
+            "sum_repair": {"reaction_grad_scale": 0.9, "vxc_loss_scale": 50, "exc_loss_scale": 1.5},
+            "fchem_polish": {"gradient_merge_strategy": "sum", "reaction_grad_scale": 0.75, "vxc_loss_scale": 35, "exc_loss_scale": 3.0, "exc_grad_clip": "none", "exc_gradient_merge_strategy": "sum"},
+            "fchem_drive": {"reaction_grad_scale": 1.0, "vxc_loss_scale": 20, "exc_loss_scale": 1.5},
+            "fchem_finish": {"vxc_loss_scale": 7},
+        },
+    },
+    "exc_repair_density_guard": {
+        "duration_deltas": {"sum_repair": 10, "fchem_polish": 10, "fchem_drive": 20, "fchem_finish": -40},
+        "param_overrides": {
+            "sum_repair": {"reaction_grad_scale": 0.9, "vxc_loss_scale": 50, "exc_loss_scale": 1.5},
+            "fchem_polish": {"gradient_merge_strategy": "sum", "reaction_grad_scale": 0.8, "vxc_loss_scale": 40, "exc_loss_scale": 2.0, "exc_grad_clip": "none", "exc_gradient_merge_strategy": "sum"},
+            "fchem_drive": {"reaction_grad_scale": 1.0, "vxc_loss_scale": 20, "exc_loss_scale": 1.5},
+            "fchem_finish": {"vxc_loss_scale": 7},
+        },
+    },
+    "late_exc_repair": {
+        "duration_deltas": {"fchem_polish": -20, "fchem_drive": 60, "fchem_finish": -40},
+        "param_overrides": {
+            "fchem_drive": {"gradient_merge_strategy": "clip_then_sum", "reaction_grad_scale": 0.75, "vxc_loss_scale": 15, "exc_loss_scale": 3.0, "exc_grad_clip": 2.0, "exc_gradient_merge_strategy": "clip_then_sum"},
+            "fchem_finish": {"vxc_loss_scale": 7},
+        },
+    },
+    "early_exc_repair": {
+        "duration_deltas": {"sum_repair": 20, "fchem_polish": 20, "fchem_finish": -40},
+        "param_overrides": {
+            "sum_repair": {"reaction_grad_scale": 0.9, "vxc_loss_scale": 50, "exc_loss_scale": 1.5},
+            "fchem_polish": {"gradient_merge_strategy": "clip_then_sum", "reaction_grad_scale": 0.75, "vxc_loss_scale": 35, "exc_loss_scale": 3.0, "exc_grad_clip": 2.0, "exc_gradient_merge_strategy": "clip_then_sum"},
+            "fchem_finish": {"vxc_loss_scale": 7},
+        },
+    },
     "finish_vxc7": {
         "param_overrides": {"fchem_finish": {"vxc_loss_scale": 7}},
     },
