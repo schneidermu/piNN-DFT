@@ -187,6 +187,151 @@ MICRO_SCHEDULE_PRESETS = {
 }
 MICRO_SCHEDULE_PRESET_NAMES = tuple(MICRO_SCHEDULE_PRESETS)
 
+def _phase_from_base(name, start_epoch, end_epoch, overrides=None):
+    base_phase = next(phase for phase in TRIAL_19_PARAMS["epoch_schedule"] if phase["name"] == name)
+    phase = copy.deepcopy(base_phase)
+    phase["start_epoch"] = start_epoch
+    phase["end_epoch"] = end_epoch
+    if overrides:
+        phase["params"].update(overrides)
+    return phase
+
+
+def _h9_repair_phase(
+    start_epoch,
+    end_epoch,
+    *,
+    exc_loss_scale=3.0,
+    vxc_loss_scale=15,
+    reaction_grad_scale=0.75,
+):
+    return _phase_from_base(
+        "fchem_drive",
+        start_epoch,
+        end_epoch,
+        {
+            "gradient_merge_strategy": "clip_then_sum",
+            "reaction_grad_scale": reaction_grad_scale,
+            "vxc_loss_scale": vxc_loss_scale,
+            "exc_loss_scale": exc_loss_scale,
+            "exc_grad_clip": 2.0,
+            "exc_gradient_merge_strategy": "clip_then_sum",
+        },
+    )
+
+
+def _h9_soft_landing_phase(
+    start_epoch,
+    end_epoch,
+    *,
+    exc_loss_scale,
+    vxc_loss_scale,
+    reaction_grad_scale,
+):
+    phase = _h9_repair_phase(
+        start_epoch,
+        end_epoch,
+        exc_loss_scale=exc_loss_scale,
+        vxc_loss_scale=vxc_loss_scale,
+        reaction_grad_scale=reaction_grad_scale,
+    )
+    phase["name"] = "h9_soft_landing"
+    return phase
+
+
+def _build_h9_schedule(
+    *,
+    repair_start=241,
+    repair_end=420,
+    repair_exc_loss_scale=3.0,
+    repair_vxc_loss_scale=15,
+    repair_reaction_grad_scale=0.75,
+    soft_landing=None,
+):
+    if repair_start < 241 or repair_end < repair_start:
+        raise ValueError("Invalid h9 repair window.")
+
+    schedule = [
+        _phase_from_base("clip_drive", 1, 72),
+        _phase_from_base("sum_repair", 73, 160),
+        _phase_from_base("fchem_polish", 161, 240),
+    ]
+
+    if repair_start > 241:
+        schedule.append(_phase_from_base("fchem_drive", 241, repair_start - 1))
+
+    schedule.append(
+        _h9_repair_phase(
+            repair_start,
+            repair_end,
+            exc_loss_scale=repair_exc_loss_scale,
+            vxc_loss_scale=repair_vxc_loss_scale,
+            reaction_grad_scale=repair_reaction_grad_scale,
+        )
+    )
+
+    next_epoch = repair_end + 1
+    if soft_landing:
+        duration, kwargs = soft_landing
+        if duration <= 0:
+            raise ValueError("h9 soft-landing duration must be positive.")
+        soft_end = next_epoch + duration - 1
+        schedule.append(_h9_soft_landing_phase(next_epoch, soft_end, **kwargs))
+        next_epoch = soft_end + 1
+
+    if next_epoch > 500:
+        raise ValueError("h9 repair and soft-landing phases exceed 500 epochs.")
+
+    schedule.append(
+        _phase_from_base(
+            "fchem_finish",
+            next_epoch,
+            500,
+            {"vxc_loss_scale": 7},
+        )
+    )
+    return schedule
+
+
+H9_SCHEDULE_PRESETS = {
+    # Exploration: identify which part of h9's repair window and force matters.
+    "h9_explore_short_repair": _build_h9_schedule(repair_end=380),
+    "h9_explore_long_repair": _build_h9_schedule(repair_end=460),
+    "h9_explore_delayed_repair": _build_h9_schedule(repair_start=281, repair_end=440),
+    "h9_explore_exc4": _build_h9_schedule(repair_exc_loss_scale=4.0),
+    "h9_explore_reaction1": _build_h9_schedule(repair_reaction_grad_scale=1.0),
+    # Exploitation: retain h9's repair and replace its destructive hard finish.
+    "h9_exploit_soft_exc2_vxc10_r085": _build_h9_schedule(
+        soft_landing=(
+            40,
+            {"exc_loss_scale": 2.0, "vxc_loss_scale": 10, "reaction_grad_scale": 0.85},
+        )
+    ),
+    "h9_exploit_soft_exc2_vxc15_r075": _build_h9_schedule(
+        soft_landing=(
+            40,
+            {"exc_loss_scale": 2.0, "vxc_loss_scale": 15, "reaction_grad_scale": 0.75},
+        )
+    ),
+    "h9_exploit_soft_exc25_vxc12_r080": _build_h9_schedule(
+        soft_landing=(
+            40,
+            {"exc_loss_scale": 2.5, "vxc_loss_scale": 12, "reaction_grad_scale": 0.80},
+        )
+    ),
+    "h9_exploit_repair440_soft30": _build_h9_schedule(
+        repair_end=440,
+        soft_landing=(30, {"exc_loss_scale": 2.0, "vxc_loss_scale": 12, "reaction_grad_scale": 0.80}),
+    ),
+    "h9_exploit_soft60": _build_h9_schedule(
+        soft_landing=(
+            60,
+            {"exc_loss_scale": 2.0, "vxc_loss_scale": 10, "reaction_grad_scale": 0.75},
+        )
+    ),
+}
+H9_SCHEDULE_PRESET_NAMES = tuple(H9_SCHEDULE_PRESETS)
+
 
 def _apply_duration_deltas(params, duration_deltas):
     phases = params["epoch_schedule"]
@@ -268,6 +413,12 @@ def build_trial_19_params(extend_phase=None, extend_epochs=0):
 
 
 def resolve_trial_19_params(args):
+    if args.h9_schedule_preset:
+        if args.micro_schedule_preset or args.extend_epochs:
+            raise ValueError("--h9-schedule-preset cannot be combined with micro or extension options.")
+        params = copy.deepcopy(TRIAL_19_PARAMS)
+        params["epoch_schedule"] = copy.deepcopy(H9_SCHEDULE_PRESETS[args.h9_schedule_preset])
+        return params
     if args.micro_schedule_preset and args.extend_epochs:
         raise ValueError("--micro-schedule-preset cannot be combined with --extend-epochs.")
     params = build_trial_19_params(args.extend_phase, args.extend_epochs)
@@ -291,6 +442,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--extend-phase", type=str, default=None, choices=TRIAL_19_PHASE_NAMES)
     parser.add_argument("--extend-epochs", type=int, default=0)
     parser.add_argument("--micro-schedule-preset", type=str, default=None, choices=MICRO_SCHEDULE_PRESET_NAMES)
+    parser.add_argument("--h9-schedule-preset", type=str, default=None, choices=H9_SCHEDULE_PRESET_NAMES)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
     parser.add_argument("--lr-predopt", type=float, default=1e-2)
