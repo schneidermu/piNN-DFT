@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -97,6 +98,12 @@ def build_functional_npz(
     target_npz = dens_dir / f"{functional}.npz"
     return _build_npz_from_functional_dir(functional_calc_dir, target_npz)
 
+
+def cleanup_experiment_avrane_artifacts(experiment_root: Path) -> None:
+    """Remove regenerable avRANE grids after their metrics have been persisted."""
+    den_mol_or_root = experiment_root / "outputs" / "avrane" / "den_mol_or"
+    if den_mol_or_root.exists():
+        shutil.rmtree(den_mol_or_root)
 
 def _compute_tables(
     functional_npz: Path,
@@ -207,12 +214,10 @@ def run_avrane_reduction(
 
     metrics_path = experiment_root / "reports" / "avrane_metrics.json"
     metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    cleanup_experiment_avrane_artifacts(experiment_root)
 
     artifacts = [
-        str(functional_npz),
-        str(lda_npz),
         str(metrics_path),
-        str(calc_dir),
     ]
     normalized_refs = {key: str(value) for key, value in reference_paths.items()}
     return metrics, artifacts, normalized_refs
