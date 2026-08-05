@@ -333,6 +333,103 @@ H9_SCHEDULE_PRESETS = {
 H9_SCHEDULE_PRESET_NAMES = tuple(H9_SCHEDULE_PRESETS)
 
 
+def _build_e3_schedule(
+    *,
+    repair_start=281,
+    repair_end=440,
+    pre_drive_overrides=None,
+    repair_exc_loss_scale=3.0,
+    repair_vxc_loss_scale=15,
+    repair_reaction_grad_scale=0.75,
+    finish_overrides=None,
+):
+    if repair_start < 241 or repair_end < repair_start or repair_end >= 500:
+        raise ValueError("Invalid e3 repair window.")
+
+    schedule = [
+        _phase_from_base("clip_drive", 1, 72),
+        _phase_from_base("sum_repair", 73, 160),
+        _phase_from_base("fchem_polish", 161, 240),
+    ]
+    if repair_start > 241:
+        pre_drive = _phase_from_base(
+            "fchem_drive",
+            241,
+            repair_start - 1,
+            pre_drive_overrides,
+        )
+        pre_drive["name"] = "e3_pre_drive"
+        schedule.append(pre_drive)
+    repair = _h9_repair_phase(
+        repair_start,
+        repair_end,
+        exc_loss_scale=repair_exc_loss_scale,
+        vxc_loss_scale=repair_vxc_loss_scale,
+        reaction_grad_scale=repair_reaction_grad_scale,
+    )
+    repair["name"] = "e3_repair"
+    schedule.append(repair)
+    finish_params = {"vxc_loss_scale": 7}
+    if finish_overrides:
+        finish_params.update(finish_overrides)
+    finish = _phase_from_base("fchem_finish", repair_end + 1, 500, finish_params)
+    finish["name"] = "e3_finish"
+    schedule.append(finish)
+    return schedule
+
+
+def _build_e3_split_repair_schedule():
+    schedule = [
+        _phase_from_base("clip_drive", 1, 72),
+        _phase_from_base("sum_repair", 73, 160),
+        _phase_from_base("fchem_polish", 161, 240),
+    ]
+    pre_drive = _phase_from_base("fchem_drive", 241, 280)
+    pre_drive["name"] = "e3_pre_drive"
+    schedule.append(pre_drive)
+    first_repair = _h9_repair_phase(281, 360)
+    first_repair["name"] = "e3_repair_a"
+    schedule.append(first_repair)
+    gap_drive = _phase_from_base("fchem_drive", 361, 400)
+    gap_drive["name"] = "e3_gap_drive"
+    schedule.append(gap_drive)
+    second_repair = _h9_repair_phase(401, 440)
+    second_repair["name"] = "e3_repair_b"
+    schedule.append(second_repair)
+    finish = _phase_from_base("fchem_finish", 441, 500, {"vxc_loss_scale": 7})
+    finish["name"] = "e3_finish"
+    schedule.append(finish)
+    return schedule
+
+
+E3_SCHEDULE_PRESETS = {
+    # Temporal map: determine the viable delayed-repair region.
+    "e3_onset261_end440": _build_e3_schedule(repair_start=261),
+    "e3_onset301_end440": _build_e3_schedule(repair_start=301),
+    "e3_onset281_end420": _build_e3_schedule(repair_end=420),
+    "e3_onset281_end460": _build_e3_schedule(repair_end=460),
+    # Preconditioning: test whether elapsed time or the pre-repair trajectory creates e3's basin.
+    "e3_pre_reaction075": _build_e3_schedule(
+        pre_drive_overrides={"reaction_grad_scale": 0.75},
+    ),
+    "e3_pre_density_guard": _build_e3_schedule(
+        pre_drive_overrides={
+            "reaction_grad_scale": 0.75,
+            "vxc_loss_scale": 20,
+            "exc_loss_scale": 1.5,
+        },
+    ),
+    # Repair balance: e4 rules out higher E_xc force; test the opposite side and VXC pressure.
+    "e3_repair_exc2": _build_e3_schedule(repair_exc_loss_scale=2.0),
+    "e3_repair_vxc10": _build_e3_schedule(repair_vxc_loss_scale=10),
+    "e3_finish_reaction075": _build_e3_schedule(
+        finish_overrides={"reaction_grad_scale": 0.75},
+    ),
+    # Structure: test whether contiguous clipped repair is necessary.
+    "e3_split_repair": _build_e3_split_repair_schedule(),
+}
+E3_SCHEDULE_PRESET_NAMES = tuple(E3_SCHEDULE_PRESETS)
+
 def _apply_duration_deltas(params, duration_deltas):
     phases = params["epoch_schedule"]
     durations = {
@@ -413,6 +510,12 @@ def build_trial_19_params(extend_phase=None, extend_epochs=0):
 
 
 def resolve_trial_19_params(args):
+    if args.e3_schedule_preset:
+        if args.h9_schedule_preset or args.micro_schedule_preset or args.extend_epochs:
+            raise ValueError("--e3-schedule-preset cannot be combined with other schedule options.")
+        params = copy.deepcopy(TRIAL_19_PARAMS)
+        params["epoch_schedule"] = copy.deepcopy(E3_SCHEDULE_PRESETS[args.e3_schedule_preset])
+        return params
     if args.h9_schedule_preset:
         if args.micro_schedule_preset or args.extend_epochs:
             raise ValueError("--h9-schedule-preset cannot be combined with micro or extension options.")
@@ -443,6 +546,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--extend-epochs", type=int, default=0)
     parser.add_argument("--micro-schedule-preset", type=str, default=None, choices=MICRO_SCHEDULE_PRESET_NAMES)
     parser.add_argument("--h9-schedule-preset", type=str, default=None, choices=H9_SCHEDULE_PRESET_NAMES)
+    parser.add_argument("--e3-schedule-preset", type=str, default=None, choices=E3_SCHEDULE_PRESET_NAMES)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
     parser.add_argument("--lr-predopt", type=float, default=1e-2)
