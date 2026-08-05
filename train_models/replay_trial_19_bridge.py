@@ -430,6 +430,63 @@ E3_SCHEDULE_PRESETS = {
 }
 E3_SCHEDULE_PRESET_NAMES = tuple(E3_SCHEDULE_PRESETS)
 
+
+def _build_simple_guard_schedule(*, guard, repair_end):
+    """Build a three-stage homotopy/repair/consolidation schedule."""
+    if not 0.0 <= guard <= 1.0:
+        raise ValueError("Simple guard must be in [0, 1].")
+    if repair_end not in {420, 440}:
+        raise ValueError("Simple repair end must be 420 or 440.")
+
+    endpoint_vxc = 10.0 + 30.0 * guard
+    endpoint_exc = 1.0 + guard
+    endpoint_reaction = 1.0 - 0.2 * guard
+    homotopy = []
+    for epoch in range(1, 281):
+        fraction = (epoch - 1) / 279.0
+        phase = _phase_from_base(
+            "fchem_drive",
+            epoch,
+            epoch,
+            {
+                "accum_iter": 2,
+                "gradient_merge_strategy": "sum",
+                "reaction_grad_clip": "none",
+                "reaction_grad_scale": 0.6 + fraction * (endpoint_reaction - 0.6),
+                "vxc_grad_clip": 2.0,
+                "vxc_loss_scale": 75.0 + fraction * (endpoint_vxc - 75.0),
+                "exc_loss_scale": 1.0 + fraction * (endpoint_exc - 1.0),
+                "exc_grad_clip": "none",
+                "exc_grad_scale": 1.0,
+                "exc_gradient_merge_strategy": "sum",
+            },
+        )
+        phase["name"] = "simple_joint_homotopy"
+        homotopy.append(phase)
+
+    repair = _h9_repair_phase(281, repair_end)
+    repair["name"] = "simple_energy_repair"
+    finish = _phase_from_base(
+        "fchem_finish",
+        repair_end + 1,
+        500,
+        {"vxc_loss_scale": 7},
+    )
+    finish["name"] = "simple_joint_consolidation"
+    return [*homotopy, repair, finish]
+
+
+SIMPLE_SCHEDULE_PRESETS = {
+    f"simple_s{2 * index + offset}": _build_simple_guard_schedule(
+        guard=guard,
+        repair_end=repair_end,
+    )
+    for index, guard in enumerate((0.0, 0.25, 0.5, 0.75, 1.0))
+    for offset, repair_end in ((1, 420), (2, 440))
+}
+SIMPLE_SCHEDULE_PRESET_NAMES = tuple(SIMPLE_SCHEDULE_PRESETS)
+
+
 def _apply_duration_deltas(params, duration_deltas):
     phases = params["epoch_schedule"]
     durations = {
@@ -510,6 +567,19 @@ def build_trial_19_params(extend_phase=None, extend_epochs=0):
 
 
 def resolve_trial_19_params(args):
+    if args.simple_schedule_preset:
+        if (
+            args.e3_schedule_preset
+            or args.h9_schedule_preset
+            or args.micro_schedule_preset
+            or args.extend_epochs
+        ):
+            raise ValueError("--simple-schedule-preset cannot be combined with other schedule options.")
+        params = copy.deepcopy(TRIAL_19_PARAMS)
+        params["epoch_schedule"] = copy.deepcopy(
+            SIMPLE_SCHEDULE_PRESETS[args.simple_schedule_preset]
+        )
+        return params
     if args.e3_schedule_preset:
         if args.h9_schedule_preset or args.micro_schedule_preset or args.extend_epochs:
             raise ValueError("--e3-schedule-preset cannot be combined with other schedule options.")
@@ -547,6 +617,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--micro-schedule-preset", type=str, default=None, choices=MICRO_SCHEDULE_PRESET_NAMES)
     parser.add_argument("--h9-schedule-preset", type=str, default=None, choices=H9_SCHEDULE_PRESET_NAMES)
     parser.add_argument("--e3-schedule-preset", type=str, default=None, choices=E3_SCHEDULE_PRESET_NAMES)
+    parser.add_argument(
+        "--simple-schedule-preset",
+        type=str,
+        default=None,
+        choices=SIMPLE_SCHEDULE_PRESET_NAMES,
+    )
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
     parser.add_argument("--lr-predopt", type=float, default=1e-2)
