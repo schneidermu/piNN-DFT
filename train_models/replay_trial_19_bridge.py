@@ -1,6 +1,7 @@
 import argparse
 import copy
 import json
+import math
 import pickle
 from pathlib import Path
 
@@ -487,6 +488,118 @@ SIMPLE_SCHEDULE_PRESETS = {
 SIMPLE_SCHEDULE_PRESET_NAMES = tuple(SIMPLE_SCHEDULE_PRESETS)
 
 
+OCCAM_VXC_SCALE = 64.0
+OCCAM_REPRESENTATION_END = 300
+OCCAM_REPAIR_END = 400
+
+
+def _occam_progress(fraction, path):
+    if path == "geometric" or path == "linear":
+        return fraction
+    if path == "cosine":
+        return 0.5 * (1.0 - math.cos(math.pi * fraction))
+    if path == "quarter_step":
+        return 0.0 if fraction < 0.25 else 1.0
+    if path == "half_step":
+        return 0.0 if fraction < 0.5 else 1.0
+    raise ValueError(f"Unknown Occam representation path: {path}")
+
+
+def _build_occam_schedule(*, path, repair_multiplier):
+    """Build a 300/100/100 joint-repair-joint curriculum.
+
+    The Vxc anchor is the nearest power of two to the measured initial
+    Fchem/Vxc gradient-norm ratio (~73). All remaining coefficients are tied
+    to powers of two, leaving path shape and repair strength as the only
+    experimental factors.
+    """
+    if repair_multiplier not in {2.0, 3.0}:
+        raise ValueError("Occam repair multiplier must be 2 or 3.")
+
+    representation = []
+    for epoch in range(1, OCCAM_REPRESENTATION_END + 1):
+        fraction = (epoch - 1) / (OCCAM_REPRESENTATION_END - 1)
+        progress = _occam_progress(fraction, path)
+        if path == "linear":
+            reaction_scale = 0.5 + 0.5 * progress
+            vxc_scale = OCCAM_VXC_SCALE - 0.75 * OCCAM_VXC_SCALE * progress
+        else:
+            reaction_scale = 2.0 ** (progress - 1.0)
+            vxc_scale = OCCAM_VXC_SCALE * 2.0 ** (-2.0 * progress)
+
+        anchored = fraction < 0.25
+        phase = _phase_from_base(
+            "fchem_drive",
+            epoch,
+            epoch,
+            {
+                "accum_iter": 2,
+                "gradient_merge_strategy": "clip_then_sum" if anchored else "sum",
+                "reaction_grad_clip": "none",
+                "reaction_grad_scale": reaction_scale,
+                "vxc_grad_clip": 2.0,
+                "vxc_loss_scale": vxc_scale,
+                "exc_loss_scale": 1.0,
+                "exc_grad_clip": "none",
+                "exc_grad_scale": 1.0,
+                "exc_gradient_merge_strategy": "sum",
+            },
+        )
+        phase["name"] = "occam_representation"
+        representation.append(phase)
+
+    repair = _phase_from_base(
+        "fchem_drive",
+        OCCAM_REPRESENTATION_END + 1,
+        OCCAM_REPAIR_END,
+        {
+            "accum_iter": 2,
+            "gradient_merge_strategy": "clip_then_sum",
+            "reaction_grad_clip": "none",
+            "reaction_grad_scale": repair_multiplier / (repair_multiplier + 1.0),
+            "vxc_grad_clip": 2.0,
+            "vxc_loss_scale": OCCAM_VXC_SCALE / 4.0,
+            "exc_loss_scale": repair_multiplier,
+            "exc_grad_clip": 2.0,
+            "exc_grad_scale": 1.0,
+            "exc_gradient_merge_strategy": "clip_then_sum",
+        },
+    )
+    repair["name"] = "occam_energy_repair"
+
+    consolidation = _phase_from_base(
+        "fchem_finish",
+        OCCAM_REPAIR_END + 1,
+        500,
+        {
+            "accum_iter": 2,
+            "gradient_merge_strategy": "sum",
+            "reaction_grad_clip": "none",
+            "reaction_grad_scale": 1.0,
+            "vxc_grad_clip": 2.0,
+            "vxc_loss_scale": OCCAM_VXC_SCALE / 8.0,
+            "exc_loss_scale": 1.0,
+            "exc_grad_clip": "none",
+            "exc_grad_scale": 1.0,
+            "exc_gradient_merge_strategy": "sum",
+        },
+    )
+    consolidation["name"] = "occam_joint_consolidation"
+    return [*representation, repair, consolidation]
+
+
+_OCCAM_PATHS = ("geometric", "cosine", "linear", "quarter_step", "half_step")
+OCCAM_SCHEDULE_PRESETS = {
+    f"occam_{path}_{repair_name}": _build_occam_schedule(
+        path=path,
+        repair_multiplier=repair_multiplier,
+    )
+    for path in _OCCAM_PATHS
+    for repair_name, repair_multiplier in (("double", 2.0), ("triple", 3.0))
+}
+OCCAM_SCHEDULE_PRESET_NAMES = tuple(OCCAM_SCHEDULE_PRESETS)
+
+
 def _apply_duration_deltas(params, duration_deltas):
     phases = params["epoch_schedule"]
     durations = {
@@ -567,6 +680,20 @@ def build_trial_19_params(extend_phase=None, extend_epochs=0):
 
 
 def resolve_trial_19_params(args):
+    if args.occam_schedule_preset:
+        if (
+            args.simple_schedule_preset
+            or args.e3_schedule_preset
+            or args.h9_schedule_preset
+            or args.micro_schedule_preset
+            or args.extend_epochs
+        ):
+            raise ValueError("--occam-schedule-preset cannot be combined with other schedule options.")
+        params = copy.deepcopy(TRIAL_19_PARAMS)
+        params["epoch_schedule"] = copy.deepcopy(
+            OCCAM_SCHEDULE_PRESETS[args.occam_schedule_preset]
+        )
+        return params
     if args.simple_schedule_preset:
         if (
             args.e3_schedule_preset
@@ -622,6 +749,12 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default=None,
         choices=SIMPLE_SCHEDULE_PRESET_NAMES,
+    )
+    parser.add_argument(
+        "--occam-schedule-preset",
+        type=str,
+        default=None,
+        choices=OCCAM_SCHEDULE_PRESET_NAMES,
     )
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
