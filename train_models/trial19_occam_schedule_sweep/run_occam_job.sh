@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+# Prevent ~/.local packages from shadowing the activated Conda environment.
+export PYTHONNOUSERSITE=1
+
 : "${OCCAM_PRESET:?OCCAM_PRESET must be set by the SLURM file}"
 : "${OCCAM_TAG:?OCCAM_TAG must be set by the SLURM file}"
 
@@ -31,6 +34,8 @@ fi
 
 MASTER_PORT=$(expr 10000 + $(echo -n "$SLURM_JOBID" | tail -c 4))
 MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
+
+python -c 'import numpy, pandas, pyarrow, sklearn, torch; assert int(numpy.__version__.split(".")[0]) < 2, numpy.__version__; print("Environment:", numpy.__version__, pandas.__version__, pyarrow.__version__, sklearn.__version__, torch.__version__)'
 
 CUBLAS_WORKSPACE_CONFIG=:16:8 torchrun \
     --nproc_per_node=2 \
