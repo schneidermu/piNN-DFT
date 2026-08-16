@@ -10,6 +10,39 @@ import numpy as np
 import torch
 
 
+class _LegacyRAdamW(torch.optim.RAdam):
+    """RAdam with decoupled weight decay for PyTorch releases before 2.2."""
+
+    def __init__(self, params, *args, **kwargs):
+        super().__init__(params, *args, **kwargs)
+        for group in self.param_groups:
+            group["decoupled_weight_decay"] = group["weight_decay"]
+            group["weight_decay"] = 0.0
+
+    def step(self, closure=None):
+        # Match AdamW/RAdamW: decay parameters before the adaptive update and
+        # keep the base RAdam implementation's coupled decay disabled.
+        with torch.no_grad():
+            for group in self.param_groups:
+                weight_decay = group["decoupled_weight_decay"]
+                if weight_decay == 0.0:
+                    continue
+                decay_factor = 1.0 - group["lr"] * weight_decay
+                for parameter in group["params"]:
+                    if parameter.grad is not None:
+                        parameter.mul_(decay_factor)
+        return super().step(closure)
+
+
+def _make_radamw(optim_groups, learning_rate):
+    """Create RAdamW across the PyTorch versions used by the GPU clusters."""
+    if "decoupled_weight_decay" in inspect.signature(torch.optim.RAdam).parameters:
+        return torch.optim.RAdam(
+            optim_groups, lr=learning_rate, decoupled_weight_decay=True
+        )
+    return _LegacyRAdamW(optim_groups, lr=learning_rate)
+
+
 def catch_nan(**kwargs):
     nan_detected = False
     inf_detected = False
@@ -173,9 +206,7 @@ def configure_optimizers(model, learning_rate, optimizer_str="radamw", weight_de
     ]
 
     if optimizer_str == "radamw":
-        optimizer = torch.optim.RAdam(
-            optim_groups, lr=learning_rate, decoupled_weight_decay=True
-        )
+        optimizer = _make_radamw(optim_groups, learning_rate)
     elif optimizer_str == "adamw":
         optimizer = torch.optim.AdamW(
             optim_groups, lr=learning_rate
