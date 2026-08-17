@@ -600,6 +600,95 @@ OCCAM_SCHEDULE_PRESETS = {
 OCCAM_SCHEDULE_PRESET_NAMES = tuple(OCCAM_SCHEDULE_PRESETS)
 
 
+def _build_minimal_sota_schedule(
+    *,
+    representation_vxc,
+    representation_merge,
+    representation_reaction,
+    repair_start=281,
+):
+    """Build a three-stage constant-weight representation/repair/joint schedule."""
+    if representation_vxc not in {40.0, 80.0}:
+        raise ValueError("Minimal-SOTA representation Vxc scale must be 40 or 80.")
+    if representation_merge not in {"sum", "clip_then_sum"}:
+        raise ValueError("Minimal-SOTA merge strategy must be sum or clip_then_sum.")
+    if representation_reaction not in {0.75, 1.0}:
+        raise ValueError("Minimal-SOTA reaction scale must be 0.75 or 1.")
+    if repair_start not in {261, 281, 301}:
+        raise ValueError("Minimal-SOTA repair must start at epoch 261, 281, or 301.")
+
+    representation = _phase_from_base(
+        "fchem_drive",
+        1,
+        repair_start - 1,
+        {
+            "accum_iter": 2,
+            "gradient_merge_strategy": representation_merge,
+            "reaction_grad_clip": "none",
+            "reaction_grad_scale": representation_reaction,
+            "vxc_grad_clip": 2.0,
+            "vxc_loss_scale": representation_vxc,
+            "exc_loss_scale": 1.0,
+            "exc_grad_clip": "none",
+            "exc_grad_scale": 1.0,
+            "exc_gradient_merge_strategy": "sum",
+        },
+    )
+    representation["name"] = "minimal_representation"
+
+    repair = _h9_repair_phase(repair_start, 440)
+    repair["name"] = "minimal_energy_repair"
+
+    consolidation = _phase_from_base(
+        "fchem_finish",
+        441,
+        500,
+        {
+            "accum_iter": 2,
+            "gradient_merge_strategy": "sum",
+            "reaction_grad_clip": "none",
+            "reaction_grad_scale": 1.0,
+            "vxc_grad_clip": 2.0,
+            "vxc_loss_scale": 7.0,
+            "exc_loss_scale": 1.0,
+            "exc_grad_clip": "none",
+            "exc_grad_scale": 1.0,
+            "exc_gradient_merge_strategy": "sum",
+        },
+    )
+    consolidation["name"] = "minimal_joint_consolidation"
+    return [representation, repair, consolidation]
+
+
+MINIMAL_SOTA_SCHEDULE_PRESETS = {
+    f"minimal_v{int(vxc)}_{merge_name}_r{reaction_name}": _build_minimal_sota_schedule(
+        representation_vxc=vxc,
+        representation_merge=merge_strategy,
+        representation_reaction=reaction_scale,
+    )
+    for vxc in (40.0, 80.0)
+    for merge_name, merge_strategy in (("sum", "sum"), ("clip", "clip_then_sum"))
+    for reaction_name, reaction_scale in (("1", 1.0), ("075", 0.75))
+}
+MINIMAL_SOTA_SCHEDULE_PRESETS.update(
+    {
+        "minimal_v40_sum_r1_onset261": _build_minimal_sota_schedule(
+            representation_vxc=40.0,
+            representation_merge="sum",
+            representation_reaction=1.0,
+            repair_start=261,
+        ),
+        "minimal_v40_sum_r1_onset301": _build_minimal_sota_schedule(
+            representation_vxc=40.0,
+            representation_merge="sum",
+            representation_reaction=1.0,
+            repair_start=301,
+        ),
+    }
+)
+MINIMAL_SOTA_SCHEDULE_PRESET_NAMES = tuple(MINIMAL_SOTA_SCHEDULE_PRESETS)
+
+
 def _apply_duration_deltas(params, duration_deltas):
     phases = params["epoch_schedule"]
     durations = {
@@ -680,6 +769,24 @@ def build_trial_19_params(extend_phase=None, extend_epochs=0):
 
 
 def resolve_trial_19_params(args):
+    minimal_sota_schedule_preset = getattr(args, "minimal_sota_schedule_preset", None)
+    if minimal_sota_schedule_preset:
+        if (
+            args.occam_schedule_preset
+            or args.simple_schedule_preset
+            or args.e3_schedule_preset
+            or args.h9_schedule_preset
+            or args.micro_schedule_preset
+            or args.extend_epochs
+        ):
+            raise ValueError(
+                "--minimal-sota-schedule-preset cannot be combined with other schedule options."
+            )
+        params = copy.deepcopy(TRIAL_19_PARAMS)
+        params["epoch_schedule"] = copy.deepcopy(
+            MINIMAL_SOTA_SCHEDULE_PRESETS[minimal_sota_schedule_preset]
+        )
+        return params
     if args.occam_schedule_preset:
         if (
             args.simple_schedule_preset
@@ -755,6 +862,12 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default=None,
         choices=OCCAM_SCHEDULE_PRESET_NAMES,
+    )
+    parser.add_argument(
+        "--minimal-sota-schedule-preset",
+        type=str,
+        default=None,
+        choices=MINIMAL_SOTA_SCHEDULE_PRESET_NAMES,
     )
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
