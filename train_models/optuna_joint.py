@@ -37,6 +37,12 @@ from utils import (
     seed_worker,
     set_random_seed,
 )
+from training_state import (
+    atomic_torch_save,
+    capture_runtime_state,
+    load_torch_payload,
+    restore_runtime_state,
+)
 
 EPS = 1e-10
 OMEGA = 0.5
@@ -177,6 +183,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-type", type=str, default="base", choices=["base", "log", "gc_svelu_mirror", "gc_softplus_mirror", "gc_softplus_mirror_r2scan_alpha"])
     parser.add_argument("--n-predopt", type=int, default=3)
     parser.add_argument("--n-train", type=int, default=80)
+    parser.add_argument("--convergence-base-epochs", type=int, default=500)
+    parser.add_argument("--convergence-tail-epochs", type=int, default=0)
+    parser.add_argument("--convergence-tail-start-lr", type=float, default=1e-5)
+    parser.add_argument("--convergence-tail-min-lr", type=float, default=1e-7)
+    parser.add_argument("--resume-training-state", type=str, default="")
+    parser.add_argument("--training-state-every", type=int, default=0)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
     parser.add_argument("--lr-predopt", type=float, default=2e-2)
@@ -294,6 +306,119 @@ def build_scheduler(optimizer: torch.optim.Optimizer, n_train: int):
         eta_min=MIN_LR,
     )
     return SequentialLR(optimizer, schedulers=[warmup, cosine], milestones=[WARMUP_EPOCHS])
+
+
+class GlobalCosineWithConvergenceTail:
+    """Preserve the 500-epoch replay LR path, then run a low-LR cosine tail."""
+
+    def __init__(
+        self,
+        optimizer: torch.optim.Optimizer,
+        *,
+        base_epochs: int,
+        tail_epochs: int,
+        tail_start_lr: float,
+        tail_min_lr: float,
+    ) -> None:
+        if base_epochs <= WARMUP_EPOCHS:
+            raise ValueError("Convergence-tail base epochs must exceed warmup epochs.")
+        if tail_epochs <= 0:
+            raise ValueError("Convergence-tail epochs must be positive.")
+        if not 0.0 < tail_min_lr < tail_start_lr:
+            raise ValueError("Convergence-tail LR bounds must satisfy 0 < min < start.")
+        self.optimizer = optimizer
+        self.base_epochs = int(base_epochs)
+        self.tail_epochs = int(tail_epochs)
+        self.tail_start_lr = float(tail_start_lr)
+        self.tail_min_lr = float(tail_min_lr)
+        self.completed_epochs = 0
+        self.base_scheduler = build_scheduler(optimizer, self.base_epochs)
+
+    def prepare_epoch(self, epoch_number: int) -> None:
+        if epoch_number == self.base_epochs + 1:
+            self._set_lr(self.tail_start_lr)
+
+    def step(self) -> None:
+        self.completed_epochs += 1
+        if self.completed_epochs <= self.base_epochs:
+            self.base_scheduler.step()
+            return
+        tail_step = min(self.completed_epochs - self.base_epochs, self.tail_epochs)
+        fraction = tail_step / self.tail_epochs
+        learning_rate = self.tail_min_lr + 0.5 * (
+            self.tail_start_lr - self.tail_min_lr
+        ) * (1.0 + math.cos(math.pi * fraction))
+        self._set_lr(learning_rate)
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {
+            "base_scheduler": self.base_scheduler.state_dict(),
+            "completed_epochs": self.completed_epochs,
+            "base_epochs": self.base_epochs,
+            "tail_epochs": self.tail_epochs,
+            "tail_start_lr": self.tail_start_lr,
+            "tail_min_lr": self.tail_min_lr,
+        }
+
+    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
+        expected = {
+            "base_epochs": self.base_epochs,
+            "tail_epochs": self.tail_epochs,
+            "tail_start_lr": self.tail_start_lr,
+            "tail_min_lr": self.tail_min_lr,
+        }
+        observed = {key: state_dict[key] for key in expected}
+        if observed != expected:
+            raise ValueError(
+                f"Convergence-tail scheduler mismatch: expected {expected}, got {observed}."
+            )
+        self.base_scheduler.load_state_dict(state_dict["base_scheduler"])
+        self.completed_epochs = int(state_dict["completed_epochs"])
+
+    def get_last_lr(self) -> List[float]:
+        return [float(group["lr"]) for group in self.optimizer.param_groups]
+
+    def _set_lr(self, learning_rate: float) -> None:
+        for group in self.optimizer.param_groups:
+            group["lr"] = float(learning_rate)
+
+
+def build_training_scheduler(optimizer, args):
+    tail_epochs = int(getattr(args, "convergence_tail_epochs", 0))
+    if tail_epochs <= 0:
+        return build_scheduler(optimizer, args.n_train)
+    base_epochs = int(getattr(args, "convergence_base_epochs", 500))
+    if args.n_train < base_epochs + tail_epochs:
+        raise ValueError(
+            "Convergence training requires n_train >= convergence_base_epochs + "
+            f"convergence_tail_epochs, got {args.n_train} < {base_epochs} + {tail_epochs}."
+        )
+    return GlobalCosineWithConvergenceTail(
+        optimizer,
+        base_epochs=base_epochs,
+        tail_epochs=tail_epochs,
+        tail_start_lr=float(getattr(args, "convergence_tail_start_lr", 1e-5)),
+        tail_min_lr=float(getattr(args, "convergence_tail_min_lr", 1e-7)),
+    )
+
+
+def completed_params_signature(params: Dict[str, Any], completed_epoch: int) -> str:
+    """Describe the objective schedule already consumed by a saved run."""
+    normalized = copy.deepcopy(params)
+    schedule = normalized.get("epoch_schedule")
+    if schedule:
+        completed_schedule = []
+        for phase in schedule:
+            start_epoch = int(phase.get("start_epoch", 1))
+            if start_epoch > completed_epoch:
+                continue
+            completed_phase = copy.deepcopy(phase)
+            completed_phase["end_epoch"] = min(
+                int(phase.get("end_epoch", completed_epoch)), completed_epoch
+            )
+            completed_schedule.append(completed_phase)
+        normalized["epoch_schedule"] = completed_schedule
+    return json.dumps(normalized, sort_keys=True, separators=(",", ":"))
 
 
 def build_reaction_loader(
@@ -1337,7 +1462,7 @@ def run_trial(
     trial_number: int,
     params: Dict[str, Any],
     args: argparse.Namespace,
-    shared_preopt_checkpoint: Path,
+    shared_preopt_checkpoint: Optional[Path],
     data_train: dict,
     data_val: dict,
     data_vxc_train: list,
@@ -1366,8 +1491,10 @@ def run_trial(
         world_size=world_size,
     )
 
+    resume_training_state = str(getattr(args, "resume_training_state", "") or "")
     model = build_model(args, device)
-    load_state_dict_into_model(model, shared_preopt_checkpoint, device)
+    if not resume_training_state:
+        load_state_dict_into_model(model, shared_preopt_checkpoint, device)
     model = DDP(
         model,
         device_ids=[device.index] if device.type == "cuda" else None,
@@ -1379,7 +1506,7 @@ def run_trial(
         optimizer_str="radamw",
         weight_decay=args.weight_decay,
     )
-    scheduler = build_scheduler(optimizer, args.n_train)
+    scheduler = build_training_scheduler(optimizer, args)
 
     epoch_history: List[Dict[str, Any]] = []
     min_val_fchem_any_epoch = math.inf
@@ -1397,8 +1524,77 @@ def run_trial(
         checkpoints_dir.mkdir(parents=True, exist_ok=True)
         selected_checkpoint_path = checkpoints_dir / f"trial_{trial_number}_selected.pt"
 
-    for epoch in range(args.n_train):
+    training_state_every = int(getattr(args, "training_state_every", 0))
+    if training_state_every < 0:
+        raise ValueError("--training-state-every must be nonnegative.")
+    training_state_path = output_dir / "checkpoints" / f"trial_{trial_number}_training_state.pt"
+    start_epoch = 0
+    if resume_training_state:
+        resume_path = Path(resume_training_state)
+        resume_payload = load_torch_payload(resume_path, map_location=device)
+        if int(resume_payload.get("format_version", -1)) != 1:
+            raise ValueError(
+                f"Unsupported training-state format: {resume_payload.get('format_version')}."
+            )
+        if int(resume_payload["trial_number"]) != int(trial_number):
+            raise ValueError(
+                f"Training-state trial mismatch: {resume_payload['trial_number']} != {trial_number}."
+            )
+        if resume_payload.get("model_name") != args.name:
+            raise ValueError(
+                f"Training-state model mismatch: {resume_payload.get('model_name')} != {args.name}."
+            )
+        if resume_payload.get("model_type", "base") != getattr(args, "model_type", "base"):
+            raise ValueError("Training-state model type does not match the requested model type.")
+        if int(resume_payload.get("world_size", world_size)) != int(world_size):
+            raise ValueError("Exact training-state resume requires the original DDP world size.")
+        model.module.load_state_dict(resume_payload["model_state_dict"])
+        optimizer.load_state_dict(resume_payload["optimizer_state_dict"])
+        scheduler.load_state_dict(resume_payload["scheduler_state_dict"])
+        epoch_history = list(resume_payload.get("epoch_history", []))
+        start_epoch = int(resume_payload["completed_epoch"])
+        if len(epoch_history) != start_epoch:
+            raise ValueError(
+                f"Training-state history length {len(epoch_history)} does not match epoch {start_epoch}."
+            )
+        if start_epoch >= args.n_train:
+            raise ValueError(
+                f"Training state is already at epoch {start_epoch}, not below n_train={args.n_train}."
+            )
+        saved_signature = completed_params_signature(
+            resume_payload["params"], start_epoch
+        )
+        requested_signature = completed_params_signature(params, start_epoch)
+        if saved_signature != requested_signature:
+            raise ValueError(
+                "Training-state objective schedule does not match the requested run."
+            )
+        runtime_states = resume_payload.get("runtime_states", [])
+        rank = dist.get_rank() if dist.is_initialized() else local_rank
+        if len(runtime_states) != world_size:
+            raise ValueError("Training-state runtime state count does not match DDP world size.")
+        restore_runtime_state(runtime_states[rank], loaders)
+        min_val_fchem_any_epoch = min(
+            (row["val_fchem"] for row in epoch_history), default=math.inf
+        )
+        min_val_vxc_any_epoch = min(
+            (row["val_vxc"] for row in epoch_history), default=math.inf
+        )
+        min_val_exc_any_epoch = min(
+            (row["val_exc"] for row in epoch_history), default=math.inf
+        )
+        best_val_full_loss_any_epoch = min(
+            (row["val_full_loss"] for row in epoch_history), default=math.inf
+        )
+        current_selected_key = resume_payload.get("current_selected_key")
+        if rank0:
+            print(f"Resuming Trial {trial_number} from epoch {start_epoch}: {resume_path}")
+
+    for epoch in range(start_epoch, args.n_train):
         epoch_number = epoch + 1
+        prepare_epoch = getattr(scheduler, "prepare_epoch", None)
+        if prepare_epoch is not None:
+            prepare_epoch(epoch_number)
         effective_params = resolve_epoch_params(params, epoch_number=epoch_number, n_train=args.n_train)
         effective_params = resolve_objective_params(effective_params)
         train_dataset = loaders["train_loader"].dataset
@@ -1493,7 +1689,33 @@ def run_trial(
         if current_selected_key is None or candidate_key < current_selected_key:
             current_selected_key = candidate_key
             if args.save_selected_checkpoints and rank0 and selected_checkpoint_path is not None:
-                torch.save(model.module.state_dict(), selected_checkpoint_path)
+                atomic_torch_save(model.module.state_dict(), selected_checkpoint_path)
+
+        should_save_training_state = training_state_every > 0 and (
+            epoch_number % training_state_every == 0 or epoch_number == args.n_train
+        )
+        if should_save_training_state:
+            runtime_states = gather_object(capture_runtime_state(loaders), world_size)
+            if rank0:
+                atomic_torch_save(
+                    {
+                        "format_version": 1,
+                        "trial_number": int(trial_number),
+                        "model_name": args.name,
+                        "model_type": getattr(args, "model_type", "base"),
+                        "world_size": int(world_size),
+                        "completed_epoch": int(epoch_number),
+                        "planned_n_train": int(args.n_train),
+                        "params": params,
+                        "model_state_dict": model.module.state_dict(),
+                        "optimizer_state_dict": optimizer.state_dict(),
+                        "scheduler_state_dict": scheduler.state_dict(),
+                        "epoch_history": epoch_history,
+                        "current_selected_key": current_selected_key,
+                        "runtime_states": runtime_states,
+                    },
+                    training_state_path,
+                )
 
         if rank0:
             print(
@@ -1531,6 +1753,7 @@ def run_trial(
         "best_val_full_loss_any_epoch": float(best_val_full_loss_any_epoch),
         "epoch_history": epoch_history,
         "selected_checkpoint_path": str(selected_checkpoint_path) if selected_checkpoint_path is not None else None,
+        "training_state_path": str(training_state_path) if training_state_every > 0 else None,
     }
     if rank0:
         history_path = save_trial_history(output_dir, trial_number, trial_payload)

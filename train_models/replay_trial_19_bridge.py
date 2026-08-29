@@ -488,6 +488,24 @@ SIMPLE_SCHEDULE_PRESETS = {
 SIMPLE_SCHEDULE_PRESET_NAMES = tuple(SIMPLE_SCHEDULE_PRESETS)
 
 
+CONVERGED_SOTA_SCHEDULE_SOURCES = {
+    "converged_e3": H9_SCHEDULE_PRESETS["h9_explore_delayed_repair"],
+    "converged_s3": SIMPLE_SCHEDULE_PRESETS["simple_s3"],
+    "converged_s4": SIMPLE_SCHEDULE_PRESETS["simple_s4"],
+}
+CONVERGED_SOTA_SCHEDULE_PRESET_NAMES = tuple(CONVERGED_SOTA_SCHEDULE_SOURCES)
+
+
+def build_converged_sota_schedule(preset_name, end_epoch):
+    if preset_name not in CONVERGED_SOTA_SCHEDULE_SOURCES:
+        raise ValueError(f"Unknown converged SOTA schedule: {preset_name}")
+    if end_epoch < 800:
+        raise ValueError("Converged SOTA retraining requires at least 800 epochs.")
+    schedule = copy.deepcopy(CONVERGED_SOTA_SCHEDULE_SOURCES[preset_name])
+    schedule[-1]["end_epoch"] = int(end_epoch)
+    return schedule
+
+
 OCCAM_VXC_SCALE = 64.0
 OCCAM_REPRESENTATION_END = 300
 OCCAM_REPAIR_END = 400
@@ -769,6 +787,26 @@ def build_trial_19_params(extend_phase=None, extend_epochs=0):
 
 
 def resolve_trial_19_params(args):
+    converged_sota_schedule_preset = getattr(args, "converged_sota_schedule_preset", None)
+    if converged_sota_schedule_preset:
+        if (
+            getattr(args, "minimal_sota_schedule_preset", None)
+            or args.occam_schedule_preset
+            or args.simple_schedule_preset
+            or args.e3_schedule_preset
+            or args.h9_schedule_preset
+            or args.micro_schedule_preset
+            or args.extend_epochs
+        ):
+            raise ValueError(
+                "--converged-sota-schedule-preset cannot be combined with other schedule options."
+            )
+        params = copy.deepcopy(TRIAL_19_PARAMS)
+        params["epoch_schedule"] = build_converged_sota_schedule(
+            converged_sota_schedule_preset,
+            args.n_train,
+        )
+        return params
     minimal_sota_schedule_preset = getattr(args, "minimal_sota_schedule_preset", None)
     if minimal_sota_schedule_preset:
         if (
@@ -846,6 +884,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-type", type=str, default="base", choices=["base", "log", "gc_svelu_mirror", "gc_softplus_mirror", "gc_softplus_mirror_r2scan_alpha"])
     parser.add_argument("--n-predopt", type=int, default=2)
     parser.add_argument("--n-train", type=int, default=500)
+    parser.add_argument("--convergence-base-epochs", type=int, default=500)
+    parser.add_argument("--convergence-tail-epochs", type=int, default=0)
+    parser.add_argument("--convergence-tail-start-lr", type=float, default=1e-5)
+    parser.add_argument("--convergence-tail-min-lr", type=float, default=1e-7)
+    parser.add_argument("--resume-training-state", type=str, default="")
+    parser.add_argument("--training-state-every", type=int, default=1)
     parser.add_argument("--extend-phase", type=str, default=None, choices=TRIAL_19_PHASE_NAMES)
     parser.add_argument("--extend-epochs", type=int, default=0)
     parser.add_argument("--micro-schedule-preset", type=str, default=None, choices=MICRO_SCHEDULE_PRESET_NAMES)
@@ -868,6 +912,12 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default=None,
         choices=MINIMAL_SOTA_SCHEDULE_PRESET_NAMES,
+    )
+    parser.add_argument(
+        "--converged-sota-schedule-preset",
+        type=str,
+        default=None,
+        choices=CONVERGED_SOTA_SCHEDULE_PRESET_NAMES,
     )
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
@@ -931,22 +981,26 @@ def main() -> None:
     )
 
     data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(path=args.checkpoints_dir)
-    shared_preopt_checkpoint = run_or_reuse_preoptimization(
-        args=args,
-        output_dir=output_dir,
-        data_predopt=data_predopt,
-        data_vxc_train=data_vxc_train,
-        device=device,
-        local_rank=local_rank,
-        world_size=world_size,
-        rank0=rank0,
-    )
+    shared_preopt_checkpoint = None
+    if not args.resume_training_state:
+        shared_preopt_checkpoint = run_or_reuse_preoptimization(
+            args=args,
+            output_dir=output_dir,
+            data_predopt=data_predopt,
+            data_vxc_train=data_vxc_train,
+            device=device,
+            local_rank=local_rank,
+            world_size=world_size,
+            rank0=rank0,
+        )
 
     result = run_trial(
         trial_number=args.trial_number,
         params=trial_19_params,
         args=args,
-        shared_preopt_checkpoint=Path(shared_preopt_checkpoint),
+        shared_preopt_checkpoint=(
+            Path(shared_preopt_checkpoint) if shared_preopt_checkpoint is not None else None
+        ),
         data_train=data_train,
         data_val=data_val,
         data_vxc_train=data_vxc_train,
@@ -975,6 +1029,7 @@ def main() -> None:
             f"phase={final_epoch.get('phase_name')}"
         )
         print(f"Selected checkpoint: {result.get('selected_checkpoint_path')}")
+        print(f"Training state: {result.get('training_state_path')}")
         print(f"History path: {result.get('history_path')}")
         print(f"Params: {json.dumps(trial_19_params, sort_keys=True)}")
 
