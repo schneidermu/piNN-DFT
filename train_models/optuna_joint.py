@@ -189,6 +189,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--convergence-tail-min-lr", type=float, default=1e-7)
     parser.add_argument("--resume-training-state", type=str, default="")
     parser.add_argument("--training-state-every", type=int, default=0)
+    parser.add_argument("--snapshot-every", type=int, default=0)
+    parser.add_argument("--snapshot-start-epoch", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--vxc-batch-size", type=int, default=1)
     parser.add_argument("--lr-predopt", type=float, default=2e-2)
@@ -1527,6 +1529,13 @@ def run_trial(
     training_state_every = int(getattr(args, "training_state_every", 0))
     if training_state_every < 0:
         raise ValueError("--training-state-every must be nonnegative.")
+    snapshot_every = int(getattr(args, "snapshot_every", 0))
+    snapshot_start_epoch = int(getattr(args, "snapshot_start_epoch", 1))
+    if snapshot_every < 0:
+        raise ValueError("--snapshot-every must be nonnegative.")
+    if snapshot_start_epoch < 1:
+        raise ValueError("--snapshot-start-epoch must be positive.")
+    snapshot_dir = output_dir / "checkpoints" / "epoch_snapshots"
     training_state_path = output_dir / "checkpoints" / f"trial_{trial_number}_training_state.pt"
     start_epoch = 0
     if resume_training_state:
@@ -1690,6 +1699,17 @@ def run_trial(
             current_selected_key = candidate_key
             if args.save_selected_checkpoints and rank0 and selected_checkpoint_path is not None:
                 atomic_torch_save(model.module.state_dict(), selected_checkpoint_path)
+
+        should_save_snapshot = snapshot_every > 0 and epoch_number >= snapshot_start_epoch and (
+            (epoch_number - snapshot_start_epoch) % snapshot_every == 0
+            or epoch_number == args.n_train
+        )
+        if should_save_snapshot and rank0:
+            snapshot_dir.mkdir(parents=True, exist_ok=True)
+            atomic_torch_save(
+                model.module.state_dict(),
+                snapshot_dir / f"trial_{trial_number}_epoch_{epoch_number:04d}.pt",
+            )
 
         should_save_training_state = training_state_every > 0 and (
             epoch_number % training_state_every == 0 or epoch_number == args.n_train

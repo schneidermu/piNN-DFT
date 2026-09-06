@@ -403,6 +403,89 @@ def _build_e3_split_repair_schedule():
     return schedule
 
 
+def _simple_representation_progress(fraction, path):
+    if path == "linear":
+        return fraction
+    if path == "cosine":
+        return 0.5 * (1.0 - math.cos(math.pi * fraction))
+    if path == "geometric":
+        return fraction
+    if path == "constant":
+        return 0.0
+    if path == "two_step":
+        return 0.0 if fraction < 0.5 else 1.0
+    raise ValueError(f"Unknown simple representation path: {path}")
+
+
+def _build_simple_e3_curriculum(
+    *,
+    representation_path="linear",
+    representation_vxc_start=40.0,
+    representation_vxc_end=10.0,
+    repair_end=440,
+    finish_exc_loss_scale=1.0,
+):
+    """Build a four-stage anchor/representation/repair/consolidation curriculum."""
+    if representation_vxc_start <= 0.0 or representation_vxc_end <= 0.0:
+        raise ValueError("Representation Vxc endpoints must be positive.")
+    if repair_end not in {430, 440}:
+        raise ValueError("Simple E3 repair must end at epoch 430 or 440.")
+    if finish_exc_loss_scale not in {0.0, 0.5, 1.0}:
+        raise ValueError("Simple E3 terminal E_xc scale must be 0, 0.5, or 1.")
+
+    anchor = _phase_from_base("clip_drive", 1, 72)
+    anchor["name"] = "simple_potential_anchor"
+
+    representation = []
+    for epoch in range(73, 281):
+        fraction = (epoch - 73) / (280 - 73)
+        progress = _simple_representation_progress(fraction, representation_path)
+        if representation_path == "geometric":
+            vxc_scale = representation_vxc_start * (
+                representation_vxc_end / representation_vxc_start
+            ) ** progress
+        elif representation_path == "constant":
+            vxc_scale = representation_vxc_start
+        else:
+            vxc_scale = representation_vxc_start + progress * (
+                representation_vxc_end - representation_vxc_start
+            )
+        phase = _phase_from_base(
+            "sum_repair",
+            epoch,
+            epoch,
+            {
+                "accum_iter": 2,
+                "gradient_merge_strategy": "sum",
+                "reaction_grad_clip": "none",
+                "reaction_grad_scale": 1.0,
+                "vxc_grad_clip": 2.0,
+                "vxc_loss_scale": vxc_scale,
+                "exc_loss_scale": 1.0,
+                "exc_grad_clip": "none",
+                "exc_grad_scale": 1.0,
+                "exc_gradient_merge_strategy": "sum",
+            },
+        )
+        phase["name"] = "simple_joint_representation"
+        representation.append(phase)
+
+    repair = _h9_repair_phase(281, repair_end)
+    repair["name"] = "simple_chemical_repair"
+
+    consolidation = _phase_from_base(
+        "fchem_finish",
+        repair_end + 1,
+        500,
+        {
+            "vxc_loss_scale": 7.0,
+            "exc_loss_scale": finish_exc_loss_scale,
+        },
+    )
+    consolidation["name"] = "simple_unbiased_consolidation"
+    return [anchor, *representation, repair, consolidation]
+
+
 E3_SCHEDULE_PRESETS = {
     # Temporal map: determine the viable delayed-repair region.
     "e3_onset261_end440": _build_e3_schedule(repair_start=261),
@@ -428,6 +511,38 @@ E3_SCHEDULE_PRESETS = {
     ),
     # Structure: test whether contiguous clipped repair is necessary.
     "e3_split_repair": _build_e3_split_repair_schedule(),
+    # Four conceptual stages. These presets retain E3's supported suffix while
+    # compressing its early 40/20/10 plateaus into one representation phase.
+    "simple4_linear_40_10": _build_simple_e3_curriculum(),
+    "simple4_cosine_40_10": _build_simple_e3_curriculum(
+        representation_path="cosine",
+    ),
+    "simple4_geometric_40_10": _build_simple_e3_curriculum(
+        representation_path="geometric",
+    ),
+    "simple4_constant_20": _build_simple_e3_curriculum(
+        representation_path="constant",
+        representation_vxc_start=20.0,
+        representation_vxc_end=20.0,
+    ),
+    "simple4_two_step_40_10": _build_simple_e3_curriculum(
+        representation_path="two_step",
+    ),
+    "simple4_linear_40_15": _build_simple_e3_curriculum(
+        representation_vxc_end=15.0,
+    ),
+    "simple4_linear_50_10": _build_simple_e3_curriculum(
+        representation_vxc_start=50.0,
+    ),
+    "simple4_linear_repair430": _build_simple_e3_curriculum(
+        repair_end=430,
+    ),
+    "simple4_linear_finish_exc05": _build_simple_e3_curriculum(
+        finish_exc_loss_scale=0.5,
+    ),
+    "simple4_linear_finish_exc0": _build_simple_e3_curriculum(
+        finish_exc_loss_scale=0.0,
+    ),
 }
 E3_SCHEDULE_PRESET_NAMES = tuple(E3_SCHEDULE_PRESETS)
 
@@ -890,6 +1005,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--convergence-tail-min-lr", type=float, default=1e-7)
     parser.add_argument("--resume-training-state", type=str, default="")
     parser.add_argument("--training-state-every", type=int, default=1)
+    parser.add_argument("--snapshot-every", type=int, default=0)
+    parser.add_argument("--snapshot-start-epoch", type=int, default=1)
     parser.add_argument("--extend-phase", type=str, default=None, choices=TRIAL_19_PHASE_NAMES)
     parser.add_argument("--extend-epochs", type=int, default=0)
     parser.add_argument("--micro-schedule-preset", type=str, default=None, choices=MICRO_SCHEDULE_PRESET_NAMES)
