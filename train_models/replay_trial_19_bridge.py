@@ -486,6 +486,97 @@ def _build_simple_e3_curriculum(
     return [anchor, *representation, repair, consolidation]
 
 
+def _occam_joint_phase(name, start_epoch, end_epoch, vxc_loss_scale):
+    phase = _phase_from_base(
+        "fchem_finish",
+        start_epoch,
+        end_epoch,
+        {
+            "accum_iter": 2,
+            "gradient_merge_strategy": "sum",
+            "reaction_grad_clip": "none",
+            "reaction_grad_scale": 1.0,
+            "vxc_grad_clip": 2.0,
+            "vxc_loss_scale": float(vxc_loss_scale),
+            "exc_loss_scale": 1.0,
+            "exc_grad_clip": "none",
+            "exc_grad_scale": 1.0,
+            "exc_gradient_merge_strategy": "sum",
+        },
+    )
+    phase["name"] = name
+    return phase
+
+
+def _build_occam_timing_schedule(
+    *,
+    representation_switch,
+    repair_start,
+    repair_end,
+):
+    """Retain E3's operators while testing only three meaningful boundaries."""
+    if not 73 <= representation_switch < repair_start <= repair_end < 500:
+        raise ValueError("Invalid Occam timing schedule boundaries.")
+
+    anchor = _phase_from_base("clip_drive", 1, 72)
+    anchor["name"] = "occam_potential_anchor"
+    high = _occam_joint_phase(
+        "occam_high_potential",
+        73,
+        representation_switch,
+        40.0,
+    )
+    low = _occam_joint_phase(
+        "occam_low_potential",
+        representation_switch + 1,
+        repair_start - 1,
+        10.0,
+    )
+    repair = _h9_repair_phase(repair_start, repair_end)
+    repair["name"] = "occam_chemical_repair"
+    finish = _occam_joint_phase(
+        "occam_unbiased_consolidation",
+        repair_end + 1,
+        500,
+        7.0,
+    )
+    return [anchor, high, low, repair, finish]
+
+
+def _build_occam_ablation_schedule(kind):
+    """Build a nested 4-to-1-stage ablation using only constant objectives."""
+    repair = _h9_repair_phase(281, 400)
+    repair["name"] = "occam_chemical_repair"
+
+    if kind == "four_stage":
+        return [
+            _occam_joint_phase("occam_high_potential", 1, 140, 40.0),
+            _occam_joint_phase("occam_low_potential", 141, 280, 10.0),
+            repair,
+            _occam_joint_phase("occam_unbiased_consolidation", 401, 500, 7.0),
+        ]
+    if kind == "three_stage_high":
+        return [
+            _occam_joint_phase("occam_high_potential", 1, 280, 40.0),
+            repair,
+            _occam_joint_phase("occam_unbiased_consolidation", 401, 500, 7.0),
+        ]
+    if kind == "three_stage_pulse":
+        return [
+            _occam_joint_phase("occam_joint", 1, 280, 10.0),
+            repair,
+            _occam_joint_phase("occam_joint", 401, 500, 10.0),
+        ]
+    if kind == "two_stage":
+        return [
+            _occam_joint_phase("occam_high_potential", 1, 200, 40.0),
+            _occam_joint_phase("occam_low_potential", 201, 500, 10.0),
+        ]
+    if kind == "one_stage":
+        return [_occam_joint_phase("occam_fixed_objective", 1, 500, 10.0)]
+    raise ValueError(f"Unknown Occam ablation schedule: {kind}")
+
+
 E3_SCHEDULE_PRESETS = {
     # Temporal map: determine the viable delayed-repair region.
     "e3_onset261_end440": _build_e3_schedule(repair_start=261),
@@ -543,6 +634,43 @@ E3_SCHEDULE_PRESETS = {
     "simple4_linear_finish_exc0": _build_simple_e3_curriculum(
         finish_exc_loss_scale=0.0,
     ),
+    # Targeted timing tests around the robust high-to-low/repair/consolidate family.
+    "occam2_x1_early_switch": _build_occam_timing_schedule(
+        representation_switch=140,
+        repair_start=281,
+        repair_end=440,
+    ),
+    "occam2_x2_late_switch": _build_occam_timing_schedule(
+        representation_switch=210,
+        repair_start=281,
+        repair_end=440,
+    ),
+    "occam2_x3_short_late_repair": _build_occam_timing_schedule(
+        representation_switch=176,
+        repair_start=301,
+        repair_end=400,
+    ),
+    "occam2_x4_short_repair": _build_occam_timing_schedule(
+        representation_switch=176,
+        repair_start=281,
+        repair_end=400,
+    ),
+    "occam2_x5_late_repair": _build_occam_timing_schedule(
+        representation_switch=176,
+        repair_start=301,
+        repair_end=420,
+    ),
+    # Nested Occam ablation: remove anchor, then representation split, repair,
+    # and finally all time dependence.
+    "occam2_o1_four_stage": _build_occam_ablation_schedule("four_stage"),
+    "occam2_o2_three_stage_high": _build_occam_ablation_schedule(
+        "three_stage_high"
+    ),
+    "occam2_o3_three_stage_pulse": _build_occam_ablation_schedule(
+        "three_stage_pulse"
+    ),
+    "occam2_o4_two_stage": _build_occam_ablation_schedule("two_stage"),
+    "occam2_o5_one_stage": _build_occam_ablation_schedule("one_stage"),
 }
 E3_SCHEDULE_PRESET_NAMES = tuple(E3_SCHEDULE_PRESETS)
 
