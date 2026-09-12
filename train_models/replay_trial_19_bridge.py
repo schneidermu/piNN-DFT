@@ -577,6 +577,107 @@ def _build_occam_ablation_schedule(kind):
     raise ValueError(f"Unknown Occam ablation schedule: {kind}")
 
 
+def _build_no_repair_schedule(representation_switch, *, anchor_merge="clip_then_sum"):
+    """Remove chemical repair while preserving the best simple4 endpoints."""
+    if representation_switch not in {140, 176, 220}:
+        raise ValueError("No-repair switch must be epoch 140, 176, or 220.")
+    if anchor_merge not in {"clip_then_sum", "sum"}:
+        raise ValueError("No-repair anchor merge must be clip_then_sum or sum.")
+
+    anchor = _phase_from_base("clip_drive", 1, 72)
+    anchor["name"] = "no_repair_potential_anchor"
+    anchor["params"]["gradient_merge_strategy"] = anchor_merge
+    high = _occam_joint_phase(
+        "no_repair_high_potential",
+        73,
+        representation_switch,
+        40.0,
+    )
+    low = _occam_joint_phase(
+        "no_repair_low_potential",
+        representation_switch + 1,
+        440,
+        10.0,
+    )
+    consolidation = _occam_joint_phase(
+        "no_repair_unbiased_consolidation",
+        441,
+        500,
+        7.0,
+    )
+    return [anchor, high, low, consolidation]
+
+
+def _build_no_repair_structural_schedule(kind):
+    """Build structural no-repair controls with checkpointable trajectories."""
+    if kind == "merged_anchor":
+        return [
+            _occam_joint_phase("merged_high_potential", 1, 176, 40.0),
+            _occam_joint_phase("merged_low_potential", 177, 440, 10.0),
+            _occam_joint_phase("merged_consolidation", 441, 500, 7.0),
+        ]
+    if kind == "anchor_direct_low":
+        anchor = _phase_from_base("clip_drive", 1, 72)
+        anchor["name"] = "direct_low_potential_anchor"
+        return [
+            anchor,
+            _occam_joint_phase("direct_low_potential", 73, 440, 10.0),
+            _occam_joint_phase("direct_low_consolidation", 441, 500, 7.0),
+        ]
+    if kind == "no_final_transition":
+        anchor = _phase_from_base("clip_drive", 1, 72)
+        anchor["name"] = "no_final_potential_anchor"
+        return [
+            anchor,
+            _occam_joint_phase("no_final_high_potential", 73, 176, 40.0),
+            _occam_joint_phase("no_final_low_potential", 177, 500, 10.0),
+        ]
+    raise ValueError(f"Unknown no-repair structural schedule: {kind}")
+
+
+def _build_repair_structure_schedule(kind):
+    """Isolate repair merging, anchoring, and mild integrated energy emphasis."""
+    anchor = _phase_from_base("clip_drive", 1, 72)
+    anchor["name"] = "repair_structure_potential_anchor"
+    high_after_anchor = _occam_joint_phase(
+        "repair_structure_high_potential", 73, 176, 40.0
+    )
+    low_after_anchor = _occam_joint_phase(
+        "repair_structure_low_potential", 177, 280, 10.0
+    )
+    finish = _occam_joint_phase(
+        "repair_structure_consolidation", 441, 500, 7.0
+    )
+
+    if kind == "sum_repair":
+        repair = _h9_repair_phase(281, 440)
+        repair["name"] = "summed_chemical_repair"
+        repair["params"]["gradient_merge_strategy"] = "sum"
+        repair["params"]["exc_gradient_merge_strategy"] = "sum"
+        return [anchor, high_after_anchor, low_after_anchor, repair, finish]
+    if kind == "no_anchor":
+        repair = _h9_repair_phase(281, 440)
+        repair["name"] = "no_anchor_chemical_repair"
+        return [
+            _occam_joint_phase("no_anchor_high_potential", 1, 176, 40.0),
+            _occam_joint_phase("no_anchor_low_potential", 177, 280, 10.0),
+            repair,
+            finish,
+        ]
+    if kind == "integrated_weak":
+        integrated = _occam_joint_phase(
+            "integrated_weak_energy_emphasis", 281, 440, 10.0
+        )
+        integrated["params"]["exc_loss_scale"] = 2.0
+        return [
+            _occam_joint_phase("integrated_high_potential", 1, 176, 40.0),
+            _occam_joint_phase("integrated_low_potential", 177, 280, 10.0),
+            integrated,
+            finish,
+        ]
+    raise ValueError(f"Unknown repair structural schedule: {kind}")
+
+
 E3_SCHEDULE_PRESETS = {
     # Temporal map: determine the viable delayed-repair region.
     "e3_onset261_end440": _build_e3_schedule(repair_start=261),
@@ -602,6 +703,26 @@ E3_SCHEDULE_PRESETS = {
     ),
     # Structure: test whether contiguous clipped repair is necessary.
     "e3_split_repair": _build_e3_split_repair_schedule(),
+    # Direct repair ablation of the best discrete 40 -> 10 curriculum.
+    "no_repair_switch140": _build_no_repair_schedule(140),
+    "no_repair_switch176": _build_no_repair_schedule(176),
+    "no_repair_switch220": _build_no_repair_schedule(220),
+    "no_repair_switch176_sum_anchor": _build_no_repair_schedule(
+        176,
+        anchor_merge="sum",
+    ),
+    "no_repair_merged_anchor": _build_no_repair_structural_schedule(
+        "merged_anchor"
+    ),
+    "no_repair_anchor_direct_low": _build_no_repair_structural_schedule(
+        "anchor_direct_low"
+    ),
+    "no_repair_no_final_transition": _build_no_repair_structural_schedule(
+        "no_final_transition"
+    ),
+    "repair_sum_merge": _build_repair_structure_schedule("sum_repair"),
+    "repair_no_anchor": _build_repair_structure_schedule("no_anchor"),
+    "repair_integrated_weak": _build_repair_structure_schedule("integrated_weak"),
     # Four conceptual stages. These presets retain E3's supported suffix while
     # compressing its early 40/20/10 plateaus into one representation phase.
     "simple4_linear_40_10": _build_simple_e3_curriculum(),
