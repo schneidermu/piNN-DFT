@@ -25,6 +25,22 @@ fi
 
 cd "$WORK_DIR"
 
+# Keep packages installed under ~/.local from shadowing the ML_param environment.
+export PYTHONNOUSERSITE=1
+unset PYTHONPATH
+
+python - <<'PY'
+import numpy
+import pandas
+import pyarrow
+import sklearn
+import torch
+
+print("Environment preflight:")
+for module in (numpy, pandas, pyarrow, sklearn, torch):
+    print(f"  {module.__name__}: {module.__version__} ({module.__file__})")
+PY
+
 if [[ -n "${CHECKPOINTS_DIR:-}" ]]; then
     RESOLVED_CHECKPOINTS_DIR="$CHECKPOINTS_DIR"
 elif [[ -f "$WORK_DIR/checkpoints/data_predopt.pickle" ]]; then
