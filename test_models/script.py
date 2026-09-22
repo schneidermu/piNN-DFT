@@ -223,6 +223,9 @@ def save_pbe_density(system_name):
     if not mf.converged:
         raise RuntimeError(f"PBE did not converge for {system_name}")
     density_path = Path(mf.chkfile)
+    # PySCF checkpoints always contain orbitals, but not necessarily an explicit
+    # density matrix. Persist it under a stable key for the fixed-density pass.
+    lib.chkfile.save(str(density_path), "scf/dm", mf.make_rdm1())
     density_path.with_suffix(density_path.suffix + ".complete").write_text(
         "converged\n",
         encoding="ascii",
