@@ -5,7 +5,7 @@ import dftd3.pyscf as disp
 from DFT.functional import NN_FUNCTIONAL
 from DFT.numint import RKS_with_Laplacian, UKS_with_Laplacian
 from pcNN_mol.dft_pcnn import model as Nagai_model
-from pyscf import dft, gto, lib
+from pyscf import dft, gto, lib, scf
 from pyscf.scf import diis
 
 from common import GIF_DIR, RESULTS_DIR, TEST_MODELS_ROOT, ensure_dir, ensure_runtime_directories
@@ -186,6 +186,82 @@ def calculate_functional_energy(
     return energy + d3_energy
 
 
+def calculate_functional_energy_on_density(
+    mf,
+    functional_name,
+    dm,
+    dispersion_correction="none",
+):
+    """Evaluate an NN functional once on a fixed density matrix."""
+    model = NN_FUNCTIONAL(
+        functional_name,
+        checkpoint_path=CHECKPOINT_PATH,
+        model_key=MODEL_KEY,
+    )
+    mf.define_xc_(model.eval_xc, "MGGA")
+    energy = mf.energy_tot(dm=dm)
+    return energy + calculate_dispersion_energy(mf.mol, dispersion_correction)
+
+
+def pbe_density_checkpoint_path(system_name):
+    if DENSITY_CHECKPOINT_DIR is None:
+        raise ValueError("--DensityCheckpointDir is required for fixed-density modes")
+    return ensure_dir(DENSITY_CHECKPOINT_DIR) / f"{system_name}.pbe.chk"
+
+
+def save_pbe_density(system_name):
+    """Run self-consistent PBE and persist its converged density matrix."""
+    ensure_runtime_directories()
+    lib.num_threads(4)
+    coords, charge, spin = get_coords_charge_spin(system_name)
+    _, mf = initialize_molecule(coords, charge, spin, lapl=False)
+    mf.xc = "PBE"
+    mf.conv_tol = 1e-6
+    mf.conv_tol_grad = 5e-3
+    mf.chkfile = str(pbe_density_checkpoint_path(system_name))
+    energy = mf.kernel()
+    if not mf.converged:
+        raise RuntimeError(f"PBE did not converge for {system_name}")
+    density_path = Path(mf.chkfile)
+    density_path.with_suffix(density_path.suffix + ".complete").write_text(
+        "converged\n",
+        encoding="ascii",
+    )
+    print(f"Saved converged PBE density for {system_name}: {mf.chkfile}")
+    return energy
+
+
+def evaluate_on_pbe_density(
+    system_name,
+    functional,
+    nfinal,
+    dispersion_correction="none",
+):
+    """Evaluate NN-PBE energy without SCF relaxation on a saved PBE density."""
+    output_dir = ensure_dir(OUTPUT_DIR)
+    ensure_runtime_directories()
+    lib.num_threads(4)
+    coords, charge, spin = get_coords_charge_spin(system_name)
+    _, mf = initialize_molecule(coords, charge, spin, lapl=True)
+    density_path = pbe_density_checkpoint_path(system_name)
+    completion_marker = density_path.with_suffix(density_path.suffix + ".complete")
+    if not density_path.is_file() or not completion_marker.is_file():
+        raise FileNotFoundError(
+            f"Missing complete PBE density checkpoint: {density_path}"
+        )
+    dm = scf.chkfile.load(str(density_path), "scf/dm")
+    energy = calculate_functional_energy_on_density(
+        mf,
+        functional,
+        dm,
+        dispersion_correction=dispersion_correction,
+    )
+    output_path = energy_list_path(output_dir, nfinal, functional, dispersion_correction)
+    with output_path.open("a") as file:
+        file.write(f"{system_name}.gif_ {energy}\n")
+    print(f"Fixed-density energy ({functional} on PBE density): {energy}")
+
+
 def calculate_non_nn_functional_energy(
     mf,
     functional_name,
@@ -307,6 +383,7 @@ def calculate_dispersions(system_name):
 OUTPUT_DIR = RESULTS_DIR
 CHECKPOINT_PATH = None
 MODEL_KEY = None
+DENSITY_CHECKPOINT_DIR = None
 
 
 if __name__ == "__main__":
@@ -331,6 +408,13 @@ if __name__ == "__main__":
     parser.add_option("--OutputDir", type=str, default=str(RESULTS_DIR))
     parser.add_option("--CheckpointPath", type=str, default="")
     parser.add_option("--ModelKey", type=str, default="")
+    parser.add_option(
+        "--DensityMode",
+        type=str,
+        default="scf",
+        help="scf, pbe-save, or nn-on-pbe",
+    )
+    parser.add_option("--DensityCheckpointDir", type=str, default="")
 
     (Opts, args) = parser.parse_args()
 
@@ -342,8 +426,25 @@ if __name__ == "__main__":
     OUTPUT_DIR = Path(Opts.OutputDir)
     CHECKPOINT_PATH = Opts.CheckpointPath or None
     MODEL_KEY = Opts.ModelKey or None
+    DENSITY_CHECKPOINT_DIR = (
+        Path(Opts.DensityCheckpointDir) if Opts.DensityCheckpointDir else None
+    )
+    density_mode = Opts.DensityMode.lower()
 
-    if dispersion:
+    if density_mode == "pbe-save":
+        save_pbe_density(system_name)
+    elif density_mode == "nn-on-pbe":
+        if not CHECKPOINT_PATH or not MODEL_KEY:
+            parser.error("nn-on-pbe requires --CheckpointPath and --ModelKey")
+        evaluate_on_pbe_density(
+            system_name,
+            functional,
+            NFinal,
+            dispersion_correction=dispersion_correction,
+        )
+    elif density_mode != "scf":
+        parser.error(f"Unknown --DensityMode: {Opts.DensityMode}")
+    elif dispersion:
         calculate_dispersions(system_name)
     elif CHECKPOINT_PATH or MODEL_KEY or "NN" in functional or functional == "Nagai":
         main(system_name, functional, NFinal, dispersion_correction=dispersion_correction)
