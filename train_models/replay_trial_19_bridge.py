@@ -577,18 +577,46 @@ def _build_occam_ablation_schedule(kind):
     raise ValueError(f"Unknown Occam ablation schedule: {kind}")
 
 
-def _build_occam3_timing_schedule(*, repair_start, finish_start):
-    """Keep O1's four objectives while changing only the last two boundaries."""
-    if not 141 < repair_start < finish_start <= 500:
-        raise ValueError("Invalid Occam3 timing boundaries.")
-    repair = _h9_repair_phase(repair_start, finish_start - 1)
-    repair["name"] = "occam3_chemical_repair"
-    return [
-        _occam_joint_phase("occam3_high_potential", 1, 140, 40.0),
-        _occam_joint_phase("occam3_low_potential", 141, repair_start - 1, 10.0),
-        repair,
-        _occam_joint_phase("occam3_consolidation", finish_start, 500, 7.0),
+def _build_s5_timing_schedule(*, base_schedule, repair_start, finish_start):
+    """Vary S5's repair/finalization boundaries without changing its prefix."""
+    if not 73 <= repair_start < finish_start <= 500:
+        raise ValueError("Invalid S5 timing boundaries.")
+    covered_epochs = [
+        epoch
+        for phase in base_schedule
+        for epoch in range(phase["start_epoch"], phase["end_epoch"] + 1)
     ]
+    if covered_epochs != list(range(1, 501)):
+        raise ValueError("The supplied schedule must cover epochs 1-500 exactly.")
+
+    repair_reference = next(
+        phase for phase in base_schedule
+        if phase["name"] == "simple_chemical_repair"
+    )
+    finish_reference = next(
+        phase for phase in base_schedule
+        if phase["name"] == "simple_unbiased_consolidation"
+    )
+
+    prefix = []
+    for phase in base_schedule:
+        if phase["start_epoch"] >= repair_start:
+            break
+        prefix_phase = copy.deepcopy(phase)
+        prefix_phase["end_epoch"] = min(
+            phase["end_epoch"], repair_start - 1
+        )
+        if prefix_phase["start_epoch"] <= prefix_phase["end_epoch"]:
+            prefix.append(prefix_phase)
+
+    repair = copy.deepcopy(repair_reference)
+    repair["start_epoch"] = repair_start
+    repair["end_epoch"] = finish_start - 1
+    finish = copy.deepcopy(finish_reference)
+    finish["start_epoch"] = finish_start
+    finish["end_epoch"] = 500
+
+    return [*prefix, repair, finish]
 
 
 def _build_no_repair_schedule(representation_switch, *, anchor_merge="clip_then_sum"):
@@ -807,7 +835,7 @@ E3_SCHEDULE_PRESETS = {
     "occam2_o4_two_stage": _build_occam_ablation_schedule("two_stage"),
     "occam2_o5_one_stage": _build_occam_ablation_schedule("one_stage"),
 }
-OCCAM3_TIMING_PAIRS = (
+S5_TIMING_PAIRS = (
     (241, 441),
     (261, 441),
     (221, 441),
@@ -821,11 +849,12 @@ OCCAM3_TIMING_PAIRS = (
 )
 E3_SCHEDULE_PRESETS.update(
     {
-        f"occam3_r{repair_start}_f{finish_start}": _build_occam3_timing_schedule(
+        f"s5_timing_r{repair_start}_f{finish_start}": _build_s5_timing_schedule(
+            base_schedule=E3_SCHEDULE_PRESETS["simple4_two_step_40_10"],
             repair_start=repair_start,
             finish_start=finish_start,
         )
-        for repair_start, finish_start in OCCAM3_TIMING_PAIRS
+        for repair_start, finish_start in S5_TIMING_PAIRS
     }
 )
 E3_SCHEDULE_PRESET_NAMES = tuple(E3_SCHEDULE_PRESETS)

@@ -22,6 +22,14 @@ fi
 
 cd "$WORK_DIR"
 
+REQUIRED_SCIENTIFIC_FIX="b0e878a31f0b8fc3a363e29c6ff8baabf362509b"
+if ! git merge-base --is-ancestor "$REQUIRED_SCIENTIFIC_FIX" HEAD; then
+    echo "Checkout lacks the required scientific-fix commit $REQUIRED_SCIENTIFIC_FIX." >&2
+    exit 1
+fi
+echo "Git commit: $(git rev-parse HEAD)"
+python -c 'import pyscf; print("PySCF:", pyscf.__version__)'
+
 if [[ -n "${CHECKPOINTS_DIR:-}" ]]; then
     RESOLVED_CHECKPOINTS_DIR="$CHECKPOINTS_DIR"
 elif [[ -f "$WORK_DIR/checkpoints/data_predopt.pickle" ]]; then
@@ -31,6 +39,12 @@ elif [[ -f "$WORK_DIR/../checkpoints/data_predopt.pickle" ]]; then
 else
     echo "Could not locate checkpoints/data_predopt.pickle from: $WORK_DIR" >&2
     echo "Set CHECKPOINTS_DIR=/path/to/checkpoints when submitting if needed." >&2
+    exit 1
+fi
+
+OUTPUT_DIR="optuna_joint_runs/replay_trial_19_simple4_${SIMPLE4_TAG}_500_gc_svelu_mirror"
+if [[ -e "$OUTPUT_DIR" ]]; then
+    echo "Refusing to reuse existing output directory: $OUTPUT_DIR" >&2
     exit 1
 fi
 
@@ -44,7 +58,7 @@ CUBLAS_WORKSPACE_CONFIG=:16:8 torchrun \
     --rdzv_backend=c10d \
     --rdzv_endpoint="$MASTER_ADDR:$MASTER_PORT" \
     replay_trial_19_bridge.py \
-    --output-dir "optuna_joint_runs/replay_trial_19_simple4_${SIMPLE4_TAG}_500_gc_svelu_mirror" \
+    --output-dir "$OUTPUT_DIR" \
     --checkpoints-dir "$RESOLVED_CHECKPOINTS_DIR" \
     --force-preopt \
     --seed 41 \
@@ -68,6 +82,6 @@ CUBLAS_WORKSPACE_CONFIG=:16:8 torchrun \
     --val-vxc-target 1.1 \
     --val-fchem-soft-cap 90 \
     --training-state-every 10 \
-    --snapshot-start-epoch 400 \
+    --snapshot-start-epoch 10 \
     --snapshot-every 10 \
     --include-mrks-dispersion
