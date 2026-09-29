@@ -577,6 +577,20 @@ def _build_occam_ablation_schedule(kind):
     raise ValueError(f"Unknown Occam ablation schedule: {kind}")
 
 
+def _build_occam3_timing_schedule(*, repair_start, finish_start):
+    """Keep O1's four objectives while changing only the last two boundaries."""
+    if not 141 < repair_start < finish_start <= 500:
+        raise ValueError("Invalid Occam3 timing boundaries.")
+    repair = _h9_repair_phase(repair_start, finish_start - 1)
+    repair["name"] = "occam3_chemical_repair"
+    return [
+        _occam_joint_phase("occam3_high_potential", 1, 140, 40.0),
+        _occam_joint_phase("occam3_low_potential", 141, repair_start - 1, 10.0),
+        repair,
+        _occam_joint_phase("occam3_consolidation", finish_start, 500, 7.0),
+    ]
+
+
 def _build_no_repair_schedule(representation_switch, *, anchor_merge="clip_then_sum"):
     """Remove chemical repair while preserving the best simple4 endpoints."""
     if representation_switch not in {140, 176, 220}:
@@ -793,6 +807,27 @@ E3_SCHEDULE_PRESETS = {
     "occam2_o4_two_stage": _build_occam_ablation_schedule("two_stage"),
     "occam2_o5_one_stage": _build_occam_ablation_schedule("one_stage"),
 }
+OCCAM3_TIMING_PAIRS = (
+    (241, 441),
+    (261, 441),
+    (221, 441),
+    (281, 441),
+    (241, 421),
+    (261, 421),
+    (281, 421),
+    (221, 421),
+    (241, 461),
+    (261, 461),
+)
+E3_SCHEDULE_PRESETS.update(
+    {
+        f"occam3_r{repair_start}_f{finish_start}": _build_occam3_timing_schedule(
+            repair_start=repair_start,
+            finish_start=finish_start,
+        )
+        for repair_start, finish_start in OCCAM3_TIMING_PAIRS
+    }
+)
 E3_SCHEDULE_PRESET_NAMES = tuple(E3_SCHEDULE_PRESETS)
 
 
