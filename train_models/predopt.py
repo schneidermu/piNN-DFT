@@ -13,6 +13,7 @@ from torch import nn
 from tqdm import tqdm
 
 from utils import _fix_sigma_tot_closed_shell, _grid_to_model_input
+from predopt_targets import _ADAPTIVE_INDICES, _prepare_predopt_targets
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from dft_functionals import PBE_CONSTANTS
@@ -85,7 +86,6 @@ def predopt(
         (train_loss_mse, train_loss_mae): Per-epoch MSE and MAE losses (rank 0 only;
         other ranks return empty lists).
     """
-    _ADAPTIVE_INDICES = [0, 1, 22, 23, 24, 25, 26, 27, 28]  # Added G_NN_up, G_NN_down, G_c
     if vxc_target_mode != "pbe":
         raise ValueError(f"Unsupported vxc_target_mode: {vxc_target_mode}")
 
@@ -139,11 +139,7 @@ def predopt(
 
         for batch_idx, (X_batch, y_batch) in enumerate(progress_bar):
             X_batch = X_batch["Grid"].to(device, non_blocking=True)
-            y_batch = torch.tile(y_batch, [X_batch.shape[0], 1]).to(
-                device, non_blocking=True
-            )[:, _ADAPTIVE_INDICES]
-
-            y_batch[:, [6, 7]] = y_batch[:, [6, 7]] - 1  # G_NN_up/down targets: 1→0
+            y_batch = _prepare_predopt_targets(y_batch, X_batch.shape[0], device)
 
             predictions = model(X_batch)[:, _ADAPTIVE_INDICES]
 
