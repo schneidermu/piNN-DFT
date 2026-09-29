@@ -32,7 +32,7 @@ from tqdm import tqdm
 
 from dataset import collate_fn, fast_collate_fn_predopt
 from NN_models import pcPBELMLOptimizerV2
-from predopt import DatasetPredopt, predopt, true_constants_PBE
+from predopt import DatasetPredopt, predopt
 from prepare_data import load_chk
 from reaction_energy_calculation import calculate_reaction_energy, get_local_energies
 from utils import configure_optimizers, seed_worker, set_random_seed, _grid_to_model_input, _fix_sigma_tot_closed_shell
@@ -1675,8 +1675,6 @@ if __name__ == "__main__":
         rung="GGA",
         dft="PBE",
     )
-
-    true_constants_PBE = true_constants_PBE.to(device)
 
     # 9. Main training phase
     optimizer = configure_optimizers(

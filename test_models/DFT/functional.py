@@ -9,16 +9,18 @@ import torch
 
 from .NN_models import (NN_PBE_L_model, NN_PBE_model, NN_PBE_star_model,
                         NN_PBE_star_star_model, NN_XALPHA_model)
+from .numerics import ensure_finite_xc
 
 # Import from shared dft_functionals at project root
 root_path = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(root_path))
-from dft_functionals import PBE, SVWN3, true_constants_PBE
+from dft_functionals import PBE, PBE_CONSTANTS, SVWN3
 
 F_PBE = PBE.F_PBE
 F_XALPHA = SVWN3.F_XALPHA
 
 torch.set_default_tensor_type(torch.DoubleTensor)
+
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 relative_path_to_model_state_dict = {
@@ -263,7 +265,7 @@ class NN_FUNCTIONAL:
                 vxc = F_PBE(
                     functional_densities,
                     functional_gradients,
-                    true_constants_PBE,
+                    PBE_CONSTANTS,
                     "cpu",
                     torch.stack(constants, dim=1),
                 )
@@ -424,7 +426,7 @@ class NN_FUNCTIONAL:
                 vxc = F_PBE(
                     functional_densities,
                     functional_gradients,
-                    true_constants_PBE,
+                    PBE_CONSTANTS,
                     "cpu",
                     torch.stack(constants, dim=1),
                 )
@@ -434,6 +436,8 @@ class NN_FUNCTIONAL:
                 )
         else:
             vxc = F_XALPHA(functional_densities, constants)
+
+        ensure_finite_xc("exc", vxc)
 
         local_xc = vxc * (feature_dict["rho_a"] + feature_dict["rho_b"])
 
@@ -487,6 +491,12 @@ class NN_FUNCTIONAL:
                 .numpy()
             )
 
+        ensure_finite_xc("vrho", vrho)
+        ensure_finite_xc("vsigma", vsigma)
+        ensure_finite_xc("vtau", vtau)
+        if with_lapl:
+            ensure_finite_xc("vlapl", vlapl)
+
         if spin == 0:
             vxc_0 = (vrho[0][0, :] + vrho[1][0, :]) / 2.0
             vxc_1 = vsigma[0][0, :] / 4.0 + vsigma[1][0, :] / 4.0 + vsigma[2][0, :]
@@ -517,12 +527,15 @@ class NN_FUNCTIONAL:
         fxc = None  # Second derivative not implemented
         kxc = None  # Second derivative not implemented
         exc = vxc.detach().cpu().numpy().astype(np.float64)
-        
-        exc = numpy.nan_to_num(exc)
-        vxc_0 = numpy.nan_to_num(vxc_0)
-        vxc_1 = numpy.nan_to_num(vxc_1)
-        vxc_2 = numpy.nan_to_num(vxc_2)
-        vxc_3 = numpy.nan_to_num(vxc_3)
+        vxc_0 = np.asarray(vxc_0, dtype=np.float64)
+        vxc_1 = np.asarray(vxc_1, dtype=np.float64)
+        vxc_2 = np.asarray(vxc_2, dtype=np.float64)
+        vxc_3 = np.asarray(vxc_3, dtype=np.float64)
+        ensure_finite_xc("exc", exc)
+        ensure_finite_xc("vrho", vxc_0)
+        ensure_finite_xc("vsigma", vxc_1)
+        ensure_finite_xc("vlapl", vxc_2)
+        ensure_finite_xc("vtau", vxc_3)
 
         return (
             exc,

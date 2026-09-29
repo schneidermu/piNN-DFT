@@ -17,7 +17,7 @@ import torch
 from torch import nn
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from dft_functionals import true_constants_PBE
+from dft_functionals import NN_OUTPUT_SCALE_PBE
 from dft_functionals.constants import (
     BETA_CORR_INDEX,
     EPS_RHO,
@@ -50,6 +50,11 @@ _C_FERMI: float = (3.0 * np.pi**2) ** (1.0 / 3.0)
 
 # Thomas-Fermi KE density: τ_TF = _C_TF · ρ^(5/3)
 _C_TF: float = 3.0 / 10.0 * (3.0 * np.pi**2) ** (2.0 / 3.0)
+
+
+def _spin_resolved_ueg_tau(rho: torch.Tensor) -> torch.Tensor:
+    """Physical kinetic-energy density for one spin channel of a UEG."""
+    return 0.5 * _C_TF * (2.0 * rho + EPS_RHO) ** (5.0 / 3.0)
 
 # Reduced Laplacian normalization: q = ∇²ρ / (_C_LAPL · ρ^(5/3))
 _C_LAPL: float = 4.0 * (3.0 * np.pi**2) ** (2.0 / 3.0)
@@ -155,7 +160,7 @@ class pcPBELMLOptimizerV2(nn.Module):
 
     Output
     ------
-    Tensor of shape (N, 29) equal to predicted_factors * true_constants_PBE.
+    Tensor of shape (N, 29) equal to predicted factors times NN output scales.
     The 20 pass-through constants at indices 2–21 are returned unchanged.
     Indices 26–27 are G_NN (0.0 if use_g_x=False), index 28 is G_c (1.0 if use_g_c=False).
 
@@ -427,19 +432,22 @@ class pcPBELMLOptimizerV2(nn.Module):
         dis0  = torch.tanh(d_sq_0  / delta ** 2)
         dis1  = torch.tanh(d_sq_1  / delta ** 2)
         dis2  = torch.tanh(d_sq_2  / delta ** 2)
-        dis01 = torch.tanh(d_sq_01 / delta ** 2) + 1e-8
-        dis02 = torch.tanh(d_sq_02 / delta ** 2) + 1e-8
-        dis12 = torch.tanh(d_sq_12 / delta ** 2) + 1e-8
+        dis01 = torch.tanh(d_sq_01 / delta ** 2)
+        dis02 = torch.tanh(d_sq_02 / delta ** 2)
+        dis12 = torch.tanh(d_sq_12 / delta ** 2)
 
-        c0 = (dis1 * dis2) / (dis01 * dis02)  # weight for constraint at x1 (sigma_zero)
-        c1 = (dis0 * dis2) / (dis01 * dis12)  # weight for constraint at x2 (rho_inf)
-        c2 = (dis0 * dis1) / (dis02 * dis12)  # weight for constraint at x3 (s_inf)
+        w0 = dis1 * dis2 * dis12
+        w1 = dis0 * dis2 * dis02
+        w2 = dis0 * dis1 * dis01
 
-        f0 = G_c_real - G_c_at_x1 + 1.0
-        f1 = G_c_real - G_c_at_x2 + 1.0
-        f2 = G_c_real - G_c_at_x3 + 1.0
-
-        return (f0 * c0 + f1 * c1 + f2 * c2) / (c0 + c1 + c2 + 1e-8)
+        den = w0 + w1 + w2
+        num = (
+            w0 * (G_c_real - G_c_at_x1)
+            + w1 * (G_c_real - G_c_at_x2)
+            + w2 * (G_c_real - G_c_at_x3)
+        )
+        safe_den = torch.where(den == 0, torch.ones_like(den), den)
+        return 1.0 + num / safe_den
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -459,7 +467,7 @@ class pcPBELMLOptimizerV2(nn.Module):
             x: Raw DFT grid tensor of shape (N, 9).
 
         Returns:
-            Tensor of shape (N, 29): modified_factors * true_constants_PBE.
+            Tensor of shape (N, 29): modified factors times NN output scales.
             Indices 0,1 are beta, gamma; indices 2–21 pass through unchanged;
             indices 22–25 are kappa_up, mu_up, kappa_down, mu_down;
             indices 26–27 are G_NN_up/down (0.0 if use_g_x=False);
@@ -528,8 +536,8 @@ class pcPBELMLOptimizerV2(nn.Module):
             g_nn_down_at_constraint = x_out_down_ueg[:, 2].view(-1, 1)
 
         # ---- Correlation UEG constraint (s→0) for beta ----
-        tau_tf_rho_a = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
-        tau_tf_rho_b = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+        tau_tf_rho_a = _spin_resolved_ueg_tau(rho_a)
+        tau_tf_rho_b = _spin_resolved_ueg_tau(rho_b)
         raw_ueg_corr_input = torch.stack(
             [rho_a, rho_b, zeros, zeros, zeros, tau_tf_rho_a, tau_tf_rho_b, zeros, zeros],
             dim=1,
@@ -611,7 +619,7 @@ class pcPBELMLOptimizerV2(nn.Module):
         # ---- Assemble 29-element output tensor ----
         # Layout: [beta, gamma, <20 pass-through>, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down, G_c]
         # (N, 1+1+20+1+1+1+1+2+1) = (N, 29) ✓
-        constants_batch = true_constants_PBE.repeat(x.shape[0], 1).to(x.device)
+        constants_batch = NN_OUTPUT_SCALE_PBE.repeat(x.shape[0], 1).to(x.device)
         fill_tensor = torch.ones([x.shape[0], _N_FILL_CONSTANTS], device=x.device)
         final_tensor = torch.hstack(
             [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down, g_x_part, g_c_part]
@@ -842,6 +850,7 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
         )
         hidden_x_symm = (hidden_x_up_scaled + hidden_x_down_scaled) / 2.0
 
+
         params_x_up_real   = self.x_output_layer(hidden_x_up_scaled)
         params_x_down_real = self.x_output_layer(hidden_x_down_scaled)
         mu_up_real,   kappa_up_real   = params_x_up_real[:,   MU_EX_INDEX].view(-1, 1), params_x_up_real[:,   KAPPA_EX_INDEX].view(-1, 1)
@@ -968,7 +977,7 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
         # ---- Assemble 29-element output tensor ----
         # Layout: [beta, gamma, <20 pass-through>, kappa_up, mu_up, kappa_down, mu_down, g_nn_up, g_nn_down, G_c]
         # (N, 1+1+20+1+1+1+1+2+1) = (N, 29) ✓
-        constants_batch = true_constants_PBE.repeat(x.shape[0], 1).to(x.device)
+        constants_batch = NN_OUTPUT_SCALE_PBE.repeat(x.shape[0], 1).to(x.device)
         fill_tensor = torch.ones([x.shape[0], _N_FILL_CONSTANTS], device=x.device)
         final_tensor = torch.hstack(
             [beta, gamma, fill_tensor, kappa_up, mu_up, kappa_down, mu_down, g_x_part, g_c_part]

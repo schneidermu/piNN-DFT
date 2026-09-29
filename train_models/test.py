@@ -13,7 +13,7 @@ Coverage
 5.  G_c sigma_zero constraint    — G_c = 1.0     at same point (use_g_c=True only).
 6.  High-density constraint      — gamma = true_gamma as rho → ∞.
 7.  G_c rho_inf constraint       — G_c = 1.0     as rho → ∞ (use_g_c=True only).
-8.  Pass-through constants       — indices 2–21 always equal true_constants_PBE.
+8.  Pass-through constants       — indices 2–21 always equal PBE_CONSTANTS.
 9.  Disabled-flag baselines      — G_NN = 0 when use_g_x=False; G_c = 1 when use_g_c=False.
 10. Spin symmetry (correlation)  — beta, gamma, G_c invariant under spin swap.
 11. Spin symmetry (exchange)     — mu, kappa, G_NN swap under spin swap.
@@ -27,7 +27,8 @@ import pytest
 import torch
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from dft_functionals.constants import EPS_RHO, true_constants_PBE
+from dft_functionals.constants import EPS_RHO, NN_OUTPUT_SCALE_PBE, PBE_CONSTANTS
+from dft_functionals import PBE
 from NN_models import pcPBELMLOptimizerV2
 
 # ---------------------------------------------------------------------------
@@ -49,8 +50,8 @@ IDX_GNN_UP    = 26
 IDX_GNN_DOWN  = 27
 IDX_GC        = 28
 
-# Reference values (true_constants_PBE factored out)
-_TCP = true_constants_PBE[0]
+# Reference values (PBE constants factored out)
+_TCP = PBE_CONSTANTS[0]
 TRUE_BETA  = _TCP[IDX_BETA].item()
 TRUE_GAMMA = _TCP[IDX_GAMMA].item()
 TRUE_MU    = _TCP[IDX_MU_UP].item()   # same for up and down
@@ -102,14 +103,14 @@ def _ueg_exchange_input(rho_a: torch.Tensor, rho_b: torch.Tensor) -> torch.Tenso
 
 def _ueg_corr_input(rho_a: torch.Tensor, rho_b: torch.Tensor) -> torch.Tensor:
     """
-    UEG correlation constraint point: sigma = 0, tau = tau_TF(rho), lapl = 0.
+    Physical spin-resolved UEG correlation point: sigma = 0, lapl = 0.
 
     Matches the model's internal construction:
-        tau_tf_rho_a = C_TF * (rho_a + EPS_RHO) ** (5/3)
+        tau_sigma = 1/2 * C_TF * (2*rho_sigma + EPS_RHO) ** (5/3)
     """
     zeros = torch.zeros_like(rho_a)
-    tau_a = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
-    tau_b = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+    tau_a = 0.5 * _C_TF * (2.0 * rho_a + EPS_RHO) ** (5.0 / 3.0)
+    tau_b = 0.5 * _C_TF * (2.0 * rho_b + EPS_RHO) ** (5.0 / 3.0)
     return torch.stack(
         [rho_a, rho_b, zeros, zeros, zeros, tau_a, tau_b, zeros, zeros], dim=1
     )
@@ -262,7 +263,7 @@ def test_gnn_down_zero_at_ueg_exchange(model_info):
 # ---------------------------------------------------------------------------
 
 def test_beta_at_ueg_corr(model_info):
-    """beta factor = 1 → output[IDX_BETA] = true_beta at UEG correlation point."""
+    """beta factor = 1 → true beta at the physical spin-resolved UEG point."""
     m, _, _ = model_info
     with torch.no_grad():
         out = m(_X_UEG_CORR)
@@ -273,7 +274,7 @@ def test_beta_at_ueg_corr(model_info):
 
 
 def test_gc_one_at_sigma_zero(model_info):
-    """G_c = 1.0 at UEG correlation point (sigma=0) via Lagrange correction (use_g_c only)."""
+    """G_c = 1 at physical spin-resolved UEG via Lagrange correction."""
     m, _, use_g_c = model_info
     if not use_g_c:
         pytest.skip("use_g_c=False — G_c is a fixed baseline (1.0)")
@@ -331,7 +332,7 @@ def test_gc_one_at_s_inf(model_info):
 # ---------------------------------------------------------------------------
 
 def test_fill_constants_unchanged(model_info):
-    """Indices 2–21 must always equal true_constants_PBE (factor = 1.0)."""
+    """Indices 2–21 must always equal PBE_CONSTANTS (factor = 1.0)."""
     m, _, _ = model_info
     with torch.no_grad():
         out = m(_X_RAND)
@@ -340,6 +341,76 @@ def test_fill_constants_unchanged(model_info):
         out[:, IDX_FILL_SLICE], expected, atol=ATOL, rtol=0,
         msg="Indices 2–21 are pass-through and must not change",
     )
+
+
+def test_physical_spin_ueg_anchor_is_used():
+    """Independently build physical tau and verify beta/Gc constraints there."""
+    rho_a = torch.tensor([0.07, 0.4, 1.3], dtype=torch.float64)
+    rho_b = torch.tensor([0.11, 0.8, 0.6], dtype=torch.float64)
+    zeros = torch.zeros_like(rho_a)
+    tau_a = 0.5 * _C_TF * (2.0 * rho_a + EPS_RHO) ** (5.0 / 3.0)
+    tau_b = 0.5 * _C_TF * (2.0 * rho_b + EPS_RHO) ** (5.0 / 3.0)
+    physical_ueg = torch.stack(
+        [rho_a, rho_b, zeros, zeros, zeros, tau_a, tau_b, zeros, zeros], dim=1
+    )
+
+    # Independently check the spin-resolved Fermi-gas coefficient.
+    ratio_a = tau_a / (_C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0))
+    ratio_b = tau_b / (_C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0))
+    expected_ratio_a = ((2.0 * rho_a + EPS_RHO) / (rho_a + EPS_RHO)) ** (5.0 / 3.0) / 2.0
+    expected_ratio_b = ((2.0 * rho_b + EPS_RHO) / (rho_b + EPS_RHO)) ** (5.0 / 3.0) / 2.0
+    torch.testing.assert_close(ratio_a, expected_ratio_a, rtol=1e-12, atol=1e-12)
+    torch.testing.assert_close(ratio_b, expected_ratio_b, rtol=1e-12, atol=1e-12)
+
+    model = pcPBELMLOptimizerV2(
+        num_layers=6, h_dim=32, use_g_x=False, use_g_c=True
+    ).double().eval()
+    descriptors = model.get_density_descriptors(physical_ueg)
+    descriptor_ratio_a = tau_a / (
+        _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0) + EPS_RHO
+    )
+    descriptor_ratio_b = tau_b / (
+        _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0) + EPS_RHO
+    )
+    expected_alpha_a = torch.tanh(descriptor_ratio_a - 1.0)
+    expected_alpha_b = torch.tanh(descriptor_ratio_b - 1.0)
+    torch.testing.assert_close(descriptors[:, 5], expected_alpha_a, rtol=1e-12, atol=1e-12)
+    torch.testing.assert_close(descriptors[:, 6], expected_alpha_b, rtol=1e-12, atol=1e-12)
+
+    with torch.no_grad():
+        output = model(physical_ueg)
+    torch.testing.assert_close(
+        output[:, IDX_BETA],
+        torch.full_like(rho_a, float(PBE_CONSTANTS[0, IDX_BETA])),
+        rtol=0,
+        atol=1e-12,
+    )
+    torch.testing.assert_close(output[:, IDX_GC], torch.ones_like(rho_a), rtol=0, atol=1e-12)
+
+
+def test_canonical_pbe_constants_and_nn_output_scales_are_separate():
+    torch.testing.assert_close(PBE_CONSTANTS[:, 26:28], torch.zeros_like(PBE_CONSTANTS[:, 26:28]))
+    torch.testing.assert_close(PBE_CONSTANTS[:, 28], torch.ones_like(PBE_CONSTANTS[:, 28]))
+    torch.testing.assert_close(
+        NN_OUTPUT_SCALE_PBE[:, 26:28], torch.ones_like(NN_OUTPUT_SCALE_PBE[:, 26:28])
+    )
+
+
+def test_learned_gnn_outputs_remain_live_with_canonical_pbe_constants():
+    torch.manual_seed(20260929)
+    model = pcPBELMLOptimizerV2(
+        num_layers=6, h_dim=32, use_g_x=True, use_g_c=False
+    ).eval()
+    with torch.no_grad():
+        output = model(_X_RAND)
+    assert torch.max(torch.abs(output[:, IDX_GNN_UP:IDX_GNN_DOWN + 1])) > 1e-8
+
+
+def test_canonical_pbe_exchange_has_unity_enhancement_at_zero_gradient():
+    constants = PBE_CONSTANTS.expand(3, -1)
+    spin_up_constants = constants[:, list(range(22)) + [22, 23, 26]]
+    fx = PBE.pbe_f0(torch.zeros(3, dtype=torch.float64), spin_up_constants)
+    torch.testing.assert_close(fx, torch.ones_like(fx), rtol=0, atol=0)
 
 
 # ---------------------------------------------------------------------------
@@ -365,6 +436,102 @@ def test_gc_is_one_when_disabled(model_info):
     with torch.no_grad():
         out = m(_X_RAND)
     torch.testing.assert_close(out[:, IDX_GC], torch.ones(8), atol=ATOL, rtol=0)
+
+
+def _gc_probe(x: torch.Tensor) -> torch.Tensor:
+    return 0.3 * x.square().sum(dim=1, keepdim=True) + 0.2 * x.sum(dim=1, keepdim=True)
+
+
+def _gc_interpolate(x_real, x1, x2, x3):
+    return pcPBELMLOptimizerV2._lagrange_correct_Gc(
+        _gc_probe(x_real),
+        _gc_probe(x1),
+        _gc_probe(x2),
+        _gc_probe(x3),
+        x_real,
+        x1,
+        x2,
+        x3,
+    )
+
+
+def test_gc_cross_weights_match_old_interpolation_away_from_degeneracy():
+    torch.manual_seed(20260929)
+    dtype = torch.float64
+    x_real = torch.randn(64, 7, dtype=dtype)
+    x1 = torch.randn(64, 7, dtype=dtype) + 2.0
+    x2 = torch.randn(64, 7, dtype=dtype) - 2.0
+    x3 = torch.randn(64, 7, dtype=dtype) + torch.tensor([1., -1., 2., -2., 3., -3., 0.], dtype=dtype)
+    g_real, g1, g2, g3 = (_gc_probe(x) for x in (x_real, x1, x2, x3))
+
+    def dist(a, b):
+        return torch.tanh((a - b).square().sum(dim=1, keepdim=True))
+
+    d0, d1, d2 = (dist(x_real, x) for x in (x1, x2, x3))
+    d01, d02, d12 = dist(x1, x2), dist(x1, x3), dist(x2, x3)
+    c0 = d1 * d2 / (d01 * d02)
+    c1 = d0 * d2 / (d01 * d12)
+    c2 = d0 * d1 / (d02 * d12)
+    old = (
+        c0 * (g_real - g1 + 1.0)
+        + c1 * (g_real - g2 + 1.0)
+        + c2 * (g_real - g3 + 1.0)
+    ) / (c0 + c1 + c2)
+
+    actual = pcPBELMLOptimizerV2._lagrange_correct_Gc(
+        g_real, g1, g2, g3, x_real, x1, x2, x3
+    )
+    torch.testing.assert_close(actual, old, rtol=1e-12, atol=1e-12)
+
+
+@pytest.mark.parametrize("anchor", [0, 1, 2])
+def test_gc_is_exactly_one_at_each_anchor(anchor):
+    dtype = torch.float64
+    x1 = torch.tensor([[0.0, 0.0]], dtype=dtype)
+    x2 = torch.tensor([[1.0, 0.0]], dtype=dtype)
+    x3 = torch.tensor([[0.0, 1.0]], dtype=dtype)
+    points = [x1, x2, x3]
+    result = _gc_interpolate(points[anchor], x1, x2, x3)
+    torch.testing.assert_close(result, torch.ones_like(result), rtol=0, atol=0)
+
+
+@pytest.mark.parametrize("pair", [(0, 1), (0, 2), (1, 2)])
+def test_gc_pairwise_constraint_intersections_are_finite_and_exact(pair):
+    dtype = torch.float64
+    points = [
+        torch.tensor([[0.0, 0.0]], dtype=dtype),
+        torch.tensor([[1.0, 0.0]], dtype=dtype),
+        torch.tensor([[0.0, 1.0]], dtype=dtype),
+    ]
+    points[pair[1]] = points[pair[0]].clone()
+    x_real = points[pair[0]].clone()
+    result = _gc_interpolate(x_real, *points)
+    assert torch.isfinite(result).all()
+    torch.testing.assert_close(result, torch.ones_like(result), rtol=0, atol=0)
+
+
+def test_gc_triple_constraint_intersection_is_finite_and_exact():
+    x_real = torch.tensor([[0.4, -0.2, 0.8]], dtype=torch.float64)
+    result = _gc_interpolate(x_real, x_real.clone(), x_real.clone(), x_real.clone())
+    assert torch.isfinite(result).all()
+    torch.testing.assert_close(result, torch.ones_like(result), rtol=0, atol=0)
+
+
+def test_gc_first_derivatives_remain_finite_near_degenerate_intersection():
+    dtype = torch.float64
+    derivative_norms = []
+    for scale in (1e-2, 1e-4, 1e-6):
+        x_real = torch.tensor([[3.0, 4.0]], dtype=dtype, requires_grad=True) * scale
+        x1 = torch.tensor([[0.0, 0.0]], dtype=dtype, requires_grad=True) * scale
+        x2 = torch.tensor([[1.0, 0.0]], dtype=dtype, requires_grad=True) * scale
+        x3 = torch.tensor([[0.0, 1.0]], dtype=dtype, requires_grad=True) * scale
+        result = _gc_interpolate(x_real, x1, x2, x3)
+        grads = torch.autograd.grad(result.sum(), (x_real, x1, x2, x3))
+        assert torch.isfinite(result).all()
+        assert all(torch.isfinite(grad).all() for grad in grads)
+        derivative_norms.append(max(grad.norm().item() for grad in grads))
+
+    assert max(derivative_norms) < 1e3, derivative_norms
 
 
 # ---------------------------------------------------------------------------

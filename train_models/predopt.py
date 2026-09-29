@@ -15,7 +15,7 @@ from tqdm import tqdm
 from utils import _fix_sigma_tot_closed_shell, _grid_to_model_input
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from dft_functionals import true_constants_PBE
+from dft_functionals import PBE_CONSTANTS
 from reaction_energy_calculation import get_local_energies
 
 
@@ -23,7 +23,7 @@ class DatasetPredopt(torch.utils.data.Dataset):
     """
     Dataset for the pre-optimization phase.
 
-    Returns (reaction_dict, true_constants_PBE) pairs.  The target constants
+    Returns (reaction_dict, PBE_CONSTANTS) pairs.  The target constants
     are the same for every sample; the model is trained to reproduce them from
     any local density input before fine-tuning on reaction energies.
 
@@ -37,7 +37,7 @@ class DatasetPredopt(torch.utils.data.Dataset):
     def __getitem__(self, i: int):
         reaction = dict(self.data[i])   # shallow copy to avoid mutating the cache
         reaction.pop("Database", None)
-        return reaction, true_constants_PBE
+        return reaction, PBE_CONSTANTS
 
     def __len__(self) -> int:
         return len(self.data.keys())
@@ -160,7 +160,7 @@ def predopt(
                 grid_vxc = X_vxc["Grid"].to(device, non_blocking=True)
                 weights_vxc = X_vxc["Weights"].to(device, non_blocking=True)
 
-                pbe_constants = true_constants_PBE.to(device).reshape(1, -1).expand(grid_vxc.shape[0], -1)
+                pbe_constants = PBE_CONSTANTS.to(device).reshape(1, -1).expand(grid_vxc.shape[0], -1)
                 target_vrho, _ = _vrho_from_constants(
                     pbe_constants, grid_vxc, weights_vxc, create_graph=False
                 )

@@ -94,7 +94,10 @@ class NumIntWithLaplacian(numint.NumInt):
         aow = None
         v1 = numpy.zeros_like(vmat) 
         pair_mask = mol.get_overlap_cond() < -numpy.log(self.cutoff)
-        nbins = NBINS * 2 - int(NBINS * numpy.log(self.cutoff * 1e2) / numpy.log(grids.cutoff))
+        cutoff = grids.cutoff * 1e2
+        nbins = NBINS * 2 - int(
+            NBINS * numpy.log(cutoff) / numpy.log(grids.cutoff)
+        )
 
         for ao, mask, weight, coords in self.block_loop(mol, grids, nao, ao_deriv, max_memory=max_memory):
             for i in range(nset):
@@ -125,9 +128,9 @@ class NumIntWithLaplacian(numint.NumInt):
                 _dot_ao_ao_sparse(ao[0], aow, None, nbins, mask, pair_mask, mol.ao_loc_nr(), hermi=0, out=vmat[0,i])
 
                 if wva.shape[0] > 5:
-                    _tau_dot_sparse(ao, ao, wva[5], nbins, mask, pair_mask, mol.ao_loc_nr(), out=v1[0,i])
+                    _tau_dot_sparse(ao, ao, 2.0 * wva[5], nbins, mask, pair_mask, mol.ao_loc_nr(), out=v1[0,i])
 
-                if vlapl is not None and numpy.linalg.norm(vlapl[:,0]) > 1e-9:
+                if vlapl is not None:
                     XX, YY, ZZ = 4, 7, 9
                     ao2 = ao[XX] + ao[YY] + ao[ZZ]
                     
@@ -144,9 +147,9 @@ class NumIntWithLaplacian(numint.NumInt):
                 _dot_ao_ao_sparse(ao[0], aow, None, nbins, mask, pair_mask, mol.ao_loc_nr(), hermi=0, out=vmat[1,i])
                 
                 if wvb.shape[0] > 5:
-                    _tau_dot_sparse(ao, ao, wvb[5], nbins, mask, pair_mask, mol.ao_loc_nr(), out=v1[1,i])
+                    _tau_dot_sparse(ao, ao, 2.0 * wvb[5], nbins, mask, pair_mask, mol.ao_loc_nr(), out=v1[1,i])
 
-                if vlapl is not None and numpy.linalg.norm(vlapl[:,1]) > 1e-9:
+                if vlapl is not None:
                     XX, YY, ZZ = 4, 7, 9
                     ao2 = ao[XX] + ao[YY] + ao[ZZ]
                     

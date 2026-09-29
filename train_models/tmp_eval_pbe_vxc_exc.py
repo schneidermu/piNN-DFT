@@ -11,7 +11,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from dft_functionals import true_constants_PBE
+from dft_functionals import PBE_CONSTANTS
 from reaction_energy_calculation import calculate_xc_energy, get_local_energies
 from utils import _fix_sigma_tot_closed_shell
 
@@ -42,11 +42,7 @@ def vxc_collate_fn(batch: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tens
 
 
 def pbe_constants(n_points: int, device: torch.device) -> torch.Tensor:
-    constants = true_constants_PBE.to(device).reshape(1, -1).repeat(n_points, 1)
-    # The local PBE implementation uses indices 26 and 27 as additive neural
-    # exchange corrections. Pure canonical PBE has no NN exchange correction.
-    constants[:, 26:28] = 0.0
-    return constants
+    return PBE_CONSTANTS.to(device).reshape(1, -1).repeat(n_points, 1)
 
 
 def batch_exc(

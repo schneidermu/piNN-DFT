@@ -8,7 +8,7 @@ the piNN-DFT project
 import numpy as np
 import torch
 
-true_constants_PBE = torch.Tensor(
+PBE_CONSTANTS = torch.Tensor(
     [
         [
             0.06672455,
@@ -38,12 +38,21 @@ true_constants_PBE = torch.Tensor(
             0.2195149727645171,
             0.8040,
             0.2195149727645171,
-            1,  # Index 26: G_NN_up (Neural network exchange correction, spin-up)
-            1,  # Index 27: G_NN_down (Neural network exchange correction, spin-down)
+            0,  # Index 26: G_NN_up is additive and vanishes for canonical PBE
+            0,  # Index 27: G_NN_down is additive and vanishes for canonical PBE
             1,  # Index 28: G_c (Neural network correlation correction factor)
         ]
     ]
 )
+
+# NN outputs are multiplicative factors for PBE parameters, but G_NN is
+# additive in F_x. Keep a separate unit scale for learned G_NN outputs.
+NN_OUTPUT_SCALE_PBE = PBE_CONSTANTS.clone()
+NN_OUTPUT_SCALE_PBE[:, 26:28] = 1.0
+
+# Backward-compatible public name; these are physical PBE constants, not NN
+# output scales.
+true_constants_PBE = PBE_CONSTANTS
 
 
 true_constants_SVWN3 = [

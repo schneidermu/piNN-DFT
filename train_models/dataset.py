@@ -12,7 +12,7 @@ import torch
 from utils import stack_reactions
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from dft_functionals import PBE, true_constants_PBE
+from dft_functionals import PBE, PBE_CONSTANTS
 
 
 def group_and_augment_reactions(base_reactions, file_index):
@@ -217,7 +217,7 @@ def add_reaction_info_from_h5(reaction, file_index):
     sigmas = X[:, 3:6]
 
     device = torch.device("cpu")
-    pbe_constants = true_constants_PBE.to(device)
+    pbe_constants = PBE_CONSTANTS.to(device)
     local_pbe_energies = PBE.F_PBE(
         torch.from_numpy(densities).float(),
         torch.from_numpy(sigmas).float(),
