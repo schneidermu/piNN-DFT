@@ -4,6 +4,9 @@ set -euo pipefail
 
 export PYTHONNOUSERSITE=1
 
+source /home/mmedvedev/anaconda3/etc/profile.d/conda.sh
+conda activate ML_param
+
 : "${SIMPLE4_PRESET:?SIMPLE4_PRESET must be set by the SLURM file}"
 : "${SIMPLE4_TAG:?SIMPLE4_TAG must be set by the SLURM file}"
 
