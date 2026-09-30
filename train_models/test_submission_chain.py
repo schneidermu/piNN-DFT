@@ -52,7 +52,16 @@ def run_fake(tmp_path, mode="ok"):
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     git = bin_dir / "git"
-    git.write_text("#!/bin/bash\nexit 0\n")
+    git.write_text(
+        '#!/bin/bash\ncase "$1" in\nrev-parse) echo '
+        + "a" * 40
+        + "\n;;\nls-files) printf 'train_models/launch_provenance.py\\0'\n;;\nesac\n"
+    )
+    (repo / ".git").mkdir()
+    (repo / ".git/HEAD").write_text("a" * 40)
+    (repo / "train_models/launch_provenance.py").write_text(
+        (ROOT / "train_models/launch_provenance.py").read_text()
+    )
     git.chmod(0o755)
     fake = bin_dir / "sbatch"
     fake.write_text("""#!/usr/bin/env python3
@@ -94,7 +103,7 @@ def test_parallel_siblings_and_cluster_id_parsing(tmp_path):
         assert [arg for arg in call["args"] if arg.startswith("--dependency")] == [
             "--dependency=afterok:1001"
         ]
-        assert "--export=ALL,CHECKPOINTS_DIR" in call["args"]
+        assert "--export=ALL,CHECKPOINTS_DIR,PINN_LAUNCH_PROVENANCE" in call["args"]
     assert "CPU preprocessing: 1001" in result.stdout
     assert "1012" in result.stdout
     assert "afterany" not in (ROOT / "submit_dietclean_s5_chain.sh").read_text()

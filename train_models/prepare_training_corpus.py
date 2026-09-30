@@ -8,7 +8,6 @@ import json
 import pickle
 
 import torch
-import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -22,6 +21,7 @@ from prepare_data import (
     save_chk,
 )
 from prepare_vxc import prepare_vxc
+from launch_provenance import current_commit
 
 DEFAULT_CORPUS_DIR = "checkpoints_dietclean_noval_v1"
 ARTIFACTS = (
@@ -144,9 +144,7 @@ def regenerate(
             "No valid mRKS systems; corpus is incomplete and has no manifest."
         )
     repository = Path(__file__).resolve().parent.parent
-    commit = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=repository, text=True
-    ).strip()
+    commit = current_commit(repository)
     manifest = {
         "manifest_version": 1,
         "training_protocol": TRAINING_PROTOCOL,

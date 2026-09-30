@@ -147,3 +147,12 @@ mv train_models/checkpoints_dietclean_noval_v1 \
    train_models/checkpoints_dietclean_noval_v1_failed_4364796
 bash submit_dietclean_s5_chain.sh
 ```
+
+Git is required only on the login/submission host for the chained launch. The
+wrapper checks the minimum commit ancestry there and writes a per-submission
+record under `train_models/launch_manifests/`, containing HEAD and SHA256 hashes
+of tracked Python, shell, SLURM and CSV sources. It exports that record to every
+job. CPU/GPU jobs verify checkout HEAD and those hashes with Python, without
+calling Git. Changing the checkout or source files while jobs are queued fails
+the checks; finish/cancel the chain before pulling more changes. This verifies
+submission provenance without requiring Git in `ML_param` on compute nodes.

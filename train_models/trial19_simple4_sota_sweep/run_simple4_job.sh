@@ -23,11 +23,16 @@ fi
 cd "$WORK_DIR"
 
 REQUIRED_SCIENTIFIC_FIX="29b36ac2faa29d31a758e0067499f10b41c3ab39"
-if ! git merge-base --is-ancestor "$REQUIRED_SCIENTIFIC_FIX" HEAD; then
-    echo "Checkout lacks the required scientific-fix commit $REQUIRED_SCIENTIFIC_FIX." >&2
-    exit 1
+if [[ -n "${PINN_LAUNCH_PROVENANCE:-}" ]]; then
+    VERIFIED_COMMIT=$(python launch_provenance.py)
+    echo "Git commit: $VERIFIED_COMMIT"
+else
+    if ! git merge-base --is-ancestor "$REQUIRED_SCIENTIFIC_FIX" HEAD; then
+        echo "Checkout lacks the required scientific-fix commit $REQUIRED_SCIENTIFIC_FIX." >&2
+        exit 1
+    fi
+    echo "Git commit: $(git rev-parse HEAD)"
 fi
-echo "Git commit: $(git rev-parse HEAD)"
 python -c 'import pyscf; print("PySCF:", pyscf.__version__)'
 
 # All planned jobs default to the same newly regenerated corpus; no old-data fallback.

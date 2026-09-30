@@ -16,15 +16,15 @@ source /home/mmedvedev/anaconda3/etc/profile.d/conda.sh
 conda activate ML_param
 
 SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$PWD}"
-REPO_ROOT=$(git -C "$SUBMIT_DIR" rev-parse --show-toplevel)
+if [[ -f "$SUBMIT_DIR/train_models/launch_provenance.py" ]]; then
+    REPO_ROOT="$SUBMIT_DIR"
+else
+    REPO_ROOT=$(cd "$SUBMIT_DIR/.." && pwd -P)
+fi
 cd "$REPO_ROOT"
-REQUIRED_SCIENTIFIC_FIX="29b36ac2faa29d31a758e0067499f10b41c3ab39"
-git merge-base --is-ancestor "$REQUIRED_SCIENTIFIC_FIX" HEAD || {
-    echo "Checkout predates the required protocol/manifest commit: $REQUIRED_SCIENTIFIC_FIX" >&2
-    exit 1
-}
 hostname
-git rev-parse HEAD
+VERIFIED_COMMIT=$(python train_models/launch_provenance.py)
+echo "Git commit: $VERIFIED_COMMIT"
 python --version
 python -c 'import torch, numpy, h5py; print("torch:", torch.__version__, "numpy:", numpy.__version__, "h5py:", h5py.__version__)'
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-4}"

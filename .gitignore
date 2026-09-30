@@ -408,3 +408,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Per-submission launch provenance records
+train_models/launch_manifests/

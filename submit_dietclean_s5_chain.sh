@@ -52,10 +52,13 @@ submit_job() {
     }
     printf '%s\n' "${response%%;*}"
 }
-PREP_JOB_ID=$(submit_job --chdir="$REPO_ROOT" train_models/prepare_dietclean_noval_v1.slurm)
+# Git runs only on the submission host; Python validates this snapshot in batch.
+export PINN_LAUNCH_PROVENANCE
+PINN_LAUNCH_PROVENANCE=$(python train_models/launch_provenance.py --capture)
+PREP_JOB_ID=$(submit_job --chdir="$REPO_ROOT" --export=ALL,CHECKPOINTS_DIR,PINN_LAUNCH_PROVENANCE train_models/prepare_dietclean_noval_v1.slurm)
 printf 'CPU preprocessing: %s (log: %s/dietclean_noval_prep_%s.out)\n' "$PREP_JOB_ID" "$REPO_ROOT" "$PREP_JOB_ID"
 for script in "${jobs[@]}"; do
-    job_id=$(submit_job --chdir="$REPO_ROOT" --export=ALL,CHECKPOINTS_DIR \
+    job_id=$(submit_job --chdir="$REPO_ROOT" --export=ALL,CHECKPOINTS_DIR,PINN_LAUNCH_PROVENANCE \
         --dependency="afterok:$PREP_JOB_ID" "$script")
     printf 'Training %s: %s (afterok:%s)\n' "$script" "$job_id" "$PREP_JOB_ID"
 done
