@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name="DIETCLEAN_PREP_V1"
-#SBATCH --partition=normal
+#SBATCH --partition=rocky
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4

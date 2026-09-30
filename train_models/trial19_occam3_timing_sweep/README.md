@@ -52,7 +52,7 @@ siblings and may run concurrently after successful preprocessing. The wrapper
 uses `sbatch --parsable`, accepts `JOBID;CLUSTER`, prints every role and job ID,
 and exports the same absolute `CHECKPOINTS_DIR` to all training submissions.
 
-Preprocessing uses `normal`, one Type-D node, one task, four CPU cores, 128 GiB
+Preprocessing uses `rocky`, one Type-D node, one task, four CPU cores, 128 GiB
 RAM and twelve hours, with zero GPUs in `ML_param`. The implementation has serial
 Python/HDF5 loops and native tensor kernels; four threads avoid reserving all
 48 cores. Memory includes resident grids and augmented arrays. These conservative

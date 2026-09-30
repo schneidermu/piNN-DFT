@@ -108,6 +108,7 @@ def test_cpu_and_runner_contract():
     directives = "\n".join(
         line for line in text.splitlines() if line.startswith("#SBATCH")
     )
+    assert "--partition=rocky" in directives
     assert 'constraint="type_d"' in directives
     assert "--nodes=1" in directives and "--ntasks=1" in directives
     assert "gpu" not in directives.lower() and "--gres" not in directives
