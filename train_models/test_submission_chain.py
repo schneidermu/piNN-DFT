@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -76,11 +77,18 @@ print("invalid" if os.environ["MODE"] == "invalid" else f"{1000+len(a)};charisma
 """)
     fake.chmod(0o755)
     calls = tmp_path / "calls.json"
+    if mode == "bad_python":
+        extra_env = {"PINN_SUBMIT_PYTHON": str(tmp_path / "missing-python")}
+    elif mode == "explicit_python":
+        extra_env = {"PINN_SUBMIT_PYTHON": sys.executable}
+    else:
+        extra_env = {}
     env = {
         **os.environ,
         "PATH": f"{bin_dir}:{os.environ['PATH']}",
         "CALLS": str(calls),
         "MODE": mode,
+        **extra_env,
     }
     result = subprocess.run(
         ["bash", str(wrapper)], cwd=tmp_path, env=env, capture_output=True, text=True
@@ -88,8 +96,9 @@ print("invalid" if os.environ["MODE"] == "invalid" else f"{1000+len(a)};charisma
     return result, json.loads(calls.read_text()) if calls.exists() else [], repo
 
 
-def test_parallel_siblings_and_cluster_id_parsing(tmp_path):
-    result, calls, repo = run_fake(tmp_path)
+@pytest.mark.parametrize("mode", ["ok", "explicit_python"])
+def test_parallel_siblings_and_cluster_id_parsing(tmp_path, mode):
+    result, calls, repo = run_fake(tmp_path, mode)
     assert result.returncode == 0, result.stderr
     assert len(calls) == 12
     assert calls[0]["args"][-1] == "train_models/prepare_dietclean_noval_v1.slurm"
@@ -113,6 +122,7 @@ def test_parallel_siblings_and_cluster_id_parsing(tmp_path):
     "mode,count",
     [
         ("existing", 0),
+        ("bad_python", 0),
         ("missing", 0),
         ("missing_split", 0),
         ("failed", 1),

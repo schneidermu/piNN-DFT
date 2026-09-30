@@ -54,7 +54,20 @@ submit_job() {
 }
 # Git runs only on the submission host; Python validates this snapshot in batch.
 export PINN_LAUNCH_PROVENANCE
-PINN_LAUNCH_PROVENANCE=$(python train_models/launch_provenance.py --capture)
+SUBMIT_PYTHON="${PINN_SUBMIT_PYTHON:-}"
+if [[ -z "$SUBMIT_PYTHON" ]]; then
+    for candidate in python3 python /home/mmedvedev/anaconda3/envs/ML_param/bin/python /home/mmedvedev/anaconda3/bin/python; do
+        if command -v "$candidate" > /dev/null 2>&1 && "$candidate" -c 'import sys; assert sys.version_info >= (3, 9)' > /dev/null 2>&1; then
+            SUBMIT_PYTHON="$candidate"
+            break
+        fi
+    done
+fi
+if [[ -z "$SUBMIT_PYTHON" ]] || ! "$SUBMIT_PYTHON" -c 'import sys; assert sys.version_info >= (3, 9)' ; then
+    echo "No Python 3.9+ interpreter available; set PINN_SUBMIT_PYTHON to its executable path." >&2
+    exit 1
+fi
+PINN_LAUNCH_PROVENANCE=$("$SUBMIT_PYTHON" train_models/launch_provenance.py --capture)
 PREP_JOB_ID=$(submit_job --chdir="$REPO_ROOT" --export=ALL,CHECKPOINTS_DIR,PINN_LAUNCH_PROVENANCE train_models/prepare_dietclean_noval_v1.slurm)
 printf 'CPU preprocessing: %s (log: %s/dietclean_noval_prep_%s.out)\n' "$PREP_JOB_ID" "$REPO_ROOT" "$PREP_JOB_ID"
 for script in "${jobs[@]}"; do

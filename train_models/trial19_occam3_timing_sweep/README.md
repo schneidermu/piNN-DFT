@@ -124,3 +124,8 @@ job. CPU/GPU jobs verify checkout HEAD and those hashes with Python, without
 calling Git. Changing the checkout or source files while jobs are queued fails
 the checks; finish/cancel the chain before pulling more changes. This verifies
 submission provenance without requiring Git in `ML_param` on compute nodes.
+
+The submission wrapper finds Python 3.9+ using `python3`, `python`, or the
+existing HSE Conda interpreter paths. No login-shell activation is required.
+Set `PINN_SUBMIT_PYTHON=/absolute/path/to/python` to override discovery.
+The provenance helper uses only the standard library on the submission host.
