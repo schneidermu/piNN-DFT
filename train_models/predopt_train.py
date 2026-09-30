@@ -9,11 +9,16 @@ Usage (distributed, 2 GPUs):
     torchrun --nproc_per_node=2 predopt_train.py --name PBE-L_8_32 --omega 0.067
 """
 
+if __name__ == "__main__":
+    raise SystemExit(
+        "Legacy non-SCF validation trainer is disabled. Use replay_trial_19_bridge.py "
+        "with training-only corpora and external DietGMTKN30 SCF checkpoint selection."
+    )
+
 import argparse
 import collections
 import copy
 import os
-import pickle
 import random
 from typing import Optional
 
@@ -22,20 +27,16 @@ import mlflow
 import numpy as np
 import torch
 import torch.distributed as dist
-from dotenv import find_dotenv, load_dotenv
 from torch import nn
-from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
 from dataset import collate_fn, fast_collate_fn_predopt
-from NN_models import pcPBELMLOptimizerV2
-from predopt import DatasetPredopt, predopt
-from prepare_data import load_chk
+from predopt import DatasetPredopt
 from reaction_energy_calculation import calculate_reaction_energy, get_local_energies
-from utils import configure_optimizers, seed_worker, set_random_seed, _grid_to_model_input, _fix_sigma_tot_closed_shell
+from utils import seed_worker, set_random_seed, _fix_sigma_tot_closed_shell
 
 set_random_seed(41)
 g = torch.Generator()
@@ -1568,135 +1569,3 @@ def _build_dataloaders(
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
-
-if __name__ == "__main__":
-
-    # 1. DDP initialization
-    local_rank = int(os.environ["LOCAL_RANK"])
-    dist.init_process_group(backend="nccl")
-    torch.cuda.set_device(local_rank)
-    device = torch.device("cuda", local_rank)
-
-    # 2. Load data
-    data, data_train, data_test, data_vxc_train, data_vxc_val = load_chk(path="checkpoints")
-
-    # 3. Parse arguments
-    args = _build_argument_parser().parse_args()
-    num_layers, h_dim = map(int, args.name.split("_")[1:])
-    name = args.name + "_" + str(args.dropout)  # e.g. PBE-L_8_32_0.6
-
-    # 4. Build model
-    name_prefix = args.name.split("_")[0]   # e.g. "PBE-LGxGc", "PBE-LGx", "PBE-LGc", "PBE-L"
-    use_g_x = "Gx" in name_prefix
-    use_g_c = "Gc" in name_prefix
-    base_model = pcPBELMLOptimizerV2(
-        num_layers=num_layers, h_dim=h_dim, dropout=args.dropout, DFT="PBE",
-        use_g_x=use_g_x, use_g_c=use_g_c,
-    ).to(device)
-    model = DDP(base_model, device_ids=[local_rank], find_unused_parameters=True)
-
-    if local_rank == 0:
-        print(FCHEM_VALIDATION)
-        print(f"name={name}, n_predopt={args.n_predopt}, n_train={args.n_train}, "
-              f"batch_size={args.batch_size}, dropout={args.dropout}, omega={args.omega}, "
-              f"lr_train={args.lr_train}, lr_predopt={args.lr_predopt}")
-        print(f"Number of GPUs: {torch.cuda.device_count()}")
-        print(f"Number of parameters: {sum(p.numel() for p in model.module.parameters())}")
-
-    # 5. Load dispersions
-    with open("./dispersions/dispersions.pickle", "rb") as handle:
-        dispersions = pickle.load(handle)
-
-    # 6. Build dataloaders
-    (train_dataloader, test_dataloader, predopt_dataloader,
-     vxc_train_loader, vxc_test_loader) = _build_dataloaders(
-        data_train, data_test, data_vxc_train, data_vxc_val, data,
-        batch_size=args.batch_size, vxc_batch_size=args.vxc_batch_size,
-        generator=g, base_seed=41,
-    )
-
-    # 7. MLFlow logging (rank 0 only)
-    run = None
-    if local_rank == 0:
-        load_dotenv(find_dotenv())
-        enable_mlflow = os.getenv("ENABLE_MLFLOW", "true").lower() in ("true", "1", "yes")
-
-        if enable_mlflow:
-            try:
-                # Configure tracking URI (defaults to ./mlruns/)
-                tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "./mlruns")
-                mlflow.set_tracking_uri(tracking_uri)
-                mlflow.set_experiment("piNN-DFT")
-
-                # Start run with descriptive name
-                run_name = f"{name}_omega_{args.omega:.3f}"
-                mlflow.start_run(run_name=run_name)
-
-                # Log all hyperparameters
-                mlflow.log_params({
-                    "name": name,
-                    "num_layers": num_layers,
-                    "h_dim": h_dim,
-                    "dropout": args.dropout,
-                    "weight_decay": args.weight_decay,
-                    "grad_clip": args.grad_clip,
-                    "vxc_lr_scale": args.vxc_lr_scale,
-                    "probe_vxc_steps": args.probe_vxc_steps,
-                    "optimizer": args.optimizer,
-                    "lr_train": args.lr_train,
-                    "omega": args.omega,
-                    "n_predopt": args.n_predopt,
-                    "n_train": args.n_train,
-                    "batch_size": args.batch_size,
-                    "lr_predopt": args.lr_predopt,
-                    "vxc_batch_size": args.vxc_batch_size,
-                    "preopt_vxc_weight": args.preopt_vxc_weight,
-                    "preopt_vxc_steps": args.preopt_vxc_steps,
-                    "preopt_vxc_target": args.preopt_vxc_target,
-                })
-
-                print(f"MLFlow tracking enabled. URI: {tracking_uri}, Experiment: piNN-DFT, Run: {run_name}")
-            except Exception as e:
-                print(f"Warning: MLFlow initialization failed: {e}. Logging disabled.")
-        else:
-            print("MLFlow logging disabled (ENABLE_MLFLOW=false).")
-
-    # 8. Pre-optimization phase
-    predopt_optimizer = torch.optim.Adam(
-        model.parameters(), lr=args.lr_predopt, betas=(0.9, 0.999)
-    )
-    predopt(
-        model, nn.MSELoss(), predopt_optimizer, predopt_dataloader,
-        device, n_epochs=args.n_predopt, accum_iter=1, local_rank=local_rank,
-        vxc_loader=vxc_train_loader,
-        preopt_vxc_weight=args.preopt_vxc_weight,
-        preopt_vxc_steps=args.preopt_vxc_steps,
-        vxc_target_mode=args.preopt_vxc_target,
-        rung="GGA",
-        dft="PBE",
-    )
-
-    # 9. Main training phase
-    optimizer = configure_optimizers(
-        model=model, learning_rate=args.lr_train * args.vxc_lr_scale,
-        optimizer_str=args.optimizer, weight_decay=args.weight_decay,
-    )
-    scheduler    = _build_scheduler(optimizer, args.n_train)
-    early_stopper = EarlyStopper(patience=_EARLY_STOP_PATIENCE)
-
-    train_full_loss, val_full_loss, best_model_path = train(
-        model=model, optimizer=optimizer, scheduler=scheduler,
-        early_stopper=early_stopper,
-        train_loader=train_dataloader, test_loader=test_dataloader,
-        vxc_train_loader=vxc_train_loader, vxc_test_loader=vxc_test_loader,
-        run=run,
-        n_epochs=args.n_train, accum_iter=1, grad_clip=args.grad_clip, probe_vxc_steps=args.probe_vxc_steps, omega=args.omega,
-        local_rank=local_rank, device=device,
-        rung="GGA", dft="PBE", dispersions=dispersions,
-        batch_size=args.batch_size, lr_train=args.lr_train, name=name,
-    )
-
-    if local_rank == 0:
-        print(f"Training complete. Best model saved at: {best_model_path}")
-        if mlflow.active_run() is not None:
-            mlflow.end_run()

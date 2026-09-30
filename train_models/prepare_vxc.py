@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pickle
 import argparse
@@ -5,32 +7,11 @@ import h5py
 import torch
 import numpy as np
 from pathlib import Path
-try:
-    from sklearn.model_selection import train_test_split
-except ModuleNotFoundError:
-    train_test_split = None
+from prepare_data import TRAINING_PROTOCOL, remove_obsolete
+import json
 
 
-def split_train_val(data, test_size, random_state):
-    if train_test_split is not None:
-        return train_test_split(
-            data,
-            test_size=test_size,
-            random_state=random_state,
-            shuffle=True,
-        )
-
-    rng = np.random.default_rng(random_state)
-    indices = np.arange(len(data))
-    rng.shuffle(indices)
-    n_val = int(np.ceil(len(data) * test_size))
-    n_val = min(max(n_val, 1), len(data) - 1)
-    val_indices = set(indices[:n_val].tolist())
-    train_data = [item for idx, item in enumerate(data) if idx not in val_indices]
-    val_data = [item for idx, item in enumerate(data) if idx in val_indices]
-    return train_data, val_data
-
-def load_vxc_from_h5(h5_path):
+def load_vxc_from_h5(h5_path: str | Path) -> dict | None:
     """
     Loads Grid, Vrho, Weights, and exact E_xc from an H5 file.
     """
@@ -87,69 +68,31 @@ def load_vxc_from_h5(h5_path):
         return None
 
 
-def prepare_vxc(h5_dir="h5_vrho", output_dir="checkpoints", test_size=0.1, random_state=42):
-    """
-    Scans directory, loads data, splits it, and saves pickles.
-    """
-    print(f"Scanning '{h5_dir}' for .h5 files...")
-    p = Path(h5_dir)
-    files = sorted(list(p.glob("*.h5")))
-    
-    if not files:
-        print("No .h5 files found! Please run gen_h5_with_vrho.py first.")
-        return
-
-    print(f"Found {len(files)} files. Loading into memory...")
-    
+def prepare_vxc(h5_dir: str = "h5_vrho", output_dir: str = "checkpoints") -> list[dict]:
+    """Save every valid mRKS system for both E_xc and v_xc training."""
+    directory = Path(output_dir)
+    directory.mkdir(parents=True, exist_ok=True)
+    remove_obsolete(directory, ("data_vxc_val.pickle",))
+    files = sorted(Path(h5_dir).glob("*.h5"))
     valid_data = []
-    for f in files:
-        data = load_vxc_from_h5(f)
+    for file in files:
+        data = load_vxc_from_h5(file)
         if data is not None:
             valid_data.append(data)
-            print(f"  Loaded: {data['Name']} (pts: {data['Grid'].shape[0]})")
-    
-    if not valid_data:
-        print("No valid data loaded.")
-        return
-
-    print(f"\nTotal loaded systems: {len(valid_data)}")
-
-    # Split Data
-    if len(valid_data) < 2:
-        print("Warning: Only 1 system found. Using it for both Train and Validation.")
-        train_data = valid_data
-        val_data = valid_data
-    else:
-        train_data, val_data = split_train_val(valid_data, test_size, random_state)
-
-    print(f"Split: {len(train_data)} Train, {len(val_data)} Validation.")
-
-    # Save Pickles
-    os.makedirs(output_dir, exist_ok=True)
-    
-    train_path = os.path.join(output_dir, "data_vxc_train.pickle")
-    val_path = os.path.join(output_dir, "data_vxc_val.pickle")
-
-    with open(train_path, "wb") as f:
-        pickle.dump(train_data, f)
-    
-    with open(val_path, "wb") as f:
-        pickle.dump(val_data, f)
-
-    print(f"\nSaved checkpoints:\n  {train_path}\n  {val_path}")
+    # Always overwrite, even for an empty corpus; never leave stale training data.
+    with (directory / "data_vxc_train.pickle").open("wb") as handle:
+        pickle.dump(valid_data, handle)
+    (directory / "mrks_protocol.json").write_text(json.dumps({
+        "protocol": TRAINING_PROTOCOL, "valid_systems": len(valid_data),
+        "source_files": [str(file.resolve()) for file in files],
+    }))
+    print(f"mRKS training systems: {len(valid_data)} / {len(files)} H5 files; no internal validation split.")
+    return valid_data
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--h5-dir", default="h5_vrho_from_mrks")
     parser.add_argument("--output-dir", default="checkpoints")
-    parser.add_argument("--test-size", type=float, default=0.2)
-    parser.add_argument("--random-state", type=int, default=42)
     args = parser.parse_args()
-
-    prepare_vxc(
-        h5_dir=args.h5_dir,
-        output_dir=args.output_dir,
-        test_size=args.test_size,
-        random_state=args.random_state,
-    )
+    prepare_vxc(h5_dir=args.h5_dir, output_dir=args.output_dir)

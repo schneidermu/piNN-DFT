@@ -11,7 +11,6 @@ from optuna_joint import (
     set_random_seed,
 )
 from replay_trial_19_bridge import (
-    last_epoch_checkpoint_key,
     parse_args,
     select_last_epoch,
 )
@@ -132,7 +131,7 @@ def main() -> None:
         else None
     )
 
-    data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(path=args.checkpoints_dir)
+    data_predopt, data_train, data_vxc_train = load_chk(path=args.checkpoints_dir)
     shared_preopt_checkpoint = run_or_reuse_preoptimization(
         args=args,
         output_dir=output_dir,
@@ -150,9 +149,7 @@ def main() -> None:
         args=args,
         shared_preopt_checkpoint=Path(shared_preopt_checkpoint),
         data_train=data_train,
-        data_val=data_val,
         data_vxc_train=data_vxc_train,
-        data_vxc_val=data_vxc_val,
         device=device,
         local_rank=local_rank,
         world_size=world_size,
@@ -160,23 +157,20 @@ def main() -> None:
         mrks_dispersions=mrks_dispersions,
         output_dir=output_dir,
         rank0=rank0,
-        epoch_selector=select_last_epoch,
-        checkpoint_row_key=last_epoch_checkpoint_key,
     )
 
-    if rank0:
+    if rank0 and not result["failed"]:
         final_epoch = select_last_epoch(result["epoch_history"])
         print("Replay complete for Trial 19 tuned log schedule.")
-        print(f"Final selected epoch: {final_epoch['epoch']}")
+        print(f"Final epoch: {final_epoch['epoch']}")
         print(
             "Final metrics: "
             f"train_fchem={float(final_epoch['train_fchem']):.8f}, "
-            f"val_vxc={float(final_epoch['val_vxc']):.8f}, "
-            f"val_exc={float(final_epoch['val_exc']):.8f}, "
-            f"val_fchem={float(final_epoch['val_fchem']):.8f}, "
+            f"train_vxc={float(final_epoch['train_vxc']):.8f}, "
+            f"train_exc={float(final_epoch['train_exc']):.8f}, "
             f"phase={final_epoch.get('phase_name')}"
         )
-        print(f"Selected checkpoint: {result.get('selected_checkpoint_path')}")
+        print(f"Final checkpoint: {result.get('final_checkpoint_path')}")
         print(f"History path: {result.get('history_path')}")
         print(f"Params: {json.dumps(LOG_TUNED_PARAMS, sort_keys=True)}")
 

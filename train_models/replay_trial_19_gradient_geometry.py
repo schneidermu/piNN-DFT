@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import collections
 import json
-import math
 import pickle
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -41,13 +40,11 @@ from optuna_joint import (
     sync_failure,
     update_db_errors,
     update_exc_errors,
-    validate_one_epoch,
     vxc_loss,
 )
 from reaction_energy_calculation import calculate_reaction_energy
 from replay_trial_19_bridge import (
     TRIAL_19_PARAMS,
-    last_epoch_checkpoint_key,
     select_last_epoch,
 )
 from utils import configure_optimizers, set_random_seed
@@ -126,11 +123,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--preopt-vxc-steps", type=int, default=0)
     parser.add_argument("--preopt-vxc-target", type=str, default="pbe", choices=["pbe"])
     parser.add_argument("--trial-number", type=int, default=19)
-    parser.add_argument("--train-fchem-target", type=float, default=40.0)
-    parser.add_argument("--val-vxc-target", type=float, default=1.1)
-    parser.add_argument("--val-fchem-soft-cap", type=float, default=90.0)
+    parser.add_argument("--train-fchem-target", type=float, default=40.0, help="Obsolete compatibility option; ignored. Checkpoint selection uses external SCF.")
+    parser.add_argument("--val-vxc-target", type=float, default=1.1, help="Obsolete compatibility option; ignored. Checkpoint selection uses external SCF.")
+    parser.add_argument("--val-fchem-soft-cap", type=float, default=90.0, help="Obsolete compatibility option; ignored. Checkpoint selection uses external SCF.")
     parser.add_argument(
-        "--save-selected-checkpoints", action="store_true", default=True
+        "--save-final-checkpoint", "--save-selected-checkpoints",
+        dest="save_final_checkpoint", action="store_true", default=True,
+        help="Save the final epoch only; historical flag alias performs no checkpoint selection.",
     )
     parser.add_argument("--include-mrks-dispersion", action="store_true")
     parser.add_argument(
@@ -576,9 +575,7 @@ def run_trial_geometry(
     args: argparse.Namespace,
     shared_preopt_checkpoint: Path,
     data_train: dict,
-    data_val: dict,
     data_vxc_train: list,
-    data_vxc_val: list,
     device: torch.device,
     local_rank: int,
     world_size: int,
@@ -591,9 +588,7 @@ def run_trial_geometry(
     set_random_seed(trial_seed)
     loaders = build_dataloaders(
         data_train=data_train,
-        data_val=data_val,
         data_vxc_train=data_vxc_train,
-        data_vxc_val=data_vxc_val,
         trial_seed=trial_seed,
         args=args,
         rank=local_rank,
@@ -614,27 +609,15 @@ def run_trial_geometry(
     )
     scheduler = build_scheduler(optimizer, args.n_train)
     epoch_history: List[Dict[str, Any]] = []
-    selected_checkpoint_path = None
-    current_selected_key = None
+    final_checkpoint_path = output_dir / "checkpoints" / f"trial_{trial_number}_final.pt"
     failed = False
-    minima = {
-        "val_fchem": math.inf,
-        "val_vxc": math.inf,
-        "val_exc": math.inf,
-        "val_full_loss": math.inf,
-    }
-
-    if args.save_selected_checkpoints and rank0:
-        checkpoints_dir = output_dir / "checkpoints"
-        checkpoints_dir.mkdir(parents=True, exist_ok=True)
-        selected_checkpoint_path = checkpoints_dir / f"trial_{trial_number}_selected.pt"
 
     for epoch in range(args.n_train):
         epoch_number = epoch + 1
         train_dataset = loaders["train_loader"].dataset
         if hasattr(train_dataset, "resample"):
             train_dataset.resample(epoch)
-        for sampler_name in ("train_sampler", "vxc_train_sampler", "val_sampler"):
+        for sampler_name in ("train_sampler", "vxc_train_sampler"):
             sampler = loaders.get(sampler_name)
             if hasattr(sampler, "set_epoch"):
                 sampler.set_epoch(epoch)
@@ -655,20 +638,6 @@ def run_trial_geometry(
         if train_failed:
             failed = True
             break
-        val_metrics, val_per_db, val_failed = validate_one_epoch(
-            model=model,
-            val_loader=loaders["val_loader"],
-            vxc_val_loader=loaders["vxc_val_loader"],
-            params=params,
-            device=device,
-            dispersions=dispersions,
-            mrks_dispersions=mrks_dispersions,
-            include_mrks_dispersion=bool(args.include_mrks_dispersion),
-            world_size=world_size,
-        )
-        if val_failed:
-            failed = True
-            break
         scheduler.step()
 
         row: Dict[str, Any] = {
@@ -682,18 +651,8 @@ def run_trial_geometry(
             "train_reaction_loss": train_metrics["train_reaction_loss"],
             "train_mae": train_metrics["train_mae"],
             "optimizer_steps": train_metrics["optimizer_steps"],
-            "val_fchem": val_metrics["val_fchem"],
-            "val_vxc": val_metrics["val_vxc"],
-            "val_exc": val_metrics["val_exc"],
-            "val_exc_loss": val_metrics["val_exc_loss"],
-            "val_full_loss": val_metrics["val_full_loss"],
-            "val_reaction_loss": val_metrics["val_reaction_loss"],
-            "val_mae": val_metrics["val_mae"],
-            "val_joint_score": val_metrics["val_joint_score"],
             "learning_rate": float(optimizer.param_groups[0]["lr"]),
-            "val_per_database_rmse": val_per_db,
             "train_per_database_rmse": train_per_db,
-            "val_per_system_exc_rmse": val_metrics["val_per_system_exc_rmse"],
             "train_per_system_exc_rmse": train_metrics["train_per_system_exc_rmse"],
             "phase_name": "one_stage_gradient_geometry",
             "phase_start_epoch": 1,
@@ -708,24 +667,11 @@ def run_trial_geometry(
             },
         }
         epoch_history.append(row)
-        for metric in minima:
-            minima[metric] = min(minima[metric], float(row[metric]))
-
-        candidate_key = last_epoch_checkpoint_key(row)
-        if current_selected_key is None or candidate_key < current_selected_key:
-            current_selected_key = candidate_key
-            if (
-                args.save_selected_checkpoints
-                and rank0
-                and selected_checkpoint_path is not None
-            ):
-                torch.save(model.module.state_dict(), selected_checkpoint_path)
-
         if rank0:
             print(
                 f"Geometry {args.aggregation} Trial {trial_number} epoch {epoch_number}/{args.n_train}: "
-                f"train_fchem={row['train_fchem']:.8f} val_fchem={row['val_fchem']:.8f} "
-                f"val_vxc={row['val_vxc']:.8f} val_exc={row['val_exc']:.8f} "
+                f"train_fchem={row['train_fchem']:.8f} "
+                f"train_vxc={row['train_vxc']:.8f} train_exc={row['train_exc']:.8f} "
                 f"cos(F,V)={row['geometry_cos_reaction_vxc']:.4f} "
                 f"cos(F,E)={row['geometry_cos_reaction_exc']:.4f}"
             )
@@ -738,28 +684,18 @@ def run_trial_geometry(
             "params": params,
             "aggregation": args.aggregation,
         }
-    selected = select_last_epoch(epoch_history)
+    if rank0:
+        final_checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        torch.save(model.module.state_dict(), final_checkpoint_path)
     payload = {
         "failed": False,
         "trial_number": trial_number,
         "params": params,
         "aggregation": args.aggregation,
         "tasks": list(TASKS),
-        "selected_epoch": int(selected["epoch"]),
-        "selected_joint_score": float(selected["val_joint_score"]),
-        "selected_train_fchem": float(selected["train_fchem"]),
-        "selected_val_fchem": float(selected["val_fchem"]),
-        "selected_val_vxc": float(selected["val_vxc"]),
-        "selected_val_exc": float(selected["val_exc"]),
-        "selected_phase_name": selected["phase_name"],
-        "min_val_fchem_any_epoch": minima["val_fchem"],
-        "min_val_vxc_any_epoch": minima["val_vxc"],
-        "min_val_exc_any_epoch": minima["val_exc"],
-        "best_val_full_loss_any_epoch": minima["val_full_loss"],
+        "final_epoch": int(epoch_history[-1]["epoch"]),
         "epoch_history": epoch_history,
-        "selected_checkpoint_path": str(selected_checkpoint_path)
-        if selected_checkpoint_path
-        else None,
+        "final_checkpoint_path": str(final_checkpoint_path),
     }
     if rank0:
         history_path = save_trial_history(output_dir, trial_number, payload)
@@ -791,7 +727,7 @@ def main() -> None:
         if args.include_mrks_dispersion
         else None
     )
-    data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(
+    data_predopt, data_train, data_vxc_train = load_chk(
         path=args.checkpoints_dir
     )
     shared_preopt_checkpoint = run_or_reuse_preoptimization(
@@ -811,9 +747,7 @@ def main() -> None:
         args=args,
         shared_preopt_checkpoint=Path(shared_preopt_checkpoint),
         data_train=data_train,
-        data_val=data_val,
         data_vxc_train=data_vxc_train,
-        data_vxc_val=data_vxc_val,
         device=device,
         local_rank=local_rank,
         world_size=world_size,
@@ -828,13 +762,13 @@ def main() -> None:
             return
         final = select_last_epoch(result["epoch_history"])
         print(f"Gradient-geometry replay complete: {args.aggregation}")
-        print(f"Final selected epoch: {final['epoch']}")
+        print(f"Final epoch: {final['epoch']}")
         print(
             f"Final metrics: train_fchem={final['train_fchem']:.8f}, "
-            f"val_vxc={final['val_vxc']:.8f}, val_exc={final['val_exc']:.8f}, "
-            f"val_fchem={final['val_fchem']:.8f}"
+            f"train_vxc={final['train_vxc']:.8f}, train_exc={final['train_exc']:.8f}, "
+            f"train_fchem={final['train_fchem']:.8f}"
         )
-        print(f"Selected checkpoint: {result.get('selected_checkpoint_path')}")
+        print(f"Final checkpoint: {result.get('final_checkpoint_path')}")
         print(f"History path: {result.get('history_path')}")
         print(f"Params: {json.dumps(params, sort_keys=True)}")
 

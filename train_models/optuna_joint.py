@@ -8,7 +8,7 @@ import pickle
 import random
 from contextlib import nullcontext
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -28,7 +28,7 @@ from NN_models import (
     pcPBELMLOptimizerV2Log,
 )
 from predopt import DatasetPredopt, predopt
-from prepare_data import load_chk
+from prepare_data import TRAINING_PROTOCOL, load_chk as load_chk
 from reaction_energy_calculation import calculate_reaction_energy, calculate_xc_energy, get_local_energies
 from utils import (
     _fix_sigma_tot_closed_shell,
@@ -54,7 +54,7 @@ RUN_TRIAL = "RUN"
 STOP_TRIALS = "STOP"
 FAIL_TRIAL = "FAIL"
 
-FCHEM_VALIDATION = {
+FCHEM_DB_WEIGHTS = {
     "ABDE4": 1,
     "AE17": 1,
     "DBH76": 1,
@@ -79,8 +79,8 @@ FREQ_WEIGHTS = {
 }
 
 MEAN_WEIGHT = sum(
-    FCHEM_VALIDATION[db] * FREQ_WEIGHTS[db] for db in FCHEM_VALIDATION
-) / len(FCHEM_VALIDATION)
+    FCHEM_DB_WEIGHTS[db] * FREQ_WEIGHTS[db] for db in FCHEM_DB_WEIGHTS
+) / len(FCHEM_DB_WEIGHTS)
 
 HARTREE2KCAL = 627.5095
 DEFAULT_MRKS_DISPERSIONS = Path(__file__).resolve().parent / "dispersions" / "dispersions_mrks.pickle"
@@ -143,18 +143,6 @@ class EpochSampledAugmentedDataset(Dataset):
         return copy.deepcopy(chosen), chosen["Energy"]
 
 
-class CanonicalVariantDataset(Dataset):
-    def __init__(self, data: dict) -> None:
-        self.reactions = [canonical_variant(group) for group in data.values()]
-
-    def __len__(self) -> int:
-        return len(self.reactions)
-
-    def __getitem__(self, idx: int) -> Tuple[Dict[str, Any], torch.Tensor]:
-        chosen = self.reactions[idx]
-        return copy.deepcopy(chosen), chosen["Energy"]
-
-
 def vxc_collate_fn(batch: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
     return {
         "Grid": torch.cat([item["Grid"] for item in batch], dim=0),
@@ -196,7 +184,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lr-predopt", type=float, default=2e-2)
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--weight-decay", type=float, default=1e-2)
-    parser.add_argument("--save-selected-checkpoints", action="store_true")
     parser.add_argument("--num-workers-train", type=int, default=4)
     parser.add_argument("--num-workers-vxc", type=int, default=2)
     parser.add_argument("--preopt-vxc-weight", type=float, default=0.0)
@@ -207,7 +194,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--no-reaction-dispersion",
         action="store_true",
-        help="Do not add precomputed D3 dispersion corrections in reaction-energy training/validation.",
+        help="Do not add precomputed D3 dispersion corrections in reaction-energy training.",
     )
     return parser.parse_args()
 
@@ -523,18 +510,14 @@ def build_preopt_loader(
 
 def build_dataloaders(
     data_train: dict,
-    data_val: dict,
     data_vxc_train: list,
-    data_vxc_val: list,
     trial_seed: int,
     args: argparse.Namespace,
     rank: int,
     world_size: int,
 ) -> Dict[str, Any]:
     train_set = EpochSampledAugmentedDataset(data_train, base_seed=trial_seed)
-    val_set = CanonicalVariantDataset(data_val)
     vxc_train_set = VxcDataset(data_vxc_train)
-    vxc_val_set = VxcDataset(data_vxc_val)
 
     train_loader, train_sampler = build_reaction_loader(
         train_set,
@@ -545,15 +528,6 @@ def build_dataloaders(
         args.num_workers_train,
         shuffle=True,
     )
-    val_loader, val_sampler = build_reaction_loader(
-        val_set,
-        args.batch_size,
-        trial_seed,
-        rank,
-        world_size,
-        args.num_workers_train,
-        shuffle=False,
-    )
     vxc_train_loader, vxc_train_sampler = build_vxc_loader(
         vxc_train_set,
         args.vxc_batch_size,
@@ -563,25 +537,12 @@ def build_dataloaders(
         args.num_workers_vxc,
         shuffle=True,
     )
-    vxc_val_loader, vxc_val_sampler = build_vxc_loader(
-        vxc_val_set,
-        args.vxc_batch_size,
-        trial_seed,
-        rank,
-        world_size,
-        args.num_workers_vxc,
-        shuffle=False,
-    )
 
     return {
         "train_loader": train_loader,
         "train_sampler": train_sampler,
-        "val_loader": val_loader,
-        "val_sampler": val_sampler,
         "vxc_train_loader": vxc_train_loader,
         "vxc_train_sampler": vxc_train_sampler,
-        "vxc_val_loader": vxc_val_loader,
-        "vxc_val_sampler": vxc_val_sampler,
     }
 
 
@@ -600,7 +561,7 @@ def batch_fchem(
     for database, (preds, refs) in err_dict.items():
         db_predictions = torch.stack(preds)
         db_ref = torch.stack(refs)
-        factor = FCHEM_VALIDATION.get(database, 1) * FREQ_WEIGHTS.get(database, 1) / MEAN_WEIGHT
+        factor = FCHEM_DB_WEIGHTS.get(database, 1) * FREQ_WEIGHTS.get(database, 1) / MEAN_WEIGHT
         mse = nn.functional.mse_loss(db_predictions, db_ref)
         values.append(factor * torch.sqrt(1e-20 + mse))
     return torch.sum(torch.stack(values)) / len(values)
@@ -657,7 +618,7 @@ def compute_fchem_from_errors(total_database_errors: Dict[str, List[float]]) -> 
             continue
         rmse = float(np.sqrt(np.mean(np.square(errors))))
         per_db[db] = rmse
-        total += FCHEM_VALIDATION.get(db, 1) * rmse
+        total += FCHEM_DB_WEIGHTS.get(db, 1) * rmse
     return total, per_db
 
 
@@ -929,6 +890,7 @@ def resolve_shared_preopt_checkpoint(args: argparse.Namespace, output_dir: Path)
 
 def preopt_metadata(args: argparse.Namespace) -> Dict[str, Any]:
     return {
+        "training_protocol": TRAINING_PROTOCOL,
         "name": args.name,
         "model_type": getattr(args, "model_type", "base"),
         "dropout": args.dropout,
@@ -1248,168 +1210,9 @@ def train_one_epoch(
     return metrics, dict(train_per_db), False
 
 
-def validate_one_epoch(
-    model: DDP,
-    val_loader: DataLoader,
-    vxc_val_loader: DataLoader,
-    params: Dict[str, Any],
-    device: torch.device,
-    dispersions: Dict[str, float],
-    mrks_dispersions: Optional[Dict[str, float]],
-    include_mrks_dispersion: bool,
-    world_size: int,
-) -> Tuple[Dict[str, float], Dict[str, float], bool]:
-    params = resolve_objective_params(params)
-    model.eval()
-
-    val_db_errors: Dict[str, List[float]] = collections.defaultdict(list)
-    val_exc_errors: Dict[str, List[float]] = collections.defaultdict(list)
-    n_val = len(val_loader)
-    n_vxc = len(vxc_val_loader)
-    if n_val == 0 or n_vxc == 0:
-        raise ValueError("Both val_loader and vxc_val_loader must be non-empty.")
-
-    val_iter = iter(val_loader)
-    vxc_iter = iter(vxc_val_loader)
-    n_steps = max(n_val, n_vxc)
-
-    reaction_loss_sum = 0.0
-    vxc_loss_sum_value = 0.0
-    exc_loss_sum_value = 0.0
-    full_loss_sum = 0.0
-    mae_sum = 0.0
-    sample_count = 0
-    vxc_step_count = 0
-    failed = False
-
-    for _ in range(n_steps):
-        try:
-            reaction_batch, y_batch = next(val_iter)
-        except StopIteration:
-            val_iter = iter(val_loader)
-            reaction_batch, y_batch = next(val_iter)
-
-        try:
-            X_vxc = next(vxc_iter)
-        except StopIteration:
-            vxc_iter = iter(vxc_val_loader)
-            X_vxc = next(vxc_iter)
-
-        current_bases = list(reaction_batch["Database"])
-        y_batch = y_batch.to(device, non_blocking=True)
-        grid = reaction_batch["Grid"].to(device, non_blocking=True)
-
-        with torch.no_grad():
-            predictions = model(grid)
-            reaction_energy, _ = calculate_reaction_energy(
-                reaction_batch,
-                predictions,
-                device,
-                rung="GGA",
-                dft="PBE",
-                dispersions=dispersions,
-                return_local_energies=False,
-            )
-            reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-            mae = nn.functional.l1_loss(reaction_energy, y_batch)
-
-        with torch.enable_grad():
-            loss_vxc_val = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=False)
-            loss_exc_val, pred_exc, ref_exc = exc_loss(
-                model,
-                X_vxc,
-                device,
-                rung="GGA",
-                dft="PBE",
-                dispersions=mrks_dispersions,
-                include_mrks_dispersion=include_mrks_dispersion,
-            )
-
-        batch_failed = (
-            not torch.isfinite(reaction_energy).all()
-            or not torch.isfinite(loss_vxc_val)
-            or not torch.isfinite(pred_exc).all()
-            or not torch.isfinite(loss_exc_val)
-        )
-        batch_failed = sync_failure(batch_failed, device)
-        if batch_failed:
-            failed = True
-            break
-
-        update_db_errors(val_db_errors, current_bases, reaction_energy, y_batch)
-        update_exc_errors(val_exc_errors, list(X_vxc["Names"]), pred_exc, ref_exc)
-        curr_batch_size = int(y_batch.size(0))
-        reaction_loss_sum += float(reaction_loss.item()) * curr_batch_size
-        vxc_loss_sum_value += float(loss_vxc_val.item())
-        exc_loss_sum_value += float(loss_exc_val.item())
-        full_loss_sum += float((
-            reaction_loss
-            + OMEGA * params["vxc_loss_scale"] * loss_vxc_val
-            + params["exc_loss_scale"] * loss_exc_val
-        ).item()) * curr_batch_size
-        mae_sum += float(mae.item()) * curr_batch_size
-        sample_count += curr_batch_size
-        vxc_step_count += 1
-
-    if failed:
-        return {}, {}, True
-
-    scalar_tensor = torch.tensor(
-        [
-            reaction_loss_sum,
-            vxc_loss_sum_value,
-            exc_loss_sum_value,
-            full_loss_sum,
-            mae_sum,
-            float(sample_count),
-            float(vxc_step_count),
-        ],
-        device=device,
-    )
-    dist.all_reduce(scalar_tensor, op=dist.ReduceOp.SUM)
-
-    gathered_errors = gather_object(dict(val_db_errors), world_size)
-    global_errors: Dict[str, List[float]] = collections.defaultdict(list)
-    for local_dict in gathered_errors:
-        for db, errs in local_dict.items():
-            global_errors[db].extend(errs)
-    val_fchem, val_per_db = compute_fchem_from_errors(global_errors)
-
-    gathered_exc_errors = gather_object(dict(val_exc_errors), world_size)
-    global_exc_errors: Dict[str, List[float]] = collections.defaultdict(list)
-    for local_dict in gathered_exc_errors:
-        for system_name, errs in local_dict.items():
-            global_exc_errors[system_name].extend(errs)
-    val_exc, val_per_system_exc = compute_exc_from_errors(global_exc_errors)
-
-    total_samples = max(int(scalar_tensor[5].item()), 1)
-    total_vxc_steps = max(int(scalar_tensor[6].item()), 1)
-    metrics = {
-        "val_reaction_loss": float(scalar_tensor[0].item() / total_samples),
-        "val_vxc": float(scalar_tensor[1].item() / total_vxc_steps),
-        "val_exc_loss": float(scalar_tensor[2].item() / total_vxc_steps),
-        "val_full_loss": float(scalar_tensor[3].item() / total_samples),
-        "val_mae": float(scalar_tensor[4].item() / total_samples),
-        "val_fchem": val_fchem,
-        "val_exc": val_exc,
-        "val_per_system_exc_rmse": val_per_system_exc,
-    }
-    metrics["val_joint_score"] = max(metrics["val_fchem"] / 50.0, metrics["val_vxc"] / 1.0)
-    return metrics, dict(val_per_db), False
-
-
-def select_representative_epoch(epoch_history: List[Dict[str, Any]]) -> Dict[str, Any]:
-    if not epoch_history:
-        raise ValueError("Cannot select representative epoch from empty history.")
-    return min(
-        epoch_history,
-        key=lambda row: (
-            row["val_joint_score"],
-            row["val_fchem"],
-            row["val_vxc"],
-            row["epoch"],
-        ),
-    )
+def validate_one_epoch(*args: Any, **kwargs: Any) -> None:
+    """Historical API disabled: validation requires external self-consistent SCF."""
+    raise RuntimeError("Non-SCF validation was removed; use external DietGMTKN30 SCF evaluation.")
 
 
 def resolve_epoch_params(
@@ -1442,15 +1245,6 @@ def resolve_epoch_params(
     )
 
 
-def default_checkpoint_row_key(row: Dict[str, Any]) -> Tuple[Any, ...]:
-    return (
-        row["val_joint_score"],
-        row["val_fchem"],
-        row["val_vxc"],
-        row["epoch"],
-    )
-
-
 def save_trial_history(output_dir: Path, trial_number: int, payload: Dict[str, Any]) -> Path:
     trials_dir = output_dir / "trials"
     trials_dir.mkdir(parents=True, exist_ok=True)
@@ -1466,9 +1260,7 @@ def run_trial(
     args: argparse.Namespace,
     shared_preopt_checkpoint: Optional[Path],
     data_train: dict,
-    data_val: dict,
     data_vxc_train: list,
-    data_vxc_val: list,
     device: torch.device,
     local_rank: int,
     world_size: int,
@@ -1476,17 +1268,13 @@ def run_trial(
     mrks_dispersions: Optional[Dict[str, float]],
     output_dir: Path,
     rank0: bool,
-    epoch_selector: Optional[Callable[[List[Dict[str, Any]]], Dict[str, Any]]] = None,
-    checkpoint_row_key: Optional[Callable[[Dict[str, Any]], Any]] = None,
 ) -> Dict[str, Any]:
     trial_seed = args.seed + trial_number
     set_random_seed(trial_seed)
 
     loaders = build_dataloaders(
         data_train=data_train,
-        data_val=data_val,
         data_vxc_train=data_vxc_train,
-        data_vxc_val=data_vxc_val,
         trial_seed=trial_seed,
         args=args,
         rank=local_rank,
@@ -1511,20 +1299,8 @@ def run_trial(
     scheduler = build_training_scheduler(optimizer, args)
 
     epoch_history: List[Dict[str, Any]] = []
-    min_val_fchem_any_epoch = math.inf
-    min_val_vxc_any_epoch = math.inf
-    min_val_exc_any_epoch = math.inf
-    best_val_full_loss_any_epoch = math.inf
-    current_selected_key = None
-    selected_checkpoint_path = None
     failed = False
-    epoch_selector = epoch_selector or select_representative_epoch
-    checkpoint_row_key = checkpoint_row_key or default_checkpoint_row_key
-
-    if args.save_selected_checkpoints and rank0:
-        checkpoints_dir = output_dir / "checkpoints"
-        checkpoints_dir.mkdir(parents=True, exist_ok=True)
-        selected_checkpoint_path = checkpoints_dir / f"trial_{trial_number}_selected.pt"
+    final_checkpoint_path = output_dir / "checkpoints" / f"trial_{trial_number}_final.pt"
 
     training_state_every = int(getattr(args, "training_state_every", 0))
     if training_state_every < 0:
@@ -1541,7 +1317,7 @@ def run_trial(
     if resume_training_state:
         resume_path = Path(resume_training_state)
         resume_payload = load_torch_payload(resume_path, map_location=device)
-        if int(resume_payload.get("format_version", -1)) != 1:
+        if int(resume_payload.get("format_version", -1)) != 2:
             raise ValueError(
                 f"Unsupported training-state format: {resume_payload.get('format_version')}."
             )
@@ -1557,6 +1333,8 @@ def run_trial(
             raise ValueError("Training-state model type does not match the requested model type.")
         if int(resume_payload.get("world_size", world_size)) != int(world_size):
             raise ValueError("Exact training-state resume requires the original DDP world size.")
+        if resume_payload.get("training_protocol") != TRAINING_PROTOCOL:
+            raise ValueError("Cannot resume training state from the obsolete internal-validation protocol.")
         model.module.load_state_dict(resume_payload["model_state_dict"])
         optimizer.load_state_dict(resume_payload["optimizer_state_dict"])
         scheduler.load_state_dict(resume_payload["scheduler_state_dict"])
@@ -1583,19 +1361,6 @@ def run_trial(
         if len(runtime_states) != world_size:
             raise ValueError("Training-state runtime state count does not match DDP world size.")
         restore_runtime_state(runtime_states[rank], loaders)
-        min_val_fchem_any_epoch = min(
-            (row["val_fchem"] for row in epoch_history), default=math.inf
-        )
-        min_val_vxc_any_epoch = min(
-            (row["val_vxc"] for row in epoch_history), default=math.inf
-        )
-        min_val_exc_any_epoch = min(
-            (row["val_exc"] for row in epoch_history), default=math.inf
-        )
-        best_val_full_loss_any_epoch = min(
-            (row["val_full_loss"] for row in epoch_history), default=math.inf
-        )
-        current_selected_key = resume_payload.get("current_selected_key")
         if rank0:
             print(f"Resuming Trial {trial_number} from epoch {start_epoch}: {resume_path}")
 
@@ -1631,21 +1396,6 @@ def run_trial(
             failed = True
             break
 
-        val_metrics, val_per_db, val_failed = validate_one_epoch(
-            model=model,
-            val_loader=loaders["val_loader"],
-            vxc_val_loader=loaders["vxc_val_loader"],
-            params=effective_params,
-            device=device,
-            dispersions=dispersions,
-            mrks_dispersions=mrks_dispersions,
-            include_mrks_dispersion=bool(getattr(args, "include_mrks_dispersion", False)),
-            world_size=world_size,
-        )
-        if val_failed:
-            failed = True
-            break
-
         scheduler.step()
 
         row = {
@@ -1658,18 +1408,8 @@ def run_trial(
             "train_reaction_loss": train_metrics["train_reaction_loss"],
             "train_mae": train_metrics["train_mae"],
             "optimizer_steps": train_metrics["optimizer_steps"],
-            "val_fchem": val_metrics["val_fchem"],
-            "val_vxc": val_metrics["val_vxc"],
-            "val_exc": val_metrics["val_exc"],
-            "val_exc_loss": val_metrics["val_exc_loss"],
-            "val_full_loss": val_metrics["val_full_loss"],
-            "val_reaction_loss": val_metrics["val_reaction_loss"],
-            "val_mae": val_metrics["val_mae"],
-            "val_joint_score": val_metrics["val_joint_score"],
             "learning_rate": float(optimizer.param_groups[0]["lr"]),
-            "val_per_database_rmse": val_per_db,
             "train_per_database_rmse": train_per_db,
-            "val_per_system_exc_rmse": val_metrics["val_per_system_exc_rmse"],
             "train_per_system_exc_rmse": train_metrics["train_per_system_exc_rmse"],
             "phase_name": effective_params.get("phase_name", "static"),
             "phase_start_epoch": int(effective_params.get("phase_start_epoch", 1)),
@@ -1688,17 +1428,6 @@ def run_trial(
             "effective_exc_gradient_merge_strategy": effective_params["exc_gradient_merge_strategy"],
         }
         epoch_history.append(row)
-
-        min_val_fchem_any_epoch = min(min_val_fchem_any_epoch, row["val_fchem"])
-        min_val_vxc_any_epoch = min(min_val_vxc_any_epoch, row["val_vxc"])
-        min_val_exc_any_epoch = min(min_val_exc_any_epoch, row["val_exc"])
-        best_val_full_loss_any_epoch = min(best_val_full_loss_any_epoch, row["val_full_loss"])
-
-        candidate_key = checkpoint_row_key(row)
-        if current_selected_key is None or candidate_key < current_selected_key:
-            current_selected_key = candidate_key
-            if args.save_selected_checkpoints and rank0 and selected_checkpoint_path is not None:
-                atomic_torch_save(model.module.state_dict(), selected_checkpoint_path)
 
         should_save_snapshot = snapshot_every > 0 and epoch_number >= snapshot_start_epoch and (
             (epoch_number - snapshot_start_epoch) % snapshot_every == 0
@@ -1719,7 +1448,8 @@ def run_trial(
             if rank0:
                 atomic_torch_save(
                     {
-                        "format_version": 1,
+                        "format_version": 2,
+                        "training_protocol": TRAINING_PROTOCOL,
                         "trial_number": int(trial_number),
                         "model_name": args.name,
                         "model_type": getattr(args, "model_type", "base"),
@@ -1731,7 +1461,6 @@ def run_trial(
                         "optimizer_state_dict": optimizer.state_dict(),
                         "scheduler_state_dict": scheduler.state_dict(),
                         "epoch_history": epoch_history,
-                        "current_selected_key": current_selected_key,
                         "runtime_states": runtime_states,
                     },
                     training_state_path,
@@ -1741,10 +1470,9 @@ def run_trial(
             print(
                 f"Trial {trial_number} epoch {epoch + 1}/{args.n_train}: "
                 f"train_fchem={row['train_fchem']:.8f} "
-                f"val_fchem={row['val_fchem']:.8f} "
-                f"val_vxc={row['val_vxc']:.8f} "
-                f"val_exc={row['val_exc']:.8f} "
-                f"joint_score={row['val_joint_score']:.8f}"
+                f"train_vxc={row['train_vxc']:.8f} "
+                f"train_exc={row['train_exc']:.8f} "
+                f"phase={row['phase_name']}"
             )
 
     failed = sync_failure(failed, device)
@@ -1755,24 +1483,17 @@ def run_trial(
             "params": params,
         }
 
-    selected = epoch_selector(epoch_history)
+    if rank0:
+        atomic_torch_save(model.module.state_dict(), final_checkpoint_path)
     trial_payload = {
         "failed": False,
         "trial_number": trial_number,
         "params": params,
-        "selected_epoch": int(selected["epoch"]),
-        "selected_joint_score": float(selected["val_joint_score"]),
-        "selected_train_fchem": float(selected["train_fchem"]),
-        "selected_val_fchem": float(selected["val_fchem"]),
-        "selected_val_vxc": float(selected["val_vxc"]),
-        "selected_val_exc": float(selected["val_exc"]),
-        "selected_phase_name": selected.get("phase_name"),
-        "min_val_fchem_any_epoch": float(min_val_fchem_any_epoch),
-        "min_val_vxc_any_epoch": float(min_val_vxc_any_epoch),
-        "min_val_exc_any_epoch": float(min_val_exc_any_epoch),
-        "best_val_full_loss_any_epoch": float(best_val_full_loss_any_epoch),
+        "final_epoch": int(epoch_history[-1]["epoch"]),
+        "training_protocol": TRAINING_PROTOCOL,
         "epoch_history": epoch_history,
-        "selected_checkpoint_path": str(selected_checkpoint_path) if selected_checkpoint_path is not None else None,
+        "final_checkpoint_path": str(final_checkpoint_path),
+        "epoch_snapshots": str(snapshot_dir) if snapshot_every > 0 else None,
         "training_state_path": str(training_state_path) if training_state_every > 0 else None,
     }
     if rank0:
@@ -1783,159 +1504,12 @@ def run_trial(
     return trial_payload
 
 
-def summarize_study(study: Any) -> None:
-    completed_trials = [trial for trial in study.trials if trial.values is not None]
-    if not completed_trials:
-        print("No completed trials.")
-        return
-
-    print("\nPareto front trials:")
-    for trial in study.best_trials:
-        score = max(trial.values[0] / 50.0, trial.values[1] / 1.0)
-        print(
-            f"  Trial {trial.number}: values={trial.values}, "
-            f"selected_epoch={trial.user_attrs.get('selected_epoch')}, "
-            f"joint_score={score:.8f}, params={trial.params}"
-        )
-
-    best_fchem_trial = min(completed_trials, key=lambda trial: trial.values[0])
-    best_vxc_trial = min(completed_trials, key=lambda trial: trial.values[1])
-    best_compromise_trial = min(
-        completed_trials,
-        key=lambda trial: max(trial.values[0] / 50.0, trial.values[1] / 1.0),
-    )
-
-    print("\nBest-Fchem selected trial:")
-    print(f"  Trial {best_fchem_trial.number}: values={best_fchem_trial.values}, params={best_fchem_trial.params}")
-
-    print("\nBest-Vxc selected trial:")
-    print(f"  Trial {best_vxc_trial.number}: values={best_vxc_trial.values}, params={best_vxc_trial.params}")
-
-    print("\nBest-compromise selected trial:")
-    print(
-        f"  Trial {best_compromise_trial.number}: values={best_compromise_trial.values}, "
-        f"score={max(best_compromise_trial.values[0] / 50.0, best_compromise_trial.values[1] / 1.0):.8f}, "
-        f"params={best_compromise_trial.params}"
-    )
-
-
 def main() -> None:
-    import optuna
-
-    args = parse_args()
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    local_rank, world_size, device, rank0 = init_distributed()
-    set_random_seed(args.seed)
-
-    if args.no_reaction_dispersion:
-        dispersions = {}
-    else:
-        with (Path(__file__).resolve().parent / "dispersions" / "dispersions.pickle").open("rb") as handle:
-            dispersions = pickle.load(handle)
-    mrks_dispersions = (
-        load_mrks_dispersions(args.mrks_dispersions_pickle)
-        if args.include_mrks_dispersion
-        else None
+    raise SystemExit(
+        "Standalone Optuna search is disabled: external DietGMTKN30 SCF validation "
+        "is required for model selection. Use replay_trial_19_bridge.py for training "
+        "and evaluate epoch snapshots externally."
     )
-
-    data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(path=args.checkpoints_dir)
-    shared_preopt_checkpoint = run_or_reuse_preoptimization(
-        args=args,
-        output_dir=output_dir,
-        data_predopt=data_predopt,
-        data_vxc_train=data_vxc_train,
-        device=device,
-        local_rank=local_rank,
-        world_size=world_size,
-        rank0=rank0,
-    )
-
-    if rank0:
-        study = optuna.create_study(
-            study_name=args.study_name,
-            storage=args.storage,
-            load_if_exists=True,
-            directions=["minimize", "minimize"],
-        )
-    else:
-        study = None
-
-    try:
-        for _ in range(args.n_trials):
-            if rank0:
-                trial = study.ask()
-                params = suggest_params(trial)
-                payload = {
-                    "command": RUN_TRIAL,
-                    "trial_number": trial.number,
-                    "params": params,
-                    "shared_preopt_checkpoint": str(shared_preopt_checkpoint),
-                }
-                print(f"Starting trial {trial.number} with params: {json.dumps(params, sort_keys=True)}")
-            else:
-                trial = None
-                payload = None
-
-            payload = broadcast_payload(payload)
-            if payload["command"] != RUN_TRIAL:
-                break
-
-            trial_result = run_trial(
-                trial_number=int(payload["trial_number"]),
-                params=payload["params"],
-                args=args,
-                shared_preopt_checkpoint=Path(payload["shared_preopt_checkpoint"]),
-                data_train=data_train,
-                data_val=data_val,
-                data_vxc_train=data_vxc_train,
-                data_vxc_val=data_vxc_val,
-                device=device,
-                local_rank=local_rank,
-                world_size=world_size,
-                dispersions=dispersions,
-                mrks_dispersions=mrks_dispersions,
-                output_dir=output_dir,
-                rank0=rank0,
-            )
-
-            if rank0:
-                if trial_result["failed"]:
-                    study.tell(trial, state=optuna.trial.TrialState.FAIL)
-                    print(f"Trial {trial.number} failed.")
-                else:
-                    trial.set_user_attr("selected_epoch", trial_result["selected_epoch"])
-                    trial.set_user_attr("selected_joint_score", trial_result["selected_joint_score"])
-                    trial.set_user_attr("selected_val_fchem", trial_result["selected_val_fchem"])
-                    trial.set_user_attr("selected_val_vxc", trial_result["selected_val_vxc"])
-                    trial.set_user_attr("selected_val_exc", trial_result["selected_val_exc"])
-                    trial.set_user_attr("min_val_fchem_any_epoch", trial_result["min_val_fchem_any_epoch"])
-                    trial.set_user_attr("min_val_vxc_any_epoch", trial_result["min_val_vxc_any_epoch"])
-                    trial.set_user_attr("min_val_exc_any_epoch", trial_result["min_val_exc_any_epoch"])
-                    trial.set_user_attr("best_val_full_loss_any_epoch", trial_result["best_val_full_loss_any_epoch"])
-                    trial.set_user_attr("shared_preopt_checkpoint_path", str(shared_preopt_checkpoint))
-                    if trial_result.get("selected_checkpoint_path") is not None:
-                        trial.set_user_attr("selected_checkpoint_path", trial_result["selected_checkpoint_path"])
-                    if trial_result.get("history_path") is not None:
-                        trial.set_user_attr("history_path", trial_result["history_path"])
-                    study.tell(
-                        trial,
-                        values=(trial_result["selected_val_fchem"], trial_result["selected_val_vxc"]),
-                    )
-                    print(
-                        f"Completed trial {trial.number}: selected_epoch={trial_result['selected_epoch']} "
-                        f"selected_val_fchem={trial_result['selected_val_fchem']:.8f} "
-                        f"selected_val_vxc={trial_result['selected_val_vxc']:.8f} "
-                        f"selected_val_exc={trial_result['selected_val_exc']:.8f}"
-                    )
-            dist.barrier()
-
-        if rank0:
-            summarize_study(study)
-    finally:
-        dist.barrier()
-        dist.destroy_process_group()
 
 
 if __name__ == "__main__":

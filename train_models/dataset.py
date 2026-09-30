@@ -82,7 +82,7 @@ def ref(x, y, path):
     returns reference energies for points of a reaction grid from Reference_data.csv
     """
 
-    pathfile = "../MN_dataset/Reference_data.csv"
+    pathfile = Path(__file__).resolve().parent.parent / "MN_dataset/Reference_data.csv"
 
     hartree2kcal = 627.5095
     with open(pathfile, newline="", encoding="cp1251") as csvfile:
@@ -122,7 +122,7 @@ def load_component_names(path):
                         }
      which is a dictionary with Components and Coefficients data about all reactions
     """
-    pathfile = "../MN_dataset/total_dataframe_sorted_final.csv"
+    pathfile = Path(__file__).resolve().parent.parent / "MN_dataset/total_dataframe_sorted_final.csv"
   
     with open(pathfile, newline="", encoding="cp1251") as csvfile:
         ref_file = csv.reader(csvfile, delimiter=",")
@@ -167,6 +167,7 @@ def get_compounds_coefs_energy(reactions, energies):
         for reaction in data:
             data_final[i] = {
                 "Database": database,
+                "ReactionID": int(reaction),
                 "Components": reactions[database][reaction][
                     "Components"
                 ],  # .astype(object),

@@ -1,23 +1,11 @@
+from __future__ import annotations
+
 import argparse
-import json
-import pickle
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-import optuna
-import torch.distributed as dist
 
-from optuna_joint import (
-    FAIL_TRIAL,
-    RUN_TRIAL,
-    STOP_TRIALS,
-    broadcast_payload,
-    init_distributed,
-    load_chk,
-    run_or_reuse_preoptimization,
-    run_trial,
-    set_random_seed,
-)
+if TYPE_CHECKING:
+    import optuna
 
 
 def parse_args() -> argparse.Namespace:
@@ -312,6 +300,8 @@ def summarize_goal_study(
             return "n/a"
         return f"{float(value):.8f}"
 
+    import optuna
+
     completed_trials = [
         trial
         for trial in study.trials
@@ -360,201 +350,7 @@ def summarize_goal_study(
 
 
 def main() -> None:
-    args = parse_args()
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    local_rank, world_size, device, rank0 = init_distributed()
-    set_random_seed(args.seed)
-
-    with (Path(__file__).resolve().parent / "dispersions" / "dispersions.pickle").open("rb") as handle:
-        dispersions = pickle.load(handle)
-
-    data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(path=args.checkpoints_dir)
-    shared_preopt_checkpoint = run_or_reuse_preoptimization(
-        args=args,
-        output_dir=output_dir,
-        data_predopt=data_predopt,
-        data_vxc_train=data_vxc_train,
-        device=device,
-        local_rank=local_rank,
-        world_size=world_size,
-        rank0=rank0,
-    )
-
-    def goal_epoch_selector(epoch_history: List[Dict[str, Any]]) -> Dict[str, Any]:
-        return best_epoch_by_goal_box(
-            epoch_history=epoch_history,
-            train_fchem_target=args.train_fchem_target,
-            val_vxc_target=args.val_vxc_target,
-            val_fchem_soft_cap=args.val_fchem_soft_cap,
-        )
-
-    def goal_checkpoint_key(row: Dict[str, Any]) -> tuple:
-        return goal_epoch_key(
-            epoch_row=row,
-            train_fchem_target=args.train_fchem_target,
-            val_vxc_target=args.val_vxc_target,
-            val_fchem_soft_cap=args.val_fchem_soft_cap,
-        )
-
-    if rank0:
-        sampler = optuna.samplers.TPESampler(
-            seed=args.seed,
-            n_startup_trials=args.sampler_startup_trials,
-            multivariate=True,
-        )
-        study = optuna.create_study(
-            study_name=args.study_name,
-            storage=args.storage,
-            load_if_exists=True,
-            direction="minimize",
-            sampler=sampler,
-        )
-        study.set_user_attr("selection_mode", "same_epoch_train_fchem_val_vxc_box")
-        study.set_user_attr(
-            "goal_targets",
-            {"train_fchem": args.train_fchem_target, "val_vxc": args.val_vxc_target},
-        )
-        study.set_user_attr("val_fchem_soft_cap", args.val_fchem_soft_cap)
-        study.set_user_attr(
-            "objective_formula",
-            "goal_box + 1e-3 * goal_l1 + 1e-5 * max(val_fchem / soft_cap, 1.0)",
-        )
-        study.set_user_attr(
-            "search_space_summary",
-            {
-                "clip_static_refine": {
-                    "gradient_merge_strategy": ["clip_then_sum"],
-                    "accum_iter": [1, 2, 3],
-                    "vxc_loss_scale": [50, 75, 100],
-                    "reaction_grad_clip": ["none"],
-                    "reaction_grad_scale": [0.6, 0.7, 0.8],
-                    "vxc_grad_clip": [2.0, 3.0, 5.0],
-                    "lr_train": [2.2e-4, 3.8e-4],
-                },
-                "clip_to_sum_repair": {
-                    "phase_1": {
-                        "gradient_merge_strategy": ["clip_then_sum"],
-                        "accum_iter": [1, 2, 3],
-                        "vxc_loss_scale": [50, 75, 100],
-                        "reaction_grad_clip": ["none"],
-                        "reaction_grad_scale": [0.6, 0.7],
-                        "vxc_grad_clip": [3.0, 5.0],
-                    },
-                    "phase_2": {
-                        "gradient_merge_strategy": ["sum"],
-                        "accum_iter": [2, 3],
-                        "vxc_loss_scale": [40, 50, 60],
-                    },
-                    "switch_epoch": list(schedule_switch_bounds(args.n_train)),
-                    "lr_train": [2.3e-4, 3.6e-4],
-                },
-            },
-        )
-        if args.enqueue_recommended:
-            for params in recommended_trials(args.n_train):
-                study.enqueue_trial(params)
-    else:
-        study = None
-
-    try:
-        for _ in range(args.n_trials):
-            if rank0:
-                trial = study.ask()
-                params = suggest_goal_bridge_params(trial, n_train=args.n_train)
-                payload = {
-                    "command": RUN_TRIAL,
-                    "trial_number": trial.number,
-                    "params": {key: value for key, value in params.items() if key != "search_family"},
-                    "shared_preopt_checkpoint": str(shared_preopt_checkpoint),
-                    "search_family": params["search_family"],
-                }
-                print(f"Starting trial {trial.number} with params: {json.dumps(params, sort_keys=True)}")
-            else:
-                trial = None
-                payload = None
-
-            payload = broadcast_payload(payload)
-            if payload["command"] != RUN_TRIAL:
-                break
-            if payload["command"] in (STOP_TRIALS, FAIL_TRIAL):
-                break
-
-            trial_result = run_trial(
-                trial_number=int(payload["trial_number"]),
-                params=payload["params"],
-                args=args,
-                shared_preopt_checkpoint=Path(payload["shared_preopt_checkpoint"]),
-                data_train=data_train,
-                data_val=data_val,
-                data_vxc_train=data_vxc_train,
-                data_vxc_val=data_vxc_val,
-                device=device,
-                local_rank=local_rank,
-                world_size=world_size,
-                dispersions=dispersions,
-                output_dir=output_dir,
-                rank0=rank0,
-                epoch_selector=goal_epoch_selector,
-                checkpoint_row_key=goal_checkpoint_key,
-            )
-
-            if rank0:
-                if trial_result["failed"]:
-                    study.tell(trial, state=optuna.trial.TrialState.FAIL)
-                    print(f"Trial {trial.number} failed.")
-                else:
-                    goal_best = goal_epoch_selector(trial_result["epoch_history"])
-                    goal_summary = goal_epoch_components(
-                        epoch_row=goal_best,
-                        train_fchem_target=args.train_fchem_target,
-                        val_vxc_target=args.val_vxc_target,
-                        val_fchem_soft_cap=args.val_fchem_soft_cap,
-                    )
-
-                    trial.set_user_attr("search_family", payload["search_family"])
-                    trial.set_user_attr("selected_epoch", trial_result["selected_epoch"])
-                    trial.set_user_attr("selected_joint_score", trial_result["selected_joint_score"])
-                    trial.set_user_attr("selected_train_fchem", trial_result["selected_train_fchem"])
-                    trial.set_user_attr("selected_val_fchem", trial_result["selected_val_fchem"])
-                    trial.set_user_attr("selected_val_vxc", trial_result["selected_val_vxc"])
-                    trial.set_user_attr("min_val_fchem_any_epoch", trial_result["min_val_fchem_any_epoch"])
-                    trial.set_user_attr("min_val_vxc_any_epoch", trial_result["min_val_vxc_any_epoch"])
-                    trial.set_user_attr("best_val_full_loss_any_epoch", trial_result["best_val_full_loss_any_epoch"])
-                    trial.set_user_attr("goal_best_epoch", int(goal_best["epoch"]))
-                    trial.set_user_attr("goal_phase_name", goal_best.get("phase_name"))
-                    trial.set_user_attr("goal_train_fchem", float(goal_best["train_fchem"]))
-                    trial.set_user_attr("goal_val_fchem", float(goal_best["val_fchem"]))
-                    trial.set_user_attr("goal_val_vxc", float(goal_best["val_vxc"]))
-                    for key, value in goal_summary.items():
-                        trial.set_user_attr(key, value)
-                    trial.set_user_attr("shared_preopt_checkpoint_path", str(shared_preopt_checkpoint))
-                    if trial_result.get("selected_checkpoint_path") is not None:
-                        trial.set_user_attr("selected_checkpoint_path", trial_result["selected_checkpoint_path"])
-                    if trial_result.get("history_path") is not None:
-                        trial.set_user_attr("history_path", trial_result["history_path"])
-
-                    study.tell(trial, float(goal_summary["goal_objective"]))
-                    print(
-                        f"Completed trial {trial.number}: goal_epoch={goal_best['epoch']} "
-                        f"goal_train_fchem={float(goal_best['train_fchem']):.8f} "
-                        f"goal_val_vxc={float(goal_best['val_vxc']):.8f} "
-                        f"goal_val_fchem={float(goal_best['val_fchem']):.8f} "
-                        f"goal_box_score={goal_summary['goal_box_score']:.8f} "
-                        f"goal_objective={goal_summary['goal_objective']:.8f}"
-                    )
-            dist.barrier()
-
-        if rank0:
-            summarize_goal_study(
-                study=study,
-                train_fchem_target=args.train_fchem_target,
-                val_vxc_target=args.val_vxc_target,
-            )
-    finally:
-        dist.barrier()
-        dist.destroy_process_group()
+    raise SystemExit("Goal-bridge Optuna search is disabled: external SCF validation is required for model selection.")
 
 
 if __name__ == "__main__":

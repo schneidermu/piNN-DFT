@@ -26,7 +26,7 @@ _stub_module(
     ),
 )
 _stub_module("predopt", ("DatasetPredopt", "predopt"))
-_stub_module("prepare_data", ("load_chk",))
+_stub_module("prepare_data", ("load_chk", "TRAINING_PROTOCOL"))
 _stub_module(
     "reaction_energy_calculation",
     ("calculate_reaction_energy", "calculate_xc_energy", "get_local_energies"),

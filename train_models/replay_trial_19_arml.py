@@ -1,9 +1,6 @@
 import argparse
 import collections
-import copy
-import json
 import math
-import pickle
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -14,7 +11,6 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 
 from optuna_joint import (
     DEFAULT_MRKS_DISPERSIONS,
-    FAIL_VALUE,
     OMEGA,
     add_gradient_list_to_parameters,
     allreduce_parameter_grads,
@@ -28,13 +24,9 @@ from optuna_joint import (
     gather_object,
     get_trainable_parameters,
     grads_are_finite,
-    init_distributed,
-    load_chk,
-    load_mrks_dispersions,
     load_state_dict_into_model,
     prepare_objective_gradients,
     resolve_objective_params,
-    run_or_reuse_preoptimization,
     save_trial_history,
     scale_gradient_list,
     sync_failure,
@@ -44,7 +36,7 @@ from optuna_joint import (
     vxc_loss,
 )
 from reaction_energy_calculation import calculate_reaction_energy
-from replay_trial_19_bridge import TRIAL_19_PARAMS, select_last_epoch, last_epoch_checkpoint_key
+from replay_trial_19_bridge import select_last_epoch, last_epoch_checkpoint_key
 from utils import configure_optimizers, set_random_seed
 
 
@@ -201,6 +193,7 @@ def train_one_epoch_arml(
     include_mrks_dispersion: bool,
     world_size: int,
 ) -> Tuple[Dict[str, float], Dict[str, List[float]], bool]:
+    raise RuntimeError("ARML internal-validation optimization is disabled under the external-SCF protocol.")
     params = resolve_objective_params(params)
     model.train()
     trainable_parameters = get_trainable_parameters(model)
@@ -460,6 +453,7 @@ def run_trial_arml(
     output_dir: Path,
     rank0: bool,
 ) -> Dict[str, Any]:
+    raise RuntimeError("ARML internal-validation optimization is disabled under the external-SCF protocol.")
     trial_seed = args.seed + trial_number
     set_random_seed(trial_seed)
     loaders = build_dataloaders(
@@ -674,75 +668,10 @@ def resolve_epoch_params(params: Dict[str, Any], epoch_number: int, n_train: int
 
 
 def main() -> None:
-    args = parse_args()
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    local_rank, world_size, device, rank0 = init_distributed()
-    set_random_seed(args.seed + args.trial_number)
-
-    if args.no_reaction_dispersion:
-        dispersions = {}
-    else:
-        with (Path(__file__).resolve().parent / "dispersions" / "dispersions.pickle").open("rb") as handle:
-            dispersions = pickle.load(handle)
-    mrks_dispersions = (
-        load_mrks_dispersions(args.mrks_dispersions_pickle)
-        if args.include_mrks_dispersion
-        else None
+    raise SystemExit(
+        "Historical ARML replay is disabled: its multiplier updates require held-out "
+        "non-SCF gradients, which the external-SCF protocol removes. Use the S5 bridge replay."
     )
-
-    data_predopt, data_train, data_val, data_vxc_train, data_vxc_val = load_chk(path=args.checkpoints_dir)
-    shared_preopt_checkpoint = run_or_reuse_preoptimization(
-        args=args,
-        output_dir=output_dir,
-        data_predopt=data_predopt,
-        data_vxc_train=data_vxc_train,
-        device=device,
-        local_rank=local_rank,
-        world_size=world_size,
-        rank0=rank0,
-    )
-
-    params = copy.deepcopy(TRIAL_19_PARAMS)
-    result = run_trial_arml(
-        trial_number=args.trial_number,
-        params=params,
-        args=args,
-        shared_preopt_checkpoint=Path(shared_preopt_checkpoint),
-        data_train=data_train,
-        data_val=data_val,
-        data_vxc_train=data_vxc_train,
-        data_vxc_val=data_vxc_val,
-        device=device,
-        local_rank=local_rank,
-        world_size=world_size,
-        dispersions=dispersions,
-        mrks_dispersions=mrks_dispersions,
-        output_dir=output_dir,
-        rank0=rank0,
-    )
-
-    if rank0:
-        if result.get("failed"):
-            print("ARML replay failed.")
-            return
-        final_epoch = select_last_epoch(result["epoch_history"])
-        print("ARML replay complete for Trial 19 bridge schedule.")
-        print(f"Final selected epoch: {final_epoch['epoch']}")
-        print(
-            "Final metrics: "
-            f"train_fchem={float(final_epoch['train_fchem']):.8f}, "
-            f"val_vxc={float(final_epoch['val_vxc']):.8f}, "
-            f"val_exc={float(final_epoch['val_exc']):.8f}, "
-            f"val_fchem={float(final_epoch['val_fchem']):.8f}, "
-            f"m_vxc={float(final_epoch['arml_vxc_multiplier']):.4f}, "
-            f"m_exc={float(final_epoch['arml_exc_multiplier']):.4f}, "
-            f"phase={final_epoch.get('phase_name')}"
-        )
-        print(f"Selected checkpoint: {result.get('selected_checkpoint_path')}")
-        print(f"History path: {result.get('history_path')}")
-        print(f"Params: {json.dumps(params, sort_keys=True)}")
 
 
 if __name__ == "__main__":
