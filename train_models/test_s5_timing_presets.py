@@ -183,7 +183,7 @@ def test_both_launchers_save_snapshots_and_resumable_state_every_ten_epochs():
             "--include-mrks-dispersion",
         ):
             assert required in runner
-        assert "REQUIRED_SCIENTIFIC_FIX=\"a78410bc5cd24ed60e829b8570dc0550f16fa6ee\"" in runner
+        assert "REQUIRED_SCIENTIFIC_FIX=\"29b36ac2faa29d31a758e0067499f10b41c3ab39\"" in runner
         assert "git merge-base --is-ancestor" in runner
         assert 'echo "Git commit: $(git rev-parse HEAD)"' in runner
         assert "import pyscf; print(\"PySCF:\", pyscf.__version__)" in runner

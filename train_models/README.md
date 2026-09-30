@@ -40,12 +40,14 @@ objective weights, not a validation set.
 
 Install `requirements.txt` and download Minnesota H5 data as described in
 `MN_dataset/README.md`. From `train_models/`, place Minnesota H5 files in `data/`
-and prepare both corpora:
+and mRKS files in `h5_vrho_from_mrks/`. For the planned S5/timing experiment,
+submit preprocessing and training from the repository root:
 
 ```bash
-python prepare_data.py
-python prepare_vxc.py --h5-dir h5_vrho_from_mrks --output-dir checkpoints
+bash submit_dietclean_s5_chain.sh
 ```
+
+Run standalone preprocessing utilities only on a compute node under Slurm.
 
 Artifacts are `data_predopt.pickle`, `data_train_grouped.pickle`, and
 `data_vxc_train.pickle`. Every valid mRKS H5 containing grid, vrho, weights and
@@ -102,19 +104,19 @@ and the gradient-geometry replay remain available.
 
 ## Shared corpus for the 11 planned S5/timing jobs
 
-Regenerate once on the cluster, from `train_models/`:
+From the repository root on the cluster, submit the complete chain:
 
 ```bash
-python prepare_training_corpus.py --mn-dir data --mrks-dir h5_vrho_from_mrks --output-dir checkpoints_dietclean_noval_v1
+bash submit_dietclean_s5_chain.sh
 ```
 
-This fresh directory contains the three training pickles, protocol markers and
-`preprocessing_manifest.json`. The manifest records the preprocessing commit,
-UTC timestamp, original/excluded/retained reaction counts, augmentation count,
-all-valid mRKS system count and artifact hashes. The command refuses to
-replace an existing directory or use missing H5 sources. Every planned job
-verifies and logs the same manifest; the runners cannot fall back to old data.
-See `trial19_occam3_timing_sweep/README.md` for the exact 11 launch commands.
+This submits one CPU Type-D preprocessing job and eleven GPU jobs, each with
+`afterok` on that same preprocessing job. Substantial preprocessing runs on a
+compute node. The wrapper refuses an existing corpus or missing raw H5 files.
+The shared directory is `<repo>/train_models/checkpoints_dietclean_noval_v1`.
+Its three pickles, protocol markers and manifest are verified after generation
+and independently in each training job. The manifest and SHA256 appear in logs.
+See `trial19_occam3_timing_sweep/README.md` for resources and status commands.
 
 All jobs start from scratch with `--force-preopt`, architecture
 `PBE-LGxGc_6_32`, `gc_svelu_mirror`, dropout 0.0, identical data and other

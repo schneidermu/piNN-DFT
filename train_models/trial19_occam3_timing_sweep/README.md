@@ -40,24 +40,46 @@ selection. Each runner forces fresh predopt and refuses an existing output
 directory; outputs have a `dietclean_noval_v1` suffix. No old preoptimization
 checkpoint, snapshot, or training state is used to initialize these jobs.
 
-After pulling the updated branch on the cluster, regenerate one shared corpus
-from raw H5 sources before submitting any job. From the repository root:
+After pulling the updated branch, run from the repository root:
 
 ```bash
-cd train_models
-python prepare_training_corpus.py --mn-dir data --mrks-dir h5_vrho_from_mrks --output-dir checkpoints_dietclean_noval_v1
-cd ..
+bash submit_dietclean_s5_chain.sh
 ```
 
-The command refuses an existing output directory. Missing source H5 files or
-empty corpora fail explicitly; it never substitutes historical pickles.
-`preprocessing_manifest.json` records the Git commit, UTC timestamp/version,
-source/retained Minnesota counts, exact exclusions, augmentation counts,
-mRKS count, and SHA256 hashes of the generated artifacts. Both runners default
-to this same directory without fallback to `checkpoints/` or `../checkpoints/`.
-They verify every artifact hash and print the manifest, its absolute path and
-its SHA256 in each job log. If a different corpus path is required, export the
-same absolute `CHECKPOINTS_DIR` for all 11 submissions.
+The wrapper submits exactly one CPU preprocessing job and the eleven GPU jobs
+listed above. Every GPU job depends only on `afterok:<prep-id>`; they are parallel
+siblings and may run concurrently after successful preprocessing. The wrapper
+uses `sbatch --parsable`, accepts `JOBID;CLUSTER`, prints every role and job ID,
+and exports the same absolute `CHECKPOINTS_DIR` to all training submissions.
+
+Preprocessing uses `normal`, one Type-D node, one task, four CPU cores, 128 GiB
+RAM and twelve hours, with zero GPUs in `ML_param`. The implementation has serial
+Python/HDF5 loops and native tensor kernels; four threads avoid reserving all
+48 cores. Memory includes resident grids and augmented arrays. These conservative
+initial limits are unmeasured because raw H5 sources are absent locally; inspect
+`MaxRSS` and elapsed time after the first cluster run before adjusting them.
+The script prints source directory sizes, host, commit and package versions.
+
+The target `<repo>/train_models/checkpoints_dietclean_noval_v1` must not exist.
+Missing H5 inputs fail before submission; existing data is never removed.
+Regeneration requires 284 source reactions, exactly 16 exclusions and 268 retained
+reactions, with cleaned predopt and all valid mRKS systems. Final `--verify-only`
+checks all artifact hashes. The manifest records counts, exclusions, provenance
+and hashes and prints its SHA256. Both GPU runners independently verify it before
+`torchrun` and require ancestry of `29b36ac2faa29d31a758e0067499f10b41c3ab39`.
+
+Inspect the chain using:
+
+```bash
+squeue -u "$USER" -o "%i %j %T %r %E"
+mj
+sacct -j <prep-id> --format=JobID,State,ExitCode,Elapsed,MaxRSS
+```
+
+Dependent GPU jobs remain pending until preprocessing succeeds. A failed
+preprocessing job prevents them from launching (typically DependencyNeverSatisfied).
+Check `<repo>/dietclean_noval_prep_<prep-id>.out` first, including the final manifest
+and SHA256. Diagnose failed preprocessing before interpreting any training run.
 
 Permanent epoch snapshots remain at 10, 20, ..., 500. Saved training states
 are for fault recovery only and are not validation-selected checkpoints. The
@@ -71,20 +93,3 @@ selection procedure and final checkpoint before evaluating the disjoint
 98-reaction DietGMTKN100 test. Those test reactions must not guide debugging,
 tuning, schedule selection, early stopping or checkpoint selection. External
 SCF evaluation is a separate task; these launchers do not implement it.
-
-Submit exactly the following 11 jobs from `/home/mmedvedev/schnm/piNN-DFT`
-after regeneration and review:
-
-```bash
-sbatch train_models/trial19_simple4_sota_sweep/s5_two_step_40_10.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h01_r241_f441.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h02_r261_f441.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h03_r221_f441.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h04_r281_f441.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h05_r241_f421.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h06_r261_f421.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h07_r281_f421.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h08_r221_f421.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h09_r241_f461.slurm
-sbatch train_models/trial19_occam3_timing_sweep/h10_r261_f461.slurm
-```

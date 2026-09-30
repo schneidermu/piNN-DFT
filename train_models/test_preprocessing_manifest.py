@@ -64,6 +64,15 @@ def test_regeneration_records_real_split_and_all_mrks_and_refuses_reuse(
     assert len(mn.load_chk(str(directory))[2]) == 3
     with pytest.raises(FileExistsError, match="overwrite"):
         corpus.regenerate(str(mn_source), str(mrks_source), str(directory))
+    wrong_counts = {
+        **manifest,
+        "minnesota_source_reactions": 285,
+        "minnesota_training_reactions": 269,
+    }
+    manifest_path.write_text(json.dumps(wrong_counts))
+    with pytest.raises(ValueError, match="counts"):
+        corpus.verify(directory)
+    manifest_path.write_text(json.dumps(manifest))
     # Stored manifest detects changed artifacts, not just missing filenames.
     with (directory / "data_vxc_train.pickle").open("ab") as handle:
         handle.write(b"tampered")

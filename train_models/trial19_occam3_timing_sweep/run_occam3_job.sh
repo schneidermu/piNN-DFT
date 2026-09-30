@@ -20,7 +20,7 @@ else
 fi
 cd "$WORK_DIR"
 
-REQUIRED_SCIENTIFIC_FIX="a78410bc5cd24ed60e829b8570dc0550f16fa6ee"
+REQUIRED_SCIENTIFIC_FIX="29b36ac2faa29d31a758e0067499f10b41c3ab39"
 if ! git merge-base --is-ancestor "$REQUIRED_SCIENTIFIC_FIX" HEAD; then
     echo "Checkout lacks the required scientific-fix commit $REQUIRED_SCIENTIFIC_FIX." >&2
     exit 1

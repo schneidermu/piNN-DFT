@@ -59,6 +59,8 @@ def regenerate(mn_dir: str, mrks_dir: str, output_dir: str) -> Path:
         load_component_names(mn_dir), load_ref_energies(mn_dir)
     )
     clean = filter_minnesota_training(base)
+    if len(base) != 284 or len(clean) != 268:
+        raise ValueError("Expected 284 source and 268 cleaned Minnesota reactions.")
     predopt, train = prepare(mn_dir)
     if not predopt or not train:
         raise ValueError(
@@ -115,8 +117,8 @@ def verify(directory: Path) -> dict:
             "Preprocessing manifest does not contain the exact 16 exclusions."
         )
     if (
-        manifest.get("minnesota_training_reactions")
-        != manifest.get("minnesota_source_reactions", 0) - 16
+        manifest.get("minnesota_source_reactions") != 284
+        or manifest.get("minnesota_training_reactions") != 268
     ):
         raise ValueError(
             "Minnesota source/training counts violate the exclusion contract."
