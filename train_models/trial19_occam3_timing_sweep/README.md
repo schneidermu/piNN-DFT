@@ -52,12 +52,16 @@ siblings and may run concurrently after successful preprocessing. The wrapper
 uses `sbatch --parsable`, accepts `JOBID;CLUSTER`, prints every role and job ID,
 and exports the same absolute `CHECKPOINTS_DIR` to all training submissions.
 
-Preprocessing uses `rocky`, one Type-D node, one task, four CPU cores, 128 GiB
-RAM and twelve hours, with zero GPUs in `ML_param`. The implementation has serial
-Python/HDF5 loops and native tensor kernels; four threads avoid reserving all
-48 cores. Memory includes resident grids and augmented arrays. These conservative
-initial limits are unmeasured because raw H5 sources are absent locally; inspect
-`MaxRSS` and elapsed time after the first cluster run before adjusting them.
+Preprocessing uses `rocky`, one Type-D node, one task, four CPU cores and twelve
+hours, with zero GPUs in `ML_param`. No explicit memory request is made: the
+cluster reports `RealMemory=1` MB per node and `DefMemPerNode=UNLIMITED`, so
+positive requests such as `--mem=128G` cannot match its scheduler metadata.
+This uses the partition's default memory policy; it does not allocate all CPU
+cores or request exclusive node access. The implementation has serial Python/HDF5
+loops and native tensor kernels; four threads avoid reserving all 48 cores.
+Resident grids and augmented arrays can consume substantial memory. Actual peak
+memory and runtime are unmeasured because raw H5 sources are absent locally;
+inspect resource usage after the first cluster run where accounting is available.
 The script prints source directory sizes, host, commit and package versions.
 
 The target `<repo>/train_models/checkpoints_dietclean_noval_v1` must not exist.

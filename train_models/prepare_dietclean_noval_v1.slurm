@@ -4,11 +4,12 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=128G
 #SBATCH --time=12:00:00
 #SBATCH --constraint="type_d"
 #SBATCH --output="dietclean_noval_prep_%j.out"
 
+# HSE rocky advertises RealMemory=1 MB; use its unlimited default memory.
+# Explicit --mem/--mem-per-cpu requests cannot match that scheduler metadata.
 set -euo pipefail
 export PYTHONNOUSERSITE=1
 source /home/mmedvedev/anaconda3/etc/profile.d/conda.sh
