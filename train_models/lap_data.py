@@ -1,0 +1,478 @@
+"""Versioned reference-density stencils; reject legacy center-only Vrho data."""
+
+import json
+import math
+import pickle
+import shutil
+from pathlib import Path
+
+import h5py
+import torch
+from lap_vxc import STENCIL_ORDER, STENCIL_VERSION, stencil_coordinates
+from NN_models_lap import ARCHITECTURE, DESCRIPTOR_PROTOCOL
+
+PROTOCOL = "diet-clean-mn-all-mrks-lap-fullvxc-v1"
+DEFAULT_CORPUS = "checkpoints_dietclean_lap_fullvxc_v1"
+MISSING_SOURCE = (
+    "Full mRKS Vxc requires independently evaluated (N,7,10) rho/spin-gradient-vector/"
+    "Laplacian stencils. Center-only Grid/Vrho data cannot supply this. Provide the "
+    "original mRKS generator plus reference spin AO density matrices and exact molecule/"
+    "basis/AO ordering (or a wavefunction evaluator), and unchanged full Vxc/E_xc targets. "
+    "Nearest-neighbor interpolation and inferred gradient directions are forbidden."
+)
+
+
+def normalize_target(v, features, source_spin, target_kind):
+    n = len(features)
+    if target_kind == "common-rks":
+        if source_spin != 0 or not torch.allclose(
+            features[..., 0], features[..., 1], rtol=1e-8, atol=1e-12
+        ):
+            raise ValueError(
+                "One-channel Vxc requires verified closed-shell source and equal spin densities."
+            )
+        if v.shape == (n,):
+            v = v[:, None].repeat(1, 2)
+        elif v.shape != (n, 2) or not torch.allclose(
+            v[:, 0], v[:, 1], rtol=1e-8, atol=1e-12
+        ):
+            raise ValueError("Common RKS Vxc must have identical channels.")
+    elif target_kind != "spin-resolved":
+        raise ValueError("TargetKind must be common-rks or spin-resolved.")
+    if v.shape != (n, 2):
+        raise ValueError(
+            "Full Vxc target must be (N,2); arbitrary spin averaging is forbidden."
+        )
+    return v
+
+
+def validate_record(d):
+    required = {
+        "Name",
+        "Coordinates",
+        "StencilCoordinates",
+        "StencilFeatures",
+        "Weights",
+        "Vxc",
+        "E_xc",
+        "Protocol",
+        "StencilVersion",
+        "HBohr",
+        "SourceSpin",
+        "TargetKind",
+        "GaugeMetadata",
+        "SourceProvenance",
+    }
+    if not required <= d.keys() or "Vrho" in d:
+        raise ValueError(MISSING_SOURCE)
+    if d["Protocol"] != PROTOCOL or d["StencilVersion"] != STENCIL_VERSION:
+        raise ValueError("Stale/unsupported Lap full-Vxc protocol.")
+    if not isinstance(d["Name"], str) or not d["Name"] or d["SourceSpin"] not in (0, 1):
+        raise ValueError("Invalid system name/source-spin metadata.")
+    h = d["HBohr"]
+    if not isinstance(h, (float, int)) or not math.isfinite(h) or h <= 0:
+        raise ValueError(
+            "Positive finite HBohr is required; no production default exists."
+        )
+    n = len(d["Coordinates"])
+    shapes = {
+        "Coordinates": (n, 3),
+        "StencilCoordinates": (n, 7, 3),
+        "StencilFeatures": (n, 7, 10),
+        "Weights": (n,),
+        "Vxc": (n, 2),
+        "E_xc": (),
+    }
+    for key, shape in shapes.items():
+        t = d[key]
+        if (
+            not isinstance(t, torch.Tensor)
+            or t.dtype != torch.float64
+            or t.shape != shape
+            or not torch.isfinite(t).all()
+        ):
+            raise ValueError(f"{key} must be finite float64 with shape {shape}.")
+    if n == 0 or (d["Weights"] < 0).any() or (d["StencilFeatures"][..., :2] < 0).any():
+        raise ValueError("Empty grid or negative weights/density.")
+    expected = stencil_coordinates(d["Coordinates"], h)
+    # Reconstruct identically from the recorded centers and h; no nearest neighbors.
+    if not torch.equal(expected, d["StencilCoordinates"]):
+        raise ValueError(
+            "Stencil coordinates do not exactly match recorded Cartesian offsets/h."
+        )
+    if (d["StencilFeatures"][:, 0, :2] * d["Weights"][:, None]).sum() <= 0:
+        raise ValueError("Nonpositive integrated electron number.")
+    normalize_target(d["Vxc"], d["StencilFeatures"], d["SourceSpin"], d["TargetKind"])
+    if not isinstance(d["GaugeMetadata"], dict) or not isinstance(
+        d["SourceProvenance"], dict
+    ):
+        raise ValueError(  # noqa: TRY004 -- schema violations consistently raise ValueError
+            "Explicit gauge/source metadata dictionaries are required (may report unavailable)."
+        )
+    if not isinstance(d["GaugeMetadata"].get("available"), bool):
+        raise ValueError(  # noqa: TRY004 -- missing availability is a schema violation
+            "GaugeMetadata.available must explicitly report alignment metadata availability."
+        )
+    provenance = d["SourceProvenance"]
+    if not all(
+        provenance.get(key)
+        for key in (
+            "generator",
+            "reference_density",
+            "molecule_basis_ao_order",
+            "full_vxc_target",
+        )
+    ):
+        raise ValueError(
+            "Missing original generator/reference-density/basis-order/full-target provenance."
+        )
+    return d
+
+
+def evaluate_stencil(coords, h, reference_evaluator, chunk_size=4096):
+    """Caller supplies ORIGINAL reference-density evaluator, never an SCF surrogate."""
+    if reference_evaluator is None:
+        raise ValueError(MISSING_SOURCE)
+    if chunk_size <= 0 or len(coords) == 0:
+        raise ValueError("Positive chunk size and nonempty coordinates are required.")
+    sc = stencil_coordinates(coords, h)
+    values = []
+    for start in range(0, len(coords), chunk_size):
+        xyz = sc[start : start + chunk_size].reshape(-1, 3)
+        f = torch.as_tensor(reference_evaluator(xyz.cpu().numpy()), dtype=torch.float64)
+        if f.shape != (len(xyz), 10):
+            raise ValueError(
+                "Reference evaluator must return rho_a,b,grad_a_xyz,grad_b_xyz,lapl_a,b."
+            )
+        values.append(f.reshape(-1, 7, 10))
+    return sc, torch.cat(values)
+
+
+def ao_reference_evaluator(mol, spin_density_matrices):
+    """Exact AO evaluation of PROVIDED reference matrices, no new SCF calculation.
+
+    Matrices must belong to mol's exact basis/AO order and describe the reference
+    density. This adapter does not manufacture or validate mRKS provenance.
+    """
+    import numpy as np
+    from pyscf.dft import numint
+
+    dm = np.asarray(spin_density_matrices, dtype=np.float64)
+    if dm.shape != (2, mol.nao_nr(), mol.nao_nr()) or not np.isfinite(dm).all():
+        raise ValueError(
+            "Two reference spin AO density matrices matching the exact molecule are required."
+        )
+    if not np.allclose(dm, dm.transpose(0, 2, 1), atol=1e-12):
+        raise ValueError("Reference density matrices must be real symmetric.")
+
+    def evaluate(coords):
+        ao = numint.eval_ao(mol, coords, deriv=2)
+        r = [
+            numint.eval_rho(mol, ao, spin_dm, xctype="MGGA", hermi=1, with_lapl=True)
+            for spin_dm in dm
+        ]
+        return np.column_stack(
+            [r[0][0], r[1][0], r[0][1:4].T, r[1][1:4].T, r[0][4], r[1][4]]
+        )
+
+    return evaluate
+
+
+def read_stencil_h5(path):
+    with h5py.File(path, "r") as f:
+        names = {
+            "Coordinates": "coords",
+            "StencilCoordinates": "stencil_coords",
+            "StencilFeatures": "stencil_features",
+            "Weights": "weights",
+            "Vxc": "vxc",
+            "E_xc": "E_xc",
+        }
+        if not all(v in f for v in names.values()):
+            raise ValueError(f"{path}: {MISSING_SOURCE}")
+        if any(
+            f[v].dtype.kind != "f" or f[v].dtype.itemsize != 8 for v in names.values()
+        ):
+            raise ValueError(
+                "Versioned stencil H5 fields must be float64; no silent precision promotion."
+            )
+        d = {
+            k: torch.as_tensor(f[v][()], dtype=torch.float64) for k, v in names.items()
+        }
+        d.update(
+            Name=Path(path).stem,
+            Protocol=f.attrs.get("protocol"),
+            StencilVersion=f.attrs.get("stencil_version"),
+            HBohr=float(f.attrs.get("h_bohr", float("nan"))),
+            SourceSpin=int(f.attrs.get("source_spin", -1)),
+            TargetKind=f.attrs.get("target_kind"),
+            GaugeMetadata=json.loads(f.attrs.get("gauge_metadata", "{}")),
+            SourceProvenance=json.loads(f.attrs.get("source_provenance", "{}")),
+        )
+        # Explicit axes preserve channels even for ambiguous 2x2 sources.
+        layout = f.attrs.get("vxc_layout")
+        if layout == "spin,point":
+            d["Vxc"] = d["Vxc"].T.contiguous()
+        elif layout != "point,spin" and not (
+            layout == "point" and d["TargetKind"] == "common-rks"
+        ):
+            raise ValueError(
+                "Explicit vxc_layout=spin,point / point,spin / point is required."
+            )
+        d["Vxc"] = normalize_target(
+            d["Vxc"], d["StencilFeatures"], d["SourceSpin"], d["TargetKind"]
+        )
+    return validate_record(d)
+
+
+def write_stencil_h5(path, record):
+    """Write a validated original-reference record; never overwrite a source.
+
+    Use evaluate_stencil with the original reference evaluator, then supply
+    unchanged central Vxc/E_xc/weights and explicit provenance. No density,
+    target, spin identity, or alignment is inferred here.
+    """
+    d = validate_record(record)
+    if Path(path).stem != d["Name"]:
+        raise ValueError("Stencil H5 filename must preserve the original system Name.")
+    with h5py.File(path, "x") as f:
+        names = {
+            "Coordinates": "coords",
+            "StencilCoordinates": "stencil_coords",
+            "StencilFeatures": "stencil_features",
+            "Weights": "weights",
+            "Vxc": "vxc",
+            "E_xc": "E_xc",
+        }
+        for name, field in names.items():
+            f[field] = d[name].detach().cpu().numpy()
+        f.attrs.update(
+            protocol=PROTOCOL,
+            stencil_version=STENCIL_VERSION,
+            h_bohr=d["HBohr"],
+            source_spin=d["SourceSpin"],
+            target_kind=d["TargetKind"],
+            vxc_layout="point,spin",
+            gauge_metadata=json.dumps(d["GaugeMetadata"]),
+            source_provenance=json.dumps(d["SourceProvenance"]),
+        )
+
+
+def build_corpus(mn_corpus, stencil_dir, output_dir):
+    from launch_provenance import current_commit
+    from prepare_training_corpus import sha256
+    from prepare_training_corpus import verify as verify_mn
+
+    output, sources = Path(output_dir), sorted(Path(stencil_dir).glob("*.h5"))
+    if output.exists():
+        raise FileExistsError(f"Refusing to overwrite corpus {output}")
+    if not sources:
+        raise ValueError(MISSING_SOURCE)
+    # Validate ALL stencils before creating any output directory.
+    records = [read_stencil_h5(p) for p in sources]
+    if len(records) != 90 or len({d["Name"] for d in records}) != 90:
+        raise ValueError("Production Lap corpus requires all 90 unique mRKS systems.")
+    if len({d["HBohr"] for d in records}) != 1:
+        raise ValueError("All systems must use the same explicit finite-difference h.")
+    mn = verify_mn(Path(mn_corpus))
+    output.mkdir(parents=True)
+    for name in (
+        "data_predopt.pickle",
+        "data_train_grouped.pickle",
+        "minnesota_protocol.json",
+    ):
+        shutil.copyfile(Path(mn_corpus) / name, output / name)
+    artifact = output / "data_full_vxc_train.pickle"
+    with artifact.open("wb") as handle:
+        pickle.dump(records, handle)
+    names = (
+        "data_predopt.pickle",
+        "data_train_grouped.pickle",
+        "minnesota_protocol.json",
+        artifact.name,
+    )
+    manifest = {
+        "manifest_version": 1,
+        "protocol": PROTOCOL,
+        "architecture": ARCHITECTURE,
+        "descriptor_protocol": DESCRIPTOR_PROTOCOL,
+        "git_commit": current_commit(Path(__file__).parent.parent),
+        "minnesota_source_reactions": mn["minnesota_source_reactions"],
+        "minnesota_training_reactions": mn["minnesota_training_reactions"],
+        "excluded_minnesota_reactions": mn["excluded_minnesota_reactions"],
+        "augmented_reaction_samples": mn["augmented_reaction_samples"],
+        "mrks_systems": 90,
+        "stencil_version": STENCIL_VERSION,
+        "stencil_order": list(STENCIL_ORDER),
+        "h_bohr": records[0]["HBohr"],
+        "units": "Bohr",
+        "systems": [
+            {
+                "name": d["Name"],
+                "target_kind": d["TargetKind"],
+                "source_spin": d["SourceSpin"],
+                "gauge_metadata": d["GaugeMetadata"],
+                "source_provenance": d["SourceProvenance"],
+            }
+            for d in records
+        ],
+        "source_h5_sha256": {str(p.resolve()): sha256(p) for p in sources},
+        "stencil_data_sha256": sha256(artifact),
+        "artifact_sha256": {n: sha256(output / n) for n in names},
+        "minnesota_manifest_path": str(
+            (Path(mn_corpus) / "preprocessing_manifest.json").resolve()
+        ),
+        "minnesota_manifest_sha256": sha256(
+            Path(mn_corpus) / "preprocessing_manifest.json"
+        ),
+    }
+    (output / "preprocessing_manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n"
+    )
+    verify_corpus(output)
+    return output
+
+
+def verify_corpus(directory):
+    from prepare_training_corpus import exclusion_pairs, sha256
+
+    directory = Path(directory)
+    m = json.loads((directory / "preprocessing_manifest.json").read_text())
+    if (
+        m.get("protocol"),
+        m.get("architecture"),
+        m.get("descriptor_protocol"),
+        m.get("stencil_version"),
+    ) != (PROTOCOL, ARCHITECTURE, DESCRIPTOR_PROTOCOL, STENCIL_VERSION):
+        raise ValueError(
+            "Architecture/full-Vxc protocol mismatch; legacy corpus rejected."
+        )
+    if (
+        m.get("manifest_version") != 1
+        or m.get("units") != "Bohr"
+        or m.get("stencil_order") != list(STENCIL_ORDER)
+    ):
+        raise ValueError("Invalid stencil manifest/version/units.")
+    source_manifest = Path(m.get("minnesota_manifest_path", ""))
+    if not source_manifest.is_file() or sha256(source_manifest) != m.get(
+        "minnesota_manifest_sha256"
+    ):
+        raise ValueError("Minnesota source manifest provenance mismatch.")
+    mn = json.loads(source_manifest.read_text())
+    for key in (
+        "minnesota_source_reactions",
+        "minnesota_training_reactions",
+        "excluded_minnesota_reactions",
+        "augmented_reaction_samples",
+    ):
+        if m.get(key) != mn.get(key):
+            raise ValueError(f"Minnesota source scientific metadata mismatch: {key}")
+    for name in (
+        "data_predopt.pickle",
+        "data_train_grouped.pickle",
+        "minnesota_protocol.json",
+    ):
+        if m.get("artifact_sha256", {}).get(name) != mn.get("artifact_sha256", {}).get(
+            name
+        ):
+            raise ValueError(f"Minnesota source artifact mismatch: {name}")
+    if (
+        m.get("excluded_minnesota_reactions") != exclusion_pairs()
+        or m.get("minnesota_source_reactions") != 284
+        or m.get("minnesota_training_reactions") != 268
+    ):
+        raise ValueError("Minnesota exclusion/count contract changed.")
+    artifacts = {
+        "data_predopt.pickle",
+        "data_train_grouped.pickle",
+        "minnesota_protocol.json",
+        "data_full_vxc_train.pickle",
+    }
+    if set(m.get("artifact_sha256", {})) != artifacts:
+        raise ValueError("Incomplete immutable artifact hashes.")
+    for name, digest in m["artifact_sha256"].items():
+        if sha256(directory / name) != digest:
+            raise ValueError(f"Artifact hash mismatch: {name}")
+    if (
+        m.get("stencil_data_sha256")
+        != m["artifact_sha256"]["data_full_vxc_train.pickle"]
+    ):
+        raise ValueError("Stencil data hash disagrees with artifact hash.")
+    sources = m.get("source_h5_sha256", {})
+    if len(sources) != 90:
+        raise ValueError("All 90 source H5 hashes are required.")
+    for path, digest in sources.items():
+        if sha256(Path(path)) != digest:
+            raise ValueError(f"Source H5 hash mismatch: {path}")
+        with h5py.File(path, "r") as source:
+            metadata = {
+                "name": Path(path).stem,
+                "target_kind": source.attrs.get("target_kind"),
+                "source_spin": int(source.attrs.get("source_spin", -1)),
+                "gauge_metadata": json.loads(source.attrs.get("gauge_metadata", "{}")),
+                "source_provenance": json.loads(
+                    source.attrs.get("source_provenance", "{}")
+                ),
+            }
+            if metadata not in m.get("systems", []) or float(
+                source.attrs.get("h_bohr", float("nan"))
+            ) != m.get("h_bohr"):
+                raise ValueError(
+                    "Manifest scientific metadata differs from source H5 provenance."
+                )
+    if any(
+        (directory / name).exists()
+        for name in (
+            "data_vxc_train.pickle",
+            "data_vxc_val.pickle",
+            "data_test_grouped.pickle",
+            "data_val_grouped.pickle",
+            "data_full_vxc_val.pickle",
+        )
+    ):
+        raise ValueError(
+            "Legacy potential/internal validation artifacts are forbidden."
+        )
+    with (directory / "data_full_vxc_train.pickle").open("rb") as f:
+        ds = pickle.load(f)
+    if (
+        len(ds) != 90
+        or m.get("mrks_systems") != 90
+        or len({d["Name"] for d in ds}) != 90
+    ):
+        raise ValueError("Incomplete/duplicate mRKS system set.")
+    for d, metadata in zip(ds, m["systems"]):
+        validate_record(d)
+        expected = {
+            "name": d["Name"],
+            "target_kind": d["TargetKind"],
+            "source_spin": d["SourceSpin"],
+            "gauge_metadata": d["GaugeMetadata"],
+            "source_provenance": d["SourceProvenance"],
+        }
+        if expected != metadata or d["HBohr"] != m["h_bohr"]:
+            raise ValueError(
+                "Manifest scientific metadata differs from the actual stencil records."
+            )
+    if (
+        len(m["systems"]) != 90
+        or not m.get("git_commit")
+        or m.get("augmented_reaction_samples", 0) <= 0
+    ):
+        raise ValueError("Incomplete scientific provenance.")
+    return m, ds
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--mn-corpus", default="checkpoints_dietclean_noval_v1")
+    parser.add_argument("--stencil-dir", required=True)
+    parser.add_argument("--output-dir", default=DEFAULT_CORPUS)
+    args = parser.parse_args()
+    build_corpus(args.mn_corpus, args.stencil_dir, args.output_dir)
+
+
+if __name__ == "__main__":
+    main()

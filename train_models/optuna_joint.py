@@ -238,9 +238,14 @@ def parse_model_name(name: str) -> Tuple[int, int, bool, bool]:
 
 
 def build_model(args: argparse.Namespace, device: torch.device) -> nn.Module:
+    from NN_models_lap import pcPBELMLOptimizerV2Lap
+
     num_layers, h_dim, use_g_x, use_g_c = parse_model_name(args.name)
     model_type = getattr(args, "model_type", "base")
+    if args.name.startswith("PBE-Lap-") != (model_type == "lap"):
+        raise ValueError("Lap architecture requires both an explicit PBE-Lap name and model_type=lap.")
     model_classes = {
+        "lap": pcPBELMLOptimizerV2Lap,
         "base": pcPBELMLOptimizerV2,
         "log": pcPBELMLOptimizerV2Log,
         "gc_svelu_mirror": pcPBELMLOptimizerV2GcSveluMirror,
@@ -645,6 +650,8 @@ def vxc_loss(
     dft: str = "PBE",
     create_graph: bool = True,
 ) -> torch.Tensor:
+    if getattr(getattr(model, "module", model), "descriptor_protocol", None) == "rho-sigma-total-lapl-tau-free-v1":
+        raise ValueError("Lap models require full_vxc_loss and reference stencils; use train_lap.py.")
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     rho = grid_raw[:, 4:6].clone().requires_grad_(True)
     sigma = grid_raw[:, 6:9].clone()
