@@ -13,12 +13,16 @@ export CHECKPOINTS_DIR="$REPO_ROOT/train_models/checkpoints_dietclean_noval_v1"
     echo "Refusing submission: corpus target already exists: $CHECKPOINTS_DIR" >&2
     exit 1
 }
-for source in train_models/data train_models/h5_vrho_from_mrks; do
+for source in train_models/data; do
     [[ -d "$source" ]] && compgen -G "$source/*.h5" > /dev/null || {
         echo "Required raw H5 directory is missing or empty: $REPO_ROOT/$source" >&2
         exit 1
     }
 done
+for source in train_models/checkpoints/data_vxc_train.pickle train_models/checkpoints/data_vxc_val.pickle; do
+    [[ -s "$source" ]] || { echo "Required mRKS split is missing or empty: $source" >&2; exit 1; }
+done
+
 jobs=(
     train_models/trial19_simple4_sota_sweep/s5_two_step_40_10.slurm
     train_models/trial19_occam3_timing_sweep/h01_r241_f441.slurm

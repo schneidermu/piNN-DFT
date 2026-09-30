@@ -35,10 +35,16 @@ def run_fake(tmp_path, mode="ok"):
         path = repo / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.touch()
-    for name in ("data", "h5_vrho_from_mrks"):
+    for name in ("data",):
         path = repo / "train_models" / name
         path.mkdir()
         (path / "input.h5").touch()
+    checkpoint_dir = repo / "train_models/checkpoints"
+    checkpoint_dir.mkdir()
+    for name in ("data_vxc_train.pickle", "data_vxc_val.pickle"):
+        (checkpoint_dir / name).write_bytes(b"fixture")
+    if mode == "missing_split":
+        (checkpoint_dir / "data_vxc_val.pickle").unlink()
     if mode == "existing":
         (repo / "train_models/checkpoints_dietclean_noval_v1").mkdir()
     if mode == "missing":
@@ -95,7 +101,14 @@ def test_parallel_siblings_and_cluster_id_parsing(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "mode,count", [("existing", 0), ("missing", 0), ("failed", 1), ("invalid", 1)]
+    "mode,count",
+    [
+        ("existing", 0),
+        ("missing", 0),
+        ("missing_split", 0),
+        ("failed", 1),
+        ("invalid", 1),
+    ],
 )
 def test_failure_prevents_downstream_submissions(tmp_path, mode, count):
     result, calls, _ = run_fake(tmp_path, mode)
@@ -116,7 +129,9 @@ def test_cpu_and_runner_contract():
     assert "conda activate ML_param" in text
     assert "set -euo pipefail" in text
     assert "export PYTHONNOUSERSITE=1" in text
-    assert text.count("python prepare_training_corpus.py") == 2
+    assert text.count("prepare_training_corpus.py") == 2
+    assert "--mrks-train-pickle checkpoints/data_vxc_train.pickle" in text
+    assert "--mrks-val-pickle checkpoints/data_vxc_val.pickle" in text
     assert text.index("--verify-only") > text.index("--mn-dir data")
     assert "rm -rf" not in text
     for name in (

@@ -65,7 +65,7 @@ inspect resource usage after the first cluster run where accounting is available
 The script prints source directory sizes, host, commit and package versions.
 
 The target `<repo>/train_models/checkpoints_dietclean_noval_v1` must not exist.
-Missing H5 inputs fail before submission; existing data is never removed.
+Missing Minnesota H5 or mRKS split inputs fail before submission; existing data is never removed.
 Regeneration requires 284 source reactions, exactly 16 exclusions and 268 retained
 reactions, with cleaned predopt and all valid mRKS systems. Final `--verify-only`
 checks all artifact hashes. The manifest records counts, exclusions, provenance
@@ -97,3 +97,21 @@ selection procedure and final checkpoint before evaluating the disjoint
 98-reaction DietGMTKN100 test. Those test reactions must not guide debugging,
 tuning, schedule selection, early stopping or checkpoint selection. External
 SCF evaluation is a separate task; these launchers do not implement it.
+
+The CPU job regenerates only Minnesota from raw H5. It concatenates the existing
+`checkpoints/data_vxc_train.pickle` and `checkpoints/data_vxc_val.pickle` into
+one training-only mRKS list, preserving reference `E_xc` and `Vrho` without
+recalculation. Both source splits must be nonempty lists with named systems,
+finite targets and consistent grid shapes; duplicate names fail explicitly.
+Source paths, SHA256 hashes and split counts are recorded in the manifest and
+protocol marker. Original split files remain unchanged. The source hashes record
+which files were imported; they do not establish reference-data accuracy.
+The raw-H5 mRKS CLI remains available for data that explicitly contains `E_xc`.
+
+If an earlier preparation failed, preserve its partial output before resubmitting:
+
+```bash
+mv train_models/checkpoints_dietclean_noval_v1 \
+   train_models/checkpoints_dietclean_noval_v1_failed_4364796
+bash submit_dietclean_s5_chain.sh
+```

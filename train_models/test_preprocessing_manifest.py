@@ -1,6 +1,9 @@
 """Provenance and launcher contract for the 11 fresh S5/timing experiments."""
 
 import json
+import pickle
+
+import torch
 import re
 import shlex
 from pathlib import Path
@@ -27,8 +30,9 @@ PAIRS = [
 ]
 
 
+@pytest.mark.parametrize("import_splits", [False, True])
 def test_regeneration_records_real_split_and_all_mrks_and_refuses_reuse(
-    monkeypatch, tmp_path
+    monkeypatch, tmp_path, import_splits
 ):
     mn_source = tmp_path / "mn"
     mrks_source = tmp_path / "mrks"
@@ -51,13 +55,45 @@ def test_regeneration_records_real_split_and_all_mrks_and_refuses_reuse(
         },
     )
     directory = tmp_path / "fresh_dietclean_noval"
-    manifest_path = corpus.regenerate(str(mn_source), str(mrks_source), str(directory))
+    options = {}
+    if import_splits:
+        samples = [
+            dict(
+                Name=f"system_{i}",
+                Grid=torch.zeros(2, 13),
+                Vrho=torch.ones(2),
+                Weights=torch.ones(2),
+                E_xc=torch.tensor(-1.0),
+            )
+            for i in range(3)
+        ]
+        for name, payload in (("train", samples[:2]), ("val", samples[2:])):
+            path = tmp_path / f"{name}.pickle"
+            path.write_bytes(pickle.dumps(payload))
+            options[f"mrks_{name}_pickle"] = str(path)
+    manifest_path = corpus.regenerate(
+        str(mn_source), str(mrks_source), str(directory), **options
+    )
     manifest = corpus.verify(directory)
     assert manifest["minnesota_source_reactions"] == 284
     assert manifest["minnesota_training_reactions"] == 268
     assert len(manifest["excluded_minnesota_reactions"]) == 16
     assert manifest["augmented_reaction_samples"] == manifest["predopt_samples"] == 268
     assert manifest["mrks_systems"] == 3
+    if import_splits:
+        assert [source["samples"] for source in manifest["mrks_source_pickles"]] == [
+            2,
+            1,
+        ]
+        assert manifest["mrks_source_mode"] == "merged-existing-splits"
+        for source in manifest["mrks_source_pickles"]:
+            assert source["sha256"] == corpus.sha256(Path(source["path"]))
+        with (directory / "data_vxc_train.pickle").open("rb") as handle:
+            merged = pickle.load(handle)
+        for original, restored in zip(samples, merged):
+            for key in ("Grid", "Vrho", "Weights", "E_xc"):
+                assert torch.equal(original[key], restored[key])
+
     assert len(manifest["git_commit"]) == 40
     assert manifest["preprocessing_timestamp_utc"]
     assert not any((directory / name).exists() for name in mn.OBSOLETE_PICKLES)
@@ -153,3 +189,28 @@ def test_all_eleven_jobs_use_identical_slurm_resources():
         )
     assert len(resources) == 11
     assert all(resource == resources[0] for resource in resources)
+
+
+@pytest.mark.parametrize("issue", ["duplicate", "missing_exc", "nonfinite", "shape"])
+def test_import_rejects_invalid_targets(tmp_path, issue):
+    sample = dict(
+        Name="system",
+        Grid=torch.zeros(2, 13),
+        Vrho=torch.ones(2),
+        Weights=torch.ones(2),
+        E_xc=torch.tensor(-1.0),
+    )
+    other = {**sample, "Name": "other"}
+    if issue == "duplicate":
+        other["Name"] = "system"
+    elif issue == "missing_exc":
+        del other["E_xc"]
+    elif issue == "nonfinite":
+        other["E_xc"] = torch.tensor(float("nan"))
+    else:
+        other["Vrho"] = torch.ones(3)
+    paths = [tmp_path / "train.pickle", tmp_path / "val.pickle"]
+    for path, payload in zip(paths, ([sample], [other])):
+        path.write_bytes(pickle.dumps(payload))
+    with pytest.raises(ValueError):
+        corpus.merge_mrks_splits(*map(str, paths))

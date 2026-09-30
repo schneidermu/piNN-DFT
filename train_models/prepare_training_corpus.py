@@ -5,6 +5,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import pickle
+
+import torch
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,12 +50,64 @@ def exclusion_pairs() -> list[list[str | int]]:
     ]
 
 
-def regenerate(mn_dir: str, mrks_dir: str, output_dir: str) -> Path:
+def merge_mrks_splits(train_path: str, val_path: str) -> tuple[list[dict], list[dict]]:
+    """Preserve existing reference targets; validate and combine historical splits."""
+    merged = []
+    sources = []
+    names = set()
+    for source in (Path(train_path).resolve(), Path(val_path).resolve()):
+        digest = sha256(source)
+        with source.open("rb") as handle:
+            samples = pickle.load(handle)
+        if not isinstance(samples, (list, tuple)) or not samples:
+            raise ValueError(f"Expected a nonempty mRKS sample list: {source}")
+        for sample in samples:
+            required = {"Name", "Grid", "Vrho", "Weights", "E_xc"}
+            if not isinstance(sample, dict) or not required <= sample.keys():
+                raise ValueError(f"Missing mRKS fields including E_xc: {source}")
+            name = sample["Name"]
+            if not isinstance(name, str) or not name or name in names:
+                raise ValueError(f"Missing or duplicate mRKS system identity: {name!r}")
+            values = {key: torch.as_tensor(sample[key]) for key in required - {"Name"}}
+            grid = values["Grid"]
+            if (
+                grid.ndim != 2
+                or grid.shape[0] == 0
+                or grid.shape[1] < 12
+                or values["Vrho"].shape != (grid.shape[0],)
+                or values["Weights"].shape != (grid.shape[0],)
+                or values["E_xc"].numel() != 1
+            ):
+                raise ValueError(f"Invalid mRKS target/grid shapes: {name}")
+            if not all(torch.isfinite(value).all().item() for value in values.values()):
+                raise ValueError(f"Nonfinite mRKS reference data: {name}")
+            names.add(name)
+            merged.append(sample)
+        if sha256(source) != digest:
+            raise ValueError(f"mRKS source changed during import: {source}")
+        sources.append({"path": str(source), "sha256": digest, "samples": len(samples)})
+    print(f"Merged mRKS training systems: {len(merged)}; no internal validation split.")
+    return merged, sources
+
+
+def regenerate(
+    mn_dir: str,
+    mrks_dir: str,
+    output_dir: str,
+    mrks_train_pickle: str | None = None,
+    mrks_val_pickle: str | None = None,
+) -> Path:
     """Build a new directory once; never overwrite a historical/shared corpus."""
     directory = Path(output_dir).resolve()
     if directory.exists():
         raise FileExistsError(f"Refusing to overwrite existing corpus: {directory}")
-    for source in (mn_dir, mrks_dir):
+    if bool(mrks_train_pickle) != bool(mrks_val_pickle):
+        raise ValueError("Supply both mRKS train and validation pickle paths.")
+    sources = []
+    mrks = None
+    if mrks_train_pickle:
+        mrks, sources = merge_mrks_splits(mrks_train_pickle, mrks_val_pickle)
+    for source in (mn_dir,) if mrks is not None else (mn_dir, mrks_dir):
         if not Path(source).is_dir() or not any(Path(source).glob("*.h5")):
             raise ValueError(f"Raw H5 sources are missing or empty: {source}")
     base = get_compounds_coefs_energy(
@@ -67,7 +122,23 @@ def regenerate(mn_dir: str, mrks_dir: str, output_dir: str) -> Path:
             "No augmented Minnesota training samples; check source H5 availability."
         )
     save_chk(predopt, train, str(directory))
-    mrks = prepare_vxc(mrks_dir, str(directory))
+    if mrks is None:
+        mrks = prepare_vxc(mrks_dir, str(directory))
+    else:
+        with (directory / "data_vxc_train.pickle").open("wb") as handle:
+            pickle.dump(mrks, handle)
+        (directory / "mrks_protocol.json").write_text(
+            json.dumps(
+                {
+                    "protocol": TRAINING_PROTOCOL,
+                    "valid_systems": len(mrks),
+                    "source_mode": "merged-existing-splits",
+                    "source_pickles": sources,
+                },
+                indent=2,
+            )
+            + "\n"
+        )
     if not mrks:
         raise ValueError(
             "No valid mRKS systems; corpus is incomplete and has no manifest."
@@ -88,9 +159,11 @@ def regenerate(mn_dir: str, mrks_dir: str, output_dir: str) -> Path:
         "augmented_reaction_samples": sum(len(group) for group in train.values()),
         "predopt_samples": len(predopt),
         "mrks_systems": len(mrks),
+        "mrks_source_mode": "merged-existing-splits" if sources else "raw-h5",
+        "mrks_source_pickles": sources,
         "source_directories": {
             "minnesota": str(Path(mn_dir).resolve()),
-            "mrks": str(Path(mrks_dir).resolve()),
+            "mrks": None if sources else str(Path(mrks_dir).resolve()),
         },
         "artifact_sha256": {name: sha256(directory / name) for name in ARTIFACTS},
     }
@@ -128,6 +201,18 @@ def verify(directory: Path) -> dict:
         or manifest.get("augmented_reaction_samples", 0) < 1
     ):
         raise ValueError("Training corpus is empty.")
+    if manifest.get("mrks_source_mode") == "merged-existing-splits":
+        sources = manifest.get("mrks_source_pickles", [])
+        marker = json.loads((directory / "mrks_protocol.json").read_text())
+        if (
+            len(sources) != 2
+            or sum(source.get("samples", 0) for source in sources)
+            != manifest["mrks_systems"]
+            or any(len(source.get("sha256", "")) != 64 for source in sources)
+            or marker.get("source_pickles") != sources
+            or marker.get("valid_systems") != manifest["mrks_systems"]
+        ):
+            raise ValueError("Invalid merged mRKS provenance/counts.")
     for marker in ("minnesota_protocol.json", "mrks_protocol.json"):
         require_protocol(directory, marker)
     hashes = manifest.get("artifact_sha256", {})
@@ -146,13 +231,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mn-dir", default="data")
     parser.add_argument("--mrks-dir", default="h5_vrho_from_mrks")
+    parser.add_argument("--mrks-train-pickle")
+    parser.add_argument("--mrks-val-pickle")
     parser.add_argument("--output-dir", default=DEFAULT_CORPUS_DIR)
     parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args()
     if args.verify_only:
         verify(Path(args.output_dir))
     else:
-        regenerate(args.mn_dir, args.mrks_dir, args.output_dir)
+        regenerate(
+            args.mn_dir,
+            args.mrks_dir,
+            args.output_dir,
+            args.mrks_train_pickle,
+            args.mrks_val_pickle,
+        )
 
 
 if __name__ == "__main__":

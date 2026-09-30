@@ -40,7 +40,8 @@ objective weights, not a validation set.
 
 Install `requirements.txt` and download Minnesota H5 data as described in
 `MN_dataset/README.md`. From `train_models/`, place Minnesota H5 files in `data/`
-and mRKS files in `h5_vrho_from_mrks/`. For the planned S5/timing experiment,
+and retain the existing mRKS splits in `checkpoints/data_vxc_train.pickle`
+and `checkpoints/data_vxc_val.pickle`. For the planned S5/timing experiment,
 submit preprocessing and training from the repository root:
 
 ```bash
@@ -112,7 +113,7 @@ bash submit_dietclean_s5_chain.sh
 
 This submits one CPU Type-D preprocessing job and eleven GPU jobs, each with
 `afterok` on that same preprocessing job. Substantial preprocessing runs on a
-compute node. The wrapper refuses an existing corpus or missing raw H5 files.
+compute node. The wrapper refuses an existing corpus or missing Minnesota H5 files or mRKS split pickles.
 The shared directory is `<repo>/train_models/checkpoints_dietclean_noval_v1`.
 Its three pickles, protocol markers and manifest are verified after generation
 and independently in each training job. The manifest and SHA256 appear in logs.
@@ -128,3 +129,21 @@ Use external Diet30 SCF on all 50 snapshots per trajectory to select the
 schedule and checkpoint. Hold the 98-reaction test set until the schedule,
 selection procedure and final checkpoint are frozen. Training diagnostics and
 saved recovery states are not model-selection signals.
+
+The CPU job regenerates only Minnesota from raw H5. It concatenates the existing
+`checkpoints/data_vxc_train.pickle` and `checkpoints/data_vxc_val.pickle` into
+one training-only mRKS list, preserving reference `E_xc` and `Vrho` without
+recalculation. Both source splits must be nonempty lists with named systems,
+finite targets and consistent grid shapes; duplicate names fail explicitly.
+Source paths, SHA256 hashes and split counts are recorded in the manifest and
+protocol marker. Original split files remain unchanged. The source hashes record
+which files were imported; they do not establish reference-data accuracy.
+The raw-H5 mRKS CLI remains available for data that explicitly contains `E_xc`.
+
+If an earlier preparation failed, preserve its partial output before resubmitting:
+
+```bash
+mv train_models/checkpoints_dietclean_noval_v1 \
+   train_models/checkpoints_dietclean_noval_v1_failed_4364796
+bash submit_dietclean_s5_chain.sh
+```

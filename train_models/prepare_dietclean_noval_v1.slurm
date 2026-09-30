@@ -36,14 +36,15 @@ cd train_models
     echo "Refusing to overwrite existing corpus: $PWD/checkpoints_dietclean_noval_v1" >&2
     exit 1
 }
-[[ -d data && -d h5_vrho_from_mrks ]] || {
-    echo "Required raw H5 source directories are missing." >&2
+[[ -d data && -s checkpoints/data_vxc_train.pickle && -s checkpoints/data_vxc_val.pickle ]] || {
+    echo "Minnesota raw data or existing mRKS train/validation pickles are missing." >&2
     exit 1
 }
-du -sh data h5_vrho_from_mrks
-python prepare_training_corpus.py \
+du -shL data
+python -u prepare_training_corpus.py \
     --mn-dir data \
-    --mrks-dir h5_vrho_from_mrks \
+    --mrks-train-pickle checkpoints/data_vxc_train.pickle \
+    --mrks-val-pickle checkpoints/data_vxc_val.pickle \
     --output-dir checkpoints_dietclean_noval_v1
 # Batch success gates all training jobs; verify independently after generation.
 python prepare_training_corpus.py \
