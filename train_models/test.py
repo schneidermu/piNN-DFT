@@ -9,7 +9,7 @@ Coverage
 1.  Output shape — always (N, 29) for all 4 ablation variants.
 2.  Exchange UEG constraint      — mu = true_mu  at (sigma=0, tau=tau_TF(2rho)/2).
 3.  G_x UEG constraint           — G_NN = 0      at same point (use_g_x=True only).
-4.  Correlation UEG constraint   — beta = true_beta at (sigma=0, tau=tau_TF(rho)).
+4.  Correlation UEG constraint   — beta = true_beta at (sigma=0, tau=tau_unif,spin).
 5.  G_c sigma_zero constraint    — G_c = 1.0     at same point (use_g_c=True only).
 6.  High-density constraint      — gamma = true_gamma as rho → ∞.
 7.  G_c rho_inf constraint       — G_c = 1.0     as rho → ∞ (use_g_c=True only).
@@ -365,17 +365,11 @@ def test_physical_spin_ueg_anchor_is_used():
     model = pcPBELMLOptimizerV2(
         num_layers=6, h_dim=32, use_g_x=False, use_g_c=True
     ).double().eval()
-    descriptors = model.get_density_descriptors(physical_ueg)
-    descriptor_ratio_a = tau_a / (
-        _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0) + EPS_RHO
+    descriptors = model.get_correlation_descriptors(physical_ueg)
+    torch.testing.assert_close(
+        descriptors[:, [2, 3, 4, 5, 6, 7, 8]],
+        torch.zeros_like(descriptors[:, [2, 3, 4, 5, 6, 7, 8]]), rtol=0, atol=1e-12,
     )
-    descriptor_ratio_b = tau_b / (
-        _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0) + EPS_RHO
-    )
-    expected_alpha_a = torch.tanh(descriptor_ratio_a - 1.0)
-    expected_alpha_b = torch.tanh(descriptor_ratio_b - 1.0)
-    torch.testing.assert_close(descriptors[:, 5], expected_alpha_a, rtol=1e-12, atol=1e-12)
-    torch.testing.assert_close(descriptors[:, 6], expected_alpha_b, rtol=1e-12, atol=1e-12)
 
     with torch.no_grad():
         output = model(physical_ueg)
@@ -607,3 +601,116 @@ def test_gnn_swaps_under_spin_exchange(model_info):
         out_swap = m(x_swap)
     torch.testing.assert_close(out[:, IDX_GNN_UP],  out_swap[:, IDX_GNN_DOWN], atol=ATOL, rtol=0)
     torch.testing.assert_close(out[:, IDX_GNN_DOWN], out_swap[:, IDX_GNN_UP],  atol=ATOL, rtol=0)
+
+
+def _legacy_exchange_descriptors(x: torch.Tensor) -> torch.Tensor:
+    """Frozen pre-patch equations; input has already undergone spin scaling."""
+    from NN_models import (
+        _C_FERMI, _C_LAPL, RHO_ALPHA_INDEX, RHO_BETA_INDEX,
+        S_ALPHA_INDEX, S_TOTAL_INDEX, S_BETA_INDEX, TAU_ALPHA_INDEX,
+        TAU_BETA_INDEX, LAPL_ALPHA_INDEX, LAPL_BETA_INDEX,
+    )
+    from dft_functionals.constants import EPS_SIGMA
+    rho_a     = x[:, RHO_ALPHA_INDEX]
+    rho_b     = x[:, RHO_BETA_INDEX]
+    sigma_a   = x[:, S_ALPHA_INDEX]
+    sigma_tot = x[:, S_TOTAL_INDEX]
+    sigma_b   = x[:, S_BETA_INDEX]
+    tau_a     = x[:, TAU_ALPHA_INDEX]
+    tau_b     = x[:, TAU_BETA_INDEX]
+    lapl_a    = x[:, LAPL_ALPHA_INDEX]
+    lapl_b    = x[:, LAPL_BETA_INDEX]
+
+    # Density normalization: ρ^(1/3)
+    n_alpha = (rho_a + EPS_RHO) ** (1.0 / 3.0)
+    n_beta  = (rho_b + EPS_RHO) ** (1.0 / 3.0)
+
+    # Reduced gradient: s = |∇ρ| / (2·kF·ρ), kF = _C_FERMI·ρ^(1/3)
+    s_alpha = torch.sqrt(sigma_a   + EPS_SIGMA) / (rho_a          + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
+    s_norm  = torch.sqrt(sigma_tot + EPS_SIGMA) / (rho_a + rho_b  + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
+    s_beta  = torch.sqrt(sigma_b   + EPS_SIGMA) / (rho_b          + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
+
+    # Iso-orbital indicator: α = (τ - τ_W) / τ_TF, centered at UEG (α_UEG=1 → α-1=0)
+    tau_tf_alpha = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
+    tau_tf_beta  = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+    tau_w_alpha  = sigma_a / (8.0 * (rho_a + EPS_RHO))
+    tau_w_beta   = sigma_b / (8.0 * (rho_b + EPS_RHO))
+    alpha_alpha = torch.clamp((tau_a - tau_w_alpha) / (tau_tf_alpha + EPS_RHO) - 1.0, min=-1.0)
+    alpha_beta  = torch.clamp((tau_b - tau_w_beta)  / (tau_tf_beta  + EPS_RHO) - 1.0, min=-1.0)
+
+    # Reduced Laplacian: q = ∇²ρ / (_C_LAPL · ρ^(5/3))
+    q_alpha = lapl_a / (_C_LAPL * (rho_a + EPS_RHO) ** (5.0 / 3.0))
+    q_beta  = lapl_b / (_C_LAPL * (rho_b + EPS_RHO) ** (5.0 / 3.0))
+
+    # Spin polarization (already in [-1, 1], not passed through tanh)
+    zeta = (rho_a - rho_b) / (rho_a + rho_b + EPS_RHO)
+
+    desc = torch.stack(
+        [n_alpha, n_beta, s_alpha, s_norm, s_beta, alpha_alpha, alpha_beta, q_alpha, q_beta],
+        dim=1,
+    )
+    return torch.cat([torch.tanh(desc), zeta.unsqueeze(1)], dim=1)
+
+@pytest.mark.parametrize("model_name", [
+    "pcPBELMLOptimizerV2", "pcPBELMLOptimizerV2GcSveluMirror",
+    "pcPBELMLOptimizerV2GcSoftplusMirror",
+    "pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha",
+    "pcPBELMLOptimizerV2Log",
+])
+def test_descriptor_contexts_and_checkpoint_layout(model_name):
+    import NN_models
+    cls = getattr(NN_models, model_name)
+    model = cls(num_layers=2, h_dim=8, use_g_c=True, dropout=0).double().eval()
+    rho_a = torch.tensor([0.07, 0.4, 1.3], dtype=torch.float64)
+    rho_b = torch.tensor([0.11, 0.8, 0.6], dtype=torch.float64)
+    ueg = _ueg_corr_input(rho_a, rho_b)
+    corr = model.get_correlation_descriptors(ueg)
+    torch.testing.assert_close(corr[:, 5:7], torch.zeros_like(corr[:, 5:7]), atol=1e-12, rtol=0)
+    with torch.no_grad():
+        out = model(ueg)
+    torch.testing.assert_close(out[:, IDX_BETA], torch.full_like(rho_a, TRUE_BETA), atol=1e-12, rtol=0)
+    torch.testing.assert_close(out[:, IDX_GC], torch.ones_like(rho_a), atol=1e-12, rtol=0)
+    expected_dim = 17 if model_name.endswith("Log") else 10
+    assert corr.shape == (3, expected_dim)
+    physical = torch.tensor([
+        [0.4, 0.4, 0.01, 0.04, 0.01, 0.3, 0.3, 0.02, -0.03],
+        [0.07, 0.11, 0.02, 0.03, 0.04, 0.12, 0.16, -0.01, 0.07],
+        [1.3, 0.6, 0.2, 0.5, 0.1, 2.4, 0.8, 0.3, -0.2],
+    ], dtype=torch.float64)
+    swapped = physical[:, [1, 0, 4, 3, 2, 6, 5, 8, 7]]
+    d = model.get_correlation_descriptors(physical)
+    ds = model.get_correlation_descriptors(swapped)
+    torch.testing.assert_close(d[:, 5:7], ds[:, [6, 5]], atol=0, rtol=0)
+    scaled = model.scaling_array * physical
+    expected = _legacy_exchange_descriptors(scaled)
+    if "R2Scan" in model_name:
+        tau_w = scaled[:, [2, 4]] / (8 * (scaled[:, :2] + EPS_RHO))
+        tau_tf = _C_TF * (scaled[:, :2] + EPS_RHO) ** (5 / 3)
+        alpha = torch.clamp((scaled[:, 5:7] - tau_w) /
+                            (tau_tf + 1e-3 * tau_w + EPS_RHO), min=0)
+        expected[:, 5:7] = (alpha - 1) / (alpha + 1)
+    if model_name.endswith("Log"):
+        expected = torch.cat([expected, torch.log(scaled[:, :7] + 1e-5)], dim=1)
+    torch.testing.assert_close(model.get_exchange_descriptors(scaled), expected, atol=0, rtol=0)
+    if "R2Scan" not in model_name:
+        scaled_ueg = model.scaling_array * ueg
+        exchange = model.get_exchange_descriptors(scaled_ueg)
+        torch.testing.assert_close(exchange[:, 5:7], _legacy_exchange_descriptors(scaled_ueg)[:, 5:7], atol=0, rtol=0)
+        # Legacy denominator epsilon is deliberately preserved in exchange.
+        torch.testing.assert_close(exchange[:, 5:7], torch.zeros_like(exchange[:, 5:7]), atol=2e-9, rtol=0)
+
+
+def test_correlation_alpha_matches_spin_channel_equation():
+    from NN_models import _spin_resolved_ueg_tau
+    model = pcPBELMLOptimizerV2(2, 8).double().eval()
+    rho = torch.tensor([[0.07, 0.11], [0.4, 0.8], [1.3, 0.6]], dtype=torch.float64)
+    sigma = torch.tensor([[0.02, 0.03], [0.1, 0.2], [0.3, 0.4]], dtype=torch.float64)
+    tau_w = sigma / (8 * (rho + EPS_RHO))
+    physical_alpha = torch.tensor([[0.0, 0.2], [1.0, 2.0], [3.0, 0.8]], dtype=torch.float64)
+    tau = tau_w + physical_alpha * _spin_resolved_ueg_tau(rho)
+    zeros = torch.zeros_like(rho[:, 0])
+    x = torch.stack([rho[:, 0], rho[:, 1], sigma[:, 0], sigma.sum(1),
+                     sigma[:, 1], tau[:, 0], tau[:, 1], zeros, zeros], dim=1)
+    expected = torch.tanh(torch.clamp(physical_alpha - 1, min=-1))
+    torch.testing.assert_close(model.get_correlation_descriptors(x)[:, 5:7], expected,
+                               atol=1e-12, rtol=0)

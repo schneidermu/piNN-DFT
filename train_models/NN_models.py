@@ -333,7 +333,27 @@ class pcPBELMLOptimizerV2(nn.Module):
     # Descriptor computation
     # ------------------------------------------------------------------
 
-    def get_density_descriptors(self, x: torch.Tensor) -> torch.Tensor:
+    def get_correlation_descriptors(self, x: torch.Tensor) -> torch.Tensor:
+        """Normalize tau by 1/2 C_TF (2 rho_sigma + EPS_RHO)^(5/3).
+
+        Physical UEG has alpha=1 and centered alpha=0. The helper already
+        regularizes density, so no additional denominator epsilon is used.
+        Layout and state-dict shapes are unchanged, but checkpoints trained
+        with the former correlation normalization require full retraining.
+        """
+        return self._get_density_descriptors(x, spin_resolved_tau_unif=True)
+
+    def get_exchange_descriptors(self, x: torch.Tensor) -> torch.Tensor:
+        """Use legacy unpolarized TF normalization on already spin-scaled input.
+
+        Exchange first scales rho, tau and Laplacian by two and sigma by four;
+        using the spin-channel normalization here would apply spin scaling twice.
+        """
+        return self._get_density_descriptors(x, spin_resolved_tau_unif=False)
+
+    def _get_density_descriptors(
+        self, x: torch.Tensor, *, spin_resolved_tau_unif: bool
+    ) -> torch.Tensor:
         """
         Computes 10 normalized density descriptors from raw DFT grid data.
 
@@ -378,13 +398,18 @@ class pcPBELMLOptimizerV2(nn.Module):
         s_norm  = torch.sqrt(sigma_tot + EPS_SIGMA) / (rho_a + rho_b  + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
         s_beta  = torch.sqrt(sigma_b   + EPS_SIGMA) / (rho_b          + EPS_RHO) ** (4.0 / 3.0) / _C_FERMI / 2.0
 
-        # Iso-orbital indicator: α = (τ - τ_W) / τ_TF, centered at UEG (α_UEG=1 → α-1=0)
-        tau_tf_alpha = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
-        tau_tf_beta  = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+        # Correlation: tau_unif,sigma = 1/2 C_TF (2 rho_sigma)^(5/3).
+        # Exchange: legacy C_TF rho_scaled^(5/3), after exact spin scaling.
+        if spin_resolved_tau_unif:
+            tau_tf_alpha = _spin_resolved_ueg_tau(rho_a)
+            tau_tf_beta = _spin_resolved_ueg_tau(rho_b)
+        else:
+            tau_tf_alpha = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0) + EPS_RHO
+            tau_tf_beta = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0) + EPS_RHO
         tau_w_alpha  = sigma_a / (8.0 * (rho_a + EPS_RHO))
         tau_w_beta   = sigma_b / (8.0 * (rho_b + EPS_RHO))
-        alpha_alpha = torch.clamp((tau_a - tau_w_alpha) / (tau_tf_alpha + EPS_RHO) - 1.0, min=-1.0)
-        alpha_beta  = torch.clamp((tau_b - tau_w_beta)  / (tau_tf_beta  + EPS_RHO) - 1.0, min=-1.0)
+        alpha_alpha = torch.clamp((tau_a - tau_w_alpha) / tau_tf_alpha - 1.0, min=-1.0)
+        alpha_beta  = torch.clamp((tau_b - tau_w_beta)  / tau_tf_beta - 1.0, min=-1.0)
 
         # Reduced Laplacian: q = ∇²ρ / (_C_LAPL · ρ^(5/3))
         q_alpha = lapl_a / (_C_LAPL * (rho_a + EPS_RHO) ** (5.0 / 3.0))
@@ -474,8 +499,8 @@ class pcPBELMLOptimizerV2(nn.Module):
             index 28 is G_c (1.0 if use_g_c=False).
         """
         # ---- Descriptors at real density ----
-        x_correlation_desc     = self.get_density_descriptors(x)
-        x_exchange_desc_scaled = self.get_density_descriptors(self.scaling_array * x)
+        x_correlation_desc     = self.get_correlation_descriptors(x)
+        x_exchange_desc_scaled = self.get_exchange_descriptors(self.scaling_array * x)
 
         # Spin-swapped correlation descriptors (zeta negated to preserve antisymmetry)
         swapped_indices = LLMGGA_SPIN_INVERTED_SLICE + [-1]
@@ -524,7 +549,7 @@ class pcPBELMLOptimizerV2(nn.Module):
             [rho_a, rho_b, zeros, zeros, zeros, tau_tf_2rho_a / 2.0, tau_tf_2rho_b / 2.0, zeros, zeros],
             dim=1,
         )
-        x_exch_ueg_desc   = self.get_density_descriptors(self.scaling_array * raw_ueg_exch_input)
+        x_exch_ueg_desc   = self.get_exchange_descriptors(self.scaling_array * raw_ueg_exch_input)
         hidden_x_up_ueg   = self.x_feature_extractor(x_exch_ueg_desc[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX]])
         hidden_x_down_ueg = self.x_feature_extractor(x_exch_ueg_desc[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
         x_out_up_ueg   = self.x_output_layer(hidden_x_up_ueg)
@@ -542,13 +567,13 @@ class pcPBELMLOptimizerV2(nn.Module):
             [rho_a, rho_b, zeros, zeros, zeros, tau_tf_rho_a, tau_tf_rho_b, zeros, zeros],
             dim=1,
         )
-        x_corr_ueg_desc = self.get_density_descriptors(raw_ueg_corr_input)
+        x_corr_ueg_desc = self.get_correlation_descriptors(raw_ueg_corr_input)
         x_corr_ueg_desc_swapped = x_corr_ueg_desc[:, swapped_indices].clone()
         x_corr_ueg_desc_swapped = torch.cat(
             [x_corr_ueg_desc_swapped[:, :-1], -x_corr_ueg_desc_swapped[:, -1:]], dim=1
         )
 
-        x_exch_ueg_for_corr  = self.get_density_descriptors(self.scaling_array * raw_ueg_corr_input)
+        x_exch_ueg_for_corr  = self.get_exchange_descriptors(self.scaling_array * raw_ueg_corr_input)
         hidden_x_up_for_beta   = self.x_feature_extractor(x_exch_ueg_for_corr[:, [S_ALPHA_INDEX, TAU_ALPHA_INDEX, LAPL_ALPHA_INDEX]])
         hidden_x_down_for_beta = self.x_feature_extractor(x_exch_ueg_for_corr[:, [S_BETA_INDEX, TAU_BETA_INDEX, LAPL_BETA_INDEX]])
         hidden_x_symm_for_beta = (hidden_x_up_for_beta + hidden_x_down_for_beta) / 2.0
@@ -693,8 +718,10 @@ class pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha(pcPBELMLOptimizerV2GcSoftpl
 
     R2SCAN_ALPHA_ETA = 1.0e-3
 
-    def get_density_descriptors(self, x: torch.Tensor) -> torch.Tensor:
-        descriptors = super().get_density_descriptors(x)
+    def _get_density_descriptors(
+        self, x: torch.Tensor, *, spin_resolved_tau_unif: bool
+    ) -> torch.Tensor:
+        descriptors = super()._get_density_descriptors(x, spin_resolved_tau_unif=spin_resolved_tau_unif)
 
         rho_a = x[:, RHO_ALPHA_INDEX]
         rho_b = x[:, RHO_BETA_INDEX]
@@ -705,15 +732,19 @@ class pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha(pcPBELMLOptimizerV2GcSoftpl
 
         tau_tf_alpha = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
         tau_tf_beta = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+        if spin_resolved_tau_unif:
+            tau_tf_alpha = _spin_resolved_ueg_tau(rho_a)
+            tau_tf_beta = _spin_resolved_ueg_tau(rho_b)
+        denominator_epsilon = 0.0 if spin_resolved_tau_unif else EPS_RHO
         tau_w_alpha = sigma_a / (8.0 * (rho_a + EPS_RHO))
         tau_w_beta = sigma_b / (8.0 * (rho_b + EPS_RHO))
 
         alpha_bar_alpha = torch.clamp(
-            (tau_a - tau_w_alpha) / (tau_tf_alpha + self.R2SCAN_ALPHA_ETA * tau_w_alpha + EPS_RHO),
+            (tau_a - tau_w_alpha) / (tau_tf_alpha + self.R2SCAN_ALPHA_ETA * tau_w_alpha + denominator_epsilon),
             min=0.0,
         )
         alpha_bar_beta = torch.clamp(
-            (tau_b - tau_w_beta) / (tau_tf_beta + self.R2SCAN_ALPHA_ETA * tau_w_beta + EPS_RHO),
+            (tau_b - tau_w_beta) / (tau_tf_beta + self.R2SCAN_ALPHA_ETA * tau_w_beta + denominator_epsilon),
             min=0.0,
         )
 
@@ -760,7 +791,9 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
         if isinstance(self.x_feature_extractor, nn.Sequential):
             self.x_feature_extractor[0] = nn.Linear(6, h_dim, bias=False)
 
-    def get_density_descriptors(self, x: torch.Tensor) -> torch.Tensor:
+    def _get_density_descriptors(
+        self, x: torch.Tensor, *, spin_resolved_tau_unif: bool
+    ) -> torch.Tensor:
         """
         Computes 17 descriptors: the parent 10 tanh/zeta descriptors followed
         by log-transformed raw density, gradient, and kinetic-energy features.
@@ -774,7 +807,7 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
             15: log(τ_α + 1e-5)
             16: log(τ_β + 1e-5)
         """
-        orig_desc = super().get_density_descriptors(x)
+        orig_desc = super()._get_density_descriptors(x, spin_resolved_tau_unif=spin_resolved_tau_unif)
         log_features = torch.log(x[:, :7] + 1e-5)
         return torch.cat([orig_desc, log_features], dim=1)
 
@@ -805,8 +838,8 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
         logic with log-augmented descriptors.
         """
         # ---- Descriptors at real density ----
-        x_correlation_desc     = self.get_density_descriptors(x)
-        x_exchange_desc_scaled = self.get_density_descriptors(self.scaling_array * x)
+        x_correlation_desc     = self.get_correlation_descriptors(x)
+        x_exchange_desc_scaled = self.get_exchange_descriptors(self.scaling_array * x)
 
         # Spin-swapped correlation descriptors (zeta negated to preserve antisymmetry)
         swapped_indices = LLMGGA_SPIN_INVERTED_SLICE + [
@@ -882,7 +915,7 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
             [rho_a, rho_b, zeros, zeros, zeros, tau_tf_2rho_a / 2.0, tau_tf_2rho_b / 2.0, zeros, zeros],
             dim=1,
         )
-        x_exch_ueg_desc   = self.get_density_descriptors(self.scaling_array * raw_ueg_exch_input)
+        x_exch_ueg_desc   = self.get_exchange_descriptors(self.scaling_array * raw_ueg_exch_input)
         hidden_x_up_ueg   = self.x_feature_extractor(x_exch_ueg_desc[:, x_up_feature_indices])
         hidden_x_down_ueg = self.x_feature_extractor(x_exch_ueg_desc[:, x_down_feature_indices])
         x_out_up_ueg   = self.x_output_layer(hidden_x_up_ueg)
@@ -894,19 +927,19 @@ class pcPBELMLOptimizerV2Log(pcPBELMLOptimizerV2):
             g_nn_down_at_constraint = x_out_down_ueg[:, 2].view(-1, 1)
 
         # ---- Correlation UEG constraint (s→0) for beta ----
-        tau_tf_rho_a = _C_TF * (rho_a + EPS_RHO) ** (5.0 / 3.0)
-        tau_tf_rho_b = _C_TF * (rho_b + EPS_RHO) ** (5.0 / 3.0)
+        tau_tf_rho_a = _spin_resolved_ueg_tau(rho_a)
+        tau_tf_rho_b = _spin_resolved_ueg_tau(rho_b)
         raw_ueg_corr_input = torch.stack(
             [rho_a, rho_b, zeros, zeros, zeros, tau_tf_rho_a, tau_tf_rho_b, zeros, zeros],
             dim=1,
         )
-        x_corr_ueg_desc = self.get_density_descriptors(raw_ueg_corr_input)
+        x_corr_ueg_desc = self.get_correlation_descriptors(raw_ueg_corr_input)
         x_corr_ueg_desc_swapped = x_corr_ueg_desc[:, swapped_indices].clone()
         x_corr_ueg_desc_swapped = torch.cat(
             [x_corr_ueg_desc_swapped[:, :-8], -x_corr_ueg_desc_swapped[:, -8:-7], x_corr_ueg_desc_swapped[:, -7:]], dim=1
         )
 
-        x_exch_ueg_for_corr  = self.get_density_descriptors(self.scaling_array * raw_ueg_corr_input)
+        x_exch_ueg_for_corr  = self.get_exchange_descriptors(self.scaling_array * raw_ueg_corr_input)
         hidden_x_up_for_beta   = self.x_feature_extractor(x_exch_ueg_for_corr[:, x_up_feature_indices])
         hidden_x_down_for_beta = self.x_feature_extractor(x_exch_ueg_for_corr[:, x_down_feature_indices])
         hidden_x_symm_for_beta = (hidden_x_up_for_beta + hidden_x_down_for_beta) / 2.0
