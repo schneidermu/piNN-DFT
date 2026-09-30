@@ -139,7 +139,7 @@ def main():
     p.add_argument("--dtype", choices=["float32", "float64"], default="float64")
     p.add_argument("--point-chunk-size", type=int, default=4096)
     p.add_argument("--predopt-epochs", type=int, default=2)
-    p.add_argument("--predopt-lr", type=float, default=1e-3)
+    p.add_argument("--predopt-lr", type=float, default=1e-2)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--reaction-dispersions", default=str(DEFAULT_REACTION_DISPERSIONS))
     p.add_argument("--no-reaction-dispersion", action="store_true")

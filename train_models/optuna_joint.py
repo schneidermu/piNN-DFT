@@ -13,12 +13,6 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import torch
 import torch.distributed as dist
-from torch import nn
-from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
-from torch.utils.data import DataLoader, Dataset
-from torch.utils.data.distributed import DistributedSampler
-
 from dataset import collate_fn, fast_collate_fn_predopt
 from NN_models import (
     pcPBELMLOptimizerV2,
@@ -28,20 +22,30 @@ from NN_models import (
     pcPBELMLOptimizerV2Log,
 )
 from predopt import DatasetPredopt, predopt
-from prepare_data import TRAINING_PROTOCOL, load_chk as load_chk
-from reaction_energy_calculation import calculate_reaction_energy, calculate_xc_energy, get_local_energies
+from prepare_data import TRAINING_PROTOCOL
+from prepare_data import load_chk as load_chk
+from reaction_energy_calculation import (
+    calculate_reaction_energy,
+    calculate_xc_energy,
+    get_local_energies,
+)
+from torch import nn
+from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
+from torch.utils.data import DataLoader, Dataset
+from torch.utils.data.distributed import DistributedSampler
+from training_state import (
+    atomic_torch_save,
+    capture_runtime_state,
+    load_torch_payload,
+    restore_runtime_state,
+)
 from utils import (
     _fix_sigma_tot_closed_shell,
     _grid_to_model_input,
     configure_optimizers,
     seed_worker,
     set_random_seed,
-)
-from training_state import (
-    atomic_torch_save,
-    capture_runtime_state,
-    load_torch_payload,
-    restore_runtime_state,
 )
 
 EPS = 1e-10
@@ -168,7 +172,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--shared-preopt-checkpoint", type=str, default=None)
     parser.add_argument("--force-preopt", action="store_true")
     parser.add_argument("--name", type=str, default="PBE-LGxGc_6_64")
-    parser.add_argument("--model-type", type=str, default="base", choices=["base", "log", "gc_svelu_mirror", "gc_softplus_mirror", "gc_softplus_mirror_r2scan_alpha"])
+    parser.add_argument(
+        "--model-type",
+        type=str,
+        default="base",
+        choices=[
+            "base",
+            "log",
+            "lap",
+            "gc_svelu_mirror",
+            "gc_softplus_mirror",
+            "gc_softplus_mirror_r2scan_alpha",
+        ],
+    )
     parser.add_argument("--n-predopt", type=int, default=3)
     parser.add_argument("--n-train", type=int, default=80)
     parser.add_argument("--convergence-base-epochs", type=int, default=500)

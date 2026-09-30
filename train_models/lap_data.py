@@ -3,6 +3,7 @@
 import json
 import math
 import pickle
+import re
 import shutil
 from pathlib import Path
 
@@ -50,6 +51,7 @@ def validate_record(d):
     required = {
         "Name",
         "Coordinates",
+        "LegacyCoordinates",
         "StencilCoordinates",
         "StencilFeatures",
         "Weights",
@@ -77,6 +79,7 @@ def validate_record(d):
     n = len(d["Coordinates"])
     shapes = {
         "Coordinates": (n, 3),
+        "LegacyCoordinates": (n, 3),
         "StencilCoordinates": (n, 7, 3),
         "StencilFeatures": (n, 7, 10),
         "Weights": (n,),
@@ -99,6 +102,13 @@ def validate_record(d):
     if not torch.equal(expected, d["StencilCoordinates"]):
         raise ValueError(
             "Stencil coordinates do not exactly match recorded Cartesian offsets/h."
+        )
+    if not torch.equal(
+        d["LegacyCoordinates"].to(torch.float32),
+        d["Coordinates"].to(torch.float32),
+    ):
+        raise ValueError(
+            "Recovered source centers do not retain exact legacy float32 coordinate identity."
         )
     if (d["StencilFeatures"][:, 0, :2] * d["Weights"][:, None]).sum() <= 0:
         raise ValueError("Nonpositive integrated electron number.")
@@ -126,7 +136,40 @@ def validate_record(d):
         raise ValueError(
             "Missing original generator/reference-density/basis-order/full-target provenance."
         )
+    for key in ("npz_sha256", "legacy_target_sha256"):
+        digest = provenance.get(key)
+        if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
+            raise ValueError(f"Missing or invalid SHA-256 provenance field: {key}.")
+    if provenance.get("E_xc_source") != "preserved legacy mRKS training target":
+        raise ValueError("The full-Vxc corpus must preserve the historical E_xc target.")
+    if provenance.get("NPZ_exc_wf_substituted") is not False:
+        raise ValueError("NPZ exc_wf may not be substituted for the historical E_xc.")
     return d
+
+
+def require_full_center_verification(d):
+    """Require a builder-measured numeric tie to every legacy central row.
+
+    This check is for production corpus assembly.  Development H5 files may
+    carry a deterministic dense sample, but those records cannot be promoted
+    into the 90-system corpus until every legacy center has been reconstructed
+    and compared with the old rho/sigma/lapl columns.
+    """
+    provenance = d["SourceProvenance"]
+    n = provenance.get("legacy_training_points")
+    check = provenance.get("central_density_check")
+    if type(n) is not int or n != len(d["Coordinates"]) or not isinstance(check, dict):
+        raise ValueError("Production stencil lacks legacy central-point verification provenance.")
+    if check.get("points_checked") != n:
+        raise ValueError(
+            "Production stencil did not numerically verify every legacy central point."
+        )
+    for group in ("rho", "sigma_aa_ab_bb", "lapl"):
+        combined = check.get(group, {}).get("combined", {})
+        if combined.get("float32_level_compatible") is not True:
+            raise ValueError(
+                f"Production stencil failed the legacy center {group} comparison."
+            )
 
 
 def evaluate_stencil(coords, h, reference_evaluator, chunk_size=4096):
@@ -182,6 +225,7 @@ def read_stencil_h5(path):
     with h5py.File(path, "r") as f:
         names = {
             "Coordinates": "coords",
+            "LegacyCoordinates": "legacy_coords",
             "StencilCoordinates": "stencil_coords",
             "StencilFeatures": "stencil_features",
             "Weights": "weights",
@@ -238,6 +282,7 @@ def write_stencil_h5(path, record):
     with h5py.File(path, "x") as f:
         names = {
             "Coordinates": "coords",
+            "LegacyCoordinates": "legacy_coords",
             "StencilCoordinates": "stencil_coords",
             "StencilFeatures": "stencil_features",
             "Weights": "weights",
@@ -272,6 +317,8 @@ def build_corpus(mn_corpus, stencil_dir, output_dir):
     records = [read_stencil_h5(p) for p in sources]
     if len(records) != 90 or len({d["Name"] for d in records}) != 90:
         raise ValueError("Production Lap corpus requires all 90 unique mRKS systems.")
+    for record in records:
+        require_full_center_verification(record)
     if len({d["HBohr"] for d in records}) != 1:
         raise ValueError("All systems must use the same explicit finite-difference h.")
     mn = verify_mn(Path(mn_corpus))
@@ -283,14 +330,26 @@ def build_corpus(mn_corpus, stencil_dir, output_dir):
     ):
         shutil.copyfile(Path(mn_corpus) / name, output / name)
     artifact = output / "data_full_vxc_train.pickle"
-    with artifact.open("wb") as handle:
-        pickle.dump(records, handle)
     names = (
         "data_predopt.pickle",
         "data_train_grouped.pickle",
         "minnesota_protocol.json",
         artifact.name,
     )
+    mn_manifest = Path(mn_corpus) / "preprocessing_manifest.json"
+    mn_manifest_copy = output / "minnesota_preprocessing_manifest.json"
+    shutil.copyfile(mn_manifest, mn_manifest_copy)
+    source_h5_manifest = []
+    for path, record in zip(sources, records):
+        digest = sha256(path)
+        record["SourceProvenance"]["generated_stencil_h5_name"] = path.name
+        record["SourceProvenance"]["generated_stencil_h5_sha256"] = digest
+        source_h5_manifest.append(
+            {"name": record["Name"], "filename": path.name, "sha256": digest}
+        )
+    # Re-serialize after binding every record to its exact generated stencil.
+    with artifact.open("wb") as handle:
+        pickle.dump(records, handle)
     manifest = {
         "manifest_version": 1,
         "protocol": PROTOCOL,
@@ -316,15 +375,11 @@ def build_corpus(mn_corpus, stencil_dir, output_dir):
             }
             for d in records
         ],
-        "source_h5_sha256": {str(p.resolve()): sha256(p) for p in sources},
+        "source_h5_identities": source_h5_manifest,
         "stencil_data_sha256": sha256(artifact),
         "artifact_sha256": {n: sha256(output / n) for n in names},
-        "minnesota_manifest_path": str(
-            (Path(mn_corpus) / "preprocessing_manifest.json").resolve()
-        ),
-        "minnesota_manifest_sha256": sha256(
-            Path(mn_corpus) / "preprocessing_manifest.json"
-        ),
+        "minnesota_manifest_source_path": str(mn_manifest.resolve()),
+        "minnesota_manifest_sha256": sha256(mn_manifest_copy),
     }
     (output / "preprocessing_manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n"
@@ -353,7 +408,7 @@ def verify_corpus(directory):
         or m.get("stencil_order") != list(STENCIL_ORDER)
     ):
         raise ValueError("Invalid stencil manifest/version/units.")
-    source_manifest = Path(m.get("minnesota_manifest_path", ""))
+    source_manifest = directory / "minnesota_preprocessing_manifest.json"
     if not source_manifest.is_file() or sha256(source_manifest) != m.get(
         "minnesota_manifest_sha256"
     ):
@@ -398,28 +453,19 @@ def verify_corpus(directory):
         != m["artifact_sha256"]["data_full_vxc_train.pickle"]
     ):
         raise ValueError("Stencil data hash disagrees with artifact hash.")
-    sources = m.get("source_h5_sha256", {})
-    if len(sources) != 90:
+    sources = m.get("source_h5_identities", [])
+    if len(sources) != 90 or len({item.get("name") for item in sources}) != 90:
         raise ValueError("All 90 source H5 hashes are required.")
-    for path, digest in sources.items():
-        if sha256(Path(path)) != digest:
-            raise ValueError(f"Source H5 hash mismatch: {path}")
-        with h5py.File(path, "r") as source:
-            metadata = {
-                "name": Path(path).stem,
-                "target_kind": source.attrs.get("target_kind"),
-                "source_spin": int(source.attrs.get("source_spin", -1)),
-                "gauge_metadata": json.loads(source.attrs.get("gauge_metadata", "{}")),
-                "source_provenance": json.loads(
-                    source.attrs.get("source_provenance", "{}")
-                ),
-            }
-            if metadata not in m.get("systems", []) or float(
-                source.attrs.get("h_bohr", float("nan"))
-            ) != m.get("h_bohr"):
-                raise ValueError(
-                    "Manifest scientific metadata differs from source H5 provenance."
-                )
+    source_h5_by_name = {}
+    for item in sources:
+        digest = item.get("sha256")
+        if (
+            not item.get("filename")
+            or not isinstance(digest, str)
+            or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+        ):
+            raise ValueError("Invalid generated stencil source identity/hash.")
+        source_h5_by_name[item["name"]] = item
     if any(
         (directory / name).exists()
         for name in (
@@ -454,6 +500,16 @@ def verify_corpus(directory):
             raise ValueError(
                 "Manifest scientific metadata differs from the actual stencil records."
             )
+        source_identity = source_h5_by_name.get(d["Name"])
+        provenance = d["SourceProvenance"]
+        if (
+            source_identity is None
+            or provenance.get("generated_stencil_h5_name")
+            != source_identity.get("filename")
+            or provenance.get("generated_stencil_h5_sha256")
+            != source_identity.get("sha256")
+        ):
+            raise ValueError("Stencil record is not tied to its generated H5 hash.")
     if (
         len(m["systems"]) != 90
         or not m.get("git_commit")

@@ -2,7 +2,7 @@
 
 import torch
 from lap_vxc import full_vxc_loss, integrated_energy, sigma_standard_to_total
-from optuna_joint import batch_exc, batch_fchem
+from optuna_joint import batch_exc, batch_fchem, canonical_variant
 from predopt_targets import _ADAPTIVE_INDICES, _prepare_predopt_targets
 from reaction_energy_calculation import calculate_reaction_energy
 from torch.utils.checkpoint import checkpoint
@@ -17,6 +17,16 @@ def tensor_record(record, device, dtype):
     }
 
 
+def canonical_predopt_view(grouped):
+    """Return exactly one stable augmentation variant for each base reaction."""
+    if not isinstance(grouped, dict) or len(grouped) != 268:
+        raise ValueError("Lap PBE predopt requires all 268 cleaned base reactions.")
+    return {
+        index: canonical_variant(group)
+        for index, group in enumerate(grouped.values())
+    }
+
+
 def reaction_loss(model, reaction, target, device, dtype, dispersions=None):
     """Keep the existing reaction integration, weights, and augmentation protocol."""
     reaction = tensor_record(reaction, device, dtype)
@@ -27,12 +37,7 @@ def reaction_loss(model, reaction, target, device, dtype, dispersions=None):
         )
     if not torch.allclose(raw[:, :2], reaction["Densities"], rtol=1e-6, atol=1e-12):
         raise ValueError("Minnesota rho boundary disagrees with model input.")
-    if not torch.allclose(
-        raw[:, 2:5],
-        sigma_standard_to_total(reaction["Gradients"]),
-        rtol=1e-6,
-        atol=1e-12,
-    ):
+    if not minnesota_sigma_boundary_matches(raw[:, 2:5], reaction["Gradients"]):
         raise ValueError(
             "Minnesota standard sigma/model sigma-total boundary disagrees."
         )
@@ -51,11 +56,35 @@ def reaction_loss(model, reaction, target, device, dtype, dispersions=None):
     )
 
 
+def minnesota_sigma_boundary_matches(model_sigma, standard_sigma):
+    """Allow source-float32 rounding after cancellation in the total sigma.
+
+    The grouped Minnesota artifact stores both the model's total-sigma column
+    and standard ``(aa, ab, bb)`` values as float32.  Near cancellation, their
+    independent rounding can exceed a small relative comparison even though
+    each value is consistent with the original float32 record.  Scale the
+    absolute tolerance by the magnitudes of the terms being added so a nearly
+    zero total does not get an unrealistically strict relative tolerance.
+    """
+    reconstructed = sigma_standard_to_total(standard_sigma)
+    scale = (
+        standard_sigma[..., 0].abs()
+        + 2 * standard_sigma[..., 1].abs()
+        + standard_sigma[..., 2].abs()
+    ).unsqueeze(-1)
+    tolerance = 8 * torch.finfo(torch.float32).eps * scale + 1e-12
+    return bool(((model_sigma - reconstructed).abs() <= tolerance).all())
+
+
 def mrks_losses(energy, record, device, dtype, chunk):
     d = tensor_record(record, device, dtype)
     f, weights = d["StencilFeatures"], d["Weights"]
     prediction = integrated_energy(energy, f, weights, chunk)
-    exc = batch_exc([d["Name"]], prediction.reshape(1), d["E_xc"].reshape(1))
+    # integrated_energy accumulates in float64 even for a float32 model. Keep
+    # the preserved float32 legacy scalar's value while matching prediction's
+    # dtype for the standard MSE backward path.
+    target = d["E_xc"].reshape(1).to(dtype=prediction.dtype)
+    exc = batch_exc([d["Name"]], prediction.reshape(1), target)
     vxc = full_vxc_loss(energy, f, d["Vxc"], weights, d["HBohr"], chunk)
     return exc, vxc
 
@@ -81,16 +110,52 @@ def predopt_loss(model, raw):
 
 
 def run_predopt(model, loader, device, dtype, epochs, lr, chunk, world_size=1):
-    """Canonical nine adaptive PBE targets; no legacy partial-Vrho objective."""
+    """Canonical nine adaptive PBE targets; no legacy partial-Vrho objective.
+
+    Return per-epoch MSE/MAE over the grid points visited.  The data loader is
+    expected to contain one deterministic canonical variant per base reaction.
+    """
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    history = []
     for epoch in range(epochs):
         if hasattr(getattr(loader, "sampler", None), "set_epoch"):
             loader.sampler.set_epoch(epoch)
+        epoch_mse = 0.0
+        epoch_mae = 0.0
+        reaction_count = 0
         for reaction, _ in loader:
             raw = reaction["Grid"].to(device=device, dtype=dtype)
             optimizer.zero_grad(set_to_none=True)
+            reaction_mse = 0.0
+            reaction_mae = 0.0
             for start in range(0, len(raw), chunk):
                 block = raw[start : start + chunk]
-                (predopt_loss(model, block) * len(block) / len(raw)).backward()
+                prediction = model(block)[:, _ADAPTIVE_INDICES]
+                from dft_functionals import PBE_CONSTANTS
+
+                target = _prepare_predopt_targets(
+                    PBE_CONSTANTS.to(block), len(block), block.device
+                )
+                difference = prediction - target
+                mse = difference.square().mean()
+                mae = difference.abs().mean()
+                fraction = len(block) / len(raw)
+                (mse * fraction).backward()
+                reaction_mse += float(mse.detach()) * fraction
+                reaction_mae += float(mae.detach()) * fraction
             average_gradients(model, world_size)
             optimizer.step()
+            epoch_mse += reaction_mse
+            epoch_mae += reaction_mae
+            reaction_count += 1
+        if reaction_count == 0:
+            raise ValueError("PBE predopt received an empty canonical reaction view.")
+        history.append(
+            {
+                "epoch": epoch + 1,
+                "mse": epoch_mse / reaction_count,
+                "mae": epoch_mae / reaction_count,
+                "reactions": reaction_count,
+            }
+        )
+    return history

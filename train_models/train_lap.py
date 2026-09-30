@@ -15,10 +15,19 @@ import torch
 from dataset import collate_fn, collate_fn_predopt
 from lap_checkpoint import checkpoint_payload
 from lap_data import DEFAULT_CORPUS, verify_corpus
-from lap_training import average_gradients, mrks_losses, reaction_loss, run_predopt
+from lap_training import (
+    average_gradients,
+    canonical_predopt_view,
+    mrks_losses,
+    reaction_loss,
+    run_predopt,
+)
 from lap_vxc import LapEnergy
 from NN_models_lap import pcPBELMLOptimizerV2Lap
-from optuna_joint import EpochSampledAugmentedDataset, parse_model_name
+from optuna_joint import (
+    EpochSampledAugmentedDataset,
+    parse_model_name,
+)
 from predopt import DatasetPredopt
 from torch.utils.data import DataLoader, DistributedSampler
 
@@ -47,12 +56,14 @@ def make_model(name, device, dtype):
 def load_minnesota(directory):
     with (Path(directory) / "data_train_grouped.pickle").open("rb") as f:
         grouped = pickle.load(f)
-    with (Path(directory) / "data_predopt.pickle").open("rb") as f:
-        flat = pickle.load(f)
     if len(grouped) != 268:
         raise ValueError(
             "Lap training requires all 268 cleaned Minnesota base reactions."
         )
+    # The tau-free Lap predopt view is one deterministic variant per base
+    # reaction.  Prefer 'default'; otherwise use the existing lexical suffix
+    # rule (the supplied grouped artifact selects 'level2' for all 268).
+    flat = canonical_predopt_view(grouped)
     return grouped, flat
 
 
@@ -89,12 +100,15 @@ def epoch_steps(
     optimizer.zero_grad(set_to_none=True)
     history = []
     for step in range(count):
+        window_start = (step // accum_iter) * accum_iter
+        window_size = min(accum_iter, count - window_start)
+        microstep_scale = 1.0 / window_size
         batch, target = next(reactions)
         reaction = reaction_loss(model, batch, target, device, dtype, dispersions)
-        (weights[0] * reaction / accum_iter).backward()
+        (weights[0] * reaction * microstep_scale).backward()
         exc, vxc = mrks_losses(energy, records[next(systems)], device, dtype, chunk)
-        (weights[1] * exc / accum_iter).backward()
-        (weights[2] * vxc / accum_iter).backward()
+        (weights[1] * exc * microstep_scale).backward()
+        (weights[2] * vxc * microstep_scale).backward()
         history.append([float(x.detach()) for x in (reaction, exc, vxc)])
         if (step + 1) % accum_iter == 0 or step + 1 == count:
             average_gradients(model, world)
@@ -115,7 +129,7 @@ def main():
     p.add_argument("--dtype", choices=["float32", "float64"], required=True)
     p.add_argument("--lr", type=float, required=True)
     p.add_argument("--predopt-epochs", type=int, default=2)
-    p.add_argument("--predopt-lr", type=float, default=1e-3)
+    p.add_argument("--predopt-lr", type=float, default=1e-2)
     p.add_argument("--point-chunk-size", type=int, default=4096)
     p.add_argument("--accum-iter", type=int, default=1)
     p.add_argument("--seed", type=int, default=42)
@@ -171,7 +185,7 @@ def main():
     system_sampler = DistributedSampler(
         records, num_replicas=world, rank=rank, seed=args.seed
     )
-    run_predopt(
+    predopt_history = run_predopt(
         model,
         pre_loader,
         device,
@@ -181,6 +195,8 @@ def main():
         args.point_chunk_size,
         world,
     )
+    if rank == 0:
+        print(f"PBE predopt (canonical variants): {json.dumps(predopt_history)}")
     energy = LapEnergy(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     if rank == 0:

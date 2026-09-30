@@ -14,12 +14,20 @@ from lap_data import (
     PROTOCOL,
     build_corpus,
     read_stencil_h5,
+    require_full_center_verification,
     validate_record,
     verify_corpus,
     write_stencil_h5,
 )
 from lap_diagnostics import diagnose, measure_objectives
-from lap_training import mrks_losses, predopt_loss, reaction_loss, run_predopt
+from lap_training import (
+    canonical_predopt_view,
+    minnesota_sigma_boundary_matches,
+    mrks_losses,
+    predopt_loss,
+    reaction_loss,
+    run_predopt,
+)
 from lap_vxc import (
     STENCIL_VERSION,
     LapEnergy,
@@ -27,9 +35,31 @@ from lap_vxc import (
     sigma_total_to_standard,
     stencil_coordinates,
 )
-from optuna_joint import build_model, vxc_loss
+from optuna_joint import build_model, parse_args, vxc_loss
 from prepare_training_corpus import exclusion_pairs, sha256
 from test_lap import raw_grid, small_model
+from train_lap import epoch_steps
+
+
+def test_minnesota_sigma_boundary_accepts_float32_cancellation_rounding():
+    standard = torch.tensor(
+        [[0.00027287358534522355, -0.0002746396348811686, 0.0002764188393484801]],
+        dtype=torch.float32,
+    )
+    model_sigma = torch.tensor(
+        [[0.00027287358534522355, 1.3165866619146982e-8, 0.0002764188393484801]],
+        dtype=torch.float32,
+    )
+    assert not torch.allclose(
+        model_sigma,
+        torch.stack(
+            [standard[:, 0], standard[:, 0] + 2 * standard[:, 1] + standard[:, 2], standard[:, 2]],
+            dim=-1,
+        ),
+        rtol=1e-6,
+        atol=1e-12,
+    )
+    assert minnesota_sigma_boundary_matches(model_sigma, standard)
 
 
 def record(name="He", spin=0, kind="common-rks"):
@@ -39,6 +69,7 @@ def record(name="He", spin=0, kind="common-rks"):
     return {
         "Name": name,
         "Coordinates": coords,
+        "LegacyCoordinates": coords.clone(),
         "StencilCoordinates": sc,
         "StencilFeatures": f,
         "Weights": torch.tensor([0.1, 0.2], dtype=torch.float64),
@@ -55,14 +86,35 @@ def record(name="He", spin=0, kind="common-rks"):
             "reference_density": "analytic-test",
             "molecule_basis_ao_order": "analytic/no-AO-test",
             "full_vxc_target": "synthetic-test",
+            "npz_sha256": "a" * 64,
+            "legacy_target_sha256": "b" * 64,
+            "E_xc_source": "preserved legacy mRKS training target",
+            "NPZ_exc_wf_substituted": False,
+            "legacy_training_points": 2,
+            "central_density_check": {
+                "points_checked": 2,
+                **{
+                    key: {"combined": {"float32_level_compatible": True}}
+                    for key in ("rho", "sigma_aa_ab_bb", "lapl")
+                },
+            },
         },
     }
+
+
+def test_production_center_verifier_requires_every_legacy_row():
+    d = record()
+    require_full_center_verification(d)
+    d["SourceProvenance"]["central_density_check"]["points_checked"] = 1
+    with pytest.raises(ValueError, match="every legacy central point"):
+        require_full_center_verification(d)
 
 
 def write_h5(path, d, layout="point,spin"):
     with h5py.File(path, "w") as f:
         keys = {
             "Coordinates": "coords",
+            "LegacyCoordinates": "legacy_coords",
             "StencilCoordinates": "stencil_coords",
             "StencilFeatures": "stencil_features",
             "Weights": "weights",
@@ -147,6 +199,20 @@ def test_corpus_roundtrip_and_no_overwrite(corpus):
         build_corpus("", "", corpus)
 
 
+def test_built_corpus_remains_usable_when_source_h5_moves(corpus, tmp_path):
+    source_dir = tmp_path / "stencils"
+    for path in source_dir.glob("*.h5"):
+        path.unlink()
+    source_dir.rmdir()
+    manifest_path = corpus / "preprocessing_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["minnesota_manifest_source_path"] = "Z:/source-was-moved/preprocessing_manifest.json"
+    manifest_path.write_text(json.dumps(manifest))
+    manifest, records = verify_corpus(corpus)
+    assert len(records) == 90
+    assert len(manifest["source_h5_identities"]) == 90
+
+
 @pytest.mark.parametrize(
     "field,value",
     [
@@ -210,6 +276,26 @@ def test_legacy_partial_loss_and_wrong_name_are_rejected():
         build_model(args, torch.device("cpu"))
 
 
+def test_optuna_cli_accepts_registered_lap_model(monkeypatch):
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "optuna_joint.py",
+            "--study-name",
+            "test",
+            "--storage",
+            "sqlite:///unused.db",
+            "--n-trials",
+            "1",
+            "--output-dir",
+            "unused",
+            "--model-type",
+            "lap",
+        ],
+    )
+    assert parse_args().model_type == "lap"
+
+
 def test_reaction_mrks_same_energy_and_calibration():
     model = small_model()
     energy = LapEnergy(model)
@@ -247,7 +333,7 @@ def test_predopt_updates_canonical_constants_in_memory():
     model = small_model()
     raw = raw_grid()
     before = predopt_loss(model, raw).detach()
-    run_predopt(
+    history = run_predopt(
         model,
         [({"Grid": raw}, None)],
         torch.device("cpu"),
@@ -259,3 +345,52 @@ def test_predopt_updates_canonical_constants_in_memory():
     after = predopt_loss(model, raw).detach()
     assert torch.isfinite(after)
     assert after < before
+    assert history[0]["mse"] > 0
+    assert history[0]["mae"] > 0
+
+
+def test_lap_predopt_uses_one_canonical_variant_per_base_reaction():
+    grouped = {
+        index: [
+            {"component_paths": [f"m{index}__level2_delley.h5"]},
+            {"component_paths": [f"m{index}__level2.h5"]},
+        ]
+        for index in range(268)
+    }
+    view = canonical_predopt_view(grouped)
+    assert len(view) == 268
+    assert all(item["component_paths"][0].endswith("__level2.h5") for item in view.values())
+    grouped[0].append({"component_paths": ["m0.h5"]})
+    assert canonical_predopt_view(grouped)[0]["component_paths"] == ["m0.h5"]
+    with pytest.raises(ValueError, match="268"):
+        canonical_predopt_view({0: grouped[0]})
+
+
+def test_final_partial_gradient_accumulation_window_is_not_underweighted(monkeypatch):
+    model = torch.nn.Linear(1, 1, bias=False)
+    torch.nn.init.zeros_(model.weight)
+    coefficients = iter((2.0, 4.0, 8.0))
+
+    def fake_reaction_loss(*args):
+        return model.weight.sum() * next(coefficients)
+
+    def fake_mrks_losses(*args):
+        return model.weight.sum() * 0, model.weight.sum() * 0
+
+    monkeypatch.setattr("train_lap.reaction_loss", fake_reaction_loss)
+    monkeypatch.setattr("train_lap.mrks_losses", fake_mrks_losses)
+    epoch_steps(
+        model=model,
+        energy=None,
+        reaction_loader=[(None, torch.tensor(0.0)) for _ in range(3)],
+        records=[record()],
+        indices=[0],
+        optimizer=torch.optim.SGD(model.parameters(), lr=1.0),
+        weights=[1.0, 0.0, 0.0],
+        device=torch.device("cpu"),
+        dtype=torch.float64,
+        chunk=1,
+        accum_iter=2,
+        world=1,
+    )
+    assert model.weight.item() == pytest.approx(-11.0)
