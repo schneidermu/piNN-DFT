@@ -18,7 +18,7 @@ representation phase and compare smooth or constant Vxc paths. S8 tests a
 ten-epoch-earlier repair exit. S9-S10 test whether reducing absolute `E_xc`
 supervision during consolidation avoids the energy-generalization drift seen
 in the 800-epoch runs. All jobs save model snapshots every ten epochs from
-400 through 500 for terminal-trajectory screening.
+10 through 500 for later external DietGMTKN30 SCF selection.
 
 From the repository root:
 
@@ -30,3 +30,14 @@ done
 
 The targets are WTMAD-2 below 5.5 and avRANE below 0.47. They are experimental
 targets, not outcomes inferable from the internal training losses.
+
+## Planned S5 reproduction and timing sweep
+
+The planned comparison uses only `s5_two_step_40_10.slurm` from this folder
+plus the ten timing jobs in `../trial19_occam3_timing_sweep/`. Follow that
+folder's README to regenerate the single `checkpoints_dietclean_noval_v1`
+corpus and submit exactly those 11 jobs. The common runner requires its
+verified preprocessing manifest, forces fresh predopt, and uses a fresh
+`dietclean_noval_v1` output directory. It saves every tenth epoch from 10 to
+500 and training state every ten epochs. It does no internal validation or
+checkpoint selection. The R=281, F=441 control is schedule-equivalent to S5.

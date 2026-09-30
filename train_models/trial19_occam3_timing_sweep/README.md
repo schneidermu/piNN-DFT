@@ -33,7 +33,47 @@ write model snapshots every 10 epochs (10-500) and resumable training state
 every 10 epochs. New runs refuse to start if their output directory already
 exists.
 
-Submit from `/home/mmedvedev/schnm/piNN-DFT` after reviewing the files:
+All 11 jobs use the training-only protocol: 268 Minnesota base reactions
+(284 minus the explicit 16 Diet overlaps), plus all valid mRKS E_xc/v_xc
+systems. They have no internal validation or training-based checkpoint
+selection. Each runner forces fresh predopt and refuses an existing output
+directory; outputs have a `dietclean_noval_v1` suffix. No old preoptimization
+checkpoint, snapshot, or training state is used to initialize these jobs.
+
+After pulling the updated branch on the cluster, regenerate one shared corpus
+from raw H5 sources before submitting any job. From the repository root:
+
+```bash
+cd train_models
+python prepare_training_corpus.py --mn-dir data --mrks-dir h5_vrho_from_mrks --output-dir checkpoints_dietclean_noval_v1
+cd ..
+```
+
+The command refuses an existing output directory. Missing source H5 files or
+empty corpora fail explicitly; it never substitutes historical pickles.
+`preprocessing_manifest.json` records the Git commit, UTC timestamp/version,
+source/retained Minnesota counts, exact exclusions, augmentation counts,
+mRKS count, and SHA256 hashes of the generated artifacts. Both runners default
+to this same directory without fallback to `checkpoints/` or `../checkpoints/`.
+They verify every artifact hash and print the manifest, its absolute path and
+its SHA256 in each job log. If a different corpus path is required, export the
+same absolute `CHECKPOINTS_DIR` for all 11 submissions.
+
+Permanent epoch snapshots remain at 10, 20, ..., 500. Saved training states
+are for fault recovery only and are not validation-selected checkpoints. The
+final epoch-500 checkpoint is provided for convenience; a best checkpoint is
+undefined until external evaluation.
+
+After all jobs finish, evaluate each of the 50 snapshots per trajectory using
+DietGMTKN30 fully self-consistent SCF. These results are the only validation
+signal for schedule and checkpoint selection. Freeze the schedule, checkpoint
+selection procedure and final checkpoint before evaluating the disjoint
+98-reaction DietGMTKN100 test. Those test reactions must not guide debugging,
+tuning, schedule selection, early stopping or checkpoint selection. External
+SCF evaluation is a separate task; these launchers do not implement it.
+
+Submit exactly the following 11 jobs from `/home/mmedvedev/schnm/piNN-DFT`
+after regeneration and review:
 
 ```bash
 sbatch train_models/trial19_simple4_sota_sweep/s5_two_step_40_10.slurm

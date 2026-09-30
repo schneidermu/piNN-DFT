@@ -20,7 +20,7 @@ else
 fi
 cd "$WORK_DIR"
 
-REQUIRED_SCIENTIFIC_FIX="b0e878a31f0b8fc3a363e29c6ff8baabf362509b"
+REQUIRED_SCIENTIFIC_FIX="a78410bc5cd24ed60e829b8570dc0550f16fa6ee"
 if ! git merge-base --is-ancestor "$REQUIRED_SCIENTIFIC_FIX" HEAD; then
     echo "Checkout lacks the required scientific-fix commit $REQUIRED_SCIENTIFIC_FIX." >&2
     exit 1
@@ -28,18 +28,12 @@ fi
 echo "Git commit: $(git rev-parse HEAD)"
 python -c 'import pyscf; print("PySCF:", pyscf.__version__)'
 
-if [[ -n "${CHECKPOINTS_DIR:-}" ]]; then
-    RESOLVED_CHECKPOINTS_DIR="$CHECKPOINTS_DIR"
-elif [[ -f "$WORK_DIR/checkpoints/data_predopt.pickle" ]]; then
-    RESOLVED_CHECKPOINTS_DIR="checkpoints"
-elif [[ -f "$WORK_DIR/../checkpoints/data_predopt.pickle" ]]; then
-    RESOLVED_CHECKPOINTS_DIR="../checkpoints"
-else
-    echo "Could not locate checkpoints/data_predopt.pickle from: $WORK_DIR" >&2
-    exit 1
-fi
+# All planned jobs default to the same newly regenerated corpus; no old-data fallback.
+RESOLVED_CHECKPOINTS_DIR="${CHECKPOINTS_DIR:-$WORK_DIR/checkpoints_dietclean_noval_v1}"
+RESOLVED_CHECKPOINTS_DIR=$(python -c 'from pathlib import Path; import sys; print(Path(sys.argv[1]).resolve())' "$RESOLVED_CHECKPOINTS_DIR")
+python prepare_training_corpus.py --verify-only --output-dir "$RESOLVED_CHECKPOINTS_DIR"
 
-OUTPUT_DIR="optuna_joint_runs/replay_trial_19_s5_timing_${S5_TIMING_TAG}_fixed"
+OUTPUT_DIR="optuna_joint_runs/replay_trial_19_s5_timing_${S5_TIMING_TAG}_dietclean_noval_v1"
 if [[ -e "$OUTPUT_DIR" ]]; then
     echo "Refusing to reuse existing output directory: $OUTPUT_DIR" >&2
     exit 1
@@ -75,9 +69,6 @@ CUBLAS_WORKSPACE_CONFIG=:16:8 torchrun \
     --preopt-vxc-steps 0 \
     --preopt-vxc-target pbe \
     --trial-number 19 \
-    --train-fchem-target 40 \
-    --val-vxc-target 1.1 \
-    --val-fchem-soft-cap 90 \
     --training-state-every 10 \
     --snapshot-start-epoch 10 \
     --snapshot-every 10 \

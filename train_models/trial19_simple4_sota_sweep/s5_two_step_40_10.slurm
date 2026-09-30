@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name="T19_S5_REPRO_FIXED"
+#SBATCH --job-name="T19_S5_REPRO_DC_NV"
 #SBATCH --gpus=2
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=6
 #SBATCH --gpus-per-node=2
 #SBATCH --mail-user=schneider.mark14@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --output="PBE-T19_S5_REPRO_FIXED_%j.out"
+#SBATCH --output="PBE-T19_S5_REPRO_DC_NV_%j.out"
 #SBATCH --constraint="type_b|type_c"
 #SBATCH --time=7-0
 #SBATCH --exclude=cn-024

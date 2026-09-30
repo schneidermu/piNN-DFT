@@ -183,15 +183,15 @@ def test_both_launchers_save_snapshots_and_resumable_state_every_ten_epochs():
             "--include-mrks-dispersion",
         ):
             assert required in runner
-        assert "REQUIRED_SCIENTIFIC_FIX=\"b0e878a31f0b8fc3a363e29c6ff8baabf362509b\"" in runner
+        assert "REQUIRED_SCIENTIFIC_FIX=\"a78410bc5cd24ed60e829b8570dc0550f16fa6ee\"" in runner
         assert "git merge-base --is-ancestor" in runner
         assert 'echo "Git commit: $(git rev-parse HEAD)"' in runner
         assert "import pyscf; print(\"PySCF:\", pyscf.__version__)" in runner
         assert "Refusing to reuse existing output directory" in runner
     s5_runner = runner_paths[0].read_text(encoding="utf-8")
     timing_runner = runner_paths[1].read_text(encoding="utf-8")
-    assert "replay_trial_19_simple4_${SIMPLE4_TAG}_500_gc_svelu_mirror" in s5_runner
-    assert "replay_trial_19_s5_timing_${S5_TIMING_TAG}_fixed" in timing_runner
+    assert "replay_trial_19_simple4_${SIMPLE4_TAG}_500_gc_svelu_mirror_dietclean_noval_v1" in s5_runner
+    assert "replay_trial_19_s5_timing_${S5_TIMING_TAG}_dietclean_noval_v1" in timing_runner
 
 
 def test_all_sbatch_files_select_the_expected_unique_s5_runs():

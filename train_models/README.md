@@ -99,3 +99,30 @@ library routines remain available. Historical ARML replay is disabled because
 its multiplier optimization requires held-out non-SCF gradients; substituting
 training gradients would change that algorithm. Shared S5 training primitives
 and the gradient-geometry replay remain available.
+
+## Shared corpus for the 11 planned S5/timing jobs
+
+Regenerate once on the cluster, from `train_models/`:
+
+```bash
+python prepare_training_corpus.py --mn-dir data --mrks-dir h5_vrho_from_mrks --output-dir checkpoints_dietclean_noval_v1
+```
+
+This fresh directory contains the three training pickles, protocol markers and
+`preprocessing_manifest.json`. The manifest records the preprocessing commit,
+UTC timestamp, original/excluded/retained reaction counts, augmentation count,
+all-valid mRKS system count and artifact hashes. The command refuses to
+replace an existing directory or use missing H5 sources. Every planned job
+verifies and logs the same manifest; the runners cannot fall back to old data.
+See `trial19_occam3_timing_sweep/README.md` for the exact 11 launch commands.
+
+All jobs start from scratch with `--force-preopt`, architecture
+`PBE-LGxGc_6_32`, `gc_svelu_mirror`, dropout 0.0, identical data and other
+training settings. Only the S5/R/F objective timing differs. Outputs include
+`dietclean_noval_v1` and refuse reuse. Snapshots at epochs 10..500 and saved
+training states retain their ten-epoch cadence.
+
+Use external Diet30 SCF on all 50 snapshots per trajectory to select the
+schedule and checkpoint. Hold the 98-reaction test set until the schedule,
+selection procedure and final checkpoint are frozen. Training diagnostics and
+saved recovery states are not model-selection signals.
