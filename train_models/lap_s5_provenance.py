@@ -38,10 +38,16 @@ if _MODULE_DIR not in sys.path:
 
 from lap_data import PROTOCOL
 from lap_s5_protocol import OMEGA_METADATA, build_lap_s5_protocol
-from lap_vxc import STENCIL_ORDER, STENCIL_VERSION
+from lap_vxc import (
+    STENCIL_ORDER,
+    STENCIL_VERSION,
+    stencil_order_for_version,
+    stencil_positions_for_version,
+    validate_stencil_selection,
+)
 from NN_models_lap import ARCHITECTURE, DESCRIPTOR_PROTOCOL
 
-METADATA_VERSION = 1
+METADATA_VERSION = 2
 MODEL_CLASS = "pcPBELMLOptimizerV2Lap"
 POTENTIAL_MODE = "full_euler"
 POTENTIAL_EXPRESSION = "C-divA+lapB"
@@ -141,15 +147,37 @@ def source_bindings_from_verified_corpus(
     the embedded Minnesota-manifest hash in the immutable Lap manifest.
     """
     _require(isinstance(corpus_manifest, Mapping), "Lap corpus manifest is required.")
+    version = corpus_manifest.get("stencil_version")
+    offset_order = corpus_manifest.get("stencil_order")
+    derivative_order = corpus_manifest.get("derivative_order")
+    if (
+        version == STENCIL_VERSION
+        and offset_order == list(STENCIL_ORDER)
+        and derivative_order is None
+    ):
+        # Verified v1 corpora recorded the explicit legacy offset layout and
+        # immutable 7-point ID before adding derivative_order.
+        derivative_order = stencil_order_for_version(version)
+    try:
+        validate_stencil_selection(derivative_order, version)
+        _require(
+            offset_order == list(stencil_positions_for_version(version)),
+            "Corpus stencil offset layout disagrees with its version.",
+        )
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "Cannot bind sources from an unsupported stencil schema."
+        ) from exc
     _require(
         corpus_manifest.get("protocol") == PROTOCOL
         and corpus_manifest.get("architecture") == ARCHITECTURE
         and corpus_manifest.get("descriptor_protocol") == DESCRIPTOR_PROTOCOL
-        and corpus_manifest.get("stencil_version") == STENCIL_VERSION
         and corpus_manifest.get("manifest_version") == 1
         and corpus_manifest.get("mrks_systems") == 90
         and corpus_manifest.get("units") == "Bohr"
-        and corpus_manifest.get("stencil_order") == list(STENCIL_ORDER),
+        and corpus_manifest.get("stencil_order") == list(offset_order)
+        and derivative_order
+        == corpus_manifest.get("derivative_order", derivative_order),
         "Cannot bind sources from a legacy or non-Lap full-Vxc corpus manifest.",
     )
     _finite_number(corpus_manifest.get("h_bohr"), "corpus h_bohr", positive=True)
@@ -217,6 +245,8 @@ def _normalize_dtype(dtype: Any) -> str:
 def build_lap_s5_provenance(
     *,
     h_bohr: float,
+    stencil_version: str = STENCIL_VERSION,
+    derivative_order: int | None = None,
     dtype: Any,
     model_kwargs: Mapping[str, Any],
     source_bindings: Mapping[str, Any],
@@ -236,6 +266,12 @@ def build_lap_s5_provenance(
     chosen_schedule = (
         build_lap_s5_protocol() if schedule is None else copy.deepcopy(dict(schedule))
     )
+    selected_order = (
+        stencil_order_for_version(stencil_version)
+        if derivative_order is None
+        else derivative_order
+    )
+    validate_stencil_selection(selected_order, stencil_version)
     payload = {
         "metadata_version": METADATA_VERSION,
         "architecture": ARCHITECTURE,
@@ -245,7 +281,13 @@ def build_lap_s5_provenance(
         "potential_mode": POTENTIAL_MODE,
         "potential_expression": POTENTIAL_EXPRESSION,
         "tau_dependent": False,
-        "stencil": {"version": STENCIL_VERSION, "h_bohr": h_bohr, "units": "Bohr"},
+        "stencil": {
+            "version": stencil_version,
+            "stencil_order": list(stencil_positions_for_version(stencil_version)),
+            "derivative_order": selected_order,
+            "h_bohr": h_bohr,
+            "units": "Bohr",
+        },
         "dtype": _normalize_dtype(dtype),
         "model_kwargs": copy.deepcopy(dict(model_kwargs)),
         "optimizer": copy.deepcopy(
@@ -400,6 +442,23 @@ def validate_lap_s5_provenance(
     including the external dispersion artifact, to current immutable hashes.
     """
     _require(isinstance(metadata, Mapping), "Lap S5 provenance mapping is required.")
+    metadata = copy.deepcopy(dict(metadata))
+    legacy_stencil = metadata.get("stencil")
+    if (
+        metadata.get("metadata_version") == 1
+        and isinstance(legacy_stencil, Mapping)
+        and set(legacy_stencil) == {"version", "h_bohr", "units"}
+        and legacy_stencil.get("version") == STENCIL_VERSION
+    ):
+        # Metadata v1 was emitted only for the persisted 7-point schema. Bind
+        # that explicit version to order 2 and promote the normalized mapping;
+        # no tensor dimensions participate in this compatibility path.
+        metadata["metadata_version"] = METADATA_VERSION
+        metadata["stencil"] = {
+            **legacy_stencil,
+            "stencil_order": list(STENCIL_ORDER),
+            "derivative_order": stencil_order_for_version(STENCIL_VERSION),
+        }
     expected_fields = {
         "metadata_version",
         "architecture",
@@ -441,12 +500,22 @@ def validate_lap_s5_provenance(
     _require(metadata["omega"] == OMEGA_METADATA, "Lap S5 requires OMEGA=0.5.")
     stencil = metadata["stencil"]
     _require(
-        isinstance(stencil, Mapping) and set(stencil) == {"version", "h_bohr", "units"},
-        "Explicit stencil version and h metadata are required.",
+        isinstance(stencil, Mapping)
+        and set(stencil)
+        == {"version", "stencil_order", "derivative_order", "h_bohr", "units"},
+        "Explicit stencil version, offset layout, derivative order, and h are required.",
     )
+    _require(stencil["units"] == "Bohr", "Unsupported stencil coordinate units.")
+    try:
+        validate_stencil_selection(stencil["derivative_order"], stencil["version"])
+        expected_order = list(stencil_positions_for_version(stencil["version"]))
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "Unsupported stencil version/derivative order."
+        ) from exc
     _require(
-        stencil["version"] == STENCIL_VERSION and stencil["units"] == "Bohr",
-        "Unsupported stencil version or coordinate units.",
+        stencil["stencil_order"] == expected_order,
+        "Stencil offset layout does not match its explicit version.",
     )
     _finite_number(stencil["h_bohr"], "stencil.h_bohr", positive=True)
     _normalize_dtype(metadata["dtype"])
@@ -478,8 +547,15 @@ def validate_lap_s5_provenance(
                 f"Checkpoint {group} identity/hash differs from the current immutable corpus.",
             )
         _require(
-            metadata["stencil"]["h_bohr"] == corpus_manifest["h_bohr"],
-            "Checkpoint stencil h differs from the current immutable corpus.",
+            metadata["stencil"]["h_bohr"] == corpus_manifest["h_bohr"]
+            and metadata["stencil"]["version"] == corpus_manifest["stencil_version"]
+            and metadata["stencil"]["derivative_order"]
+            == corpus_manifest.get(
+                "derivative_order", metadata["stencil"]["derivative_order"]
+            )
+            and metadata["stencil"]["stencil_order"]
+            == corpus_manifest["stencil_order"],
+            "Checkpoint stencil schema/h differs from the current immutable corpus.",
         )
     return copy.deepcopy(dict(metadata))
 

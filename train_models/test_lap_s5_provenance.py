@@ -130,6 +130,21 @@ def test_build_and_validate_complete_lap_s5_metadata_without_raw_source_paths():
     )
 
 
+def test_v1_7point_stencil_provenance_normalizes_from_explicit_version():
+    metadata = _metadata()
+    legacy = copy.deepcopy(metadata)
+    legacy["metadata_version"] = 1
+    legacy["stencil"] = {
+        key: legacy["stencil"][key] for key in ("version", "h_bohr", "units")
+    }
+
+    restored = validate_lap_s5_provenance(legacy)
+    assert restored["metadata_version"] == 2
+    assert restored["stencil"]["version"] == STENCIL_VERSION
+    assert restored["stencil"]["derivative_order"] == 2
+    assert restored["stencil"]["stencil_order"] == list(STENCIL_ORDER)
+
+
 def test_verified_corpus_manifest_revalidates_embedded_artifact_hashes():
     metadata = _metadata()
     assert (

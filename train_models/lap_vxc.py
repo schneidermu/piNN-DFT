@@ -13,23 +13,84 @@ from torch import nn
 
 # Support the repository's documented `python file.py` execution boundary.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from lap_stencil_operators import (
+    STENCIL_VERSION_7_POINT_RHO_GRAD_LAPL_V1,
+    STENCIL_VERSION_13_POINT_FOURTH_ORDER,
+    divergence,
+    get_stencil,
+    laplacian,
+)
+from lap_stencil_operators import (
+    stencil_coordinates as cartesian_stencil_coordinates,
+)
+
 from dft_functionals import PBE
 
-STENCIL_VERSION = "cartesian-7-rho-grad-lapl-v1"
+STENCIL_VERSION = STENCIL_VERSION_7_POINT_RHO_GRAD_LAPL_V1
 STENCIL_ORDER = ("center", "+x", "-x", "+y", "-y", "+z", "-z")
+STENCIL_ORDER_13 = (
+    "center",
+    "+x",
+    "-x",
+    "+2x",
+    "-2x",
+    "+y",
+    "-y",
+    "+2y",
+    "-2y",
+    "+z",
+    "-z",
+    "+2z",
+    "-2z",
+)
+STENCIL_DERIVATIVE_ORDER = 2
+SUPPORTED_STENCIL_VERSIONS = (
+    STENCIL_VERSION,
+    STENCIL_VERSION_13_POINT_FOURTH_ORDER,
+)
 # Features per point: rho_a,rho_b,grad_a_x,y,z,grad_b_x,y,z,lapl_a,lapl_b.
 FEATURE_COUNT = 10
 
 
-def stencil_coordinates(coords, h):
+def stencil_order_for_version(version):
+    """Return the derivative order bound to an explicit persisted version ID."""
+    if version == STENCIL_VERSION:
+        return STENCIL_DERIVATIVE_ORDER
+    if version == STENCIL_VERSION_13_POINT_FOURTH_ORDER:
+        return 4
+    raise ValueError(f"Unsupported Lap stencil version {version!r}.")
+
+
+def stencil_positions_for_version(version):
+    """Return the persisted offset labels bound to one explicit version ID."""
+    stencil_order_for_version(version)
+    if version == STENCIL_VERSION:
+        return STENCIL_ORDER
+    return STENCIL_ORDER_13
+
+
+def validate_stencil_selection(order, version):
+    """Validate one supported persisted version/order pair without shape inference."""
+    if version not in SUPPORTED_STENCIL_VERSIONS:
+        raise ValueError(f"Unsupported Lap stencil version {version!r}.")
+    return get_stencil(order, version)
+
+
+def stencil_coordinates(
+    coords,
+    h,
+    *,
+    order=STENCIL_DERIVATIVE_ORDER,
+    version=STENCIL_VERSION,
+):
     if not math.isfinite(h) or h <= 0 or coords.dtype != torch.float64:
         raise ValueError(
             "Positive finite h in Bohr and float64 coordinates are required."
         )
-    offsets = coords.new_zeros((7, 3))
-    for axis in range(3):
-        offsets[1 + 2 * axis, axis], offsets[2 + 2 * axis, axis] = h, -h
-    return coords[:, None, :] + offsets[None, :, :]
+    validate_stencil_selection(order, version)
+    return cartesian_stencil_coordinates(
+        coords, h, order=order, version=version
+    )
 
 
 def sigma_from_gradients(grad):
@@ -110,10 +171,23 @@ def local_partials(energy, features, create_graph=True):
     return e, c, gradient_chain_rule(es, grad), b
 
 
-def euler_components(energy, features, h, create_graph=True):
-    if features.ndim != 3 or features.shape[1:] != (7, FEATURE_COUNT):
+def euler_components(
+    energy,
+    features,
+    h,
+    create_graph=True,
+    *,
+    order=STENCIL_DERIVATIVE_ORDER,
+    version=STENCIL_VERSION,
+):
+    stencil = validate_stencil_selection(order, version)
+    if features.ndim != 3 or features.shape[1:] != (
+        stencil.point_count,
+        FEATURE_COUNT,
+    ):
         raise ValueError(
-            "Full Vxc requires independently evaluated (N,7,10) stencil features."
+            f"Full Vxc requires independently evaluated (N,{stencil.point_count},10) "
+            f"features for {version}."
         )
     if not math.isfinite(h) or h <= 0:
         raise ValueError("Finite-difference h must be positive, finite, in Bohr.")
@@ -122,16 +196,20 @@ def euler_components(energy, features, h, create_graph=True):
     # Use a double model for convergence diagnostics; do not silently cast it.
     n = len(features)
     c, a, b = (
-        c.reshape(n, 7, 2).double(),
-        a.reshape(n, 7, 2, 3).double(),
-        b.reshape(n, 7, 2).double(),
+        c.reshape(n, stencil.point_count, 2).double(),
+        a.reshape(n, stencil.point_count, 2, 3).double(),
+        b.reshape(n, stencil.point_count, 2).double(),
     )
-    div = sum(
-        (a[:, 1 + 2 * k, :, k] - a[:, 2 + 2 * k, :, k]) / (2 * h) for k in range(3)
-    )
-    lap = (b[:, 1:].sum(1) - 6 * b[:, 0]) / (h * h)
+    # Operator inputs keep the offset axis immediately before the Cartesian
+    # component axis. Move spin ahead of offsets for these stencil kernels.
+    vector_by_spin = a.movedim(2, 1)
+    scalar_by_spin = b.movedim(2, 1)
+    # Keep the named terms available for diagnostics while sharing the exact
+    # selected stencil weights with the main C - div(A) + lap(B) expression.
+    div = divergence(vector_by_spin, h, order=order, version=version)
+    lap = laplacian(scalar_by_spin, h, order=order, version=version)
     return {
-        "energy": e.reshape(n, 7)[:, 0],
+        "energy": e.reshape(n, stencil.point_count)[:, 0],
         "C": c[:, 0],
         "minus_div_A": -div,
         "lap_B": lap,
@@ -157,8 +235,20 @@ class _ChunkedLoss(torch.autograd.Function):
     """
 
     @staticmethod
-    def forward(ctx, energy, features, target, weights, h, chunk_size, *parameters):
+    def forward(
+        ctx,
+        energy,
+        features,
+        target,
+        weights,
+        h,
+        chunk_size,
+        order,
+        version,
+        *parameters,
+    ):
         ctx.energy, ctx.h, ctx.chunk_size = energy, h, chunk_size
+        ctx.order, ctx.version = order, version
         ctx.save_for_backward(features, target, weights, *parameters)
         loss = features.new_zeros((), dtype=torch.float64)
         norm = (features[:, 0, :2].double() * weights.double()[:, None]).sum()
@@ -168,7 +258,9 @@ class _ChunkedLoss(torch.autograd.Function):
         for start in range(0, len(features), chunk_size):
             sl = slice(start, start + chunk_size)
             with torch.enable_grad():
-                pred = euler_components(energy, features[sl], h, False)["Vxc"]
+                pred = euler_components(
+                    energy, features[sl], h, False, order=order, version=version
+                )["Vxc"]
             q = features[sl, 0, :2].double() * weights[sl].double()[:, None]
             loss += (q * (pred.detach() - target[sl]).square()).sum() / norm
         return loss
@@ -180,7 +272,14 @@ class _ChunkedLoss(torch.autograd.Function):
         for start in range(0, len(features), ctx.chunk_size):
             sl = slice(start, start + ctx.chunk_size)
             with torch.enable_grad():
-                pred = euler_components(ctx.energy, features[sl], ctx.h, True)["Vxc"]
+                pred = euler_components(
+                    ctx.energy,
+                    features[sl],
+                    ctx.h,
+                    True,
+                    order=ctx.order,
+                    version=ctx.version,
+                )["Vxc"]
                 q = features[sl, 0, :2].double() * weights[sl].double()[:, None]
                 loss = (q * (pred - target[sl]).square()).sum() / ctx.norm
                 if loss.requires_grad:
@@ -188,12 +287,23 @@ class _ChunkedLoss(torch.autograd.Function):
                     for total, g in zip(accumulated, grads):
                         if g is not None:
                             total.add_(g)
-        return (None,) * 6 + tuple(g * upstream for g in accumulated)
+        return (None,) * 8 + tuple(g * upstream for g in accumulated)
 
 
-def full_vxc_loss(energy, features, target, weights, h, point_chunk_size=4096):
+def full_vxc_loss(
+    energy,
+    features,
+    target,
+    weights,
+    h,
+    point_chunk_size=4096,
+    *,
+    order=STENCIL_DERIVATIVE_ORDER,
+    version=STENCIL_VERSION,
+):
     if point_chunk_size <= 0:
         raise ValueError("Point chunk size must be positive.")
+    validate_stencil_selection(order, version)
     if target.shape != (len(features), 2) or weights.shape != (len(features),):
         raise ValueError("Vxc must preserve (N,2) spin channels, with (N,) weights.")
     if any(isinstance(m, nn.Dropout) and m.p != 0 for m in energy.modules()):
@@ -202,7 +312,15 @@ def full_vxc_loss(energy, features, target, weights, h, point_chunk_size=4096):
         )
     params = tuple(p for p in energy.parameters() if p.requires_grad)
     return _ChunkedLoss.apply(
-        energy, features, target, weights, h, point_chunk_size, *params
+        energy,
+        features,
+        target,
+        weights,
+        h,
+        point_chunk_size,
+        order,
+        version,
+        *params,
     )
 
 

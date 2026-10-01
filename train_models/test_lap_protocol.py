@@ -29,6 +29,7 @@ from lap_training import (
     run_predopt,
 )
 from lap_vxc import (
+    STENCIL_ORDER,
     STENCIL_VERSION,
     LapEnergy,
     integrated_energy,
@@ -216,6 +217,19 @@ def test_corpus_roundtrip_and_no_overwrite(corpus):
     assert manifest["minnesota_training_reactions"] == 268
     with pytest.raises(FileExistsError):
         build_corpus("", "", corpus)
+
+
+def test_legacy_7point_manifest_without_derivative_order_remains_readable(corpus):
+    manifest_path = corpus / "preprocessing_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    assert manifest["stencil_order"] == list(STENCIL_ORDER)
+    manifest.pop("derivative_order")
+    manifest_path.write_text(json.dumps(manifest))
+
+    restored_manifest, records = verify_corpus(corpus)
+    assert restored_manifest["derivative_order"] == 2
+    assert restored_manifest["stencil_version"] == STENCIL_VERSION
+    assert len(records) == 90
 
 
 def test_built_corpus_remains_usable_when_source_h5_moves(corpus, tmp_path):

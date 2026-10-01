@@ -32,7 +32,13 @@ from lap_data import (
     evaluate_stencil,
     write_stencil_h5,
 )
-from lap_vxc import sigma_from_gradients
+from lap_vxc import (
+    STENCIL_VERSION,
+    STENCIL_VERSION_13_POINT_FOURTH_ORDER,
+    sigma_from_gradients,
+    stencil_order_for_version,
+    stencil_positions_for_version,
+)
 
 
 def sha256(path: Path) -> str:
@@ -321,6 +327,9 @@ def build(args):
         raise ValueError("An explicit positive finite --h-bohr is required.")
     if args.chunk_size <= 0 or args.center_sample_count <= 0:
         raise ValueError("Chunk and center sample sizes must be positive.")
+    stencil_version = args.stencil_version
+    stencil_order = stencil_order_for_version(stencil_version)
+    stencil_positions = list(stencil_positions_for_version(stencil_version))
 
     csv_by_key = {key: value[1] for key, value in csv_index.items()}
     legacy_digest = sha256(legacy_path)
@@ -342,6 +351,9 @@ def build(args):
         "built_systems": [],
         "records": [],
         "pilot_h_bohr": args.h_bohr,
+        "stencil_version": stencil_version,
+        "stencil_order": stencil_positions,
+        "derivative_order": stencil_order,
         "pilot_mode": bool(args.pilot_systems),
         "audit_only": args.audit_only,
         "center_verification_mode": (
@@ -425,10 +437,15 @@ def build(args):
                     evaluator = ao_reference_evaluator(mol, np.stack((dm / 2, dm / 2)))
                     stencil_start = time.perf_counter()
                     stencil_coords, stencil_features = evaluate_stencil(
-                        coords, args.h_bohr, evaluator, chunk_size=args.chunk_size
+                        coords,
+                        args.h_bohr,
+                        evaluator,
+                        chunk_size=args.chunk_size,
+                        order=stencil_order,
+                        version=stencil_version,
                     )
                     item["stencil_generation_seconds"] = time.perf_counter() - stencil_start
-                    item["stencil_evaluation_points"] = 7 * len(coords)
+                    item["stencil_evaluation_points"] = len(stencil_positions) * len(coords)
                     weights = torch.as_tensor(legacy["Weights"].detach().cpu().numpy(), dtype=torch.float64)
                     target, e_xc = preserved_targets(legacy)
                     provenance = {
@@ -462,7 +479,8 @@ def build(args):
                         "Vxc": target,
                         "E_xc": e_xc,
                         "Protocol": PROTOCOL,
-                        "StencilVersion": "cartesian-7-rho-grad-lapl-v1",
+                        "StencilVersion": stencil_version,
+                        "StencilOrder": stencil_order,
                         "HBohr": args.h_bohr,
                         "SourceSpin": spin,
                         "TargetKind": "common-rks",
@@ -497,6 +515,12 @@ def parse_args():
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--pilot-systems", help="Comma-separated system subset; omitting means generate all 90.")
     parser.add_argument("--h-bohr", type=float, required=True, help="Explicit finite-difference step in Bohr; there is no default.")
+    parser.add_argument(
+        "--stencil-version",
+        choices=(STENCIL_VERSION, STENCIL_VERSION_13_POINT_FOURTH_ORDER),
+        default=STENCIL_VERSION,
+        help="Explicit Cartesian stencil schema; default preserves the persisted 7-point version.",
+    )
     parser.add_argument("--chunk-size", type=int, default=512)
     parser.add_argument("--center-sample-count", type=int, default=4096)
     parser.add_argument("--verify-full-centers", action="store_true", help="Check every central point before writing its stencil.")

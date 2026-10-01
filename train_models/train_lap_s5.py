@@ -963,6 +963,8 @@ def run_pilot_smoke(args):
     )
     provenance = build_lap_s5_provenance(
         h_bohr=record["HBohr"],
+        stencil_version=record["StencilVersion"],
+        derivative_order=record["StencilOrder"],
         dtype=dtype,
         model_kwargs=model.model_kwargs,
         source_bindings=sources,
@@ -1202,6 +1204,8 @@ def run_production(args):
     protocol = build_lap_s5_protocol()
     provenance = build_lap_s5_provenance(
         h_bohr=manifest["h_bohr"],
+        stencil_version=manifest["stencil_version"],
+        derivative_order=manifest["derivative_order"],
         dtype=dtype,
         model_kwargs=model.model_kwargs,
         source_bindings=source_bindings,

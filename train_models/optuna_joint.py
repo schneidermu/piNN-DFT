@@ -369,11 +369,23 @@ def _lap_record_from_batch(X_batch: dict[str, Any]) -> dict[str, Any]:
         )
     if record.get("Protocol") != "diet-clean-mn-all-mrks-lap-fullvxc-v1":
         raise ValueError("Lap/full-Euler record protocol is missing or incompatible.")
-    if record.get("StencilVersion") != "cartesian-7-rho-grad-lapl-v1":
-        raise ValueError(
-            "Lap/full-Euler record stencil version is missing or incompatible."
-        )
-    return record
+    from lap_vxc import (
+        STENCIL_VERSION,
+        stencil_order_for_version,
+        validate_stencil_selection,
+    )
+
+    version = record.get("StencilVersion")
+    order = record.get("StencilOrder")
+    # Older full-Vxc records predate the numeric order field, but carry the
+    # immutable persisted 7-point version. Resolve only that exact version;
+    # tensor shape is never used to select an operator.
+    if "StencilOrder" not in record and version == STENCIL_VERSION:
+        order = stencil_order_for_version(version)
+    validate_stencil_selection(order, version)
+    normalized = dict(record)
+    normalized["StencilOrder"] = order
+    return normalized
 
 
 def _require_lap_model(model: nn.Module) -> nn.Module:
@@ -442,6 +454,8 @@ def lap_full_vxc_loss(
         weights,
         h,
         point_chunk_size=point_chunk_size,
+        order=record["StencilOrder"],
+        version=record["StencilVersion"],
     )
 
 

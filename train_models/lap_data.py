@@ -5,17 +5,27 @@ import math
 import pickle
 import re
 import shutil
+from numbers import Integral
 from pathlib import Path
 
 import h5py
 import torch
-from lap_vxc import STENCIL_ORDER, STENCIL_VERSION, stencil_coordinates
+from lap_vxc import (
+    STENCIL_DERIVATIVE_ORDER,
+    STENCIL_ORDER,
+    STENCIL_VERSION,
+    stencil_coordinates,
+    stencil_order_for_version,
+    stencil_positions_for_version,
+    validate_stencil_selection,
+)
 from NN_models_lap import ARCHITECTURE, DESCRIPTOR_PROTOCOL
 
 PROTOCOL = "diet-clean-mn-all-mrks-lap-fullvxc-v1"
 DEFAULT_CORPUS = "checkpoints_dietclean_lap_fullvxc_v1"
+_LEGACY_STENCIL_POSITIONS = list(STENCIL_ORDER)
 MISSING_SOURCE = (
-    "Full mRKS Vxc requires independently evaluated (N,7,10) rho/spin-gradient-vector/"
+    "Full mRKS Vxc requires independently evaluated (N,n_offsets,10) rho/spin-gradient-vector/"
     "Laplacian stencils. Center-only Grid/Vrho data cannot supply this. Provide the "
     "original mRKS generator plus reference spin AO density matrices and exact molecule/"
     "basis/AO ordering (or a wavefunction evaluator), and unchanged full Vxc/E_xc targets. "
@@ -67,8 +77,17 @@ def validate_record(d):
     }
     if not required <= d.keys() or "Vrho" in d:
         raise ValueError(MISSING_SOURCE)
-    if d["Protocol"] != PROTOCOL or d["StencilVersion"] != STENCIL_VERSION:
+    if d["Protocol"] != PROTOCOL:
         raise ValueError("Stale/unsupported Lap full-Vxc protocol.")
+    version = d["StencilVersion"]
+    order = d.get("StencilOrder")
+    # Pre-versioned-order 7-point H5/pickle records carried this exact version
+    # identifier. Keep those readable by mapping the identifier itself to its
+    # registered order; never inspect tensor shape to choose a version.
+    if "StencilOrder" not in d and version == STENCIL_VERSION:
+        order = stencil_order_for_version(version)
+        d["StencilOrder"] = order
+    stencil = validate_stencil_selection(order, version)
     if not isinstance(d["Name"], str) or not d["Name"] or d["SourceSpin"] not in (0, 1):
         raise ValueError("Invalid system name/source-spin metadata.")
     h = d["HBohr"]
@@ -80,8 +99,8 @@ def validate_record(d):
     shapes = {
         "Coordinates": (n, 3),
         "LegacyCoordinates": (n, 3),
-        "StencilCoordinates": (n, 7, 3),
-        "StencilFeatures": (n, 7, 10),
+        "StencilCoordinates": (n, stencil.point_count, 3),
+        "StencilFeatures": (n, stencil.point_count, 10),
         "Weights": (n,),
         "Vxc": (n, 2),
         "E_xc": (),
@@ -97,7 +116,9 @@ def validate_record(d):
             raise ValueError(f"{key} must be finite float64 with shape {shape}.")
     if n == 0 or (d["Weights"] < 0).any() or (d["StencilFeatures"][..., :2] < 0).any():
         raise ValueError("Empty grid or negative weights/density.")
-    expected = stencil_coordinates(d["Coordinates"], h)
+    expected = stencil_coordinates(
+        d["Coordinates"], h, order=order, version=version
+    )
     # Reconstruct identically from the recorded centers and h; no nearest neighbors.
     if not torch.equal(expected, d["StencilCoordinates"]):
         raise ValueError(
@@ -201,13 +222,22 @@ def require_full_center_verification(d):
             )
 
 
-def evaluate_stencil(coords, h, reference_evaluator, chunk_size=4096):
+def evaluate_stencil(
+    coords,
+    h,
+    reference_evaluator,
+    chunk_size=4096,
+    *,
+    order=STENCIL_DERIVATIVE_ORDER,
+    version=STENCIL_VERSION,
+):
     """Caller supplies ORIGINAL reference-density evaluator, never an SCF surrogate."""
     if reference_evaluator is None:
         raise ValueError(MISSING_SOURCE)
     if chunk_size <= 0 or len(coords) == 0:
         raise ValueError("Positive chunk size and nonempty coordinates are required.")
-    sc = stencil_coordinates(coords, h)
+    stencil = validate_stencil_selection(order, version)
+    sc = stencil_coordinates(coords, h, order=order, version=version)
     values = []
     for start in range(0, len(coords), chunk_size):
         xyz = sc[start : start + chunk_size].reshape(-1, 3)
@@ -216,7 +246,7 @@ def evaluate_stencil(coords, h, reference_evaluator, chunk_size=4096):
             raise ValueError(
                 "Reference evaluator must return rho_a,b,grad_a_xyz,grad_b_xyz,lapl_a,b."
             )
-        values.append(f.reshape(-1, 7, 10))
+        values.append(f.reshape(-1, stencil.point_count, 10))
     return sc, torch.cat(values)
 
 
@@ -269,13 +299,32 @@ def read_stencil_h5(path):
             raise ValueError(
                 "Versioned stencil H5 fields must be float64; no silent precision promotion."
             )
+        version = f.attrs.get("stencil_version")
+        order = f.attrs.get("derivative_order")
+        if order is None and version == STENCIL_VERSION:
+            # Historical 7-point files used the immutable version ID but did
+            # not yet persist the numeric order attribute.
+            order = stencil_order_for_version(version)
+        declared_positions = f.attrs.get("stencil_order")
+        if declared_positions is not None:
+            try:
+                declared_positions = json.loads(declared_positions)
+            except (TypeError, json.JSONDecodeError) as exc:
+                raise ValueError("Invalid H5 stencil_order offset layout.") from exc
+            if declared_positions != list(stencil_positions_for_version(version)):
+                raise ValueError("H5 stencil_order layout disagrees with its version.")
+        if order is not None:
+            if isinstance(order, bool) or not isinstance(order, Integral):
+                raise ValueError("H5 derivative_order must be an integer.")
+            order = int(order)
         d = {
             k: torch.as_tensor(f[v][()], dtype=torch.float64) for k, v in names.items()
         }
         d.update(
             Name=Path(path).stem,
             Protocol=f.attrs.get("protocol"),
-            StencilVersion=f.attrs.get("stencil_version"),
+            StencilVersion=version,
+            StencilOrder=int(order) if order is not None else None,
             HBohr=float(f.attrs.get("h_bohr", float("nan"))),
             SourceSpin=int(f.attrs.get("source_spin", -1)),
             TargetKind=f.attrs.get("target_kind"),
@@ -322,7 +371,11 @@ def write_stencil_h5(path, record):
             f[field] = d[name].detach().cpu().numpy()
         f.attrs.update(
             protocol=PROTOCOL,
-            stencil_version=STENCIL_VERSION,
+            stencil_version=d["StencilVersion"],
+            derivative_order=d["StencilOrder"],
+            stencil_order=json.dumps(
+                list(stencil_positions_for_version(d["StencilVersion"]))
+            ),
             h_bohr=d["HBohr"],
             source_spin=d["SourceSpin"],
             target_kind=d["TargetKind"],
@@ -350,6 +403,13 @@ def build_corpus(mn_corpus, stencil_dir, output_dir):
         require_full_center_verification(record)
     if len({d["HBohr"] for d in records}) != 1:
         raise ValueError("All systems must use the same explicit finite-difference h.")
+    if len({(d["StencilOrder"], d["StencilVersion"]) for d in records}) != 1:
+        raise ValueError(
+            "All systems must use the same explicit stencil order/version."
+        )
+    derivative_order = records[0]["StencilOrder"]
+    stencil_version = records[0]["StencilVersion"]
+    stencil_order = list(stencil_positions_for_version(stencil_version))
     mn = verify_mn(Path(mn_corpus))
     output.mkdir(parents=True)
     for name in (
@@ -374,7 +434,16 @@ def build_corpus(mn_corpus, stencil_dir, output_dir):
         record["SourceProvenance"]["generated_stencil_h5_name"] = path.name
         record["SourceProvenance"]["generated_stencil_h5_sha256"] = digest
         source_h5_manifest.append(
-            {"name": record["Name"], "filename": path.name, "sha256": digest}
+            {
+                "name": record["Name"],
+                "filename": path.name,
+                "sha256": digest,
+                "stencil_version": record["StencilVersion"],
+                "derivative_order": record["StencilOrder"],
+                "stencil_order": list(
+                    stencil_positions_for_version(record["StencilVersion"])
+                ),
+            }
         )
     # Re-serialize after binding every record to its exact generated stencil.
     with artifact.open("wb") as handle:
@@ -390,8 +459,9 @@ def build_corpus(mn_corpus, stencil_dir, output_dir):
         "excluded_minnesota_reactions": mn["excluded_minnesota_reactions"],
         "augmented_reaction_samples": mn["augmented_reaction_samples"],
         "mrks_systems": 90,
-        "stencil_version": STENCIL_VERSION,
-        "stencil_order": list(STENCIL_ORDER),
+        "stencil_version": stencil_version,
+        "stencil_order": stencil_order,
+        "derivative_order": derivative_order,
         "h_bohr": records[0]["HBohr"],
         "units": "Bohr",
         "systems": [
@@ -426,16 +496,29 @@ def verify_corpus(directory):
         m.get("protocol"),
         m.get("architecture"),
         m.get("descriptor_protocol"),
-        m.get("stencil_version"),
-    ) != (PROTOCOL, ARCHITECTURE, DESCRIPTOR_PROTOCOL, STENCIL_VERSION):
+    ) != (PROTOCOL, ARCHITECTURE, DESCRIPTOR_PROTOCOL):
         raise ValueError(
             "Architecture/full-Vxc protocol mismatch; legacy corpus rejected."
         )
+    manifest_order = m.get("stencil_order")
+    derivative_order = m.get("derivative_order")
     if (
-        m.get("manifest_version") != 1
-        or m.get("units") != "Bohr"
-        or m.get("stencil_order") != list(STENCIL_ORDER)
+        m.get("stencil_version") == STENCIL_VERSION
+        and manifest_order == _LEGACY_STENCIL_POSITIONS
+        and derivative_order is None
     ):
+        # Early manifests persisted the exact 7-point position sequence. Its
+        # immutable version ID determines second order; no tensor shape is read.
+        derivative_order = stencil_order_for_version(m["stencil_version"])
+        m["derivative_order"] = derivative_order
+    try:
+        validate_stencil_selection(derivative_order, m.get("stencil_version"))
+        expected_positions = list(stencil_positions_for_version(m["stencil_version"]))
+        if manifest_order != expected_positions:
+            raise ValueError("Manifest offset layout disagrees with stencil version.")
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Unsupported corpus stencil order/version.") from exc
+    if m.get("manifest_version") != 1 or m.get("units") != "Bohr":
         raise ValueError("Invalid stencil manifest/version/units.")
     source_manifest = directory / "minnesota_preprocessing_manifest.json"
     if not source_manifest.is_file() or sha256(source_manifest) != m.get(
@@ -492,6 +575,18 @@ def verify_corpus(directory):
             not item.get("filename")
             or not isinstance(digest, str)
             or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+            or (
+                "stencil_version" in item
+                and item["stencil_version"] != m["stencil_version"]
+            )
+            or (
+                "stencil_order" in item
+                and item["stencil_order"] != m["stencil_order"]
+            )
+            or (
+                "derivative_order" in item
+                and item["derivative_order"] != m["derivative_order"]
+            )
         ):
             raise ValueError("Invalid generated stencil source identity/hash.")
         source_h5_by_name[item["name"]] = item
@@ -525,7 +620,12 @@ def verify_corpus(directory):
             "gauge_metadata": d["GaugeMetadata"],
             "source_provenance": d["SourceProvenance"],
         }
-        if expected != metadata or d["HBohr"] != m["h_bohr"]:
+        if (
+            expected != metadata
+            or d["HBohr"] != m["h_bohr"]
+            or d["StencilOrder"] != m["derivative_order"]
+            or d["StencilVersion"] != m["stencil_version"]
+        ):
             raise ValueError(
                 "Manifest scientific metadata differs from the actual stencil records."
             )

@@ -1,7 +1,13 @@
 """Shared Lap objectives, clean Minnesota predopt, and rank-average updates."""
 
 import torch
-from lap_vxc import full_vxc_loss, integrated_energy, sigma_standard_to_total
+from lap_vxc import (
+    STENCIL_VERSION,
+    full_vxc_loss,
+    integrated_energy,
+    sigma_standard_to_total,
+    stencil_order_for_version,
+)
 from optuna_joint import batch_exc, batch_fchem, canonical_variant
 from predopt_targets import _ADAPTIVE_INDICES, _prepare_predopt_targets
 from reaction_energy_calculation import calculate_reaction_energy
@@ -85,7 +91,20 @@ def mrks_losses(energy, record, device, dtype, chunk):
     # dtype for the standard MSE backward path.
     target = d["E_xc"].reshape(1).to(dtype=prediction.dtype)
     exc = batch_exc([d["Name"]], prediction.reshape(1), target)
-    vxc = full_vxc_loss(energy, f, d["Vxc"], weights, d["HBohr"], chunk)
+    stencil_version = d["StencilVersion"]
+    stencil_order = d.get("StencilOrder")
+    if "StencilOrder" not in d and stencil_version == STENCIL_VERSION:
+        stencil_order = stencil_order_for_version(stencil_version)
+    vxc = full_vxc_loss(
+        energy,
+        f,
+        d["Vxc"],
+        weights,
+        d["HBohr"],
+        chunk,
+        order=stencil_order,
+        version=stencil_version,
+    )
     return exc, vxc
 
 
