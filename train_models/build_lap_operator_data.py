@@ -186,7 +186,7 @@ def _build_record(
     if abs(nelec - float(npz_metadata["nelec"])) > 1e-6:
         raise ValueError(f"{name}: dm_ks electron count disagrees with source metadata.")
     if spin != 0:
-        raise ValueError(f"{name}: pilot is intended for closed-shell RKS systems only.")
+        raise ValueError(f"{name}: central corpus currently requires a closed-shell RKS system.")
 
     descriptors = np.empty((ngrid, len(FEATURE_LAYOUT)), dtype=np.float64)
     ref_ao = np.zeros((mol.nao_nr(), mol.nao_nr()), dtype=np.float64)
@@ -369,7 +369,8 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
     )
     result["output_dir"] = str(output)
     result["build_runtime_seconds"] = time.perf_counter() - started
-    print(f"Verified pilot corpus at {output}; runtime {result['build_runtime_seconds']:.2f} s")
+    corpus_label = "all-90 operator corpus" if args.all90 else "pilot operator corpus"
+    print(f"Verified {corpus_label} at {output}; runtime {result['build_runtime_seconds']:.2f} s")
     return result
 
 

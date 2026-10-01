@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
@@ -407,6 +408,108 @@ def verify_operator_corpus(
     }
 
 
+def write_corpus_manifest(
+    directory: str | Path,
+    destination: str | Path,
+    *,
+    expected_systems: Iterable[str] | None = None,
+    require_all90: bool = True,
+) -> dict[str, Any]:
+    """Write hashes and record metadata without copying central-grid arrays."""
+    directory = Path(directory).resolve()
+    destination = Path(destination).resolve()
+    if destination.exists():
+        raise FileExistsError(f"Refusing to overwrite immutable corpus manifest: {destination}")
+    verified = verify_operator_corpus(
+        directory,
+        expected_systems=expected_systems,
+        require_all90=require_all90,
+    )
+    external_path = directory / "manifest.json"
+    external_bytes = external_path.read_bytes()
+    external = json.loads(external_bytes)
+    records = []
+    total_bytes = 0
+    max_vxc_error = 0.0
+    max_descriptor_error = 0.0
+    for item in external["records"]:
+        record_path = directory / item["file"]
+        record = load_central_operator_record(record_path)
+        metadata = record.metadata
+        file_bytes = record_path.stat().st_size
+        total_bytes += file_bytes
+        max_vxc_error = max(max_vxc_error, metadata["source"]["vxc_matching"]["max_abs"])
+        descriptor_metrics = metadata["verification"]["central_descriptor_compatibility"]
+        max_descriptor_error = max(
+            max_descriptor_error,
+            *(
+                descriptor_metrics[field]["float32_level_max_normalized_error"]
+                for field in ("rho", "sigma_aa_ab_bb", "lapl")
+            ),
+        )
+        records.append(
+            {
+                "system_name": item["system_name"],
+                "file": item["file"],
+                "file_sha256": item["file_sha256"],
+                "record_sha256": item["record_sha256"],
+                "file_bytes": file_bytes,
+                "point_count": item["point_count"],
+                "nao": item["nao"],
+                "Exc_legacy_ha": float(record.Exc),
+                "metadata": metadata,
+            }
+        )
+    manifest = {
+        "schema_version": 1,
+        "protocol": PROTOCOL,
+        "operator_protocol": OPERATOR_PROTOCOL,
+        "spatial_derivative_method": SPATIAL_DERIVATIVE_METHOD,
+        "external_corpus_path_relative_to_manifest": os.path.relpath(
+            directory, destination.parent
+        ).replace("\\", "/"),
+        "external_manifest": {
+            "file": "manifest.json",
+            "sha256": hashlib.sha256(external_bytes).hexdigest(),
+            "bytes": len(external_bytes),
+        },
+        "corpus": {
+            "system_count": verified["verified_records"],
+            "central_point_count": verified["point_count"],
+            "compressed_hdf5_bytes": total_bytes,
+            "builder": external.get("builder"),
+            "build_runtime_seconds": external.get("build_runtime_seconds"),
+            "all90_strict_verification": verified["all90"],
+            "vxc_unmatched_legacy_points": sum(
+                item["metadata"]["source"]["vxc_matching"]["unmatched_legacy_points"]
+                for item in records
+            ),
+            "max_vxc_identity_error_ha": max_vxc_error,
+            "all_density_descriptors_float32_compatible": all(
+                item["metadata"]["verification"]["central_descriptor_compatibility"][field][
+                    "float32_level_compatible"
+                ]
+                for item in records
+                for field in ("rho", "sigma_aa_ab_bb", "lapl")
+            ),
+            "max_density_descriptor_normalized_error": max_descriptor_error,
+        },
+        "records": records,
+    }
+    if FORBIDDEN_METADATA_KEYS.intersection(_recursive_keys(manifest)):
+        raise ValueError("Root corpus manifest includes a forbidden h/stencil field.")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_name(f".{destination.name}.tmp")
+    if temporary.exists():
+        raise FileExistsError(f"Refusing to overwrite temporary manifest: {temporary}")
+    temporary.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+    os.replace(temporary, destination)
+    return manifest
+
+
 __all__ = [
     "ALL90_EXPECTED_POINT_COUNT",
     "FEATURE_LAYOUT",
@@ -424,4 +527,5 @@ __all__ = [
     "recover_legacy_centers",
     "verify_operator_corpus",
     "write_central_operator_record",
+    "write_corpus_manifest",
 ]

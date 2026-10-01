@@ -17,6 +17,7 @@ from train_models.lap_operator_data import (
     recover_legacy_centers,
     verify_operator_corpus,
     write_central_operator_record,
+    write_corpus_manifest,
 )
 
 
@@ -44,6 +45,21 @@ def _fixture_record():
         "system_name": "Fixture",
         "point_count": 3,
         "nao": 2,
+        "source": {
+            "legacy_pickle_sha256": "legacy-fixture",
+            "npz_file_sha256": "npz-fixture",
+            "npz_relative_id": "Fixture/inp_mrks.npz",
+            "vxc_matching": {"max_abs": 0.0, "unmatched_legacy_points": 0},
+        },
+        "verification": {
+            "central_descriptor_compatibility": {
+                field: {
+                    "float32_level_compatible": True,
+                    "float32_level_max_normalized_error": 0.01,
+                }
+                for field in ("rho", "sigma_aa_ab_bb", "lapl")
+            }
+        },
     }
     return arrays, metadata
 
@@ -143,3 +159,38 @@ def test_builder_rejects_git_repository_output(tmp_path):
     with pytest.raises(ValueError, match="outside the Git repository"):
         _validate_external_output(repo_root / "generated_corpus")
     assert _validate_external_output(tmp_path / "external-corpus") == (tmp_path / "external-corpus").resolve()
+
+
+def test_root_corpus_manifest_contains_metadata_and_hashes_only(tmp_path):
+    arrays, metadata = _fixture_record()
+    record_path = tmp_path / "Fixture.h5"
+    digests = write_central_operator_record(record_path, arrays, metadata)
+    external = {
+        "protocol": PROTOCOL,
+        "operator_protocol": OPERATOR_PROTOCOL,
+        "built_systems": ["Fixture"],
+        "records": [
+            {
+                "system_name": "Fixture",
+                "file": record_path.name,
+                **digests,
+                "point_count": 3,
+                "nao": 2,
+            }
+        ],
+    }
+    (tmp_path / "manifest.json").write_text(json.dumps(external), encoding="utf-8")
+
+    root_path = tmp_path / "lap_operator_corpus_manifest.json"
+    manifest = write_corpus_manifest(
+        tmp_path,
+        root_path,
+        expected_systems={"Fixture"},
+        require_all90=False,
+    )
+    assert manifest["corpus"]["system_count"] == 1
+    assert manifest["corpus"]["vxc_unmatched_legacy_points"] == 0
+    assert manifest["records"][0]["metadata"]["record_sha256"] == digests["record_sha256"]
+    assert "DensityDescriptorsN10" not in manifest["records"][0]
+    with pytest.raises(FileExistsError):
+        write_corpus_manifest(tmp_path, root_path, require_all90=False)
