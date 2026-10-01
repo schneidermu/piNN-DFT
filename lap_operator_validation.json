@@ -1,0 +1,992 @@
+{
+  "schema_version": 1,
+  "project": "piNN-DFT",
+  "branch": "lap_full_vxc",
+  "starting_head": "ccd78151f6562540d3a6ae52759c5a2dc565965a",
+  "report_state": "all_validation_gates_passed_ready_for_clean_moo_design",
+  "decision": {
+    "gate1": "passed",
+    "gate2": "passed_all_six_conditions",
+    "real_data_pilot": "passed_h2_beh2_co_and_scf",
+    "all90_operator_corpus": "passed_independent_verification",
+    "moo_training": "not_started_clean_design_next_project",
+    "production_training_jobs_submitted": false,
+    "slurm_jobs_submitted": false
+  },
+  "relevant_commits": {
+    "starting_head": "ccd78151f6562540d3a6ae52759c5a2dc565965a",
+    "stencil_validation": "0a6c7abf7581e8eeff87188e267405a23621ab70",
+    "s5_equivalent_lap": "8e72748d5de048220661cd13bc4abd14457ee1b0",
+    "s5_report": "ad2036799758d6f7dff6b7ef8c94fb020941461c",
+    "real_lap_pilot_report": "0ff1494dafea0065d4689f832c792a8956bc5478",
+    "variational_operator_source": "4f7ce3191f22e8fe9185daca446b97cb02efbff8",
+    "all90_manifest_and_guard": "3d95d373815502d784c859b1c70734dbc0c036ba"
+  },
+  "agents_and_scopes": [
+    {
+      "agent": "operator_theory",
+      "scope": "spin/RKS AO variational derivation; independent h-free validator tests, runner, and numerical analysis"
+    },
+    {
+      "agent": "operator_scf_audit",
+      "scope": "existing SCF convention audit; Torch AO operator and focused unit tests; synthetic CUDA chunk diagnostic"
+    },
+    {
+      "agent": "stencil_operator_tests",
+      "scope": "central data/provenance/storage design and operator-corpus builder"
+    }
+  ],
+  "theory": {
+    "functional": "E_xc = integral f(rho_alpha,rho_beta,sigma_aa,sigma_ab,sigma_bb,lapl_alpha,lapl_beta) dr",
+    "spin_sigma_gradient_alpha": "A_alpha = 2*f_sigma_aa*grad(rho_alpha) + f_sigma_ab*grad(rho_beta)",
+    "spin_sigma_gradient_beta": "A_beta = 2*f_sigma_bb*grad(rho_beta) + f_sigma_ab*grad(rho_alpha)",
+    "spin_ao_operator": "V^s_mn = sum_g w_g [C_s*phi_m*phi_n + A_s dot (grad(phi_m)*phi_n + phi_m*grad(phi_n)) + B_s*(phi_m*lap(phi_n) + phi_n*lap(phi_m) + 2*grad(phi_m) dot grad(phi_n))]",
+    "rks_factors": {
+      "vrho": "(C_alpha + C_beta)/2",
+      "vsigma": "(f_sigma_aa + f_sigma_ab + f_sigma_bb)/4",
+      "vlapl": "(B_alpha + B_beta)/2",
+      "vtau": 0,
+      "spin_density_matrices": "P_alpha = P_beta = P_total/2",
+      "total_rks_matrix": "(V_alpha + V_beta)/2; common PySCF scalars already encode this averaging, so do not apply another half factor"
+    },
+    "reference_projection": "V_ref_mn = sum_g w_g*phi[g,m]*vxc_ref[g]*phi[g,n], no spin factor",
+    "symmetric_dm_convention": "delta_E_xc = Tr(V_RKS delta_P_total) for a full symmetric AO density matrix",
+    "operator_loss": "||S^-1/2 (V_pred - V_ref) S^-1/2||_F^2 / n_AO",
+    "theory_review": "operator_theory independently agreed with the spin and RKS factors"
+  },
+  "scf_audit": {
+    "files_and_functions": [
+      "test_models/DFT/lap_functional.py: LapFunctional.eval_xc",
+      "test_models/DFT/numint.py: NumIntWithLaplacian.nr_rks and RKS_with_Laplacian",
+      "train_models/lap_vxc.py: LapEnergy and local_partials",
+      "train_models/reaction_energy_calculation.py: integrate_xc_energy"
+    ],
+    "pyscf_version_wsl": "2.14.0",
+    "existing_rks_vlapl_assembly": "The custom nr_rks adds the complete AO product Laplacian including 2*grad(phi_m) dot grad(phi_n); stock eval_mat's non-None vlapl branch alone adds only the AO-Hessian pair.",
+    "existing_scf_autograd": "severed by NumPy conversions, detach, autograd.grad without create_graph, and NumPy/PySCF AO matrix assembly",
+    "recommended_trainable_path": "LapEnergy plus local_partials(create_graph=True) and Torch-native AO contractions"
+  },
+  "implementation": {
+    "module": "train_models/lap_operator.py",
+    "focused_tests": "train_models/test_lap_operator_unit.py",
+    "public_functions": [
+      "spin_density_features_from_ao",
+      "rks_density_features_from_ao",
+      "integrated_xc_energy",
+      "assemble_spin_operators",
+      "assemble_rks_operator",
+      "project_scalar_vxc",
+      "orthonormalize_operator",
+      "operator_loss",
+      "operator_checkpoint_metadata",
+      "validate_operator_metadata"
+    ],
+    "metadata": {
+      "protocol": "lap-weakform-ao-v1",
+      "immutable": true,
+      "contains_h_or_stencil_fields": false,
+      "validator_rejects_h_or_stencil_fields": true
+    },
+    "focused_unit_tests": {
+      "windows": "6 passed",
+      "wsl": "6 passed",
+      "py_compile": "passed",
+      "ruff": "passed",
+      "git_diff_check": "passed"
+    },
+    "orchestrator_combined_windows_suite": {
+      "reported_result": "13 passed, 1 PySCF test skipped",
+      "environment": {
+        "MKL_THREADING_LAYER": "SEQUENTIAL",
+        "OMP_NUM_THREADS": "1"
+      },
+      "note": "native MKL aborted without these settings; no test was weakened"
+    }
+  },
+  "cuda_diagnostic": {
+    "status": "synthetic_plumbing_only",
+    "json_path_outside_repository": "C:\\Users\\schne\\AppData\\Local\\Temp\\lap_operator_cuda_diag_20261001_183417.json",
+    "device": "NVIDIA GeForce RTX 5070 Ti",
+    "torch_version": "2.11.0+cu128",
+    "dtype": "float32",
+    "model": "pcPBELMLOptimizerV2Lap(num_layers=2,h_dim=8)",
+    "n_grid": 4096,
+    "n_ao": 40,
+    "chunks": [
+      {
+        "chunk_size": 128,
+        "raw_loss": 2.209973899880424e-05,
+        "relative_loss_error": 0.0,
+        "relative_operator_error": 1.536673437385616e-07,
+        "relative_parameter_gradient_error": 4.683114340764405e-08,
+        "forward_seconds": 0.0626979999942705,
+        "backward_seconds": 0.07000619999598712,
+        "forward_peak_allocated_mib": 63.73974609375,
+        "forward_peak_reserved_mib": 66.0,
+        "backward_peak_allocated_mib": 62.078125,
+        "backward_peak_reserved_mib": 66.0,
+        "finite": true
+      },
+      {
+        "chunk_size": 256,
+        "raw_loss": 2.2099737179814838e-05,
+        "relative_loss_error": 8.230818489052189e-08,
+        "relative_operator_error": 1.570622458757498e-07,
+        "relative_parameter_gradient_error": 4.741913173234025e-08,
+        "forward_seconds": 0.04543379996903241,
+        "backward_seconds": 0.1056527000037022,
+        "forward_peak_allocated_mib": 63.73974609375,
+        "forward_peak_reserved_mib": 66.0,
+        "backward_peak_allocated_mib": 62.07470703125,
+        "backward_peak_reserved_mib": 66.0,
+        "finite": true
+      },
+      {
+        "chunk_size": 512,
+        "raw_loss": 2.209973899880424e-05,
+        "relative_loss_error": 0.0,
+        "relative_operator_error": 1.7326709667031537e-07,
+        "relative_parameter_gradient_error": 4.812110532270708e-08,
+        "forward_seconds": 0.037677699991036206,
+        "backward_seconds": 0.07345540000824258,
+        "forward_peak_allocated_mib": 63.73974609375,
+        "forward_peak_reserved_mib": 66.0,
+        "backward_peak_allocated_mib": 62.11474609375,
+        "backward_peak_reserved_mib": 66.0,
+        "finite": true
+      },
+      {
+        "chunk_size": 1024,
+        "raw_loss": 2.209973899880424e-05,
+        "relative_loss_error": 0.0,
+        "relative_operator_error": 1.3660059039466432e-07,
+        "relative_parameter_gradient_error": 6.656012629946417e-08,
+        "forward_seconds": 0.03518820001045242,
+        "backward_seconds": 0.052776800002902746,
+        "forward_peak_allocated_mib": 63.73974609375,
+        "forward_peak_reserved_mib": 66.0,
+        "backward_peak_allocated_mib": 62.19482421875,
+        "backward_peak_reserved_mib": 66.0,
+        "finite": true
+      },
+      {
+        "chunk_size": 2048,
+        "raw_loss": 2.209973899880424e-05,
+        "relative_loss_error": 0.0,
+        "relative_operator_error": 1.6002627489797305e-07,
+        "relative_parameter_gradient_error": 2.2401906107916147e-08,
+        "forward_seconds": 0.028799200023058802,
+        "backward_seconds": 0.03511689999140799,
+        "forward_peak_allocated_mib": 63.73974609375,
+        "forward_peak_reserved_mib": 66.0,
+        "backward_peak_allocated_mib": 62.35498046875,
+        "backward_peak_reserved_mib": 66.0,
+        "finite": true
+      },
+      {
+        "chunk_size": 4096,
+        "raw_loss": 2.209973899880424e-05,
+        "relative_loss_error": 0.0,
+        "relative_operator_error": 0.0,
+        "relative_parameter_gradient_error": 0.0,
+        "forward_seconds": 0.028548499976750463,
+        "backward_seconds": 0.06208489998243749,
+        "forward_peak_allocated_mib": 63.73974609375,
+        "forward_peak_reserved_mib": 66.0,
+        "backward_peak_allocated_mib": 62.67529296875,
+        "backward_peak_reserved_mib": 66.0,
+        "finite": true
+      }
+    ]
+  },
+  "source_provenance": {
+    "source_audit_file": "train_models/mrks_source_audit_v2.json",
+    "source_audit_file_sha256": "300d09095cca9c8e8809f9e45ba78d6a694c30542cf35a314cf6d74db7a7e131",
+    "source_audit_protocol": "diet-clean-mn-all-mrks-lap-fullvxc-v1",
+    "matched_systems": 90,
+    "central_points_reconstructed": 8271091,
+    "reference_vxc_matches": 8271091,
+    "reference_vxc_unmatched": 0,
+    "reference_vxc_pooled_rms_ha": 3.4e-08,
+    "reference_vxc_max_abs_ha": 4.768e-07,
+    "legacy_pickle_sha256": "0ccc0cfb09814cadcc9e0537953cc324fe6ce5551654fe3254f310a25cc6ee49",
+    "csv_sha256": "4040c5ddd21cb73edcf6f54356114ff2cf216fe47346e227c5ca83180fde7e4e",
+    "mrks_zip_sha256": "15a49f4517c35f2159f1e66d02a817945dbf1e1e66deb46f6e612d553890ad16",
+    "legacy_exc_target_preserved": true,
+    "exc_wf_substituted": false
+  },
+  "real_data_status": {
+    "pilot_systems": [
+      "H2",
+      "BeH2",
+      "CO"
+    ],
+    "operator_loss_before_training": "H2: 0.0506506488 Ha^2/AO; H2+BeH2+CO mean: 0.0446237288 Ha^2/AO",
+    "gradient_norms_and_cosines": "H2 initial/final gradient cosine 0.980149462/0.980292480; combined initial/final 0.900203646/0.891537101; all parameter gradients finite and nonzero",
+    "operator_training_pilot": "H2-only and H2+BeH2+CO 20-update branches completed; E_xc MSE and mean operator loss decreased in both; q/Laplacian dependence survives on all three systems; tau unused",
+    "scf_convergence_after_pilot": "passed: all 4 requested RKS runs converged with finite energies, vtau=0, and exact tau independence",
+    "all90_operator_corpus": "passed_independent_verification: 90 systems, 8,271,091 points, zero unmatched Vxc centers",
+    "large_generated_data_committed": false,
+    "pilot_gate": "passed: Gate 1, Gate 2, H2/BeH2/CO pilot, SCF, and all90 corpus",
+    "data_fixture": "H2/BeH2/CO pilot corpus built and hash-verified outside Git",
+    "ao_factor_cache": "transient float32 cache generated and density/reference projection preflight passed",
+    "predopt": "fresh two-epoch canonical PBE predopt completed; source/checkpoint hashes recorded"
+  },
+  "required_final_decision_language": {
+    "if_gate_passes": "The h-free variational XC-operator objective is validated and ready for multi-objective training design.",
+    "if_gate_fails": "The variational XC-operator objective is not yet validated; no multi-objective training should be started.",
+    "current_report": "The h-free variational XC-operator objective is validated and ready for multi-objective training design."
+  },
+  "independent_validator": {
+    "status": "final_pass",
+    "test_file": "train_models/test_lap_operator_validation.py",
+    "reported_wsl_test_count": 8,
+    "exact_command_output_and_result_artifact": {
+      "command": "wsl -d Ubuntu-22.04 --exec /home/schneidermu/.cache/pinn-lap-tests/bin/python -c \"import os,pytest; os.chdir('/mnt/c/Dev/readWFN_share_ms/lap_full_vxc'); raise SystemExit(pytest.main(['train_models/test_lap_operator_validation.py','-q']))\"",
+      "result": "8 passed, 1 warning in 3.85s",
+      "warning": "PyTorch set_default_tensor_type deprecation from test fixture; no test failure"
+    },
+    "manufactured_checks": {
+      "D1_LDA": {
+        "status": "reported_pass",
+        "coefficients_a": [
+          0.7,
+          1.3
+        ],
+        "gauss_hermite_grid": [
+          24,
+          24,
+          24
+        ],
+        "rtol": 3e-12,
+        "atol": 3e-12
+      },
+      "D2_GGA": {
+        "status": "reported_pass",
+        "gauss_hermite_grid": [
+          24,
+          24,
+          24
+        ],
+        "rtol": 4e-11,
+        "atol": 4e-12
+      },
+      "D3_Lap": {
+        "status": "reported_pass",
+        "gauss_hermite_grid": [
+          28,
+          28,
+          28
+        ],
+        "rtol": 8e-10,
+        "atol": 8e-11
+      },
+      "D4_analytic_PBE_projection_parity": {
+        "status": "pass_with_documented_quadrature_residual_and_refinement",
+        "result_file": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\d4_real_pbe_ao_validation.json",
+        "result_file_sha256": "05cd902af73ae338cafd18a613c1b48aa55c04144a91e4f4f97537dc7cdabe1c",
+        "spatial_finite_difference_used": false,
+        "chunk_size": 1024,
+        "torch_threads": 1,
+        "systems": [
+          {
+            "name": "H2",
+            "status": "pass",
+            "n_ao": 60,
+            "legacy_points": 42508,
+            "source_points": 47080,
+            "elapsed_seconds": 3.048925811999993,
+            "weak_strong_abs_frobenius_ha": 5.669844890267393e-09,
+            "weak_strong_relative_frobenius": 1.0589037735228305e-09,
+            "weak_strong_max_abs_element_ha": 2.062022885773729e-09,
+            "orthonormalized_abs_frobenius_ha": 2.6746147992215457e-08,
+            "orthonormalized_relative_frobenius": 8.301457235444014e-09,
+            "spin_potential_max_abs_difference": 2.220446049250313e-16
+          },
+          {
+            "name": "BeH2",
+            "status": "pass_with_quadrature_refinement",
+            "n_ao": 144,
+            "legacy_points": 77240,
+            "source_points": 89200,
+            "elapsed_seconds": 8.442675891000022,
+            "weak_strong_abs_frobenius_ha": 9.241265904280889e-05,
+            "weak_strong_relative_frobenius": 7.55919993239428e-06,
+            "weak_strong_max_abs_element_ha": 4.482660736321309e-05,
+            "orthonormalized_abs_frobenius_ha": 9.671322947437541e-05,
+            "orthonormalized_relative_frobenius": 1.1832293678275466e-05,
+            "spin_potential_max_abs_difference": 1.7763568394002505e-15
+          },
+          {
+            "name": "CO",
+            "status": "pass",
+            "n_ao": 168,
+            "legacy_points": 72110,
+            "source_points": 85960,
+            "elapsed_seconds": 10.121749058000034,
+            "weak_strong_abs_frobenius_ha": 2.7406707678587336e-05,
+            "weak_strong_relative_frobenius": 9.426785846977869e-07,
+            "weak_strong_max_abs_element_ha": 6.025592095171284e-06,
+            "orthonormalized_abs_frobenius_ha": 3.689918921444557e-05,
+            "orthonormalized_relative_frobenius": 1.9335750782533946e-06,
+            "spin_potential_max_abs_difference": 7.105427357601002e-15
+          },
+          {
+            "name": "N2",
+            "status": "pass",
+            "n_ao": 168,
+            "legacy_points": 71820,
+            "source_points": 84232,
+            "elapsed_seconds": 13.214624965999974,
+            "weak_strong_abs_frobenius_ha": 2.8814438872250016e-05,
+            "weak_strong_relative_frobenius": 9.977645925110356e-07,
+            "weak_strong_max_abs_element_ha": 6.057309848372938e-06,
+            "orthonormalized_abs_frobenius_ha": 3.82998854279263e-05,
+            "orthonormalized_relative_frobenius": 2.021748420710062e-06,
+            "spin_potential_max_abs_difference": 1.7763568394002505e-15
+          },
+          {
+            "name": "ClH",
+            "status": "pass",
+            "n_ao": 139,
+            "legacy_points": 58114,
+            "source_points": 66592,
+            "elapsed_seconds": 7.730784626000002,
+            "weak_strong_abs_frobenius_ha": 5.696348676156614e-06,
+            "weak_strong_relative_frobenius": 1.9639590282947813e-07,
+            "weak_strong_max_abs_element_ha": 1.4139744491936668e-06,
+            "orthonormalized_abs_frobenius_ha": 7.042410397893583e-06,
+            "orthonormalized_relative_frobenius": 3.427510762800314e-07,
+            "spin_potential_max_abs_difference": 2.842170943040401e-14
+          }
+        ],
+        "parity_tolerance_accepted": true,
+        "BeH2_quadrature_residual_investigation": {
+          "conclusion": "Finite-grid weak/strong integration-by-parts residual; confirmed by independent unpruned radial/angular refinement, with no AO derivative-chain defect indicated.",
+          "legacy_training_grid_relative_frobenius": 7.55919993239428e-06,
+          "legacy_training_grid_max_abs_Ha": 4.482660736321309e-05,
+          "legacy_training_grid_orthonormalized_relative_frobenius": 1.1832293678275466e-05,
+          "complete_npz_grid_points": 89200,
+          "complete_npz_grid_relative_frobenius": 7.5591833626054346e-06,
+          "standard_pruned_grid_levels": [
+            {
+              "level": 5,
+              "points": 89200,
+              "relative_frobenius": 7.5591833626054346e-06,
+              "max_abs_Ha": 4.482651446452435e-05,
+              "orthonormalized_relative_frobenius": 1.1831998974421809e-05
+            },
+            {
+              "level": 6,
+              "points": 130976,
+              "relative_frobenius": 7.899399046709747e-06,
+              "max_abs_Ha": 4.6444743322937576e-05,
+              "orthonormalized_relative_frobenius": 1.2069556993599729e-05
+            },
+            {
+              "level": 7,
+              "points": 184328,
+              "relative_frobenius": 7.346694968742266e-06,
+              "max_abs_Ha": 4.133080993623528e-05,
+              "orthonormalized_relative_frobenius": 1.1072370893244052e-05
+            }
+          ],
+          "unpruned_grids": [
+            {
+              "radial_points_per_atom": 100,
+              "angular_points_per_shell": 434,
+              "points": 130200,
+              "relative_frobenius": 7.62978919796739e-07,
+              "max_abs_Ha": 1.870351137078785e-06,
+              "orthonormalized_relative_frobenius": 1.590261434995319e-06
+            },
+            {
+              "radial_points_per_atom": 120,
+              "angular_points_per_shell": 590,
+              "points": 212400,
+              "relative_frobenius": 1.4433282036330173e-07,
+              "max_abs_Ha": 3.9361324855047286e-07,
+              "orthonormalized_relative_frobenius": 3.245862046830392e-07
+            }
+          ],
+          "relative_error_reduction_from_legacy_grid": 52.37
+        },
+        "auxiliary_repository_torch_vs_pyscf_libxc_pbe": {
+          "status": "diagnostic_only_not_gate_oracle",
+          "relative_frobenius": 4.904574575111106e-06,
+          "max_abs_Ha": 3.784656264052555e-05,
+          "orthonormalized_relative_frobenius": 2.6750504058589908e-05,
+          "note": "This compares distinct PBE evaluation implementations; D4 acceptance compares weak and analytic-strong derivatives of the same repository canonical energy."
+        },
+        "complete_npz_grid_results": [
+          {
+            "name": "H2",
+            "legacy_points": 47080,
+            "weak_strong_relative_frobenius": 9.061287117203526e-10,
+            "weak_strong_max_abs_element_Ha": 2.061056991742305e-09,
+            "orthonormalized_relative_frobenius": 3.0239556996173742e-09
+          },
+          {
+            "name": "BeH2",
+            "legacy_points": 89200,
+            "weak_strong_relative_frobenius": 7.5591833626054346e-06,
+            "weak_strong_max_abs_element_Ha": 4.482651446452435e-05,
+            "orthonormalized_relative_frobenius": 1.1831998974421809e-05
+          }
+        ],
+        "standard_pruned_grid_levels": [
+          {
+            "name": "BeH2",
+            "grid_level": 5,
+            "legacy_points": 89200,
+            "weak_strong_relative_frobenius": 7.5591833626054346e-06,
+            "weak_strong_max_abs_element_Ha": 4.482651446452435e-05,
+            "orthonormalized_relative_frobenius": 1.1831998974421809e-05
+          },
+          {
+            "name": "BeH2",
+            "grid_level": 6,
+            "legacy_points": 130976,
+            "weak_strong_relative_frobenius": 7.899399046709747e-06,
+            "weak_strong_max_abs_element_Ha": 4.6444743322937576e-05,
+            "orthonormalized_relative_frobenius": 1.2069556993599729e-05
+          },
+          {
+            "name": "BeH2",
+            "grid_level": 7,
+            "legacy_points": 184328,
+            "weak_strong_relative_frobenius": 7.346694968742266e-06,
+            "weak_strong_max_abs_element_Ha": 4.133080993623528e-05,
+            "orthonormalized_relative_frobenius": 1.1072370893244052e-05
+          }
+        ],
+        "unpruned_grid_results": [
+          {
+            "name": "BeH2",
+            "radial_points_per_atom": 100,
+            "angular_points_per_shell": 434,
+            "legacy_points": 130200,
+            "weak_strong_relative_frobenius": 7.62978919796739e-07,
+            "weak_strong_max_abs_element_Ha": 1.870351137078785e-06,
+            "orthonormalized_relative_frobenius": 1.590261434995319e-06
+          },
+          {
+            "name": "BeH2",
+            "radial_points_per_atom": 120,
+            "angular_points_per_shell": 590,
+            "legacy_points": 212400,
+            "weak_strong_relative_frobenius": 1.4433282036330173e-07,
+            "weak_strong_max_abs_element_Ha": 3.9361324855047286e-07,
+            "orthonormalized_relative_frobenius": 3.245862046830392e-07
+          }
+        ]
+      }
+    },
+    "density_matrix_directional_contraction": {
+      "status": "reported_pass",
+      "epsilons": [
+        0.0003,
+        0.0001,
+        3e-05,
+        1e-05
+      ],
+      "absolute_errors": {
+        "LDA": [
+          3.88e-13,
+          3.88e-13,
+          3.35e-12,
+          4.05e-12
+        ],
+        "PBE": [
+          1.18e-11,
+          4.4e-12,
+          3e-12,
+          1.78e-11
+        ],
+        "LapNN": [
+          8.25e-12,
+          8.47e-13,
+          3.59e-12,
+          3.59e-12
+        ]
+      },
+      "reported_approximate_analytic_contractions_ha": [
+        0.22,
+        -0.384,
+        -0.325
+      ]
+    },
+    "parameter_backprop_and_gradcheck": {
+      "status": "reported_pass",
+      "finite_nonzero_lapnn_parameter_gradients": true,
+      "one_parameter_outer_gradcheck": "passed"
+    },
+    "spin_equality": "reported_pass",
+    "actual_pyscf_nr_rks": {
+      "system": "H2 / STO-3G",
+      "status": "pass_exact_reported",
+      "functional": "same LapEnergy NN instance via Torch weak operator and RKS_with_Laplacian NumIntWithLaplacian.nr_rks",
+      "grid": "42,508 exact legacy central coordinates and weights",
+      "n_ao": 60,
+      "absolute_frobenius_Ha": 3.288326660947658e-15,
+      "relative_frobenius_error": 4.483279940305549e-16,
+      "max_absolute_element_Ha": 5.551115123125783e-16,
+      "orthonormalized_absolute_frobenius_Ha": 1.33406226960313e-12,
+      "orthonormalized_relative_error": 2.54161134881203e-13,
+      "result_artifact": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\d4_real_pbe_ao_validation.json"
+    },
+    "analytic_pbe_projection_parity": "pass_on_five_legacy_central_grids; BeH2 residual explicitly quantified and independently reduced by unpruned quadrature refinement",
+    "final_gate2_status": "passed",
+    "six_gate_conditions": [
+      {
+        "condition": 1,
+        "name": "manufactured LDA/GGA/Lap AO matrices",
+        "status": "pass"
+      },
+      {
+        "condition": 2,
+        "name": "real PBE weak operator vs analytic strong projection",
+        "status": "pass_with_finite_quadrature_residual_documented"
+      },
+      {
+        "condition": 3,
+        "name": "Torch operator vs actual PySCF Lap nr_rks matrix",
+        "status": "pass"
+      },
+      {
+        "condition": 4,
+        "name": "density-matrix directional derivative",
+        "status": "pass_LDA_PBE_LapNN"
+      },
+      {
+        "condition": 5,
+        "name": "finite nonzero NN parameter gradients and gradcheck",
+        "status": "pass"
+      },
+      {
+        "condition": 6,
+        "name": "no spatial h or spatial finite differences",
+        "status": "pass; only central AO values/derivatives; DM epsilon sweep is not a spatial derivative"
+      }
+    ],
+    "no_spatial_h_or_fd_dependence": true
+  },
+  "wsl_full_focused_regression": {
+    "status": "pass",
+    "result": "41 passed in 7.97 s, one PyTorch deprecation warning",
+    "scope": "operator unit/validation/data/pilot tests plus historical scientific regressions",
+    "reported_by_orchestrator": true
+  },
+  "windows_full_focused_regression": {
+    "status": "pass",
+    "result": "177 passed, 5 skipped, 2 warnings; 1 historical warning",
+    "environment": {
+      "MKL_THREADING_LAYER": "SEQUENTIAL",
+      "OMP_NUM_THREADS": "1"
+    },
+    "scope": "train_models/test_lap*.py plus training protocol/state tests",
+    "reported_by_orchestrator": true,
+    "supersedes": "earlier 161 passed, 5 skipped run"
+  },
+  "pilot_preparation": {
+    "status": "three_system_fixture_cache_pilot_scf_and_all90_corpus_passed",
+    "central_corpus": {
+      "path_outside_repository": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\pilot_h2_beh2_co",
+      "protocol": "lap-operator-central-ao-noh-v1",
+      "operator_protocol": "lap-weakform-ao-v1",
+      "manifest_sha256": "b55e569784ab0d3ebc1940849594be08a799e9c32b506668827a35cf5f4eb72b",
+      "builder_runtime_seconds": 9.59,
+      "manifest_build_loop_seconds": 8.790612195999998,
+      "compressed_hdf5_file_bytes": 13657447,
+      "raw_dataset_bytes": 29656448,
+      "records": [
+        {
+          "system_name": "H2",
+          "point_count": 42508,
+          "nao": 60,
+          "file": "H2.h5",
+          "file_sha256": "073dabbf58912237b9fb4e9915eee7b93518fbc10874120e5f73b92c2221dcce",
+          "record_sha256": "c0f5d50b8947520318291b7c68b80f620ee44314c99530da59c595c5ae59dae7"
+        },
+        {
+          "system_name": "BeH2",
+          "point_count": 77240,
+          "nao": 144,
+          "file": "BeH2.h5",
+          "file_sha256": "58ac877f4fc02c1dbdc625414390438d820cf5a9499eea1980fe81d0fc0dc8bb",
+          "record_sha256": "141c4a68d99df09bdd75552c762a3bbd5e9b4068b6d205b6f8889c355123e9a8"
+        },
+        {
+          "system_name": "CO",
+          "point_count": 72110,
+          "nao": 168,
+          "file": "CO.h5",
+          "file_sha256": "803bbc5092fd85da00d9e51eb6114f63ead41dba0d687d161fda2748e1cafd35",
+          "record_sha256": "61dc2917820f798b02a1232335074d5a6aa9ca7153aee88344e3c56b0f3a62f1"
+        }
+      ],
+      "recovery_and_projection_checks": {
+        "legacy_row_order_preserved": true,
+        "legacy_weights_vxc_exc_preserved": true,
+        "coordinate_recovery": "exact float32 identity; ambiguous distinct float64 collisions fail closed",
+        "h2_rebuilt_descriptor_max_abs_error": 4.24e-22,
+        "h2_rebuilt_reference_projection_max_abs_Ha": 1.11e-16,
+        "hash_verified_load_seconds": 0.432,
+        "hash_verified_load_compressed_MB_per_second": 31.6
+      },
+      "all90_mode": "Completed and independently verified; 90 systems and 8,271,091 central points.",
+      "output_location_guard": "builder rejects paths inside the repository",
+      "validation": {
+        "focused_wsl_tests": "13 passed",
+        "compileall": "passed",
+        "ruff": "passed"
+      }
+    },
+    "transient_ao_factor_cache": {
+      "path_outside_repository": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\ao_cache_fgpu_20261001T192623",
+      "protocol": "lap-ao-factor-cache-f32-v1",
+      "operator_protocol": "lap-weakform-ao-v1",
+      "dtype": "float32",
+      "compression": "HDF5 LZF with shuffle",
+      "manifest_sha256": "20ae74614a21ccb84eab1708e581c2c3e466860d7902615549d29c5e8aa37d15",
+      "generation_seconds": 10.746623616,
+      "generation_chunk_size": 2048,
+      "compressed_file_bytes": 286907157,
+      "raw_factor_bytes": 515750400,
+      "record_hashes": [
+        {
+          "system_name": "H2",
+          "point_count": 42508,
+          "nao": 60,
+          "file": "H2_ao_factors.h5",
+          "cache_file_bytes": 26049250,
+          "cache_file_sha256": "c4e0b876679ea1970d51c80632656398f5c988d91c9742b741185a9db9327c0d",
+          "source_record_sha256": "c0f5d50b8947520318291b7c68b80f620ee44314c99530da59c595c5ae59dae7",
+          "source_file_sha256": "073dabbf58912237b9fb4e9915eee7b93518fbc10874120e5f73b92c2221dcce"
+        },
+        {
+          "system_name": "BeH2",
+          "point_count": 77240,
+          "nao": 144,
+          "file": "BeH2_ao_factors.h5",
+          "cache_file_bytes": 129724948,
+          "cache_file_sha256": "ae754c8b7401487d2cdc85dc1db87da4fdaabde35210eab26f6333d2ae1531d2",
+          "source_record_sha256": "141c4a68d99df09bdd75552c762a3bbd5e9b4068b6d205b6f8889c355123e9a8",
+          "source_file_sha256": "58ac877f4fc02c1dbdc625414390438d820cf5a9499eea1980fe81d0fc0dc8bb"
+        },
+        {
+          "system_name": "CO",
+          "point_count": 72110,
+          "nao": 168,
+          "file": "CO_ao_factors.h5",
+          "cache_file_bytes": 131132959,
+          "cache_file_sha256": "c9c5083b0abc416751ee85d82de56081e3a6beb8e7e58c323d5cdb9aeaa90365",
+          "source_record_sha256": "61dc2917820f798b02a1232335074d5a6aa9ca7153aee88344e3c56b0f3a62f1",
+          "source_file_sha256": "803bbc5092fd85da00d9e51eb6114f63ead41dba0d687d161fda2748e1cafd35"
+        }
+      ],
+      "gpu_cache_preflight": {
+        "density_descriptor_max_relative_errors": {
+          "H2": 5.404e-08,
+          "BeH2": 1.126e-07,
+          "CO": 6.197e-08
+        },
+        "reference_projection_relative_frobenius": {
+          "H2": 3.28e-09,
+          "BeH2": 8.127e-09,
+          "CO": 7.361e-09
+        }
+      },
+      "pilot_cache_tests": "15 passed in 4.88 s; independent WSL rerun of test_lap_operator_data.py and test_lap_operator_pilot.py"
+    }
+  },
+  "predopt_run": {
+    "status": "completed",
+    "purpose": "fresh two-epoch canonical Minnesota PBE adaptive-parameter predopt only; no MRKS/reaction objective",
+    "path_outside_repository": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623",
+    "report_sha256": "7ffb34795ec10e2fde8d42c3eb432e6588f5a24f400e8242be14592abd537262",
+    "checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "source_pickle_sha256": "70d23f32286e62c05bf2794e20426f6a03cf516bb1e0dc44e9d3a7d73266bce3",
+    "source_manifest_sha256": "d33b1ddaac5add399381067f385630f01e9ccd6a64e8a10ba15dbb610d89e6cf",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "dtype": "torch.float32",
+    "seed": 41,
+    "epochs": 2,
+    "base_reactions": 268,
+    "grid_points": 21073642,
+    "elapsed_seconds": 186.94681949994992,
+    "before": {
+      "adaptive_targets": 9,
+      "grid_points": 21073642,
+      "mae": 0.1921368972469249,
+      "mse": 0.08232276912261569
+    },
+    "after": {
+      "adaptive_targets": 9,
+      "grid_points": 21073642,
+      "mae": 0.0002829270709107505,
+      "mse": 4.878753724403021e-07
+    },
+    "peak_allocated_bytes": 118871040,
+    "peak_reserved_bytes": 146800640
+  },
+  "pilot_branch_progress": {
+    "status": "H2-only and H2+BeH2+CO branches completed; all 4 SCF runs converged; all90 corpus independently verified",
+    "current_gate_decision": "all_validation_gates_passed; ready for clean MOO design",
+    "h2_only": {
+      "status": "completed_20_steps",
+      "systems": [
+        "H2"
+      ],
+      "steps": 20,
+      "learning_rate": 1e-05,
+      "chunk_size": 512,
+      "checkpoint_protocol": "lap-weakform-ao-v1",
+      "report_sha256": "e8a99ef4c52b3ad83f8a76ee1fb4879794d990c4717368d5dd43bcdb2801bc0",
+      "checkpoint_sha256": "ee352f4ae1854f14fa1279c17a888837420e5ab55ea3f168a5797caeb153acad",
+      "initial_objectives_and_gradients": {
+        "diagnostic_loss_coefficients": {
+          "exc": 0.0001424861845526504,
+          "operator": 3.4768596667795153,
+          "rule": "freeze inverse initial parameter-gradient norms so both pilot objectives begin with unit gradient norm; diagnostic only"
+        },
+        "exc_gradient_norm": 7018.224280056344,
+        "exc_loss_kcal2": 27.977975845336914,
+        "exc_operator_gradient_cosine": 0.9801494619999126,
+        "operator_gradient_norm": 0.28761586484342133,
+        "operator_loss_ha2_per_ao": 0.05065064877271652,
+        "system_metrics": {
+          "H2": {
+            "exc_error_kcal_mol": 5.289421081542969,
+            "operator_loss_ha2_per_ao": 0.05065064877271652,
+            "predicted_exc_hartree": -0.6939274072647095
+          }
+        }
+      },
+      "step1": {
+        "exc_errors_kcal_mol": {
+          "H2": 5.289421081542969
+        },
+        "operator_loss_ha2_per_ao": 0.05065064877271652,
+        "combined_gradient_norm": 1.9900467470286807,
+        "step_seconds": 6.799968199979048,
+        "cuda_peak_allocated_bytes": 3421786112,
+        "cuda_peak_reserved_bytes": 3703570432
+      },
+      "step20": {
+        "exc_errors_kcal_mol": {
+          "H2": 3.901041030883789
+        },
+        "operator_loss_ha2_per_ao": 0.05008181557059288,
+        "combined_gradient_norm": 1.7193662880380283,
+        "step_seconds": 6.121764800045639,
+        "cuda_peak_allocated_bytes": 3423554560,
+        "cuda_peak_reserved_bytes": 3703570432
+      },
+      "all_history_finite": true,
+      "q_tau_diagnostics": {
+        "all_finite": true,
+        "sampling": "deterministic density-rank stratification over the complete central population",
+        "density_range": [
+          1.0062930044796303e-07,
+          0.43108633160591125
+        ],
+        "lapl_adaptive_constants_delta_max_abs_vs_zero_lapl": 0.016668200492858887,
+        "lapl_energy_delta_max_abs_vs_zero_lapl": 0.0029268264770507812,
+        "lapl_energy_gradient_l2": 0.007124432706475983,
+        "lapl_energy_gradient_max_abs": 0.0008054397185333073,
+        "lapl_energy_gradient_nonzero_entries": 1514,
+        "sample_points": 1024,
+        "tau_feature_max_abs": 0.0,
+        "tau_perturbation_output_max_abs": 0.0
+      },
+      "interpretation": "Post-update density-stratified H2 evaluation shows finite nonzero Laplacian response; tau perturbation has exactly zero effect. Combined branch and SCF results are recorded separately.",
+      "final_checkpoint_evaluation": {
+        "checkpoint_state": "post_update",
+        "optimizer_updates_completed": 20,
+        "exc_loss_kcal2": 14.664134979248047,
+        "operator_loss_ha2_per_ao": 0.05005259066820145,
+        "combined_loss": 0.1761152744293213,
+        "exc_gradient_norm": 5077.46648929548,
+        "operator_gradient_norm": 0.2848037563818534,
+        "exc_operator_gradient_cosine": 0.9802924797445508,
+        "combined_gradient_norm": 1.7054253944676534,
+        "system_metrics": {
+          "H2": {
+            "predicted_exc_hartree": -0.6962541341781616,
+            "exc_error_kcal_mol": 3.8293778896331787,
+            "exc_loss_kcal2_contribution": 14.664134979248047,
+            "operator_loss_ha2_per_ao": 0.05005259066820145
+          }
+        }
+      },
+      "history_semantics": "Each history row is measured immediately before its named optimizer update; final_checkpoint_evaluation measures the saved model after all 20 updates."
+    },
+    "combined_branch": {
+      "status": "completed_20_optimizer_updates",
+      "systems": [
+        "H2",
+        "BeH2",
+        "CO"
+      ],
+      "steps": 20,
+      "learning_rate": 1e-05,
+      "chunk_size": 512,
+      "checkpoint_protocol": "lap-weakform-ao-v1",
+      "report_sha256": "afeb592cdc533f1a48dede617565aaa4d68e46a1987dff3087228d2150f2caa0",
+      "checkpoint_sha256": "59bb5a4dda380c1c01d306fbfe78ad2e3582e51275027738faa92ea38db4f7d6",
+      "initial": {
+        "exc_loss_kcal2": 1245.9072265625,
+        "operator_loss_ha2_per_ao": 0.0446237288415432,
+        "exc_gradient_norm": 618899.7754255335,
+        "operator_gradient_norm": 0.3689552604058973,
+        "exc_operator_gradient_cosine": 0.9002036459405776
+      },
+      "final": {
+        "checkpoint_state": "post_update",
+        "optimizer_updates_completed": 20,
+        "exc_loss_kcal2": 354.50555419921875,
+        "operator_loss_ha2_per_ao": 0.04384702071547508,
+        "combined_loss": 0.119413822889328,
+        "exc_gradient_norm": 315672.71001252346,
+        "operator_gradient_norm": 0.35823932221336335,
+        "exc_operator_gradient_cosine": 0.8915371006082571,
+        "combined_gradient_norm": 1.4442514986129609,
+        "system_metrics": {
+          "H2": {
+            "exc_error_kcal_mol": 3.880918502807617,
+            "operator_loss_ha2_per_ao": 0.05010811239480972
+          },
+          "BeH2": {
+            "exc_error_kcal_mol": 17.766475677490234,
+            "operator_loss_ha2_per_ao": 0.03271661326289177
+          },
+          "CO": {
+            "exc_error_kcal_mol": 27.070417404174805,
+            "operator_loss_ha2_per_ao": 0.048716336488723755
+          }
+        }
+      },
+      "q_tau_diagnostics": {
+        "H2": {
+          "lapl_energy_delta_max_abs_vs_zero_lapl": 0.0020987987518310547,
+          "lapl_energy_gradient_l2": 0.006370813748093365,
+          "lapl_energy_gradient_max_abs": 0.0006823189905844629,
+          "lapl_energy_gradient_nonzero_entries": 1514,
+          "lapl_adaptive_constants_delta_max_abs_vs_zero_lapl": 0.016638636589050293,
+          "sample_points": 1024,
+          "tau_perturbation_output_max_abs": 0.0,
+          "all_finite": true
+        },
+        "BeH2": {
+          "lapl_energy_delta_max_abs_vs_zero_lapl": 0.693756103515625,
+          "lapl_energy_gradient_l2": 0.007718082829793612,
+          "lapl_energy_gradient_max_abs": 0.001105927280150354,
+          "lapl_energy_gradient_nonzero_entries": 1492,
+          "lapl_adaptive_constants_delta_max_abs_vs_zero_lapl": 0.016570627689361572,
+          "sample_points": 1024,
+          "tau_perturbation_output_max_abs": 0.0,
+          "all_finite": true
+        },
+        "CO": {
+          "lapl_energy_delta_max_abs_vs_zero_lapl": 13.99267578125,
+          "lapl_energy_gradient_l2": 0.006536793283804806,
+          "lapl_energy_gradient_max_abs": 0.0010115420445799828,
+          "lapl_energy_gradient_nonzero_entries": 1472,
+          "lapl_adaptive_constants_delta_max_abs_vs_zero_lapl": 0.009474583901464939,
+          "sample_points": 1024,
+          "tau_perturbation_output_max_abs": 0.0,
+          "all_finite": true
+        }
+      }
+    },
+    "scf": {
+      "status": "passed_4_of_4_converged_finite_tau_free",
+      "report_path": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\fgpu_operator_pilot_scf_wsl_20261001Tfinal\\lap_operator_scf_report.json",
+      "report_sha256": "798862ce238fcc7c545e7e0944250d211599a19a2cdf42ae59e513ea38753abb",
+      "grid_level": 1,
+      "max_cycle": 40,
+      "all_cycle_energies_finite": true,
+      "vtau_max_abs": 0.0,
+      "tau_independent": true,
+      "results": [
+        {
+          "checkpoint_branch": "h2_only",
+          "system": "H2",
+          "converged": true,
+          "cycles": 5,
+          "total_energy_hartree": -1.1688595766964938
+        },
+        {
+          "checkpoint_branch": "h2_beh2_co",
+          "system": "H2",
+          "converged": true,
+          "cycles": 5,
+          "total_energy_hartree": -1.168777358857939
+        },
+        {
+          "checkpoint_branch": "h2_beh2_co",
+          "system": "BeH2",
+          "converged": true,
+          "cycles": 6,
+          "total_energy_hartree": -15.876881665408899
+        },
+        {
+          "checkpoint_branch": "h2_beh2_co",
+          "system": "CO",
+          "converged": true,
+          "cycles": 8,
+          "total_energy_hartree": -113.28575493828066
+        }
+      ]
+    },
+    "overall_pilot_gate": "passed: h-free variational operator, three-system real-data pilot, SCF, and independently verified all90 corpus"
+  },
+  "pilot_summary_report": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\fgpu_operator_pilot_20261001T192623\\lap_operator_pilot_report.json",
+    "sha256": "14f013f9f92d7985cc6ba95aa0942ebf70700d94790a5c1e67104861a40582f"
+  },
+  "final_source_checks": {
+    "ruff": "passed for all 9 new Python files",
+    "compileall": "passed for train_models and test_models",
+    "git_diff_check": "passed",
+    "manifest_writer_and_output_guard_windows": "8 passed in 1.82 s",
+    "manifest_writer_and_output_guard_wsl": "8 passed in 2.19 s",
+    "ruff_and_compileall_rechecks": "passed; 9 new Python files linted and train_models/test_models compiled"
+  },
+  "source_commit_hash": "3d95d373815502d784c859b1c70734dbc0c036ba",
+  "all90_operator_corpus": {
+    "status": "passed_builder_and_independent_verification",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90",
+    "manifest_path": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json",
+    "manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "protocol": "lap-operator-central-ao-noh-v1",
+    "operator_protocol": "lap-weakform-ao-v1",
+    "systems": 90,
+    "central_points": 8271091,
+    "compressed_hdf5_bytes": 703764412,
+    "manifest_bytes": 27736,
+    "directory_payload_bytes": 703792148,
+    "build_runtime_seconds": 406.12,
+    "atomic_publication": true,
+    "strict_verification_before_publication": true,
+    "strict_verification_after_publication": true,
+    "independent_verification": {
+      "status": "passed",
+      "vxc_unmatched_legacy_centers": 0,
+      "vxc_identity_max_abs_error_ha": 4.768337902305575e-07,
+      "all_rho_sigma_lapl_descriptors_float32_compatible": true,
+      "worst_normalized_descriptor_error": 0.011893171425632443
+    },
+    "repository_metadata_manifest": {
+      "path": "lap_operator_corpus_manifest.json",
+      "bytes": 2191045,
+      "sha256": "65aab3a084eb1a5ac6eb78d3a2d04d9744524b4ea58616f5e29768f8731b1bd7",
+      "contains_large_corpus_data": false
+    },
+    "reproducible_verification_command": "wsl -d Ubuntu-22.04 --exec /home/schneidermu/.cache/pinn-lap-tests/bin/python -c \"import json; from train_models.lap_operator_data import verify_operator_corpus; p='/mnt/c/Dev/readWFN_share_ms/lap_operator_runs_20261001/all90'; m=json.load(open(p+'/manifest.json')); print(verify_operator_corpus(p, expected_systems=m['built_systems'], require_all90=True))\""
+  },
+  "final_decision": "The h-free variational XC-operator objective is validated and ready for multi-objective training design.",
+  "next_step": "Clean multi-objective training design is the next project; no implementation or training jobs are part of this validated gate."
+}
