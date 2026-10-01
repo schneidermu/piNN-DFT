@@ -53,7 +53,11 @@ def test_minnesota_sigma_boundary_accepts_float32_cancellation_rounding():
     assert not torch.allclose(
         model_sigma,
         torch.stack(
-            [standard[:, 0], standard[:, 0] + 2 * standard[:, 1] + standard[:, 2], standard[:, 2]],
+            [
+                standard[:, 0],
+                standard[:, 0] + 2 * standard[:, 1] + standard[:, 2],
+                standard[:, 2],
+            ],
             dim=-1,
         ),
         rtol=1e-6,
@@ -107,6 +111,21 @@ def test_production_center_verifier_requires_every_legacy_row():
     require_full_center_verification(d)
     d["SourceProvenance"]["central_density_check"]["points_checked"] = 1
     with pytest.raises(ValueError, match="every legacy central point"):
+        require_full_center_verification(d)
+
+
+def test_production_center_verifier_accepts_old_independent_full_population_counts():
+    d = record()
+    provenance = d["SourceProvenance"]
+    del provenance["legacy_training_points"]
+    provenance["legacy_vxc_matching"] = {
+        "legacy_points": 2,
+        "matched_legacy_points": 2,
+        "unmatched_legacy_points": 0,
+    }
+    require_full_center_verification(d)
+    provenance["legacy_vxc_matching"]["matched_legacy_points"] = 1
+    with pytest.raises(ValueError, match="lacks legacy central-point"):
         require_full_center_verification(d)
 
 
@@ -206,7 +225,9 @@ def test_built_corpus_remains_usable_when_source_h5_moves(corpus, tmp_path):
     source_dir.rmdir()
     manifest_path = corpus / "preprocessing_manifest.json"
     manifest = json.loads(manifest_path.read_text())
-    manifest["minnesota_manifest_source_path"] = "Z:/source-was-moved/preprocessing_manifest.json"
+    manifest["minnesota_manifest_source_path"] = (
+        "Z:/source-was-moved/preprocessing_manifest.json"
+    )
     manifest_path.write_text(json.dumps(manifest))
     manifest, records = verify_corpus(corpus)
     assert len(records) == 90
@@ -359,7 +380,9 @@ def test_lap_predopt_uses_one_canonical_variant_per_base_reaction():
     }
     view = canonical_predopt_view(grouped)
     assert len(view) == 268
-    assert all(item["component_paths"][0].endswith("__level2.h5") for item in view.values())
+    assert all(
+        item["component_paths"][0].endswith("__level2.h5") for item in view.values()
+    )
     grouped[0].append({"component_paths": ["m0.h5"]})
     assert canonical_predopt_view(grouped)[0]["component_paths"] == ["m0.h5"]
     with pytest.raises(ValueError, match="268"):

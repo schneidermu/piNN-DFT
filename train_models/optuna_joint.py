@@ -87,7 +87,9 @@ MEAN_WEIGHT = sum(
 ) / len(FCHEM_DB_WEIGHTS)
 
 HARTREE2KCAL = 627.5095
-DEFAULT_MRKS_DISPERSIONS = Path(__file__).resolve().parent / "dispersions" / "dispersions_mrks.pickle"
+DEFAULT_MRKS_DISPERSIONS = (
+    Path(__file__).resolve().parent / "dispersions" / "dispersions_mrks.pickle"
+)
 
 
 class VxcDataset(Dataset):
@@ -115,12 +117,16 @@ def variant_suffix_from_reaction(reaction: Dict[str, Any]) -> str:
         raise ValueError("Reaction variant is missing component_paths.")
     suffixes = {variant_suffix_from_path(path) for path in component_paths}
     if len(suffixes) != 1:
-        raise ValueError(f"Inconsistent augmentation suffixes detected: {sorted(suffixes)}")
+        raise ValueError(
+            f"Inconsistent augmentation suffixes detected: {sorted(suffixes)}"
+        )
     return next(iter(suffixes))
 
 
 def canonical_variant(group: List[Dict[str, Any]]) -> Dict[str, Any]:
-    suffix_map = {variant_suffix_from_reaction(reaction): reaction for reaction in group}
+    suffix_map = {
+        variant_suffix_from_reaction(reaction): reaction for reaction in group
+    }
     chosen_suffix = "default" if "default" in suffix_map else min(suffix_map)
     return suffix_map[chosen_suffix]
 
@@ -135,8 +141,7 @@ class EpochSampledAugmentedDataset(Dataset):
     def resample(self, epoch: int) -> None:
         generator = random.Random(self.base_seed + epoch)
         self.sampled_reactions = [
-            group[generator.randrange(len(group))]
-            for group in self.reaction_groups
+            group[generator.randrange(len(group))] for group in self.reaction_groups
         ]
 
     def __len__(self) -> int:
@@ -147,14 +152,44 @@ class EpochSampledAugmentedDataset(Dataset):
         return copy.deepcopy(chosen), chosen["Energy"]
 
 
-def vxc_collate_fn(batch: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
+def vxc_collate_fn(batch: list[dict[str, torch.Tensor]]) -> dict[str, Any]:
+    if batch and "StencilFeatures" in batch[0]:
+        if len(batch) != 1:
+            raise ValueError(
+                "Full-Euler Lap batches must contain exactly one mRKS system."
+            )
+        record = batch[0]
+        required = {
+            "Name",
+            "StencilFeatures",
+            "Weights",
+            "Vxc",
+            "E_xc",
+            "HBohr",
+            "Protocol",
+            "StencilVersion",
+            "SourceProvenance",
+        }
+        if not required <= record.keys() or "Vrho" in record:
+            raise ValueError(
+                "Lap/full-Euler mode requires a provenance-complete stencil record; "
+                "legacy Grid/Vrho data are rejected."
+            )
+        return {
+            "LapRecords": [record],
+            "Names": [record["Name"]],
+            "GridLengths": torch.tensor([len(record["Weights"])], dtype=torch.long),
+            "E_xc": record["E_xc"].reshape(1),
+        }
     return {
         "Grid": torch.cat([item["Grid"] for item in batch], dim=0),
         "Vrho": torch.cat([item["Vrho"] for item in batch], dim=0),
         "Weights": torch.cat([item["Weights"] for item in batch], dim=0),
         "E_xc": torch.stack([item["E_xc"] for item in batch], dim=0),
         "Names": [item["Name"] for item in batch],
-        "GridLengths": torch.tensor([item["Grid"].shape[0] for item in batch], dtype=torch.long),
+        "GridLengths": torch.tensor(
+            [item["Grid"].shape[0] for item in batch], dtype=torch.long
+        ),
     }
 
 
@@ -206,7 +241,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--preopt-vxc-steps", type=int, default=0)
     parser.add_argument("--preopt-vxc-target", type=str, default="pbe", choices=["pbe"])
     parser.add_argument("--include-mrks-dispersion", action="store_true")
-    parser.add_argument("--mrks-dispersions-pickle", type=str, default=str(DEFAULT_MRKS_DISPERSIONS))
+    parser.add_argument(
+        "--mrks-dispersions-pickle", type=str, default=str(DEFAULT_MRKS_DISPERSIONS)
+    )
     parser.add_argument(
         "--no-reaction-dispersion",
         action="store_true",
@@ -229,18 +266,24 @@ def init_distributed() -> Tuple[int, int, torch.device, bool]:
 
 
 def sync_failure(local_failed: bool, device: torch.device) -> bool:
+    if not dist.is_initialized():
+        return bool(local_failed)
     flag = torch.tensor([1 if local_failed else 0], device=device, dtype=torch.int32)
     dist.all_reduce(flag, op=dist.ReduceOp.MAX)
     return bool(flag.item())
 
 
 def broadcast_payload(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if not dist.is_initialized():
+        return payload
     object_list = [payload]
     dist.broadcast_object_list(object_list, src=0)
     return object_list[0]
 
 
 def gather_object(payload: Any, world_size: int) -> List[Any]:
+    if not dist.is_initialized():
+        return [payload]
     gathered = [None] * world_size
     dist.all_gather_object(gathered, payload)
     return gathered
@@ -259,7 +302,9 @@ def build_model(args: argparse.Namespace, device: torch.device) -> nn.Module:
     num_layers, h_dim, use_g_x, use_g_c = parse_model_name(args.name)
     model_type = getattr(args, "model_type", "base")
     if args.name.startswith("PBE-Lap-") != (model_type == "lap"):
-        raise ValueError("Lap architecture requires both an explicit PBE-Lap name and model_type=lap.")
+        raise ValueError(
+            "Lap architecture requires both an explicit PBE-Lap name and model_type=lap."
+        )
     model_classes = {
         "lap": pcPBELMLOptimizerV2Lap,
         "base": pcPBELMLOptimizerV2,
@@ -269,14 +314,15 @@ def build_model(args: argparse.Namespace, device: torch.device) -> nn.Module:
         "gc_softplus_mirror_r2scan_alpha": pcPBELMLOptimizerV2GcSoftplusMirrorR2ScanAlpha,
     }
     model_cls = model_classes[model_type]
-    return model_cls(
+    model = model_cls(
         num_layers=num_layers,
         h_dim=h_dim,
         dropout=args.dropout,
         DFT="PBE",
         use_g_x=use_g_x,
         use_g_c=use_g_c,
-    ).to(device)
+    )
+    return model.to(device=device, dtype=getattr(args, "dtype", torch.float32))
 
 
 def load_state_dict_into_model(
@@ -295,7 +341,9 @@ def load_state_dict_into_model(
     missing, unexpected = model.load_state_dict(cleaned, strict=False)
     allowed_missing: List[str] = []
     allowed_unexpected = {name for name in unexpected if name.startswith("log_scale")}
-    unexpected_without_allowed = [name for name in unexpected if name not in allowed_unexpected]
+    unexpected_without_allowed = [
+        name for name in unexpected if name not in allowed_unexpected
+    ]
     if missing != allowed_missing or unexpected_without_allowed:
         raise RuntimeError(
             f"Unexpected checkpoint mismatch. Missing={missing}, Unexpected={unexpected_without_allowed}"
@@ -308,14 +356,132 @@ def load_mrks_dispersions(path: str) -> Dict[str, float]:
     return {key: float(value) for key, value in raw.items()}
 
 
+def _lap_record_from_batch(X_batch: dict[str, Any]) -> dict[str, Any]:
+    records = X_batch.get("LapRecords")
+    if not isinstance(records, (list, tuple)) or len(records) != 1:
+        raise ValueError(
+            "Full-Euler Lap objectives require one explicit full-stencil record."
+        )
+    record = records[0]
+    if "Vrho" in record or "Grid" in record:
+        raise ValueError(
+            "Legacy partial-Vrho records cannot enter Lap/full-Euler mode."
+        )
+    if record.get("Protocol") != "diet-clean-mn-all-mrks-lap-fullvxc-v1":
+        raise ValueError("Lap/full-Euler record protocol is missing or incompatible.")
+    if record.get("StencilVersion") != "cartesian-7-rho-grad-lapl-v1":
+        raise ValueError(
+            "Lap/full-Euler record stencil version is missing or incompatible."
+        )
+    return record
+
+
+def _require_lap_model(model: nn.Module) -> nn.Module:
+    from lap_data import PROTOCOL
+    from NN_models_lap import DESCRIPTOR_PROTOCOL
+
+    base_model = model.module if hasattr(model, "module") else model
+    if getattr(base_model, "descriptor_protocol", None) != DESCRIPTOR_PROTOCOL:
+        raise ValueError("full_euler potential mode requires pcPBELMLOptimizerV2Lap.")
+    if getattr(base_model, "protocol", PROTOCOL) not in (None, PROTOCOL):
+        raise ValueError("Lap architecture and full-Vxc corpus protocol disagree.")
+    return base_model
+
+
+def _lap_energy_and_features(model: nn.Module, record: dict[str, Any], device):
+    from lap_vxc import LapEnergy
+
+    base_model = _require_lap_model(model)
+    parameter = next(base_model.parameters())
+    features = record["StencilFeatures"].to(
+        device=device, dtype=parameter.dtype, non_blocking=True
+    )
+    target = record["Vxc"].to(device=device, dtype=torch.float64, non_blocking=True)
+    weights = record["Weights"].to(
+        device=device, dtype=torch.float64, non_blocking=True
+    )
+    return LapEnergy(base_model), features, target, weights
+
+
+def _add_mrks_dispersion_once(
+    prediction: torch.Tensor,
+    system_name: str,
+    dispersions: dict[str, float] | None,
+    enabled: bool,
+) -> torch.Tensor:
+    """Match calculate_xc_energy's exact Name lookup and one-addition semantics."""
+    if not enabled:
+        return prediction
+    if dispersions is None:
+        raise ValueError(
+            "Lap-S5 mRKS dispersion is enabled but no artifact was loaded."
+        )
+    correction = torch.as_tensor(
+        float(dispersions.get(system_name, 0.0)),
+        device=prediction.device,
+        dtype=prediction.dtype,
+    )
+    return prediction + correction
+
+
+def lap_full_vxc_loss(
+    model: nn.Module,
+    X_batch: dict[str, Any],
+    device: torch.device,
+    point_chunk_size: int,
+) -> torch.Tensor:
+    from lap_vxc import full_vxc_loss
+
+    record = _lap_record_from_batch(X_batch)
+    energy, features, target, weights = _lap_energy_and_features(model, record, device)
+    h = float(record["HBohr"])
+    return full_vxc_loss(
+        energy,
+        features,
+        target,
+        weights,
+        h,
+        point_chunk_size=point_chunk_size,
+    )
+
+
+def lap_exc_loss(
+    model: nn.Module,
+    X_batch: dict[str, Any],
+    device: torch.device,
+    dispersions: dict[str, float] | None,
+    include_mrks_dispersion: bool,
+    point_chunk_size: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    from lap_vxc import integrated_energy
+
+    record = _lap_record_from_batch(X_batch)
+    energy, features, _, weights = _lap_energy_and_features(model, record, device)
+    prediction = integrated_energy(
+        energy, features, weights, point_chunk_size=point_chunk_size
+    )
+    prediction = _add_mrks_dispersion_once(
+        prediction, record["Name"], dispersions, include_mrks_dispersion
+    )
+    target = record["E_xc"].to(device=device, dtype=prediction.dtype).reshape(())
+    pred_batch = prediction.reshape(1)
+    target_batch = target.reshape(1)
+    loss = batch_exc([record["Name"]], pred_batch, target_batch)
+    return loss, pred_batch, target_batch
+
+
 def build_scheduler(optimizer: torch.optim.Optimizer, n_train: int):
-    warmup = LinearLR(optimizer, start_factor=WARMUP_START_FACTOR, total_iters=WARMUP_EPOCHS)
+    warmup = LinearLR(
+        optimizer, start_factor=WARMUP_START_FACTOR, total_iters=WARMUP_EPOCHS
+    )
     cosine = CosineAnnealingLR(
         optimizer,
         T_max=max(n_train - WARMUP_EPOCHS, 1),
         eta_min=MIN_LR,
     )
-    return SequentialLR(optimizer, schedulers=[warmup, cosine], milestones=[WARMUP_EPOCHS])
+    return SequentialLR(
+        optimizer, schedulers=[warmup, cosine], milestones=[WARMUP_EPOCHS]
+    )
 
 
 class GlobalCosineWithConvergenceTail:
@@ -537,6 +703,35 @@ def build_dataloaders(
     rank: int,
     world_size: int,
 ) -> Dict[str, Any]:
+    data_protocol = getattr(args, "data_protocol", "legacy_vrho")
+    potential_mode = getattr(args, "potential_mode", "partial_vrho")
+    model_type = getattr(args, "model_type", "base")
+    if data_protocol == "lap_full_vxc":
+        if potential_mode != "full_euler" or model_type != "lap":
+            raise ValueError(
+                "Lap stencil data requires model_type=lap and potential_mode=full_euler."
+            )
+        if int(args.vxc_batch_size) != 1:
+            raise ValueError("Lap full-Euler training requires vxc_batch_size=1.")
+        if not data_vxc_train:
+            raise ValueError("Lap full-Euler training requires nonempty stencil data.")
+        for record in data_vxc_train:
+            if (
+                "Vrho" in record
+                or record.get("Protocol") != "diet-clean-mn-all-mrks-lap-fullvxc-v1"
+                or "StencilFeatures" not in record
+            ):
+                raise ValueError(
+                    "Lap full-Euler training rejected legacy/partial-potential data."
+                )
+    elif data_protocol == "legacy_vrho":
+        if potential_mode != "partial_vrho" or model_type == "lap":
+            raise ValueError(
+                "Legacy Vrho data requires a non-Lap model and partial_vrho mode."
+            )
+    else:
+        raise ValueError(f"Unsupported data protocol: {data_protocol!r}.")
+
     train_set = EpochSampledAugmentedDataset(data_train, base_seed=trial_seed)
     vxc_train_set = VxcDataset(data_vxc_train)
 
@@ -582,7 +777,11 @@ def batch_fchem(
     for database, (preds, refs) in err_dict.items():
         db_predictions = torch.stack(preds)
         db_ref = torch.stack(refs)
-        factor = FCHEM_DB_WEIGHTS.get(database, 1) * FREQ_WEIGHTS.get(database, 1) / MEAN_WEIGHT
+        factor = (
+            FCHEM_DB_WEIGHTS.get(database, 1)
+            * FREQ_WEIGHTS.get(database, 1)
+            / MEAN_WEIGHT
+        )
         mse = nn.functional.mse_loss(db_predictions, db_ref)
         values.append(factor * torch.sqrt(1e-20 + mse))
     return torch.sum(torch.stack(values)) / len(values)
@@ -627,10 +826,14 @@ def update_exc_errors(
 ) -> None:
     for system_name, error in zip(system_names, pred_exc.detach() - ref_exc.detach()):
         total_exc_errors.setdefault(system_name, [])
-        total_exc_errors[system_name].append(float(torch.abs(error).item()) * HARTREE2KCAL)
+        total_exc_errors[system_name].append(
+            float(torch.abs(error).item()) * HARTREE2KCAL
+        )
 
 
-def compute_fchem_from_errors(total_database_errors: Dict[str, List[float]]) -> Tuple[float, Dict[str, float]]:
+def compute_fchem_from_errors(
+    total_database_errors: dict[str, list[float]],
+) -> tuple[float, dict[str, float]]:
     total = 0.0
     per_db = {}
     for db in sorted(total_database_errors):
@@ -643,7 +846,9 @@ def compute_fchem_from_errors(total_database_errors: Dict[str, List[float]]) -> 
     return total, per_db
 
 
-def compute_exc_from_errors(total_exc_errors: Dict[str, List[float]]) -> Tuple[float, Dict[str, float]]:
+def compute_exc_from_errors(
+    total_exc_errors: dict[str, list[float]],
+) -> tuple[float, dict[str, float]]:
     per_system = {}
     values = []
     for system_name in sorted(total_exc_errors):
@@ -665,15 +870,32 @@ def vxc_loss(
     rung: str = "GGA",
     dft: str = "PBE",
     create_graph: bool = True,
+    potential_mode: str = "partial_vrho",
+    point_chunk_size: int | None = None,
 ) -> torch.Tensor:
-    if getattr(getattr(model, "module", model), "descriptor_protocol", None) == "rho-sigma-total-lapl-tau-free-v1":
-        raise ValueError("Lap models require full_vxc_loss and reference stencils; use train_lap.py.")
+    if potential_mode == "full_euler":
+        if point_chunk_size is None or point_chunk_size <= 0:
+            raise ValueError(
+                "full_euler requires an explicit positive point chunk size."
+            )
+        return lap_full_vxc_loss(model, X_batch, device, point_chunk_size)
+    if potential_mode != "partial_vrho":
+        raise ValueError(f"Unsupported potential mode: {potential_mode!r}.")
+    if (
+        getattr(getattr(model, "module", model), "descriptor_protocol", None)
+        == "rho-sigma-total-lapl-tau-free-v1"
+    ):
+        raise ValueError(
+            "Lap models require full_vxc_loss via potential_mode='full_euler' "
+            "and reference stencils."
+        )
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     rho = grid_raw[:, 4:6].clone().requires_grad_(True)
     sigma = grid_raw[:, 6:9].clone()
     sigma = _fix_sigma_tot_closed_shell(sigma)
     sigma_pbe = torch.stack(
-        [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]], dim=1
+        [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]],
+        dim=1,
     )
     target_vrho = X_batch["Vrho"].to(device)
     weights = X_batch["Weights"].to(device)
@@ -716,7 +938,29 @@ def exc_loss(
     dft: str = "PBE",
     dispersions: Optional[Dict[str, float]] = None,
     include_mrks_dispersion: bool = False,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    potential_mode: str = "partial_vrho",
+    point_chunk_size: int | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    if potential_mode == "full_euler":
+        if point_chunk_size is None or point_chunk_size <= 0:
+            raise ValueError(
+                "full_euler requires an explicit positive point chunk size."
+            )
+        return lap_exc_loss(
+            model,
+            X_batch,
+            device,
+            dispersions,
+            include_mrks_dispersion,
+            point_chunk_size,
+        )
+    if potential_mode != "partial_vrho":
+        raise ValueError(f"Unsupported potential mode: {potential_mode!r}.")
+    if (
+        getattr(getattr(model, "module", model), "descriptor_protocol", None)
+        == "rho-sigma-total-lapl-tau-free-v1"
+    ):
+        raise ValueError("Lap models require full_euler mode and reference stencils.")
     grid_raw = X_batch["Grid"].to(device).clone().detach()
     weights = X_batch["Weights"].to(device)
     target_exc = X_batch["E_xc"].to(device)
@@ -732,7 +976,8 @@ def exc_loss(
         rho = grid_system[:, 4:6]
         sigma = _fix_sigma_tot_closed_shell(grid_system[:, 6:9].clone())
         sigma_pbe = torch.stack(
-            [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]], dim=1
+            [sigma[:, 0], (sigma[:, 1] - sigma[:, 0] - sigma[:, 2]) / 2.0, sigma[:, 2]],
+            dim=1,
         )
         model_input = torch.cat([rho, sigma, grid_system[:, 9:]], dim=1)
         constants = model(model_input)
@@ -773,7 +1018,9 @@ def compute_grad_list(
     loss: torch.Tensor,
     parameters: List[torch.nn.Parameter],
 ) -> List[Optional[torch.Tensor]]:
-    return list(torch.autograd.grad(loss, parameters, retain_graph=False, allow_unused=True))
+    return list(
+        torch.autograd.grad(loss, parameters, retain_graph=False, allow_unused=True)
+    )
 
 
 def clip_gradient_list_by_global_norm(
@@ -826,8 +1073,10 @@ def add_gradient_list_to_parameters(
             parameter.grad.add_(grad.detach())
 
 
-def allreduce_parameter_grads(parameters: List[torch.nn.Parameter], world_size: int) -> None:
-    if world_size <= 1:
+def allreduce_parameter_grads(
+    parameters: list[torch.nn.Parameter], world_size: int
+) -> None:
+    if world_size <= 1 or not dist.is_initialized():
         return
     for parameter in parameters:
         if parameter.grad is None:
@@ -846,6 +1095,28 @@ def resolve_objective_params(params: Dict[str, Any]) -> Dict[str, Any]:
     resolved.setdefault("exc_grad_clip", "none")
     resolved.setdefault("exc_grad_scale", 1.0)
     return resolved
+
+
+def accumulation_divisor(
+    batch_idx: int,
+    n_steps: int,
+    accum_iter: int,
+    potential_mode: str,
+) -> int:
+    """Return S5's divisor, correcting only Lap's final partial window.
+
+    The historical non-Lap path intentionally keeps its prior full-window
+    divisor for exact trajectory compatibility. Lap-S5 averages the final
+    partial window by its actual number of microsteps.
+    """
+    if accum_iter <= 0 or n_steps <= 0 or not 0 <= batch_idx < n_steps:
+        raise ValueError("Invalid gradient-accumulation position or size.")
+    if potential_mode == "partial_vrho":
+        return accum_iter
+    if potential_mode != "full_euler":
+        raise ValueError(f"Unsupported potential mode: {potential_mode!r}.")
+    window_start = (batch_idx // accum_iter) * accum_iter
+    return min(accum_iter, n_steps - window_start)
 
 
 def prepare_objective_gradients(
@@ -885,17 +1156,27 @@ def suggest_params(trial: Any) -> Dict[str, Any]:
     return {
         "lr_train": trial.suggest_float("lr_train", 1e-4, 1e-3, log=True),
         "accum_iter": trial.suggest_categorical("accum_iter", [1, 2, 3]),
-        "vxc_loss_scale": trial.suggest_categorical("vxc_loss_scale", [50, 100, 150, 200]),
-        "exc_loss_scale": trial.suggest_categorical("exc_loss_scale", [0.0, 1.0, 5.0, 10.0]),
+        "vxc_loss_scale": trial.suggest_categorical(
+            "vxc_loss_scale", [50, 100, 150, 200]
+        ),
+        "exc_loss_scale": trial.suggest_categorical(
+            "exc_loss_scale", [0.0, 1.0, 5.0, 10.0]
+        ),
         "reaction_grad_scale": trial.suggest_categorical(
             "reaction_grad_scale", [0.1, 0.3, 0.5, 0.7, 1.0]
         ),
         "reaction_grad_clip": trial.suggest_categorical(
             "reaction_grad_clip", ["none", 100.0, 300.0, 1000.0]
         ),
-        "vxc_grad_clip": trial.suggest_categorical("vxc_grad_clip", [1.0, 2.0, 3.0, 5.0]),
-        "exc_grad_clip": trial.suggest_categorical("exc_grad_clip", ["none", 1.0, 2.0, 5.0]),
-        "exc_grad_scale": trial.suggest_categorical("exc_grad_scale", [0.1, 0.3, 0.5, 1.0]),
+        "vxc_grad_clip": trial.suggest_categorical(
+            "vxc_grad_clip", [1.0, 2.0, 3.0, 5.0]
+        ),
+        "exc_grad_clip": trial.suggest_categorical(
+            "exc_grad_clip", ["none", 1.0, 2.0, 5.0]
+        ),
+        "exc_grad_scale": trial.suggest_categorical(
+            "exc_grad_scale", [0.1, 0.3, 0.5, 1.0]
+        ),
         "gradient_merge_strategy": trial.suggest_categorical(
             "gradient_merge_strategy", ["sum", "clip_then_sum"]
         ),
@@ -905,14 +1186,20 @@ def suggest_params(trial: Any) -> Dict[str, Any]:
     }
 
 
-def resolve_shared_preopt_checkpoint(args: argparse.Namespace, output_dir: Path) -> Tuple[Path, Path]:
-    checkpoint_path = Path(args.shared_preopt_checkpoint) if args.shared_preopt_checkpoint else output_dir / "preoptimized_checkpoint.pt"
+def resolve_shared_preopt_checkpoint(
+    args: argparse.Namespace, output_dir: Path
+) -> tuple[Path, Path]:
+    checkpoint_path = (
+        Path(args.shared_preopt_checkpoint)
+        if args.shared_preopt_checkpoint
+        else output_dir / "preoptimized_checkpoint.pt"
+    )
     metadata_path = checkpoint_path.with_suffix(checkpoint_path.suffix + ".meta.json")
     return checkpoint_path, metadata_path
 
 
 def preopt_metadata(args: argparse.Namespace) -> Dict[str, Any]:
-    return {
+    metadata = {
         "training_protocol": TRAINING_PROTOCOL,
         "name": args.name,
         "model_type": getattr(args, "model_type", "base"),
@@ -924,6 +1211,14 @@ def preopt_metadata(args: argparse.Namespace) -> Dict[str, Any]:
         "preopt_vxc_steps": args.preopt_vxc_steps,
         "preopt_vxc_target": args.preopt_vxc_target,
     }
+    if getattr(args, "data_protocol", "legacy_vrho") == "lap_full_vxc":
+        metadata.update(
+            data_protocol="lap_full_vxc",
+            potential_mode="full_euler",
+            dtype=str(getattr(args, "dtype", torch.float32)).removeprefix("torch."),
+            lap_s5_provenance=getattr(args, "lap_s5_provenance", None),
+        )
+    return metadata
 
 
 def run_or_reuse_preoptimization(
@@ -936,6 +1231,13 @@ def run_or_reuse_preoptimization(
     world_size: int,
     rank0: bool,
 ) -> Path:
+    is_lap_mode = getattr(args, "data_protocol", "legacy_vrho") == "lap_full_vxc"
+    if is_lap_mode and (
+        float(args.preopt_vxc_weight) != 0.0 or int(args.preopt_vxc_steps) != 0
+    ):
+        raise ValueError(
+            "Lap PBE predopt must have zero Vxc weight and zero Vxc steps."
+        )
     checkpoint_path, metadata_path = resolve_shared_preopt_checkpoint(args, output_dir)
     metadata = preopt_metadata(args)
 
@@ -943,7 +1245,11 @@ def run_or_reuse_preoptimization(
     if rank0:
         checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
         reuse = False
-        if checkpoint_path.exists() and metadata_path.exists() and not args.force_preopt:
+        if (
+            checkpoint_path.exists()
+            and metadata_path.exists()
+            and not args.force_preopt
+        ):
             try:
                 with metadata_path.open("r", encoding="utf-8") as handle:
                     existing = json.load(handle)
@@ -963,16 +1269,18 @@ def run_or_reuse_preoptimization(
     checkpoint_path = Path(payload["path"])
 
     if payload["reuse"]:
-        dist.barrier()
+        if dist.is_initialized():
+            dist.barrier()
         return checkpoint_path
 
     set_random_seed(args.seed)
     model = build_model(args, device)
-    model = DDP(
-        model,
-        device_ids=[device.index] if device.type == "cuda" else None,
-        find_unused_parameters=False,
-    )
+    if dist.is_initialized():
+        model = DDP(
+            model,
+            device_ids=[device.index] if device.type == "cuda" else None,
+            find_unused_parameters=False,
+        )
 
     preopt_loader = build_preopt_loader(
         data_predopt=data_predopt,
@@ -995,7 +1303,9 @@ def run_or_reuse_preoptimization(
             shuffle=True,
         )
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr_predopt, betas=(0.9, 0.999))
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=args.lr_predopt, betas=(0.9, 0.999)
+    )
     predopt(
         model=model,
         criterion=nn.MSELoss(),
@@ -1014,10 +1324,12 @@ def run_or_reuse_preoptimization(
     )
 
     if rank0:
-        torch.save(model.module.state_dict(), checkpoint_path)
+        base_model = model.module if hasattr(model, "module") else model
+        torch.save(base_model.state_dict(), checkpoint_path)
         with metadata_path.open("w", encoding="utf-8") as handle:
             json.dump(metadata, handle, indent=2, sort_keys=True)
-    dist.barrier()
+    if dist.is_initialized():
+        dist.barrier()
     del model, optimizer, preopt_loader, vxc_loader
     return checkpoint_path
 
@@ -1034,8 +1346,31 @@ def train_one_epoch(
     include_mrks_dispersion: bool,
     world_size: int,
     epoch: int,
+    potential_mode: str = "partial_vrho",
+    data_protocol: str = "legacy_vrho",
+    point_chunk_size: int | None = None,
+    max_optimizer_steps: int | None = None,
 ) -> Tuple[Dict[str, float], Dict[str, List[float]], bool]:
     params = resolve_objective_params(params)
+    base_model = model.module if hasattr(model, "module") else model
+    descriptor = getattr(base_model, "descriptor_protocol", None)
+    if potential_mode == "full_euler":
+        if data_protocol != "lap_full_vxc":
+            raise ValueError("full_euler mode requires data_protocol=lap_full_vxc.")
+        _require_lap_model(model)
+        if point_chunk_size is None or point_chunk_size <= 0:
+            raise ValueError(
+                "Lap-S5 training requires an explicit positive point chunk."
+            )
+    elif potential_mode == "partial_vrho":
+        if data_protocol != "legacy_vrho":
+            raise ValueError("partial_vrho mode requires data_protocol=legacy_vrho.")
+        if descriptor == "rho-sigma-total-lapl-tau-free-v1":
+            raise ValueError("Lap models cannot use the legacy partial-Vrho objective.")
+    else:
+        raise ValueError(f"Unsupported potential mode: {potential_mode!r}.")
+    if max_optimizer_steps is not None and max_optimizer_steps <= 0:
+        raise ValueError("max_optimizer_steps must be positive when provided.")
     model.train()
     trainable_parameters = get_trainable_parameters(model)
     optimizer.zero_grad(set_to_none=True)
@@ -1048,6 +1383,8 @@ def train_one_epoch(
         raise ValueError("Both train_loader and vxc_train_loader must be non-empty.")
 
     n_steps = max(n_train, n_vxc)
+    if max_optimizer_steps is not None:
+        n_steps = min(n_steps, max_optimizer_steps * int(params["accum_iter"]))
     train_iter = iter(train_loader)
     vxc_iter = iter(vxc_train_loader)
 
@@ -1057,6 +1394,8 @@ def train_one_epoch(
     exc_loss_sum = 0.0
     mae_sum = 0.0
     optimizer_steps = 0
+    gradient_norm_sum = 0.0
+    parameter_update_norm_sum = 0.0
     failed = False
 
     for batch_idx in range(n_steps):
@@ -1076,7 +1415,15 @@ def train_one_epoch(
         grid = reaction_batch["Grid"].to(device, non_blocking=True)
         y_batch = y_batch.to(device, non_blocking=True)
 
-        do_step = ((batch_idx + 1) % params["accum_iter"] == 0) or ((batch_idx + 1) == n_steps)
+        do_step = ((batch_idx + 1) % params["accum_iter"] == 0) or (
+            (batch_idx + 1) == n_steps
+        )
+        accumulation_scale = accumulation_divisor(
+            batch_idx,
+            n_steps,
+            int(params["accum_iter"]),
+            potential_mode,
+        )
         strategies = [
             params["reaction_gradient_merge_strategy"],
             params["vxc_gradient_merge_strategy"],
@@ -1094,11 +1441,10 @@ def train_one_epoch(
             return_local_energies=False,
         )
         reaction_loss = batch_fchem(current_bases, reaction_energy, y_batch)
-        weighted_reaction_loss = reaction_loss / params["accum_iter"]
-        microbatch_failed = (
-            not torch.isfinite(reaction_energy).all()
-            or not torch.isfinite(weighted_reaction_loss)
-        )
+        weighted_reaction_loss = reaction_loss / accumulation_scale
+        microbatch_failed = not torch.isfinite(
+            reaction_energy
+        ).all() or not torch.isfinite(weighted_reaction_loss)
         microbatch_failed = sync_failure(microbatch_failed, device)
         if microbatch_failed:
             failed = True
@@ -1114,8 +1460,19 @@ def train_one_epoch(
             ),
         )
 
-        vxc_term = vxc_loss(model, X_vxc, device, rung="GGA", dft="PBE", create_graph=True)
-        weighted_vxc_loss = OMEGA * params["vxc_loss_scale"] * vxc_term / params["accum_iter"]
+        vxc_term = vxc_loss(
+            model,
+            X_vxc,
+            device,
+            rung="GGA",
+            dft="PBE",
+            create_graph=True,
+            potential_mode=potential_mode,
+            point_chunk_size=point_chunk_size,
+        )
+        weighted_vxc_loss = (
+            OMEGA * params["vxc_loss_scale"] * vxc_term / accumulation_scale
+        )
         microbatch_failed = not torch.isfinite(weighted_vxc_loss)
         microbatch_failed = sync_failure(microbatch_failed, device)
         if microbatch_failed:
@@ -1140,12 +1497,13 @@ def train_one_epoch(
             dft="PBE",
             dispersions=mrks_dispersions,
             include_mrks_dispersion=include_mrks_dispersion,
+            potential_mode=potential_mode,
+            point_chunk_size=point_chunk_size,
         )
-        weighted_exc_loss = params["exc_loss_scale"] * exc_term / params["accum_iter"]
+        weighted_exc_loss = params["exc_loss_scale"] * exc_term / accumulation_scale
         full_loss = weighted_reaction_loss + weighted_vxc_loss + weighted_exc_loss
-        microbatch_failed = (
-            not torch.isfinite(pred_exc).all()
-            or not torch.isfinite(full_loss)
+        microbatch_failed = not torch.isfinite(pred_exc).all() or not torch.isfinite(
+            full_loss
         )
         microbatch_failed = sync_failure(microbatch_failed, device)
         if microbatch_failed:
@@ -1165,11 +1523,13 @@ def train_one_epoch(
 
         update_db_errors(train_db_errors, current_bases, reaction_energy, y_batch)
         update_exc_errors(train_exc_errors, list(X_vxc["Names"]), pred_exc, ref_exc)
-        loss_sum += float((
-            reaction_loss
-            + OMEGA * params["vxc_loss_scale"] * vxc_term
-            + params["exc_loss_scale"] * exc_term
-        ).item())
+        loss_sum += float(
+            (
+                reaction_loss
+                + OMEGA * params["vxc_loss_scale"] * vxc_term
+                + params["exc_loss_scale"] * exc_term
+            ).item()
+        )
         reaction_loss_sum += float(reaction_loss.item())
         vxc_loss_sum += float(vxc_term.item())
         exc_loss_sum += float(exc_term.item())
@@ -1191,19 +1551,50 @@ def train_one_epoch(
             failed = True
             break
 
+        if potential_mode == "full_euler":
+            gradient_norm_sum += math.sqrt(
+                sum(
+                    float(parameter.grad.detach().double().square().sum())
+                    for parameter in trainable_parameters
+                    if parameter.grad is not None
+                )
+            )
+            parameters_before = [
+                parameter.detach().clone() for parameter in trainable_parameters
+            ]
         optimizer.step()
+        if potential_mode == "full_euler":
+            parameter_update_norm_sum += math.sqrt(
+                sum(
+                    float((parameter.detach() - before).double().square().sum())
+                    for parameter, before in zip(
+                        trainable_parameters, parameters_before
+                    )
+                )
+            )
         optimizer.zero_grad(set_to_none=True)
         optimizer_steps += 1
+        if max_optimizer_steps is not None and optimizer_steps >= max_optimizer_steps:
+            break
 
     if failed:
         optimizer.zero_grad(set_to_none=True)
         return {}, {}, True
 
     scalar_tensor = torch.tensor(
-        [loss_sum, reaction_loss_sum, vxc_loss_sum, exc_loss_sum, mae_sum, float(n_steps), float(optimizer_steps)],
+        [
+            loss_sum,
+            reaction_loss_sum,
+            vxc_loss_sum,
+            exc_loss_sum,
+            mae_sum,
+            float(n_steps),
+            float(optimizer_steps),
+        ],
         device=device,
     )
-    dist.all_reduce(scalar_tensor, op=dist.ReduceOp.SUM)
+    if dist.is_initialized():
+        dist.all_reduce(scalar_tensor, op=dist.ReduceOp.SUM)
 
     gathered_errors = gather_object(dict(train_db_errors), world_size)
     global_errors: Dict[str, List[float]] = collections.defaultdict(list)
@@ -1220,22 +1611,34 @@ def train_one_epoch(
     train_exc, train_per_system_exc = compute_exc_from_errors(global_exc_errors)
 
     metrics = {
-        "train_full_loss": float(scalar_tensor[0].item() / max(scalar_tensor[5].item(), 1.0)),
-        "train_reaction_loss": float(scalar_tensor[1].item() / max(scalar_tensor[5].item(), 1.0)),
+        "train_full_loss": float(
+            scalar_tensor[0].item() / max(scalar_tensor[5].item(), 1.0)
+        ),
+        "train_reaction_loss": float(
+            scalar_tensor[1].item() / max(scalar_tensor[5].item(), 1.0)
+        ),
         "train_vxc": float(scalar_tensor[2].item() / max(scalar_tensor[5].item(), 1.0)),
-        "train_exc_loss": float(scalar_tensor[3].item() / max(scalar_tensor[5].item(), 1.0)),
+        "train_exc_loss": float(
+            scalar_tensor[3].item() / max(scalar_tensor[5].item(), 1.0)
+        ),
         "train_mae": float(scalar_tensor[4].item() / max(scalar_tensor[5].item(), 1.0)),
         "train_fchem": train_fchem,
         "train_exc": train_exc,
         "train_per_system_exc_rmse": train_per_system_exc,
         "optimizer_steps": int(scalar_tensor[6].item()),
     }
+    if potential_mode == "full_euler":
+        denom = max(optimizer_steps, 1)
+        metrics["gradient_norm"] = gradient_norm_sum / denom
+        metrics["parameter_update_norm"] = parameter_update_norm_sum / denom
     return metrics, dict(train_per_db), False
 
 
 def validate_one_epoch(*args: Any, **kwargs: Any) -> None:
     """Historical API disabled: validation requires external self-consistent SCF."""
-    raise RuntimeError("Non-SCF validation was removed; use external DietGMTKN30 SCF evaluation.")
+    raise RuntimeError(
+        "Non-SCF validation was removed; use external DietGMTKN30 SCF evaluation."
+    )
 
 
 def resolve_epoch_params(
@@ -1255,7 +1658,9 @@ def resolve_epoch_params(
         start_epoch = int(phase.get("start_epoch", 1))
         end_epoch = int(phase.get("end_epoch", n_train))
         if start_epoch <= epoch_number <= end_epoch:
-            resolved = {key: value for key, value in params.items() if key != "epoch_schedule"}
+            resolved = {
+                key: value for key, value in params.items() if key != "epoch_schedule"
+            }
             resolved.update(dict(phase.get("params", {})))
             resolved["phase_name"] = str(phase.get("name", f"phase_{index + 1}"))
             resolved["phase_start_epoch"] = start_epoch
@@ -1268,7 +1673,9 @@ def resolve_epoch_params(
     )
 
 
-def save_trial_history(output_dir: Path, trial_number: int, payload: Dict[str, Any]) -> Path:
+def save_trial_history(
+    output_dir: Path, trial_number: int, payload: dict[str, Any]
+) -> Path:
     trials_dir = output_dir / "trials"
     trials_dir.mkdir(parents=True, exist_ok=True)
     path = trials_dir / f"trial_{trial_number}.json"
@@ -1308,11 +1715,12 @@ def run_trial(
     model = build_model(args, device)
     if not resume_training_state:
         load_state_dict_into_model(model, shared_preopt_checkpoint, device)
-    model = DDP(
-        model,
-        device_ids=[device.index] if device.type == "cuda" else None,
-        find_unused_parameters=False,
-    )
+    if dist.is_initialized():
+        model = DDP(
+            model,
+            device_ids=[device.index] if device.type == "cuda" else None,
+            find_unused_parameters=False,
+        )
     optimizer = configure_optimizers(
         model=model,
         learning_rate=params["lr_train"],
@@ -1323,7 +1731,9 @@ def run_trial(
 
     epoch_history: List[Dict[str, Any]] = []
     failed = False
-    final_checkpoint_path = output_dir / "checkpoints" / f"trial_{trial_number}_final.pt"
+    final_checkpoint_path = (
+        output_dir / "checkpoints" / f"trial_{trial_number}_final.pt"
+    )
 
     training_state_every = int(getattr(args, "training_state_every", 0))
     if training_state_every < 0:
@@ -1335,8 +1745,23 @@ def run_trial(
     if snapshot_start_epoch < 1:
         raise ValueError("--snapshot-start-epoch must be positive.")
     snapshot_dir = output_dir / "checkpoints" / "epoch_snapshots"
-    training_state_path = output_dir / "checkpoints" / f"trial_{trial_number}_training_state.pt"
+    training_state_path = (
+        output_dir / "checkpoints" / f"trial_{trial_number}_training_state.pt"
+    )
     start_epoch = 0
+    lap_s5_provenance = getattr(args, "lap_s5_provenance", None)
+    lap_checkpoint_extra = getattr(args, "lap_checkpoint_extra", {})
+    is_lap_mode = getattr(args, "data_protocol", "legacy_vrho") == "lap_full_vxc"
+    if is_lap_mode:
+        if getattr(args, "potential_mode", None) != "full_euler":
+            raise ValueError(
+                "Lap-S5 run must explicitly set potential_mode=full_euler."
+            )
+        if not isinstance(lap_s5_provenance, dict):
+            raise ValueError("Lap-S5 run requires hashed checkpoint/run provenance.")
+        from lap_s5_provenance import validate_lap_s5_provenance
+
+        validate_lap_s5_provenance(lap_s5_provenance)
     if resume_training_state:
         resume_path = Path(resume_training_state)
         resume_payload = load_torch_payload(resume_path, map_location=device)
@@ -1352,13 +1777,39 @@ def run_trial(
             raise ValueError(
                 f"Training-state model mismatch: {resume_payload.get('model_name')} != {args.name}."
             )
-        if resume_payload.get("model_type", "base") != getattr(args, "model_type", "base"):
-            raise ValueError("Training-state model type does not match the requested model type.")
+        if resume_payload.get("model_type", "base") != getattr(
+            args, "model_type", "base"
+        ):
+            raise ValueError(
+                "Training-state model type does not match the requested model type."
+            )
         if int(resume_payload.get("world_size", world_size)) != int(world_size):
-            raise ValueError("Exact training-state resume requires the original DDP world size.")
+            raise ValueError(
+                "Exact training-state resume requires the original DDP world size."
+            )
         if resume_payload.get("training_protocol") != TRAINING_PROTOCOL:
-            raise ValueError("Cannot resume training state from the obsolete internal-validation protocol.")
-        model.module.load_state_dict(resume_payload["model_state_dict"])
+            raise ValueError(
+                "Cannot resume training state from the obsolete internal-validation protocol."
+            )
+        if is_lap_mode:
+            if resume_payload.get("potential_mode") != "full_euler":
+                raise ValueError(
+                    "Cannot resume a Lap run from partial-Vrho training state."
+                )
+            if resume_payload.get("lap_s5_provenance") != lap_s5_provenance:
+                raise ValueError(
+                    "Lap-S5 resume provenance differs from the requested data/protocol."
+                )
+            if resume_payload.get("lap_checkpoint_extra") != lap_checkpoint_extra:
+                raise ValueError(
+                    "Lap-S5 resume corpus identity differs from the requested source."
+                )
+        elif resume_payload.get("potential_mode", "partial_vrho") != "partial_vrho":
+            raise ValueError(
+                "Historical model cannot resume from a full-Euler Lap state."
+            )
+        base_model = model.module if hasattr(model, "module") else model
+        base_model.load_state_dict(resume_payload["model_state_dict"])
         optimizer.load_state_dict(resume_payload["optimizer_state_dict"])
         scheduler.load_state_dict(resume_payload["scheduler_state_dict"])
         epoch_history = list(resume_payload.get("epoch_history", []))
@@ -1382,17 +1833,23 @@ def run_trial(
         runtime_states = resume_payload.get("runtime_states", [])
         rank = dist.get_rank() if dist.is_initialized() else local_rank
         if len(runtime_states) != world_size:
-            raise ValueError("Training-state runtime state count does not match DDP world size.")
+            raise ValueError(
+                "Training-state runtime state count does not match DDP world size."
+            )
         restore_runtime_state(runtime_states[rank], loaders)
         if rank0:
-            print(f"Resuming Trial {trial_number} from epoch {start_epoch}: {resume_path}")
+            print(
+                f"Resuming Trial {trial_number} from epoch {start_epoch}: {resume_path}"
+            )
 
     for epoch in range(start_epoch, args.n_train):
         epoch_number = epoch + 1
         prepare_epoch = getattr(scheduler, "prepare_epoch", None)
         if prepare_epoch is not None:
             prepare_epoch(epoch_number)
-        effective_params = resolve_epoch_params(params, epoch_number=epoch_number, n_train=args.n_train)
+        effective_params = resolve_epoch_params(
+            params, epoch_number=epoch_number, n_train=args.n_train
+        )
         effective_params = resolve_objective_params(effective_params)
         train_dataset = loaders["train_loader"].dataset
         if hasattr(train_dataset, "resample"):
@@ -1411,9 +1868,14 @@ def run_trial(
             device=device,
             dispersions=dispersions,
             mrks_dispersions=mrks_dispersions,
-            include_mrks_dispersion=bool(getattr(args, "include_mrks_dispersion", False)),
+            include_mrks_dispersion=bool(
+                getattr(args, "include_mrks_dispersion", False)
+            ),
             world_size=world_size,
             epoch=epoch,
+            potential_mode=getattr(args, "potential_mode", "partial_vrho"),
+            data_protocol=getattr(args, "data_protocol", "legacy_vrho"),
+            point_chunk_size=getattr(args, "point_chunk_size", None),
         )
         if train_failed:
             failed = True
@@ -1436,30 +1898,66 @@ def run_trial(
             "train_per_system_exc_rmse": train_metrics["train_per_system_exc_rmse"],
             "phase_name": effective_params.get("phase_name", "static"),
             "phase_start_epoch": int(effective_params.get("phase_start_epoch", 1)),
-            "phase_end_epoch": int(effective_params.get("phase_end_epoch", args.n_train)),
-            "effective_gradient_merge_strategy": effective_params["gradient_merge_strategy"],
-            "effective_reaction_gradient_merge_strategy": effective_params["reaction_gradient_merge_strategy"],
-            "effective_vxc_gradient_merge_strategy": effective_params["vxc_gradient_merge_strategy"],
+            "phase_end_epoch": int(
+                effective_params.get("phase_end_epoch", args.n_train)
+            ),
+            "effective_gradient_merge_strategy": effective_params[
+                "gradient_merge_strategy"
+            ],
+            "effective_reaction_gradient_merge_strategy": effective_params[
+                "reaction_gradient_merge_strategy"
+            ],
+            "effective_vxc_gradient_merge_strategy": effective_params[
+                "vxc_gradient_merge_strategy"
+            ],
             "effective_accum_iter": int(effective_params["accum_iter"]),
             "effective_reaction_grad_clip": effective_params["reaction_grad_clip"],
-            "effective_reaction_grad_scale": float(effective_params["reaction_grad_scale"]),
+            "effective_reaction_grad_scale": float(
+                effective_params["reaction_grad_scale"]
+            ),
             "effective_vxc_grad_clip": float(effective_params["vxc_grad_clip"]),
             "effective_vxc_loss_scale": float(effective_params["vxc_loss_scale"]),
             "effective_exc_loss_scale": float(effective_params["exc_loss_scale"]),
             "effective_exc_grad_clip": effective_params["exc_grad_clip"],
             "effective_exc_grad_scale": float(effective_params["exc_grad_scale"]),
-            "effective_exc_gradient_merge_strategy": effective_params["exc_gradient_merge_strategy"],
+            "effective_exc_gradient_merge_strategy": effective_params[
+                "exc_gradient_merge_strategy"
+            ],
         }
+        if is_lap_mode:
+            row["omega"] = OMEGA
+            row["effective_vxc_coefficient"] = OMEGA * float(
+                effective_params["vxc_loss_scale"]
+            )
         epoch_history.append(row)
 
-        should_save_snapshot = snapshot_every > 0 and epoch_number >= snapshot_start_epoch and (
-            (epoch_number - snapshot_start_epoch) % snapshot_every == 0
-            or epoch_number == args.n_train
+        should_save_snapshot = (
+            snapshot_every > 0
+            and epoch_number >= snapshot_start_epoch
+            and (
+                (epoch_number - snapshot_start_epoch) % snapshot_every == 0
+                or epoch_number == args.n_train
+            )
         )
         if should_save_snapshot and rank0:
             snapshot_dir.mkdir(parents=True, exist_ok=True)
             atomic_torch_save(
-                model.module.state_dict(),
+                (
+                    _lap_s5_model_payload(
+                        model,
+                        lap_s5_provenance,
+                        **lap_checkpoint_extra,
+                        epoch=epoch_number,
+                        optimizer_state_dict=optimizer.state_dict(),
+                        scheduler_state_dict=scheduler.state_dict(),
+                    )
+                    if is_lap_mode
+                    else (
+                        model.module.state_dict()
+                        if hasattr(model, "module")
+                        else model.state_dict()
+                    )
+                ),
                 snapshot_dir / f"trial_{trial_number}_epoch_{epoch_number:04d}.pt",
             )
 
@@ -1480,11 +1978,23 @@ def run_trial(
                         "completed_epoch": int(epoch_number),
                         "planned_n_train": int(args.n_train),
                         "params": params,
-                        "model_state_dict": model.module.state_dict(),
+                        "model_state_dict": (
+                            model.module.state_dict()
+                            if hasattr(model, "module")
+                            else model.state_dict()
+                        ),
                         "optimizer_state_dict": optimizer.state_dict(),
                         "scheduler_state_dict": scheduler.state_dict(),
                         "epoch_history": epoch_history,
                         "runtime_states": runtime_states,
+                        "potential_mode": getattr(
+                            args, "potential_mode", "partial_vrho"
+                        ),
+                        "data_protocol": getattr(args, "data_protocol", "legacy_vrho"),
+                        "lap_s5_provenance": lap_s5_provenance if is_lap_mode else None,
+                        "lap_checkpoint_extra": lap_checkpoint_extra
+                        if is_lap_mode
+                        else None,
                     },
                     training_state_path,
                 )
@@ -1507,17 +2017,42 @@ def run_trial(
         }
 
     if rank0:
-        atomic_torch_save(model.module.state_dict(), final_checkpoint_path)
+        final_payload = (
+            _lap_s5_model_payload(
+                model,
+                lap_s5_provenance,
+                **lap_checkpoint_extra,
+                epoch=int(epoch_history[-1]["epoch"]),
+                optimizer_state_dict=optimizer.state_dict(),
+                scheduler_state_dict=scheduler.state_dict(),
+                training_protocol=TRAINING_PROTOCOL,
+                data_protocol="lap_full_vxc" if is_lap_mode else "legacy_vrho",
+                potential_mode="full_euler" if is_lap_mode else "partial_vrho",
+            )
+            if is_lap_mode
+            else (
+                model.module.state_dict()
+                if hasattr(model, "module")
+                else model.state_dict()
+            )
+        )
+        atomic_torch_save(final_payload, final_checkpoint_path)
     trial_payload = {
         "failed": False,
         "trial_number": trial_number,
         "params": params,
         "final_epoch": int(epoch_history[-1]["epoch"]),
         "training_protocol": TRAINING_PROTOCOL,
+        "data_protocol": "lap_full_vxc" if is_lap_mode else "legacy_vrho",
+        "potential_mode": "full_euler" if is_lap_mode else "partial_vrho",
+        "lap_s5_provenance": lap_s5_provenance if is_lap_mode else None,
+        "lap_checkpoint_extra": lap_checkpoint_extra if is_lap_mode else None,
         "epoch_history": epoch_history,
         "final_checkpoint_path": str(final_checkpoint_path),
         "epoch_snapshots": str(snapshot_dir) if snapshot_every > 0 else None,
-        "training_state_path": str(training_state_path) if training_state_every > 0 else None,
+        "training_state_path": str(training_state_path)
+        if training_state_every > 0
+        else None,
     }
     if rank0:
         history_path = save_trial_history(output_dir, trial_number, trial_payload)
@@ -1525,6 +2060,17 @@ def run_trial(
     else:
         trial_payload["history_path"] = None
     return trial_payload
+
+
+def _lap_s5_model_payload(model, provenance, **metadata):
+    from lap_checkpoint import checkpoint_payload
+    from lap_s5_provenance import validate_lap_s5_provenance
+
+    if provenance is None:
+        raise ValueError("Lap-S5 checkpoint requires validated protocol provenance.")
+    validate_lap_s5_provenance(provenance)
+    base_model = model.module if hasattr(model, "module") else model
+    return checkpoint_payload(base_model, lap_s5_provenance=provenance, **metadata)
 
 
 def main() -> None:

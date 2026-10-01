@@ -7,11 +7,10 @@ from types import SimpleNamespace
 
 import h5py
 import numpy as np
-import pytest
-import torch
-
 import optuna_joint as training
 import prepare_data as mn
+import pytest
+import torch
 from dataset import get_compounds_coefs_energy, load_component_names, load_ref_energies
 from prepare_vxc import prepare_vxc
 
@@ -89,7 +88,7 @@ def test_all_valid_mrks_train_and_stale_pickles_are_ignored(tmp_path):
     mn.save_chk({0: base}, {0: [base]}, str(checkpoints))
     data = prepare_vxc(str(source), str(checkpoints))
     assert len(data) == 5
-    assert all(set(("Grid", "Vrho", "Weights", "E_xc")) <= item.keys() for item in data)
+    assert all({"Grid", "Vrho", "Weights", "E_xc"} <= item.keys() for item in data)
     assert not any((checkpoints / name).exists() for name in mn.OBSOLETE_PICKLES)
     predopt, train, loaded_mrks = mn.load_chk(str(checkpoints))
     assert len(loaded_mrks) == 5
@@ -167,7 +166,10 @@ def test_replay_history_final_checkpoint_and_ten_epoch_snapshots(monkeypatch, tm
     monkeypatch.setattr(
         training,
         "configure_optimizers",
-        lambda model, **kwargs: torch.optim.SGD(model.module.parameters(), lr=0.01),
+        lambda model, **kwargs: torch.optim.SGD(
+            (model.module if hasattr(model, "module") else model).parameters(),
+            lr=0.01,
+        ),
     )
     monkeypatch.setattr(
         training,
@@ -194,8 +196,13 @@ def test_replay_history_final_checkpoint_and_ten_epoch_snapshots(monkeypatch, tm
         assert kwargs["vxc_train_loader"] is loaders["vxc_train_loader"]
         calls.append(kwargs["epoch"])
         # Increasing diagnostic error must not select an earlier checkpoint.
+        model = (
+            kwargs["model"].module
+            if hasattr(kwargs["model"], "module")
+            else kwargs["model"]
+        )
         with torch.no_grad():
-            kwargs["model"].module.weight.fill_(kwargs["epoch"] + 1)
+            model.weight.fill_(kwargs["epoch"] + 1)
         kwargs["optimizer"].step()
         metrics = {
             key: float(kwargs["epoch"] + 1)

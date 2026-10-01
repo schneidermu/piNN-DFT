@@ -141,7 +141,9 @@ def validate_record(d):
         if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
             raise ValueError(f"Missing or invalid SHA-256 provenance field: {key}.")
     if provenance.get("E_xc_source") != "preserved legacy mRKS training target":
-        raise ValueError("The full-Vxc corpus must preserve the historical E_xc target.")
+        raise ValueError(
+            "The full-Vxc corpus must preserve the historical E_xc target."
+        )
     if provenance.get("NPZ_exc_wf_substituted") is not False:
         raise ValueError("NPZ exc_wf may not be substituted for the historical E_xc.")
     return d
@@ -158,8 +160,35 @@ def require_full_center_verification(d):
     provenance = d["SourceProvenance"]
     n = provenance.get("legacy_training_points")
     check = provenance.get("central_density_check")
-    if type(n) is not int or n != len(d["Coordinates"]) or not isinstance(check, dict):
-        raise ValueError("Production stencil lacks legacy central-point verification provenance.")
+    if not isinstance(check, dict):
+        raise ValueError(  # noqa: TRY004 -- invalid source provenance is a data error.
+            "Production stencil lacks legacy central-point verification provenance."
+        )
+    if type(n) is not int:
+        # Earlier H5 builds kept the full checked-row count in the numeric
+        # center report and independently in exact-coordinate Vxc matching.
+        # Accept that equivalent evidence only when all three populations
+        # (coordinates, center checks, and matched legacy targets) are equal.
+        checked = check.get("points_checked")
+        matching = provenance.get("legacy_vxc_matching")
+        if not isinstance(matching, dict):
+            raise ValueError(
+                "Production stencil lacks legacy central-point verification provenance."
+            )
+        n = checked
+        if (
+            type(n) is not int
+            or matching.get("legacy_points") != n
+            or matching.get("matched_legacy_points") != n
+            or matching.get("unmatched_legacy_points") != 0
+        ):
+            raise ValueError(
+                "Production stencil lacks legacy central-point verification provenance."
+            )
+    if n != len(d["Coordinates"]):
+        raise ValueError(
+            "Production stencil lacks legacy central-point verification provenance."
+        )
     if check.get("points_checked") != n:
         raise ValueError(
             "Production stencil did not numerically verify every legacy central point."
