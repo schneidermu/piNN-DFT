@@ -23,6 +23,9 @@ for _path in (str(REPO_ROOT), str(TRAIN_MODELS)):
 import optuna_joint as _REAL_OPTUNA_JOINT
 from lap_moo_protocol import (
     LEGACY_READ_ONLY_PROTOCOL_VERSION,
+    PCD_PROTOCOL_VERSION,
+    PCD_QP_TOLERANCE,
+    PCD_SOURCE_FILE_PATHS,
     PROTOCOL_VERSION,
     SAMPLING_PROTOCOL_VERSION,
     SamplingStream,
@@ -37,6 +40,7 @@ from lap_moo_protocol import (
 from lap_moo_training import (
     AOFactorChunk,
     MRKSOperatorSystem,
+    _validate_pcd_world_size,
     average_raw_task_gradients,
     compute_isolated_task_gradients,
     load_moo_checkpoint,
@@ -48,7 +52,13 @@ from lap_moo_training import (
     train_moo_update,
 )
 from train_lap_moo import REPO_ROOT as DRIVER_REPO_ROOT
-from train_lap_moo import _distributed_runtime, _external_path, _run_scheduled_update
+from train_lap_moo import (
+    _distributed_runtime,
+    _external_path,
+    _initial_aggregator_state,
+    _method_configuration,
+    _run_scheduled_update,
+)
 
 
 def _has_visible_cuda_device() -> bool:
@@ -149,6 +159,41 @@ def _metadata(manifest_sha: str) -> dict:
     )
 
 
+def _pcd_metadata(
+    manifest_sha: str, *, world_size: int = 1, manifest_file_sha256: str = "a" * 64
+) -> dict:
+    hashes = _hashes()
+    return make_protocol_metadata(
+        architecture="tiny-test-architecture",
+        method="pcd",
+        method_hyperparameters={
+            "tau": 0.02,
+            "beta": 0.999,
+            "eps": 1.0e-8,
+            "qp_tolerance": PCD_QP_TOLERANCE,
+        },
+        fixed_scalarization=None,
+        optimizer={"name": "RAdamW", "lr": 0.01, "weight_decay": 0.01},
+        lr_schedule={"name": "cosine", "total_updates": 4, "min_lr_ratio": 0.1},
+        predopt_checkpoint_sha256=hashes["predopt"],
+        sampling_manifest_sha256=manifest_sha,
+        minnesota_data_sha256=hashes["mn"],
+        operator_corpus_manifest_sha256=hashes["mrks"],
+        ao_cache_manifest_sha256=hashes["cache"],
+        reaction_dispersions_sha256=hashes["reaction_d3"],
+        mrks_dispersions_sha256=hashes["mrks_d3"],
+        random_seed=41,
+        dtype="torch.float64",
+        grid_chunk_size=16,
+        ao_cache_chunk_size=4096,
+        world_size=world_size,
+        sampling_manifest_file_sha256=manifest_file_sha256,
+        source_code_sha256={
+            path: f"{index + 100:064x}" for index, path in enumerate(PCD_SOURCE_FILE_PATHS)
+        },
+    )
+
+
 class _CheckpointModel(nn.Module):
     def __init__(self):
         super().__init__()
@@ -167,6 +212,37 @@ def _walk_keys(value):
     elif isinstance(value, (list, tuple)):
         for nested in value:
             yield from _walk_keys(nested)
+
+
+def _assert_tree_equal(actual, expected):
+    if isinstance(expected, torch.Tensor):
+        torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+    elif isinstance(expected, dict):
+        assert actual.keys() == expected.keys()
+        for key in expected:
+            _assert_tree_equal(actual[key], expected[key])
+    elif isinstance(expected, (list, tuple)):
+        assert len(actual) == len(expected)
+        for left, right in zip(actual, expected):
+            _assert_tree_equal(left, right)
+    else:
+        assert actual == expected
+
+
+def _pcd_factories(model, *, step=0, rank=0):
+    base = {
+        "chem": ((1.0, 0.2), (1.1, 0.2)),
+        "exc": ((0.2, 1.0), (-0.1, 1.1)),
+        "op": ((0.7, 0.3), (0.8, 0.4)),
+    }
+    vectors = {
+        task: torch.tensor([values[(step + rank) % len(values)]], dtype=torch.float64)
+        for task, values in base.items()
+    }
+    return {
+        task: (lambda vector=vector: (model.linear.weight * vector).sum())
+        for task, vector in vectors.items()
+    }
 
 
 def test_sampling_manifest_is_reproducible_balanced_and_rank_aware():
@@ -251,6 +327,76 @@ def test_protocol_is_explicitly_one_stage_and_rejects_legacy_control_keys():
         nested["method_hyperparameters"] = {alias: [1.0, 1.0, 1.0]}
         with pytest.raises(ValueError, match="Epoch-dependent task weights"):
             validate_protocol_metadata(nested)
+
+
+def test_pcd_protocol_binds_source_contract_and_keeps_sampling_v1():
+    manifest = build_sampling_manifest(
+        _small_grouped(), ["H2"], updates=2, seed=41, source_hashes=_hashes()
+    )
+    metadata = _pcd_metadata(manifest["manifest_sha256"])
+    validate_protocol_metadata(metadata)
+    assert metadata["protocol_version"] == PCD_PROTOCOL_VERSION
+    assert metadata["sampling_manifest_sha256"] == manifest["manifest_sha256"]
+    assert metadata["sampling_manifest_file_sha256"] == "a" * 64
+    assert metadata["world_size"] == manifest["world_size"] == 1
+    assert metadata["pcd_provenance"]["upstream_license"] == "MIT"
+    assert metadata["pcd_algorithm"]["primary_task"] == "chem"
+    assert metadata["task_order"] == ["chem", "exc", "op"]
+    assert metadata["method_hyperparameters"] == {
+        "tau": 0.02,
+        "beta": 0.999,
+        "eps": 1.0e-8,
+        "qp_tolerance": PCD_QP_TOLERANCE,
+    }
+    assert SAMPLING_PROTOCOL_VERSION == LEGACY_READ_ONLY_PROTOCOL_VERSION
+
+    stale = copy.deepcopy(metadata)
+    stale["source_code_sha256"].pop(PCD_SOURCE_FILE_PATHS[0])
+    with pytest.raises(ValueError, match="exact current source-code hash set"):
+        validate_protocol_metadata(stale)
+    stale = copy.deepcopy(metadata)
+    stale["world_size"] = 2
+    with pytest.raises(ValueError, match="world sizes differ"):
+        _validate_pcd_world_size(stale, manifest)
+    fixed = _metadata(manifest["manifest_sha256"])
+    assert fixed["protocol_version"] == PROTOCOL_VERSION
+
+
+def test_pcd_method_configuration_and_fresh_runtime_state():
+    hparams, fixed = _method_configuration("pcd", None, None)
+    assert hparams == {
+        "tau": 0.02,
+        "beta": 0.999,
+        "eps": 1.0e-8,
+        "qp_tolerance": PCD_QP_TOLERANCE,
+    }
+    assert fixed is None
+    assert _initial_aggregator_state("pcd") is None
+    assert _initial_aggregator_state("fixed") == {}
+
+    model = _CheckpointModel()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+    vectors = {
+        "chem": torch.tensor([[1.0, 0.0]], dtype=torch.float64),
+        "exc": torch.tensor([[0.0, 1.0]], dtype=torch.float64),
+        "op": torch.tensor([[1.0, 1.0]], dtype=torch.float64),
+    }
+    result = _run_scheduled_update(
+        model,
+        optimizer,
+        {
+            task: (lambda vector=vector: (model.linear.weight * vector).sum())
+            for task, vector in vectors.items()
+        },
+        method="pcd",
+        hyperparameters=hparams,
+        aggregator_state=_initial_aggregator_state("pcd"),
+        scheduler=None,
+        world_size=1,
+    )
+    assert result.aggregator_state["method"] == "pcd"
+    assert result.aggregator_state["t"] == 1
+    assert result.aggregator_state["task_order"] == ["chem", "exc", "op"]
 
 
 def test_protocol_v2_hashes_ao_cache_chunk_and_keeps_v1_read_only_explicit():
@@ -729,6 +875,133 @@ def test_cli_scheduled_update_and_checkpoint_cursor_advance_together(tmp_path):
         )
 
 
+def test_pcd_checkpoint_resume_is_exact_and_rejects_bad_state_before_mutation(tmp_path):
+    manifest = build_sampling_manifest(
+        _small_grouped(), ["H2"], updates=4, seed=91, source_hashes=_hashes()
+    )
+    metadata = _pcd_metadata(manifest["manifest_sha256"])
+    torch.manual_seed(15)
+    random.seed(16)
+    np.random.seed(17)
+    model = _CheckpointModel()
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.003)
+    scheduler = make_cosine_scheduler(optimizer, total_updates=4)
+    result = _run_scheduled_update(
+        model,
+        optimizer,
+        _pcd_factories(model, step=0),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=None,
+        scheduler=scheduler,
+        world_size=1,
+    )
+    assert result.aggregator_state["t"] == scheduler.last_epoch == 1
+    checkpoint = tmp_path / "pcd.pt"
+    save_moo_checkpoint(
+        checkpoint,
+        model=model,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        next_update=1,
+        aggregator_state=result.aggregator_state,
+    )
+
+    uninterrupted = _run_scheduled_update(
+        model,
+        optimizer,
+        _pcd_factories(model, step=1),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=result.aggregator_state,
+        scheduler=scheduler,
+        world_size=1,
+    )
+    expected_model = copy.deepcopy(model.state_dict())
+    expected_optimizer = copy.deepcopy(optimizer.state_dict())
+    expected_scheduler = copy.deepcopy(scheduler.state_dict())
+    expected_ema = copy.deepcopy(uninterrupted.aggregator_state)
+    expected_rng = (random.random(), np.random.random(), torch.rand(3))
+
+    torch.manual_seed(501)
+    random.seed(502)
+    np.random.seed(503)
+    resumed_model = _CheckpointModel()
+    resumed_optimizer = torch.optim.AdamW(resumed_model.parameters(), lr=0.003)
+    resumed_scheduler = make_cosine_scheduler(resumed_optimizer, total_updates=4)
+    cursor, resumed_ema = load_moo_checkpoint(
+        checkpoint,
+        model=resumed_model,
+        optimizer=resumed_optimizer,
+        scheduler=resumed_scheduler,
+        expected_protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        restore_rng=True,
+    )
+    assert cursor == 1
+    resumed = _run_scheduled_update(
+        resumed_model,
+        resumed_optimizer,
+        _pcd_factories(resumed_model, step=1),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=resumed_ema,
+        scheduler=resumed_scheduler,
+        world_size=1,
+    )
+    assert resumed.aggregator_state == expected_ema
+    _assert_tree_equal(resumed_model.state_dict(), expected_model)
+    _assert_tree_equal(resumed_optimizer.state_dict(), expected_optimizer)
+    assert resumed_scheduler.state_dict() == expected_scheduler
+    assert (random.random(), np.random.random()) == expected_rng[:2]
+    torch.testing.assert_close(torch.rand(3), expected_rng[2], rtol=0, atol=0)
+
+    payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    bad_ema_payload = copy.deepcopy(payload)
+    bad_ema_payload["aggregator_state"] = None
+    bad_ema = tmp_path / "pcd_missing_ema.pt"
+    torch.save(bad_ema_payload, bad_ema)
+    sentinel = _CheckpointModel()
+    with torch.no_grad():
+        sentinel.linear.weight.fill_(123.0)
+    sentinel_optimizer = torch.optim.AdamW(sentinel.parameters(), lr=0.003)
+    sentinel_scheduler = make_cosine_scheduler(sentinel_optimizer, total_updates=4)
+    sentinel_scheduler.last_epoch = 1
+    before_model = copy.deepcopy(sentinel.state_dict())
+    before_rng = random.getstate()
+    with pytest.raises(ValueError, match="missing EMA state"):
+        load_moo_checkpoint(
+            bad_ema,
+            model=sentinel,
+            optimizer=sentinel_optimizer,
+            scheduler=sentinel_scheduler,
+            expected_protocol_metadata=metadata,
+            sampling_manifest=manifest,
+            restore_rng=True,
+        )
+    _assert_tree_equal(sentinel.state_dict(), before_model)
+    assert random.getstate() == before_rng
+
+    bad_rng_payload = copy.deepcopy(payload)
+    bad_rng_payload["rng_states_by_rank"] = []
+    bad_rng = tmp_path / "pcd_missing_rng.pt"
+    torch.save(bad_rng_payload, bad_rng)
+    with pytest.raises(ValueError, match="RNG state for this rank"):
+        load_moo_checkpoint(
+            bad_rng,
+            model=sentinel,
+            optimizer=sentinel_optimizer,
+            scheduler=sentinel_scheduler,
+            expected_protocol_metadata=metadata,
+            sampling_manifest=manifest,
+            restore_rng=True,
+        )
+    _assert_tree_equal(sentinel.state_dict(), before_model)
+    assert random.getstate() == before_rng
+
+
 @pytest.mark.skipif(not _has_visible_cuda_device(), reason="CUDA checkpoint restoration requires a visible CUDA device")
 def test_cuda_checkpoint_restore_keeps_rng_tensors_on_cpu(tmp_path):
     torch.manual_seed(111)
@@ -825,6 +1098,166 @@ def _two_rank_worker(rank: int, rendezvous: str, output_prefix: str) -> None:
     torch.distributed.destroy_process_group()
 
 
+class _TwoVectorModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.weight = nn.Parameter(torch.tensor([0.7, -0.2], dtype=torch.float64))
+
+
+def _distributed_pcd_factories(model, rank: int, *, step: int):
+    if step == 0:
+        local = (
+            {
+                "chem": (1.0, 0.0),
+                "exc": (1.0, 1.0),
+                "op": (0.0, 1.0),
+            }
+            if rank == 0
+            else {
+                "chem": (1.0, 0.0),
+                "exc": (-1.0, 1.0),
+                "op": (2.0, 1.0),
+            }
+        )
+    else:
+        local = (
+            {"chem": (1.0, 0.1), "exc": (0.4, 1.0), "op": (0.0, 1.2)}
+            if rank == 0
+            else {"chem": (1.0, 0.1), "exc": (-0.2, 1.2), "op": (1.8, 0.8)}
+        )
+    def make_objective(values):
+        vector = torch.tensor(values, dtype=torch.float64)
+        return lambda: (model.weight * vector).sum()
+
+    return {task: make_objective(values) for task, values in local.items()}
+
+
+def _two_rank_pcd_resume_worker(
+    rank: int,
+    rendezvous: str,
+    output_prefix: str,
+    checkpoint_path: str,
+    manifest: dict,
+    metadata: dict,
+) -> None:
+    torch.set_num_threads(1)
+    torch.distributed.init_process_group(
+        "gloo", init_method="file://" + rendezvous, rank=rank, world_size=2
+    )
+    from moo_aggregators import aggregate_task_gradients
+
+    random.seed(800 + rank)
+    np.random.seed(900 + rank)
+    torch.manual_seed(1000 + rank)
+    model = _TwoVectorModel()
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.003, weight_decay=0.01)
+    scheduler = make_cosine_scheduler(optimizer, total_updates=4)
+    captured = {}
+
+    def actual_pcd(task_grads, **kwargs):
+        captured["inputs"] = {
+            task: {name: grad.detach().clone() for name, grad in gradients.items()}
+            for task, gradients in task_grads.items()
+        }
+        joint, diagnostics, state = aggregate_task_gradients(task_grads, **kwargs)
+        captured["joint"] = {name: value.detach().clone() for name, value in joint.items()}
+        return joint, diagnostics, state
+
+    first = train_moo_update(
+        model,
+        optimizer,
+        _distributed_pcd_factories(model, rank, step=0),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=None,
+        aggregator=actual_pcd,
+        scheduler=scheduler,
+        world_size=2,
+        record_update_geometry=False,
+    )
+    first_direction = model.weight.grad.detach().clone()
+    save_moo_checkpoint(
+        checkpoint_path,
+        model=model,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        next_update=1,
+        aggregator_state=first.aggregator_state,
+    )
+
+    expected_second = train_moo_update(
+        model,
+        optimizer,
+        _distributed_pcd_factories(model, rank, step=1),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=first.aggregator_state,
+        aggregator=aggregate_task_gradients,
+        scheduler=scheduler,
+        world_size=2,
+        record_update_geometry=False,
+    )
+    expected = {
+        "model": copy.deepcopy(model.state_dict()),
+        "optimizer": copy.deepcopy(optimizer.state_dict()),
+        "scheduler": copy.deepcopy(scheduler.state_dict()),
+        "ema": copy.deepcopy(expected_second.aggregator_state),
+        "rng": (random.random(), float(np.random.random()), torch.rand(3)),
+    }
+
+    random.seed(1)
+    np.random.seed(2)
+    torch.manual_seed(3)
+    resumed_model = _TwoVectorModel()
+    resumed_optimizer = torch.optim.AdamW(
+        resumed_model.parameters(), lr=0.003, weight_decay=0.01
+    )
+    resumed_scheduler = make_cosine_scheduler(resumed_optimizer, total_updates=4)
+    cursor, resumed_ema = load_moo_checkpoint(
+        checkpoint_path,
+        model=resumed_model,
+        optimizer=resumed_optimizer,
+        scheduler=resumed_scheduler,
+        expected_protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        restore_rng=True,
+    )
+    resumed_second = train_moo_update(
+        resumed_model,
+        resumed_optimizer,
+        _distributed_pcd_factories(resumed_model, rank, step=1),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=resumed_ema,
+        aggregator=aggregate_task_gradients,
+        scheduler=resumed_scheduler,
+        world_size=2,
+        record_update_geometry=False,
+    )
+    resumed = {
+        "cursor": cursor,
+        "model": copy.deepcopy(resumed_model.state_dict()),
+        "optimizer": copy.deepcopy(resumed_optimizer.state_dict()),
+        "scheduler": copy.deepcopy(resumed_scheduler.state_dict()),
+        "ema": copy.deepcopy(resumed_second.aggregator_state),
+        "rng": (random.random(), float(np.random.random()), torch.rand(3)),
+    }
+    torch.save(
+        {
+            "inputs": captured["inputs"],
+            "joint": captured["joint"],
+            "first_direction": first_direction,
+            "first_ema": first.aggregator_state,
+            "expected": expected,
+            "resumed": resumed,
+        },
+        output_prefix + str(rank),
+    )
+    torch.distributed.destroy_process_group()
+
+
 @pytest.mark.skipif(sys.platform == "win32", reason="Gloo file rendezvous regression runs on Linux.")
 def test_two_rank_allreduces_each_raw_task_before_moo(tmp_path):
     torch.multiprocessing.spawn(
@@ -840,3 +1273,47 @@ def test_two_rank_allreduces_each_raw_task_before_moo(tmp_path):
                 payload["seen"][task], torch.tensor([[value]], dtype=torch.float64)
             )
         torch.testing.assert_close(payload["weight"], torch.tensor([[1.0 - 0.01 * (7.0 / 3)]], dtype=torch.float64))
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="Gloo file rendezvous regression runs on Linux.")
+def test_two_rank_pcd_averages_before_ema_and_resumes_exactly(tmp_path):
+    manifest = build_sampling_manifest(
+        _small_grouped(), ["H2"], updates=4, seed=92, source_hashes=_hashes(), world_size=2
+    )
+    metadata = _pcd_metadata(manifest["manifest_sha256"], world_size=2)
+    checkpoint = tmp_path / "two_rank_pcd.pt"
+    torch.multiprocessing.spawn(
+        _two_rank_pcd_resume_worker,
+        args=(
+            str(tmp_path / "pcd-rendezvous"),
+            str(tmp_path / "pcd-rank"),
+            str(checkpoint),
+            manifest,
+            metadata,
+        ),
+        nprocs=2,
+    )
+    outputs = [
+        torch.load(tmp_path / f"pcd-rank{rank}", map_location="cpu", weights_only=False)
+        for rank in range(2)
+    ]
+    expected_inputs = {
+        "chem": torch.tensor([1.0, 0.0], dtype=torch.float64),
+        "exc": torch.tensor([0.0, 1.0], dtype=torch.float64),
+        "op": torch.tensor([1.0, 1.0], dtype=torch.float64),
+    }
+    for output in outputs:
+        for task, gradient in expected_inputs.items():
+            torch.testing.assert_close(output["inputs"][task]["weight"], gradient)
+    _assert_tree_equal(outputs[0]["joint"], outputs[1]["joint"])
+    _assert_tree_equal(outputs[0]["first_direction"], outputs[1]["first_direction"])
+    _assert_tree_equal(outputs[0]["first_ema"], outputs[1]["first_ema"])
+    for output in outputs:
+        assert output["first_ema"]["t"] == 1
+        assert output["resumed"]["cursor"] == 1
+        assert output["resumed"]["ema"]["t"] == 2
+        for key in ("model", "optimizer", "scheduler", "ema", "rng"):
+            _assert_tree_equal(output["resumed"][key], output["expected"][key])
+    checkpoint_payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    assert len(checkpoint_payload["rng_states_by_rank"]) == 2
+    assert checkpoint_payload["protocol_metadata"]["world_size"] == 2

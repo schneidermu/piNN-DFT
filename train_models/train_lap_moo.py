@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 import random
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -32,6 +33,8 @@ from lap_moo_panel import MinnesotaGroupStore
 from lap_moo_protocol import (
     METHOD_IDS,
     OPTIMIZER_FAMILIES,
+    PCD_QP_TOLERANCE,
+    PCD_SOURCE_FILE_PATHS,
     SamplingStream,
     build_sampling_manifest_from_catalog,
     file_sha256,
@@ -70,6 +73,26 @@ def _external_path(path: str | Path, label: str) -> Path:
     return resolved
 
 
+def _current_pcd_source_identity() -> tuple[str, dict[str, str]]:
+    """Return run-level Git revision and exact critical PCD source hashes."""
+    revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=REPO_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    return revision, {
+        relative: file_sha256(REPO_ROOT / relative)
+        for relative in PCD_SOURCE_FILE_PATHS
+    }
+
+
+def _initial_aggregator_state(method: str) -> dict[str, Any] | None:
+    """Keep fresh PCD initialization explicit without changing legacy state."""
+    return None if method == "pcd" else {}
+
+
 def _run_scheduled_update(
     model: torch.nn.Module,
     optimizer: torch.optim.Optimizer,
@@ -77,7 +100,7 @@ def _run_scheduled_update(
     *,
     method: str,
     hyperparameters: dict[str, Any],
-    aggregator_state: dict[str, Any],
+    aggregator_state: dict[str, Any] | None,
     scheduler,
     world_size: int,
 ):
@@ -434,12 +457,24 @@ def _method_configuration(method: str, hyperparameters_path: Path | None, calibr
         hparams = provided
     elif method == "cagrad":
         hparams = {"c": 0.4, "rescale": "paper_unscaled", **provided}
-    else:
+    elif method == "nash_mtl":
         hparams = {
             "solver": "newton_potential",
             "max_iter": 100,
             "tol": 1e-10,
             "update_every": 1,
+            **provided,
+        }
+    else:
+        allowed = {"tau", "beta", "eps", "qp_tolerance"}
+        unknown = set(provided) - allowed
+        if unknown:
+            raise ValueError(f"Unsupported PCD method hyperparameters: {sorted(unknown)}.")
+        hparams = {
+            "tau": 0.02,
+            "beta": 0.999,
+            "eps": 1.0e-8,
+            "qp_tolerance": PCD_QP_TOLERANCE,
             **provided,
         }
     return hparams, fixed_record
@@ -684,6 +719,16 @@ def main() -> None:
         muon_learning_rate=args.muon_learning_rate,
     )
     scheduler = make_cosine_scheduler(optimizer, total_updates=args.updates)
+    pcd_protocol_kwargs: dict[str, Any] = {}
+    pcd_source_git_commit: str | None = None
+    pcd_source_hashes: dict[str, str] | None = None
+    if args.method == "pcd":
+        pcd_source_git_commit, pcd_source_hashes = _current_pcd_source_identity()
+        pcd_protocol_kwargs = {
+            "world_size": world_size,
+            "sampling_manifest_file_sha256": file_sha256(rank_args["sampling_manifest"]),
+            "source_code_sha256": pcd_source_hashes,
+        }
     protocol = make_protocol_metadata(
         architecture=model.architecture,
         method=args.method,
@@ -707,6 +752,7 @@ def main() -> None:
         dtype=args.dtype,
         grid_chunk_size=args.point_chunk_size,
         ao_cache_chunk_size=args.ao_cache_chunk_size,
+        **pcd_protocol_kwargs,
     )
     validate_protocol_metadata(protocol)
 
@@ -727,7 +773,7 @@ def main() -> None:
         dist.barrier()
 
     next_update = 0
-    aggregator_state: dict[str, Any] = {}
+    aggregator_state = _initial_aggregator_state(args.method)
     if args.resume is not None:
         resume_path = _external_path(args.resume, "resume checkpoint")
         next_update, aggregator_state = load_moo_checkpoint(
@@ -872,6 +918,9 @@ def main() -> None:
             "predopt_checkpoint_sha256": predopt_sha,
             "final_checkpoint": str((output_dir / "latest.pt").resolve()),
         }
+        if args.method == "pcd":
+            summary["source_code_git_commit"] = pcd_source_git_commit
+            summary["source_code_sha256"] = pcd_source_hashes
         _write_json(output_dir / "run_summary.json", summary)
         print(json.dumps(summary, indent=2, sort_keys=True), flush=True)
     if world_size > 1:

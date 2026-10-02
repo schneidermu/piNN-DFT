@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import math
 import random
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
@@ -495,6 +496,129 @@ def _reject_stencil_checkpoint_fields(value: Any) -> None:
             _reject_stencil_checkpoint_fields(nested)
 
 
+def _validate_pcd_world_size(
+    protocol_metadata: Mapping[str, Any], sampling_manifest: Mapping[str, Any]
+) -> None:
+    if protocol_metadata.get("method") != "pcd":
+        return
+    metadata_world_size = protocol_metadata.get("world_size")
+    manifest_world_size = sampling_manifest.get("world_size")
+    actual_world_size = (
+        dist.get_world_size()
+        if dist.is_available() and dist.is_initialized()
+        else 1
+    )
+    if (
+        type(metadata_world_size) is not int
+        or type(manifest_world_size) is not int
+        or metadata_world_size != manifest_world_size
+        or metadata_world_size != actual_world_size
+    ):
+        raise ValueError(
+            "PCD protocol, sampling manifest, and initialized process group world sizes differ."
+        )
+
+
+def _validate_rng_state(state: Any) -> None:
+    """Check a captured RNG bundle without changing process-global RNG state."""
+    if not isinstance(state, Mapping) or set(state) != {"python", "numpy", "torch_cpu", "torch_cuda"}:
+        raise ValueError("MOO checkpoint contains a malformed per-rank RNG state.")
+    try:
+        random.Random().setstate(state["python"])
+        np.random.RandomState().set_state(state["numpy"])
+    except (TypeError, ValueError) as exc:
+        raise ValueError("MOO checkpoint contains an invalid Python or NumPy RNG state.") from exc
+    cpu_state = state["torch_cpu"]
+    if (
+        not isinstance(cpu_state, torch.Tensor)
+        or cpu_state.device.type != "cpu"
+        or cpu_state.dtype != torch.uint8
+        or cpu_state.ndim != 1
+    ):
+        raise ValueError("MOO checkpoint contains an invalid CPU Torch RNG state.")
+    try:
+        torch.Generator(device="cpu").set_state(cpu_state)
+    except RuntimeError as exc:
+        raise ValueError("MOO checkpoint contains an invalid CPU Torch RNG state.") from exc
+    cuda_states = state["torch_cuda"]
+    if not isinstance(cuda_states, (list, tuple)) or any(
+        not isinstance(item, torch.Tensor)
+        or item.device.type != "cpu"
+        or item.dtype != torch.uint8
+        or item.ndim != 1
+        for item in cuda_states
+    ):
+        raise ValueError("MOO checkpoint contains invalid CUDA RNG states.")
+
+
+def _validated_pcd_aggregator_state(
+    protocol_metadata: Mapping[str, Any],
+    aggregator_state: Mapping[str, Any] | None,
+    *,
+    cursor: int,
+) -> dict[str, Any]:
+    """Fail closed on PCD EMA state before saving or mutating resumed objects."""
+    if protocol_metadata.get("method") != "pcd":
+        return copy.deepcopy(dict(aggregator_state or {}))
+
+    hyperparameters = protocol_metadata.get("method_hyperparameters")
+    if not isinstance(hyperparameters, Mapping):
+        raise TypeError("PCD protocol method hyperparameters must be a mapping.")
+    expected = {
+        "version": 1,
+        "method": "pcd",
+        "task_order": list(TASK_NAMES),
+        "tau": hyperparameters.get("tau"),
+        "beta": hyperparameters.get("beta"),
+        "eps": hyperparameters.get("eps"),
+        "qp_tolerance": hyperparameters.get("qp_tolerance"),
+    }
+    if aggregator_state is None or (isinstance(aggregator_state, Mapping) and not aggregator_state):
+        if cursor != 0:
+            raise ValueError("PCD checkpoint is missing EMA state at a nonzero cursor.")
+        return {**expected, "v": [0.0, 0.0, 0.0], "t": 0}
+    if not isinstance(aggregator_state, Mapping):
+        raise TypeError("PCD checkpoint EMA state must be a mapping.")
+    required = {*expected, "v", "t"}
+    if set(aggregator_state) != required:
+        raise ValueError("PCD checkpoint EMA state has missing or unexpected fields.")
+    for name, value in expected.items():
+        found = aggregator_state.get(name)
+        if name == "version" and type(found) is not int:
+            raise ValueError("PCD checkpoint EMA state version is invalid.")
+        if name == "task_order":
+            try:
+                found = list(found)
+            except TypeError as exc:
+                raise ValueError("PCD checkpoint task order is invalid.") from exc
+        elif name in ("tau", "beta", "eps", "qp_tolerance"):
+            if (
+                isinstance(found, bool)
+                or not isinstance(found, (int, float))
+                or not math.isfinite(float(found))
+                or float(found) != float(value)
+            ):
+                raise ValueError(f"PCD checkpoint EMA state {name!r} differs from its protocol.")
+            continue
+        if found != value:
+            raise ValueError(f"PCD checkpoint EMA state {name!r} differs from its protocol.")
+    raw_v = aggregator_state.get("v")
+    if not isinstance(raw_v, (list, tuple)) or len(raw_v) != len(TASK_NAMES):
+        raise ValueError("PCD checkpoint EMA values must align with all three tasks.")
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(float(value))
+        or float(value) < 0.0
+        for value in raw_v
+    ):
+        raise ValueError("PCD checkpoint EMA values must be finite and nonnegative.")
+    state_cursor = aggregator_state.get("t")
+    if type(state_cursor) is not int or state_cursor != cursor:
+        raise ValueError("PCD EMA step count does not match the saved sampling cursor.")
+    return copy.deepcopy(dict(aggregator_state))
+
+
 def save_moo_checkpoint(
     path: str | Path,
     *,
@@ -516,6 +640,10 @@ def save_moo_checkpoint(
     validate_cursor(sampling_manifest, cursor)
     if protocol_metadata.get("sampling_manifest_sha256") != manifest_hash:
         raise ValueError("Checkpoint protocol and sampling manifest identities differ.")
+    _validate_pcd_world_size(protocol_metadata, sampling_manifest)
+    saved_aggregator_state = _validated_pcd_aggregator_state(
+        protocol_metadata, aggregator_state, cursor=cursor["next_update"]
+    )
     if scheduler is not None:
         scheduler_epoch = scheduler.state_dict().get("last_epoch")
         if scheduler_epoch != cursor["next_update"]:
@@ -537,7 +665,7 @@ def save_moo_checkpoint(
             "optimizer_state_dict": optimizer.state_dict(),
             "scheduler_state_dict": None if scheduler is None else scheduler.state_dict(),
             "sampling_cursor": cursor,
-            "aggregator_state": copy.deepcopy(dict(aggregator_state or {})),
+            "aggregator_state": saved_aggregator_state,
             "rng_states_by_rank": rng_states,
         }
         _reject_stencil_checkpoint_fields(payload)
@@ -582,6 +710,10 @@ def load_moo_checkpoint(
     if metadata.get("sampling_manifest_sha256") != manifest_hash:
         raise ValueError("Checkpoint protocol and sampling manifest identities differ.")
     cursor_value = validate_cursor(sampling_manifest, payload["sampling_cursor"])
+    _validate_pcd_world_size(metadata, sampling_manifest)
+    aggregator_state = _validated_pcd_aggregator_state(
+        metadata, payload.get("aggregator_state"), cursor=cursor_value
+    )
     scheduler_state = payload.get("scheduler_state_dict")
     if scheduler is not None:
         if scheduler_state is None:
@@ -592,6 +724,8 @@ def load_moo_checkpoint(
                 "MOO checkpoint scheduler progress does not match its sampling cursor: "
                 f"last_epoch={scheduler_epoch}, next_update={cursor_value}."
             )
+    elif scheduler_state is not None:
+        raise ValueError("Checkpoint has an unexpected learning-rate scheduler.")
     operator_metadata = payload.get("operator_metadata")
     validate_operator_metadata(operator_metadata)
     if operator_metadata != operator_checkpoint_metadata().to_dict():
@@ -602,20 +736,21 @@ def load_moo_checkpoint(
         raise ValueError("MOO checkpoint architecture kwargs differ from the model.")
     if tuple(payload["model_state_dict"]) != tuple(model.state_dict()):
         raise ValueError("MOO checkpoint model parameter keys differ.")
+    states = payload.get("rng_states_by_rank")
+    if not isinstance(states, (list, tuple)):
+        raise TypeError("Checkpoint per-rank RNG states must be a list or tuple.")
+    for state in states:
+        _validate_rng_state(state)
+    rank = dist.get_rank() if dist.is_available() and dist.is_initialized() else 0
+    if rank >= len(states):
+        raise ValueError("Checkpoint does not contain RNG state for this rank.")
     model.load_state_dict(payload["model_state_dict"], strict=True)
     optimizer.load_state_dict(payload["optimizer_state_dict"])
-    if scheduler is None:
-        if payload.get("scheduler_state_dict") is not None:
-            raise ValueError("Checkpoint has an unexpected learning-rate scheduler.")
-    else:
+    if scheduler is not None:
         scheduler.load_state_dict(scheduler_state)
     if restore_rng:
-        rank = dist.get_rank() if dist.is_available() and dist.is_initialized() else 0
-        states = payload.get("rng_states_by_rank", [])
-        if rank >= len(states):
-            raise ValueError("Checkpoint does not contain RNG state for this rank.")
         restore_rng_state(states[rank])
-    return cursor_value, copy.deepcopy(payload.get("aggregator_state", {}))
+    return cursor_value, aggregator_state
 
 
 __all__ = [

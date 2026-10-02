@@ -1,0 +1,25 @@
+# PCD source contract
+
+## Authority and pin
+
+Primary paper: Dara Varam and Mohamed I. AlHajri, “Not All Objectives Are Born Equal: Priority-Constrained Descent for Hierarchical Multi-Objective Optimization,” *Transactions on Machine Learning Research*, September 2026. The 52-page arXiv v2 is marked as the TMLR version. DOI is not present in the paper or software citation metadata; authoritative records are the [TMLR accepted-paper index](https://www.jmlr.org/tmlr/papers/), [OpenReview HT01yGHLEt](https://openreview.net/forum?id=HT01yGHLEt), and [arXiv 2606.29521](https://arxiv.org/abs/2606.29521).
+
+Official implementation: [DaraVaram/priority-constrained-descent](https://github.com/DaraVaram/priority-constrained-descent), pinned at `e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0` (2026-09-29, release/citation metadata update). Local external clone: `C:\Dev\readWFN_share_ms\lap_pcd_runs_20261002\upstream_pcd`; working tree clean. `LICENSE` is MIT, copyright 2026 Dara Varam and Mohamed I. AlHajri. Paper copy: `C:\Dev\readWFN_share_ms\lap_pcd_runs_20261002\pcd_arxiv_2606.29521v2.pdf`; SHA-256 `8E6C03DD8EDC2836057F748761C98B352600819CCE3E0BF2C0FB6CCEF7878C65`, recorded in `pcd_arxiv_2606.29521v2.sha256.txt`.
+
+## Canonical behavior
+
+`pcd/normalize.py::EMANormalizer` keeps one scalar second-moment EMA per objective: `v_t = β v_(t−1) + (1−β)||g_t||²`, `vhat_t = v_t/(1−β^t)`, `s_t = 1/sqrt(vhat_t + ε)`, `gtilde_t = s_t g_t`; initial `v=0`, defaults `β=0.999`, `ε=1e−8`. The update runs before the primary-zero early return. State includes `β`, `ε`, global `t`, and every objective’s `v`; exact checkpoint resume needs both `v` and `t` (a reset starts bias correction over at the next call). This released formula matches paper Eq. 13. The source notes older research code used `1/(sqrt(vhat)+ε)`; treat that as historical, not the published/released contract.
+
+`pcd/qp.py::solve_qp` projects `gtilde_1` onto constraints `gtilde_j·dtilde ≥ τ||gtilde_j||²`, returning `dtilde = gtilde_1 + Σ μ_j gtilde_j`, `μ_j ≥ 0`. For K=3 it tries no active constraint, each singleton, then the independent pair; the pair solves `G_A μ = τ diag(G_A) − G_A1` (paper Cor. B.5/Cramer equivalent). Code uses `tol=1e−9`: normalized active Gram min-eigenvalue must exceed tolerance; multipliers below `−tol` reject a set, small negatives are clipped to zero; every constraint’s slack must be at least `−tol·max(max(diag G), tiny)`. These are numerical code thresholds, not theoretical paper constants.
+
+Zero secondary gradients yield `0 ≥ 0` and are ignored. If raw primary norm is exactly zero, `pcd/optim.py::PCD.apply_gradients` updates EMA state then writes an all-zero update, even if secondaries are nonzero. For τ>0 and K≥3, if constraints are infeasible, solver returns primary-only weights; deployment drops all secondary constraints that step. Feasibility fails iff zero is in the convex hull of nonzero normalized secondaries; for K=3 this requires exactly anti-parallel secondaries. τ=0 is always feasible. The inactive solution is `(weights=e0, active=(), feasible=True)`; infeasible fallback is also `e0` with `active=()`, distinguished by `feasible=False`. `PCDInfo` has no separate halt flag. If the normalized solution is exactly zero, the rescale factor is zero and `.grad` is zero; for τ>0 this requires every objective gradient to be zero, while τ=0 can also halt at Pareto-stationary points. `PCD.apply_gradients` otherwise rescales the constructed direction to raw `||g_1||`, as Algorithm 1 specifies.
+
+## Guarantees and scope
+
+For a feasible QP, each nonzero secondary meets the normalized directional constraint. For smooth secondaries this gives first-order descent under the idealized step `θ−η dtilde`; nonsmooth secondaries incur the paper’s kink-tax qualification. PCD does not guarantee primary descent for all τ/conflicts. Positive magnitude rescaling preserves the constructed direction, but Adam/RAdamW preconditioning can change the actual parameter-step direction; the paper claims no convergence theorem for the deployed optimizer loop.
+
+Scaling invariance is asymptotic with released `ε`: exact as `ε→0` or once `vhat_i >> ε/c_i²`; finite-ε deviations become material near `sqrt(ε)=10⁻⁴` for `ε=10⁻⁸`. Appendix B.6 gives exact finite-ε invariance for an alternative normalizer `s=(vhat·(1+ε))⁻¹/²`, which is not the released implementation.
+
+## Upstream tests
+
+Reviewed `tests/test_qp.py` and `tests/test_optim.py`: closed forms/KKT, K=3 Cramer case, general K projection vs. Dykstra, infeasible fallback, zero secondary, inactive regime, per-objective τ, magnitude rescale, scale invariance, zero primary, unused parameters, state round-trip, and optimizer integration. Ran upstream suite at pinned SHA: **88 passed in 9.72s**. System Python initially lacked pytest; pytest 9.1.1 plus `colorama 0.4.6`, `iniconfig 2.3.0`, `packaging 26.3`, `pluggy 1.6.0`, and `pygments 2.21.0` were installed under `C:\Dev\readWFN_share_ms\lap_pcd_runs_20261002\pcd_test_deps`; no source clone files changed.

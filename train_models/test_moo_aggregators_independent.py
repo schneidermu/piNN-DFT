@@ -6,6 +6,7 @@ reusing diagnostics or helper routines from ``moo_aggregators``.
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -25,10 +26,12 @@ TASKS = ("chem", "exc", "op")
 DTYPE = torch.float64
 
 
-def _task_gradients(vectors: list[list[float]]) -> dict[str, dict[str, torch.Tensor]]:
+def _task_gradients(
+    vectors: list[list[float]], *, dtype: torch.dtype = DTYPE
+) -> dict[str, dict[str, torch.Tensor]]:
     assert len(vectors) == len(TASKS)
     return {
-        task: {"p": torch.tensor(vector, dtype=DTYPE)}
+        task: {"p": torch.tensor(vector, dtype=dtype)}
         for task, vector in zip(TASKS, vectors, strict=True)
     }
 
@@ -396,3 +399,103 @@ def test_random_reference_calls_are_deterministic_and_preserve_tensor_metadata()
         outputs.append(joint["weight"].clone())
     torch.testing.assert_close(outputs[0], outputs[1], rtol=0.0, atol=0.0)
     torch.testing.assert_close(outputs[0].reshape(-1), vectors.mean(dim=0), rtol=0.0, atol=1e-14)
+
+
+def test_pcd_many_random_updates_match_pinned_reference_across_json_resume():
+    """Compare complete updates and resumed EMA state with the pinned release."""
+    upstream_root = REPO_ROOT.parent / "lap_pcd_runs_20261002" / "upstream_pcd"
+    if not (upstream_root / "pcd" / "optim.py").is_file():
+        pytest.skip("the task's pinned external PCD clone is not available")
+    upstream_text = str(upstream_root)
+    if upstream_text not in sys.path:
+        sys.path.insert(0, upstream_text)
+    try:
+        from pcd.optim import PCD as ReferencePCD
+    except ImportError as exc:  # pragma: no cover - clone integrity guard
+        pytest.fail(f"could not import the pinned PCD reference: {exc}")
+
+    rng = torch.Generator(device="cpu").manual_seed(80421)
+    cases = 80
+    split_at = cases // 2
+    for dtype in (torch.float32, torch.float64):
+        for tau in (0.0, 0.02, 0.1):
+            reference_parameter = torch.nn.Parameter(torch.zeros(13, dtype=dtype))
+            reference = ReferencePCD([reference_parameter], tau=tau)
+            state = None
+            for step in range(cases):
+                if step % 20 == 0:
+                    fixture = (
+                        [[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]
+                        if step % 40 == 0
+                        else [[0.0, 1.0, 0.0], [1.0, 0.0, 0.0], [-2.0, 0.0, 0.0]]
+                    )
+                    rows = [row + [0.0] * 10 for row in fixture]
+                else:
+                    raw = torch.randn((3, 13), generator=rng, dtype=dtype)
+                    task_scales = torch.pow(
+                        torch.tensor(10.0, dtype=dtype),
+                        torch.empty((3, 1), dtype=dtype).uniform_(-2.0, 2.0, generator=rng),
+                    )
+                    rows = (raw * task_scales).tolist()
+                tensors = [torch.tensor(row, dtype=dtype) for row in rows]
+                reference_info = reference.apply_gradients([[tensor] for tensor in tensors])
+                joint, diagnostics, next_state = aggregate_task_gradients(
+                    _task_gradients(rows, dtype=dtype),
+                    method="pcd",
+                    hyperparameters={"tau": tau},
+                    state=state,
+                )
+
+                tolerance = 3e-5 if dtype == torch.float32 else 2e-10
+                torch.testing.assert_close(
+                    joint["p"], reference_parameter.grad,
+                    rtol=tolerance, atol=tolerance * 1e-2,
+                )
+                assert diagnostics["active_indices"] == list(reference_info.active)
+                assert diagnostics["feasible"] is reference_info.feasible
+                assert diagnostics["mu"]["exc"] == pytest.approx(
+                    reference_info.mu[0], rel=tolerance, abs=tolerance * 1e-2
+                )
+                assert diagnostics["mu"]["op"] == pytest.approx(
+                    reference_info.mu[1], rel=tolerance, abs=tolerance * 1e-2
+                )
+                assert next_state["t"] == step + 1
+                assert next_state["v"] == pytest.approx(
+                    reference.normalizer.v.tolist(), rel=tolerance, abs=tolerance * 1e-2
+                )
+                state = next_state
+
+                if step + 1 == split_at:
+                    state = json.loads(json.dumps(state))
+                    reference_state = json.loads(json.dumps(reference.state_dict()))
+                    reference_parameter = torch.nn.Parameter(torch.zeros(13, dtype=dtype))
+                    reference = ReferencePCD([reference_parameter], tau=tau)
+                    reference.load_state_dict(reference_state)
+
+
+def test_pcd_released_epsilon_is_material_for_small_first_step_gradients():
+    rows = [[1.0, 0.0], [1e-6, 0.0], [0.0, 1.0]]
+    _, diagnostics, state = aggregate_task_gradients(
+        _task_gradients(rows), method="pcd", hyperparameters={"tau": 0.02}
+    )
+    # At t=1, vhat equals ||g||^2. With released eps=1e-8, the small
+    # secondary stays 100x below unit normalized norm; epsilon-free scaling
+    # would erase this real finite-step distinction.
+    assert diagnostics["normalized_task_gradient_norms"]["exc"] == pytest.approx(
+        1e-6 / (1e-12 + 1e-8) ** 0.5, rel=1e-12
+    )
+    assert diagnostics["normalized_task_gradient_norms"]["exc"] == pytest.approx(0.01, rel=1e-4)
+    assert diagnostics["eps"] == 1e-8
+    assert state["v"] == pytest.approx([1e-3, 1e-15, 1e-3])
+
+
+def test_pcd_positive_secondary_rescaling_is_asymptotically_invariant():
+    vectors = [[1.0, 0.0, 0.0], [-0.6, 0.8, 0.0], [0.2, -0.1, 1.0]]
+    reference, base_info, _ = _aggregate(vectors, "pcd", {"tau": 0.02})
+    rescaled_vectors = [vectors[0], [100.0 * x for x in vectors[1]], vectors[2]]
+    actual, scaled_info, _ = _aggregate(
+        rescaled_vectors, "pcd", {"tau": 0.02}
+    )
+    torch.testing.assert_close(actual, reference, rtol=2e-8, atol=2e-10)
+    assert base_info["feasible"] is scaled_info["feasible"]
+    assert base_info["active"] == scaled_info["active"]

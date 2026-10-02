@@ -12,11 +12,13 @@ from typing import Any
 
 import numpy as np
 
-RAW_SCHEMA = "lap-moo-raw-gradient-survey-v1"
-SUMMARY_SCHEMA = "lap-moo-gradient-geometry-summary-v2"
+LEGACY_RAW_SCHEMA = "lap-moo-raw-gradient-survey-v1"
+RAW_SCHEMA = "lap-moo-raw-gradient-survey-v2"
+SUMMARY_SCHEMA = "lap-moo-gradient-geometry-summary-v3"
 TASKS = ("chem", "exc", "op")
 COSINES = ("chem:exc", "chem:op", "exc:op")
-METHODS = ("fixed", "imtl_g", "cagrad", "nash_mtl")
+LEGACY_METHODS = ("fixed", "imtl_g", "cagrad", "nash_mtl")
+METHODS = (*LEGACY_METHODS, "pcd")
 
 
 def file_sha256(path: str | Path) -> str:
@@ -125,14 +127,16 @@ def summarize_raw_gradient_survey(
     report: dict[str, Any], *, source_sha256: str | None = None
 ) -> dict[str, Any]:
     """Group raw geometry and aggregator diagnostics by DB and mRKS system."""
-    if report.get("schema") != RAW_SCHEMA:
-        raise ValueError(f"Expected raw survey schema {RAW_SCHEMA!r}.")
+    source_schema = report.get("schema")
+    if source_schema not in (RAW_SCHEMA, LEGACY_RAW_SCHEMA):
+        raise ValueError(f"Expected raw survey schema {RAW_SCHEMA!r} or {LEGACY_RAW_SCHEMA!r}.")
+    methods = METHODS if source_schema == RAW_SCHEMA else LEGACY_METHODS
     samples = report.get("samples")
     aggregation = report.get("aggregation_geometry")
     if not isinstance(samples, list) or not samples:
         raise ValueError("Raw gradient survey has no sample records.")
-    if not isinstance(aggregation, dict) or set(aggregation) != set(METHODS):
-        raise ValueError("Raw survey aggregation methods differ from the frozen four-method set.")
+    if not isinstance(aggregation, dict) or set(aggregation) != set(methods):
+        raise ValueError("Raw survey aggregation methods differ from its schema version.")
 
     sample_by_update: dict[int, dict[str, Any]] = {}
     for row in samples:
@@ -151,7 +155,7 @@ def summarize_raw_gradient_survey(
         by_system[str(row["mrks_system"])].append(row)
 
     summary_methods: dict[str, Any] = {}
-    for method in METHODS:
+    for method in methods:
         method_rows = aggregation[method]
         if not isinstance(method_rows, list):
             raise TypeError(f"Aggregation rows for {method!r} must be a list.")

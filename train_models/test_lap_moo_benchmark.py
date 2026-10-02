@@ -17,6 +17,7 @@ for _path in (str(REPO_ROOT), str(TRAIN_MODELS)):
 
 from lap_moo_protocol import TASK_NAMES
 from run_lap_moo_benchmark import (
+    SCHEMA,
     _calibration_weights,
     _method_diagnostics,
     _pairwise_cosines,
@@ -53,7 +54,8 @@ def test_survey_records_raw_cosines_and_all_method_geometry():
         [{"update": 0, "gradients": gradients}],
         {"chem": 2.0 ** (-1.0 / 3.0), "exc": 2.0 ** (-1.0 / 3.0), "op": 2.0 ** (2.0 / 3.0)},
     )
-    assert set(results) == {"fixed", "imtl_g", "cagrad", "nash_mtl"}
+    assert set(results) == {"fixed", "imtl_g", "cagrad", "nash_mtl", "pcd"}
+    assert SCHEMA == "lap-moo-raw-gradient-survey-v2"
     for method, rows in results.items():
         assert len(rows) == 1, method
         assert "error" not in rows[0], rows[0]

@@ -3,19 +3,30 @@
 All geometry is accumulated in float64 over the named parameter tensors.  No
 concatenated parameter-sized vector is created, so unused parameters and large
 models do not require a separate flattened copy.
+
+PCD follows the published construction by Dara Varam and Mohamed I. AlHajri,
+"Not All Objectives Are Born Equal: Priority-Constrained Descent for
+Hierarchical Multi-Objective Optimization" (TMLR 2026), and the MIT-licensed
+reference implementation at
+https://github.com/DaraVaram/priority-constrained-descent, commit
+e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0. The reference software copyright
+is © 2026 Dara Varam and Mohamed I. AlHajri and is distributed under the MIT
+License, retained in ``train_models/PCD_LICENSE``.
 """
 
 from __future__ import annotations
 
 import math
 from collections.abc import Mapping
+from itertools import combinations
 from typing import Any
 
 import numpy as np
 import torch
 
 _TASK_PRIORITY = ("chem", "exc", "op")
-_METHODS = ("fixed", "imtl_g", "cagrad", "nash_mtl")
+_METHODS = ("fixed", "imtl_g", "cagrad", "nash_mtl", "pcd")
+_PCD_QP_TOL = 1.0e-9
 
 
 def _ordered_tasks(task_grads: Mapping[str, Mapping[str, torch.Tensor | None]]) -> tuple[str, ...]:
@@ -168,6 +179,34 @@ def _combine(
         if not bool(torch.isfinite(total).all().item()):
             raise FloatingPointError(f"Aggregated gradient for parameter {name!r} is nonfinite.")
         result[name] = total.to(dtype=template.dtype if output_dtype is None else output_dtype)
+    return result
+
+
+def _pcd_combine(
+    tasks: tuple[str, ...], names: tuple[str, ...],
+    values: Mapping[str, Mapping[str, torch.Tensor | None]],
+    coefficients: Mapping[str, float], *, final_scale: float = 1.0,
+) -> dict[str, torch.Tensor | None]:
+    """Form a PCD direction in gradient dtype, without a model-sized flatten."""
+    result: dict[str, torch.Tensor | None] = {}
+    for name in names:
+        active = [values[task][name] for task in tasks if values[task][name] is not None]
+        if not active:
+            result[name] = None
+            continue
+        template = active[0]
+        assert template is not None
+        total = torch.zeros_like(template)
+        for task in tasks:
+            grad = values[task][name]
+            coefficient = float(coefficients[task])
+            if grad is not None and coefficient != 0.0:
+                total.add_(grad.detach(), alpha=coefficient)
+        if final_scale != 1.0:
+            total.mul_(float(final_scale))
+        if not bool(torch.isfinite(total).all().item()):
+            raise FloatingPointError(f"Aggregated PCD gradient for parameter {name!r} is nonfinite.")
+        result[name] = total
     return result
 
 
@@ -396,6 +435,116 @@ def _solve_nash_potential(
     return beta, int(solver_iterations), solver_residual
 
 
+def _pcd_state_values(
+    state: Mapping[str, Any] | None,
+    tasks: tuple[str, ...],
+    *,
+    tau: float,
+    beta: float,
+    eps: float,
+) -> tuple[np.ndarray, int]:
+    """Validate and load PCD's per-task EMA state."""
+    if state is None:
+        return np.zeros(len(tasks), dtype=np.float64), 0
+    if not isinstance(state, Mapping):
+        raise TypeError("PCD state must be a mapping.")
+    if state.get("version") != 1 or state.get("method") != "pcd":
+        raise ValueError("PCD state has an unsupported version or method.")
+    try:
+        task_order = tuple(state.get("task_order", ()))
+    except TypeError as exc:
+        raise ValueError("PCD state task order is incompatible with this update.") from exc
+    if task_order != tasks:
+        raise ValueError("PCD state task order is incompatible with this update.")
+    for name, expected in (
+        ("tau", tau), ("beta", beta), ("eps", eps), ("qp_tolerance", _PCD_QP_TOL)
+    ):
+        try:
+            value = float(state[name])
+        except (KeyError, TypeError, ValueError, OverflowError) as exc:
+            raise ValueError(f"PCD state is missing a valid {name!r} value.") from exc
+        if not math.isfinite(value) or value != expected:
+            raise ValueError(f"PCD state {name!r} does not match the active configuration.")
+    try:
+        raw_v = np.asarray(state["v"], dtype=np.float64)
+    except (KeyError, TypeError, ValueError, OverflowError) as exc:
+        raise ValueError("PCD state must contain finite, task-aligned EMA values.") from exc
+    if raw_v.shape != (len(tasks),) or not np.all(np.isfinite(raw_v)) or np.any(raw_v < 0.0):
+        raise ValueError("PCD state must contain finite, nonnegative, task-aligned EMA values.")
+    count = state.get("t")
+    if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+        raise ValueError("PCD state step count must be a nonnegative integer.")
+    return raw_v.copy(), count
+
+
+def _pcd_independent(active_gram: np.ndarray, tol: float) -> bool:
+    """Match the reference solver's scale-free independence test."""
+    if active_gram.shape[0] == 1:
+        return True
+    diagonal = np.diag(active_gram)
+    if np.any(diagonal <= 0.0):
+        return False
+    norms = np.sqrt(diagonal)
+    normalized = active_gram / np.outer(norms, norms)
+    return bool(np.linalg.eigvalsh(normalized)[0] > tol)
+
+
+def _solve_pcd_qp(
+    normalized_gram: np.ndarray,
+    tau: float,
+    *,
+    tol: float = _PCD_QP_TOL,
+) -> tuple[np.ndarray, tuple[int, ...], bool, int, float]:
+    """Solve the fixed three-task PCD QP by the source's KKT enumeration.
+
+    Returned weights define ``d_tilde = sum_i weights[i] * g_tilde_i``.
+    Active task indices are 1-based into the task order (chem is index 0).
+    """
+    gram = np.asarray(normalized_gram, dtype=np.float64)
+    if gram.shape != (3, 3):
+        raise ValueError(f"PCD requires a 3x3 normalized Gram matrix, got {gram.shape}.")
+    if not np.all(np.isfinite(gram)):
+        raise FloatingPointError("PCD normalized Gram matrix contains nonfinite values.")
+    weights = np.zeros(3, dtype=np.float64)
+    weights[0] = 1.0
+    secondary_gram = gram[1:, 1:]
+    rhs = tau * np.diag(secondary_gram) - gram[1:, 0]
+    if np.all(rhs <= 0.0):
+        return weights, (), True, 0, 0.0
+
+    atol = tol * max(float(np.max(np.diag(gram))), np.finfo(np.float64).tiny)
+    candidates = [index for index in range(2) if secondary_gram[index, index] > 0.0]
+    checked = 0
+    for size in range(1, len(candidates) + 1):
+        for subset in combinations(candidates, size):
+            checked += 1
+            active = list(subset)
+            active_gram = secondary_gram[np.ix_(active, active)]
+            if not _pcd_independent(active_gram, tol):
+                continue
+            try:
+                multipliers = np.linalg.solve(active_gram, rhs[active])
+            except np.linalg.LinAlgError:
+                continue
+            if np.any(multipliers < -tol):
+                continue
+            multipliers = np.maximum(multipliers, 0.0)
+            slack = secondary_gram[:, active] @ multipliers - rhs
+            if np.all(slack >= -atol):
+                weights[1 + np.asarray(active)] = multipliers
+                residual = max(
+                    max(0.0, float(-np.min(slack))),
+                    float(np.max(np.abs(multipliers * slack[active]))),
+                )
+                return weights, tuple(1 + index for index in active), True, checked, residual
+
+    # Canonical deployment fallback: discard the secondary constraints and
+    # follow the primary gradient for this update.
+    fallback_slack = gram[1:, 0] - tau * np.diag(secondary_gram)
+    residual = max(0.0, float(-np.min(fallback_slack)))
+    return weights, (), False, checked, residual
+
+
 def aggregate_task_gradients(
     task_grads: Mapping[str, Mapping[str, torch.Tensor | None]],
     *,
@@ -425,6 +574,7 @@ def aggregate_task_gradients(
     solver_iterations = 0
     solver_residual = 0.0
     new_state: dict[str, Any] = {}
+    pcd_diagnostics: dict[str, Any] = {}
 
     if method == "fixed":
         coefficients = _fixed_coefficients(tasks, hparams)
@@ -500,6 +650,162 @@ def aggregate_task_gradients(
                 if not bool(torch.isfinite(total).all().item()):
                     raise FloatingPointError(f"Aggregated gradient for parameter {name!r} is nonfinite.")
                 joint[name] = total.to(dtype=template.dtype)
+    elif method == "pcd":
+        if tasks != _TASK_PRIORITY:
+            raise ValueError(
+                "PCD requires exactly three tasks in canonical order: chem, exc, op."
+            )
+        try:
+            tau = float(hparams.get("tau", 0.02))
+            beta = float(hparams.get("beta", 0.999))
+            eps = float(hparams.get("eps", 1.0e-8))
+            configured_tol = float(hparams.get("qp_tolerance", _PCD_QP_TOL))
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise ValueError("PCD tau, beta, eps, and qp_tolerance must be numeric scalars.") from exc
+        if (not math.isfinite(tau) or not 0.0 <= tau <= 1.0
+                or not math.isfinite(beta) or not 0.0 <= beta < 1.0
+                or not math.isfinite(eps) or eps <= 0.0):
+            raise ValueError("PCD requires tau in [0, 1], beta in [0, 1), and positive finite eps.")
+        if not math.isfinite(configured_tol) or configured_tol != _PCD_QP_TOL:
+            raise ValueError(f"PCD qp_tolerance is pinned to {_PCD_QP_TOL:g}.")
+
+        ema_v, ema_t = _pcd_state_values(
+            state, tasks, tau=tau, beta=beta, eps=eps
+        )
+        squared_norms = np.asarray([norms[task] ** 2 for task in tasks], dtype=np.float64)
+        if not np.all(np.isfinite(squared_norms)):
+            raise FloatingPointError("PCD squared task gradient norms are nonfinite.")
+        next_t = ema_t + 1
+        ema_v = beta * ema_v + (1.0 - beta) * squared_norms
+        bias_correction = 1.0 - beta ** next_t
+        if not np.all(np.isfinite(ema_v)) or bias_correction <= 0.0:
+            raise FloatingPointError("PCD EMA update or bias correction is invalid.")
+        ema_vhat = ema_v / bias_correction
+        scales = 1.0 / np.sqrt(ema_vhat + eps)
+        scaled_norms = np.asarray(
+            [scales[index] * norms[task] for index, task in enumerate(tasks)],
+            dtype=np.float64,
+        )
+        if not (np.all(np.isfinite(ema_vhat)) and np.all(np.isfinite(scales))
+                and np.all(np.isfinite(scaled_norms))):
+            raise FloatingPointError("PCD normalization produced nonfinite values.")
+
+        cosine_array = np.asarray(cosine_matrix, dtype=np.float64)
+        normalized_gram = cosine_array * np.outer(scaled_norms, scaled_norms)
+        normalized_gram = (normalized_gram + normalized_gram.T) * 0.5
+        np.fill_diagonal(normalized_gram, scaled_norms * scaled_norms)
+        if not np.all(np.isfinite(normalized_gram)):
+            raise FloatingPointError("PCD normalized Gram matrix contains nonfinite values.")
+
+        primary_norm = norms["chem"]
+        if primary_norm == 0.0:
+            # Match the reference deployment branch: update EMA state, then
+            # halt with an exact zero direction even when secondaries remain.
+            weights = np.array([1.0, 0.0, 0.0], dtype=np.float64)
+            active_indices: tuple[int, ...] = ()
+            feasible = True
+            solver_iterations = 0
+            solver_residual = 0.0
+            solver_status = "primary_zero"
+        else:
+            weights, active_indices, feasible, solver_iterations, solver_residual = _solve_pcd_qp(
+                normalized_gram, tau
+            )
+            solver_status = (
+                "infeasible_primary_fallback" if not feasible
+                else "active_set" if active_indices
+                else "inactive"
+            )
+
+        normalized_coeff_values = weights * scales
+        if not np.all(np.isfinite(normalized_coeff_values)):
+            raise FloatingPointError("PCD normalized direction coefficients are nonfinite.")
+        normalized_coefficients = {
+            task: float(normalized_coeff_values[index])
+            for index, task in enumerate(tasks)
+        }
+        normalized_direction = _pcd_combine(
+            tasks, names, values, normalized_coefficients
+        )
+        pre_rescale_norm = _task_norms(
+            ("normalized_direction",), names,
+            {"normalized_direction": normalized_direction},
+        )["normalized_direction"]
+        if not math.isfinite(pre_rescale_norm):
+            raise FloatingPointError("PCD pre-rescale direction norm is nonfinite.")
+        if primary_norm == 0.0 or pre_rescale_norm == 0.0:
+            raw_coeff_values = np.zeros(3, dtype=np.float64)
+            joint = _pcd_combine(
+                tasks, names, values,
+                {task: 0.0 for task in tasks},
+            )
+            if primary_norm != 0.0:
+                solver_status = "zero_direction"
+        else:
+            rescale = primary_norm / pre_rescale_norm
+            raw_coeff_values = normalized_coeff_values * rescale
+            if not np.all(np.isfinite(raw_coeff_values)):
+                raise FloatingPointError("PCD raw-equivalent coefficients are nonfinite.")
+            joint = _pcd_combine(
+                tasks, names, values, normalized_coefficients,
+                final_scale=rescale,
+            )
+        coefficients = {
+            task: float(raw_coeff_values[index]) for index, task in enumerate(tasks)
+        }
+
+        rhs = tau * np.diag(normalized_gram)[1:]
+        lhs = normalized_gram[1:, :] @ weights
+        slack = lhs - rhs
+        feasibility_atol = _PCD_QP_TOL * max(
+            float(np.max(np.diag(normalized_gram))), np.finfo(np.float64).tiny
+        )
+        pcd_diagnostics = {
+            "tau": tau,
+            "beta": beta,
+            "eps": eps,
+            "qp_tolerance": _PCD_QP_TOL,
+            "ema_squared_norms": {
+                task: float(ema_v[index]) for index, task in enumerate(tasks)
+            },
+            "bias_corrected_ema_squared_norms": {
+                task: float(ema_vhat[index]) for index, task in enumerate(tasks)
+            },
+            "ema_step": next_t,
+            "normalization_scales": {
+                task: float(scales[index]) for index, task in enumerate(tasks)
+            },
+            "normalized_task_gradient_norms": {
+                task: float(scaled_norms[index]) for index, task in enumerate(tasks)
+            },
+            "normalized_gram": normalized_gram.tolist(),
+            "mu": {task: float(weights[index]) for index, task in enumerate(tasks[1:], 1)},
+            "active": [tasks[index] for index in active_indices],
+            "active_indices": list(active_indices),
+            "feasible": bool(feasible),
+            "pre_final_rescale_norm": float(pre_rescale_norm),
+            "raw_equivalent_coefficients": dict(coefficients),
+            "constraints": {
+                task: {
+                    "lhs": float(lhs[index]),
+                    "rhs": float(rhs[index]),
+                    "slack": float(slack[index]),
+                    "satisfied": bool(slack[index] >= -feasibility_atol),
+                }
+                for index, task in enumerate(tasks[1:])
+            },
+        }
+        new_state = {
+            "version": 1,
+            "method": "pcd",
+            "task_order": list(tasks),
+            "tau": tau,
+            "beta": beta,
+            "eps": eps,
+            "qp_tolerance": _PCD_QP_TOL,
+            "v": [float(value) for value in ema_v],
+            "t": next_t,
+        }
     else:
         if any(norms[task] == 0.0 for task in tasks):
             zero_tasks = [task for task in tasks if norms[task] == 0.0]
@@ -581,4 +887,9 @@ def aggregate_task_gradients(
         "solver_iterations": int(solver_iterations),
         "solver_residual": float(solver_residual),
     }
+    if pcd_diagnostics:
+        pcd_diagnostics["post_final_rescale_norm"] = float(
+            _task_norms(("joint",), names, {"joint": joint})["joint"]
+        )
+        diagnostics.update(pcd_diagnostics)
     return joint, diagnostics, new_state

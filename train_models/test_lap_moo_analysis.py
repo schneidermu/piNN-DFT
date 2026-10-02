@@ -6,6 +6,8 @@ import copy
 
 import pytest
 from lap_moo_analysis import (
+    LEGACY_METHODS,
+    LEGACY_RAW_SCHEMA,
     METHODS,
     RAW_SCHEMA,
     summarize_raw_gradient_survey,
@@ -124,6 +126,17 @@ def test_summary_rejects_unknown_schema_and_incomplete_coverage() -> None:
     report["aggregation_geometry"]["fixed"].pop()
     with pytest.raises(ValueError, match="do not cover every"):
         summarize_raw_gradient_survey(report)
+
+
+def test_legacy_v1_survey_remains_readable_without_pcd_rows() -> None:
+    report = _report()
+    report["schema"] = LEGACY_RAW_SCHEMA
+    report["aggregation_geometry"] = {
+        method: report["aggregation_geometry"][method] for method in LEGACY_METHODS
+    }
+    result = summarize_raw_gradient_survey(report)
+    assert set(result["methods"]) == set(LEGACY_METHODS)
+    assert "pcd" not in result["methods"]
 
 
 def test_summary_rejects_nonfinite_and_duplicate_sample_updates() -> None:

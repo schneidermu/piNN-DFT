@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 PROTOCOL_VERSION = "lap-moo-one-stage-v2"
+PCD_PROTOCOL_VERSION = "lap-moo-one-stage-v3"
 LEGACY_READ_ONLY_PROTOCOL_VERSION = "lap-moo-one-stage-v1"
 # Sampling identity is frozen independently from training/checkpoint metadata.
 # The v2 AO-cache chunk field changes checkpoint provenance, not which samples
@@ -22,7 +23,43 @@ LEGACY_READ_ONLY_PROTOCOL_VERSION = "lap-moo-one-stage-v1"
 SAMPLING_PROTOCOL_VERSION = "lap-moo-one-stage-v1"
 TASK_NAMES = ("chem", "exc", "op")
 OPTIMIZER_FAMILIES = ("radamw", "adamw", "muon_adamw")
-METHOD_IDS = ("fixed", "imtl_g", "cagrad", "nash_mtl")
+METHOD_IDS = ("fixed", "imtl_g", "cagrad", "nash_mtl", "pcd")
+PCD_QP_TOLERANCE = 1e-9
+PCD_SOURCE_FILE_PATHS = (
+    "train_models/lap_moo_protocol.py",
+    "train_models/lap_moo_training.py",
+    "train_models/lap_moo_optimizers.py",
+    "train_models/moo_aggregators.py",
+    "train_models/train_lap_moo.py",
+)
+PCD_PROVENANCE = {
+    "paper_citation": (
+        "Dara Varam and Mohamed I. AlHajri, Not All Objectives Are Born Equal: "
+        "Priority-Constrained Descent for Hierarchical Multi-Objective Optimization, "
+        "Transactions on Machine Learning Research, September 2026."
+    ),
+    "paper_record": "https://openreview.net/forum?id=HT01yGHLEt",
+    "paper_arxiv": "2606.29521v2",
+    "paper_pdf_sha256": "8e6c03dd8edc2836057f748761c98b352600819cce3e0bf2c0fb6ccef7878c65",
+    "upstream_repository": "https://github.com/DaraVaram/priority-constrained-descent",
+    "upstream_commit": "e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0",
+    "upstream_license": "MIT",
+    "upstream_license_attribution": "Copyright 2026 Dara Varam and Mohamed I. AlHajri",
+}
+PCD_ALGORITHM_METADATA = {
+    "primary_task": "chem",
+    "secondary_tasks": ["exc", "op"],
+    "ema_quantity": "squared global raw-gradient norm, one scalar per task",
+    "normalization": "1/sqrt(bias_corrected_ema + eps)",
+    "qp": "minimize 0.5*||d-g_tilde_chem||^2 subject to g_tilde_j dot d >= tau*||g_tilde_j||^2",
+    "qp_tolerance": PCD_QP_TOLERANCE,
+    "zero_secondary_policy": "omit the exact-zero secondary constraint",
+    "zero_primary_policy": "return exact zero direction after EMA update",
+    "zero_qp_direction_policy": "return exact zero direction",
+    "infeasible_policy": "drop both secondary constraints and use the primary direction",
+    "final_rescale": "raw_primary_gradient_l2_norm",
+    "epsilon_scope": "inside_sqrt; scale invariance is asymptotic for finite eps",
+}
 _FORBIDDEN_OPERATOR_KEYS = {
     "h",
     "h_bohr",
@@ -363,6 +400,9 @@ def make_protocol_metadata(
     dtype: str,
     grid_chunk_size: int,
     ao_cache_chunk_size: int,
+    world_size: int | None = None,
+    sampling_manifest_file_sha256: str | None = None,
+    source_code_sha256: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """Build the explicit, h-free metadata contract for a new MOO run."""
     required_hashes = (
@@ -385,8 +425,8 @@ def make_protocol_metadata(
         raise ValueError("grid_chunk_size must be a positive integer.")
     if type(ao_cache_chunk_size) is not int or ao_cache_chunk_size <= 0:
         raise ValueError("ao_cache_chunk_size must be a positive integer.")
-    return {
-        "protocol_version": PROTOCOL_VERSION,
+    metadata = {
+        "protocol_version": PCD_PROTOCOL_VERSION if method == "pcd" else PROTOCOL_VERSION,
         "architecture": architecture,
         "operator_protocol": "lap-weakform-ao-v1",
         "objective_definitions": {
@@ -413,6 +453,23 @@ def make_protocol_metadata(
         "ao_cache_chunk_size": int(ao_cache_chunk_size),
         "one_stage_main_training": True,
     }
+    if method == "pcd":
+        if type(world_size) is not int or world_size <= 0:
+            raise ValueError("PCD metadata needs a positive integer world_size.")
+        if not isinstance(sampling_manifest_file_sha256, str):
+            raise ValueError("PCD metadata needs the sampling manifest file-byte SHA-256.")
+        if not isinstance(source_code_sha256, Mapping):
+            raise ValueError("PCD metadata needs current source-code file hashes.")
+        metadata.update(
+            {
+                "pcd_provenance": dict(PCD_PROVENANCE),
+                "pcd_algorithm": dict(PCD_ALGORITHM_METADATA),
+                "world_size": world_size,
+                "sampling_manifest_file_sha256": sampling_manifest_file_sha256.lower(),
+                "source_code_sha256": dict(sorted(source_code_sha256.items())),
+            }
+        )
+    return metadata
 
 
 def _validate_no_legacy_controls(value: Any) -> None:
@@ -449,8 +506,16 @@ def validate_protocol_metadata(
 ) -> None:
     version = metadata.get("protocol_version")
     legacy_read_only = allow_v1_read_only and version == LEGACY_READ_ONLY_PROTOCOL_VERSION
-    if version != PROTOCOL_VERSION and not legacy_read_only:
+    method = metadata.get("method")
+    pcd_v3 = version == PCD_PROTOCOL_VERSION
+    if version not in (PROTOCOL_VERSION, PCD_PROTOCOL_VERSION) and not legacy_read_only:
         raise ValueError("Incompatible one-stage Lap MOO protocol version.")
+    if pcd_v3 and method != "pcd":
+        raise ValueError("The v3 one-stage Lap MOO protocol is reserved for PCD.")
+    if version == PROTOCOL_VERSION and method == "pcd":
+        raise ValueError("PCD checkpoints require the v3 protocol provenance contract.")
+    if legacy_read_only and method == "pcd":
+        raise ValueError("Historical v1 MOO metadata cannot identify the PCD method.")
     if legacy_read_only and "ao_cache_chunk_size" in metadata:
         raise ValueError("Historical v1 MOO metadata cannot be retrofitted with an AO-cache chunk size.")
     if metadata.get("operator_protocol") != "lap-weakform-ao-v1":
@@ -460,13 +525,55 @@ def validate_protocol_metadata(
     if metadata.get("one_stage_main_training") is not True:
         raise ValueError("Checkpoint is not marked as one-stage main training.")
     _validate_no_legacy_controls(metadata)
-    if metadata.get("method") not in METHOD_IDS or not metadata.get("architecture"):
+    if method not in METHOD_IDS or not metadata.get("architecture"):
         raise ValueError("Lap MOO metadata needs method and architecture identities.")
     objectives = metadata.get("objective_definitions")
     if not isinstance(objectives, Mapping) or set(objectives) != set(TASK_NAMES):
         raise TypeError("Lap MOO objective definitions must be a mapping.")
     if not isinstance(metadata.get("method_hyperparameters"), Mapping):
         raise TypeError("Lap MOO method hyperparameters must be a mapping.")
+    if pcd_v3:
+        hparams = metadata["method_hyperparameters"]
+        if set(hparams) != {"tau", "beta", "eps", "qp_tolerance"}:
+            raise ValueError("PCD metadata must contain only tau, beta, eps, and qp_tolerance.")
+        for key in ("tau", "beta", "eps", "qp_tolerance"):
+            value = hparams.get(key)
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+                raise ValueError(f"PCD metadata needs a finite numeric {key!r}.")
+        if not 0.0 <= float(hparams["tau"]) <= 1.0:
+            raise ValueError("PCD tau must be in [0, 1].")
+        if not 0.0 <= float(hparams["beta"]) < 1.0:
+            raise ValueError("PCD beta must be in [0, 1).")
+        if float(hparams["eps"]) <= 0.0:
+            raise ValueError("PCD eps must be positive.")
+        if float(hparams["qp_tolerance"]) != PCD_QP_TOLERANCE:
+            raise ValueError(f"PCD QP tolerance is pinned to {PCD_QP_TOLERANCE:g}.")
+        if metadata.get("pcd_provenance") != PCD_PROVENANCE:
+            raise ValueError("PCD paper/upstream provenance differs from the pinned source contract.")
+        if metadata.get("pcd_algorithm") != PCD_ALGORITHM_METADATA:
+            raise ValueError("PCD algorithm metadata differs from the pinned source contract.")
+        world_size = metadata.get("world_size")
+        if type(world_size) is not int or world_size <= 0:
+            raise ValueError("PCD metadata needs a positive integer world_size.")
+        for name in ("sampling_manifest_file_sha256",):
+            digest = metadata.get(name)
+            if (
+                not isinstance(digest, str)
+                or len(digest) != 64
+                or any(char not in "0123456789abcdef" for char in digest.lower())
+            ):
+                raise ValueError(f"PCD metadata has an invalid {name}.")
+        source_hashes = metadata.get("source_code_sha256")
+        if not isinstance(source_hashes, Mapping) or set(source_hashes) != set(PCD_SOURCE_FILE_PATHS):
+            raise ValueError("PCD metadata needs the exact current source-code hash set.")
+        for path, digest in source_hashes.items():
+            if (
+                not isinstance(path, str)
+                or not isinstance(digest, str)
+                or len(digest) != 64
+                or any(char not in "0123456789abcdef" for char in digest.lower())
+            ):
+                raise ValueError(f"PCD metadata has an invalid current source hash for {path!r}.")
     if metadata["method"] == "fixed":
         fixed = metadata.get("fixed_scalarization")
         weights = fixed.get("fixed_weights") if isinstance(fixed, Mapping) else None
@@ -552,6 +659,11 @@ __all__ = [
     "LEGACY_READ_ONLY_PROTOCOL_VERSION",
     "METHOD_IDS",
     "OPTIMIZER_FAMILIES",
+    "PCD_ALGORITHM_METADATA",
+    "PCD_PROTOCOL_VERSION",
+    "PCD_PROVENANCE",
+    "PCD_QP_TOLERANCE",
+    "PCD_SOURCE_FILE_PATHS",
     "PROTOCOL_VERSION",
     "SAMPLING_PROTOCOL_VERSION",
     "TASK_NAMES",

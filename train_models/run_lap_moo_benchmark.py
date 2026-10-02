@@ -39,7 +39,7 @@ from optuna_joint import DEFAULT_MRKS_DISPERSIONS, load_mrks_dispersions
 from train_lap import DEFAULT_REACTION_DISPERSIONS, load_reaction_dispersions
 from train_lap_moo import CentralAOCache, _external_path
 
-SCHEMA = "lap-moo-raw-gradient-survey-v1"
+SCHEMA = "lap-moo-raw-gradient-survey-v2"
 _DEFAULT_PREDOPT = Path(
     r"C:\Dev\readWFN_share_ms\lap_operator_runs_20261001\predopt_fgpu_20261001T192623\lap_pbe_predopt.pt"
 )
@@ -201,8 +201,11 @@ def _method_diagnostics(
             "tol": 1e-10,
             "update_every": 1,
         },
+        "pcd": {"tau": 0.02, "beta": 0.999, "eps": 1.0e-8, "qp_tolerance": 1.0e-9},
     }
-    states: dict[str, dict[str, Any]] = {method: {} for method in METHOD_IDS}
+    states: dict[str, dict[str, Any] | None] = {
+        method: (None if method == "pcd" else {}) for method in METHOD_IDS
+    }
     reports: dict[str, list[dict[str, Any]]] = {method: [] for method in METHOD_IDS}
     for sample in samples:
         for method in METHOD_IDS:
