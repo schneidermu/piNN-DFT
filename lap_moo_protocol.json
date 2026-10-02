@@ -1,0 +1,3300 @@
+{
+  "aggregation_methods": {
+    "cagrad": {
+      "definition": "c=0.4; paper-unscaled CAGrad update using simplex minimizer and KKT-checked SLSQP.",
+      "note": "Reported coefficients are equivalent coefficients on unscaled raw task gradients, not simplex weights."
+    },
+    "fixed": {
+      "calibration": "lambda_i=geometric_mean(median raw task norm)/median raw task norm; frozen from this initial paired panel; geometric mean(lambda)=1.",
+      "definition": "d=(1/3) sum_i lambda_i g_i"
+    },
+    "imtl_g": {
+      "definition": "d=G alpha, sum(alpha)=1; equal projections d dot (g_i/||g_i||), negative alpha permitted.",
+      "positive_task_rescaling_law": {
+        "canonical_common_ascent": "The survey found 10/27 samples where all three IMTL-G projections were negative; independent evaluation of the canonical formula confirmed these are expected solver behavior.",
+        "definition": "For g_i_prime=k_i*g_i with each k_i>0 and base solution d=sum_i alpha_i*g_i, the rescaled solution is d_prime=d/S where S=sum_i alpha_i/k_i.",
+        "implication": "The proof establishes signed collinearity only: S may be negative, so it does not guarantee positive-direction invariance.",
+        "orientation": "The direction is preserved only when S>0; it reverses when S<0. Equal projections onto unit gradients do not guarantee a descent direction."
+      },
+      "solver": "float64 SVD minimum-norm solve for consistent rank deficiency; no ridge; exact cancellation returns explicit zero direction."
+    },
+    "nash_mtl": {
+      "definition": "Nash-MTL direction from K alpha=1/alpha.",
+      "solver": "Positive Newton-potential solve each update, tolerance 1e-10; no Gram ridge."
+    }
+  },
+  "base_head": "61837e4346ecaf46247572df24e3f2b757a7b415",
+  "checkpoint": {
+    "architecture_and_pretraining": "canonical PBE predopt, two epochs, seed 41, learning rate 0.01",
+    "device": "cuda",
+    "input_dtype": "float32",
+    "parameter_count": 9446,
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt",
+    "sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8"
+  },
+  "hashes_of_reviewed_code": {
+    "train_models/lap_moo_analysis.py": "d9855ada69876bf32110e466b38b0b9930b55a2bc106cc835e886cc45bcc766c",
+    "train_models/lap_moo_protocol.py": "f32317793b82f16facbae60ab70efc6998172fc85a3f8e1be0c8b00af941bb2b",
+    "train_models/lap_moo_training.py": "2e70d39c7bc1284236213c6700d84bfc13fd50f5eef14fcbc168b1290244f77c",
+    "train_models/lap_operator.py": "0aa94d464aacf4e4ba481bc6518a206f793ffaf2490749b20797899f5cc0802b",
+    "train_models/lap_operator_data.py": "8d411952a579728dac395e38d1255e5e5bb412ea77d4e2fb8c9f6116e55f93c9",
+    "train_models/moo_aggregators.py": "fca5fee863dbbab183c61da2ef76b5d9de68c079a17c277141c4b00ca8b2027b",
+    "train_models/test_moo_aggregators_independent.py": "a412e1095193f54ce3a1e2011b8d218179f65ea4ddb8867017673b566a2083ea",
+    "train_models/train_lap_moo.py": "1204e2c255848ae0d97eeb2a42ec29d5553e866fb512181a07fc8002d2d0fb0c",
+    "train_models/utils.py": "d74b5363c5bec54cd0667a16857f61c78d8076cb51805252bdb43660ef8b319d",
+    "train_models/test_lap_moo_training.py": "15338f168761861619a27e26b9493222c88f568aa1d01625f9d568e91864382a"
+  },
+  "independent_method_audit": {
+    "canonical_formula": "d=sum_i(alpha_i*g_i), sum_i alpha_i=1, and d has equal projections on all normalized task gradients.",
+    "common_ascent_count": 10,
+    "common_ascent_denominator": 27,
+    "independent_formula_max_absolute_direction_difference": 1.65e-08,
+    "interpretation": "All three equal unit-gradient projections are negative in these samples; this is expected canonical behavior, not an implementation failure or a promise of descent.",
+    "measured_sign_flip_fixture": {
+      "S": -0.0038888584715875848,
+      "alpha": [
+        -0.0046521431188129014,
+        -0.0002416091050050223,
+        1.0048937522238197
+      ],
+      "base_raw_task_dots": [
+        -29.168429297821024,
+        -883.9282157640084,
+        -0.08223554671645573
+      ],
+      "d_prime_over_d": -257.14486843,
+      "database": "NCCE31",
+      "mrks_system": "BH",
+      "positive_rescaling_by_task": {
+        "chem": 1.0,
+        "exc": 1.0,
+        "op": 1000.0
+      },
+      "reaction_id": 0,
+      "test": "train_models/test_moo_aggregators_independent.py::test_imtl_g_canonical_common_ascent_sample_can_flip_under_positive_task_rescaling",
+      "unit_task_projections": [
+        -0.20084566,
+        -0.20084566,
+        -0.20084566
+      ],
+      "update": 2,
+      "variant_suffix": "level2_mura"
+    },
+    "method": "IMTL-G",
+    "positive_rescaling": "For g_i_prime=k_i*g_i with k_i>0, d_prime=d/S and S=sum_i(alpha_i/k_i). This establishes collinearity only; S has no sign constraint and direction reverses when S<0."
+  },
+  "main_training": {
+    "aggregation_hyperparameters": {
+      "cagrad": {
+        "c": 0.4,
+        "rescale": "paper_unscaled"
+      },
+      "fixed": {
+        "calibration_report_sha256": "76d65dc5dc1fd309daad9150af46653d555a73849a0bedb1bc9208b64ac25965",
+        "derivation": "geometric mean of initial paired-panel median raw gradient norms divided by each task median; unit geometric mean; frozen",
+        "fixed_weights": [
+          0.12466741802525343,
+          0.0149441680402846,
+          536.7540038734303
+        ]
+      },
+      "imtl_g": {},
+      "nash_mtl": {
+        "max_iter": 100,
+        "solver": "newton_potential",
+        "tol": 1e-10,
+        "update_every": 1
+      }
+    },
+    "full_catalog_mode": {
+      "augmentation_variant_count": 2144,
+      "available_ao_cache_system_count": 15,
+      "minnesota_group_count": 268,
+      "operator_corpus_system_count": 90,
+      "reaction_cycle_length": 268,
+      "scope_note": "The trainer samples all 268 Minnesota groups and all systems in the supplied AO cache. The verified central operator corpus has 90 systems, while the hash-bound AO cache and Gate-3 panel cover 15 systems. This supports an explicitly scoped 15-system pilot; it does not imply full-90 AO cache coverage. Generate/cache the remaining 75 before claiming full-catalog AO coverage."
+    },
+    "initialization": {
+      "architecture": "pcPBELMLOptimizerV2Lap-v1",
+      "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt",
+      "model_kwargs": {
+        "dropout": 0.0,
+        "h_dim": 32,
+        "num_layers": 6,
+        "use_g_c": true,
+        "use_g_x": true
+      },
+      "pretraining": "canonical PBE predopt; two epochs; seed 41; learning rate 0.01",
+      "sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "trainable_parameter_count": 9446
+    },
+    "metadata_factory_compatibility": {
+      "factory": "lap_moo_protocol.make_protocol_metadata",
+      "forbidden_legacy_controls": "Validated metadata contains no epoch-dependent task weighting, legacy phase controls, or spatial-stencil controls; the final per-run metadata must be generated and validated by the factory rather than copied from the survey document.",
+      "required_final_fields": [
+        "protocol_version",
+        "architecture",
+        "operator_protocol",
+        "objective_definitions",
+        "task_order",
+        "method",
+        "method_hyperparameters",
+        "fixed_scalarization",
+        "optimizer",
+        "lr_schedule",
+        "predopt_checkpoint_sha256",
+        "sampling_manifest_sha256",
+        "minnesota_data_sha256",
+        "operator_corpus_manifest_sha256",
+        "ao_cache_manifest_sha256",
+        "reaction_dispersions_sha256",
+        "mrks_dispersions_sha256",
+        "random_seed",
+        "dtype",
+        "grid_chunk_size",
+        "one_stage_main_training",
+        "ao_cache_chunk_size"
+      ],
+      "sampling_manifest_hash_note": "The protocol factory binds the manifest_sha256 field inside canonical manifest content; file_sha256 is recorded separately for the exact JSON bytes.",
+      "strict_validator": "lap_moo_protocol.validate_protocol_metadata",
+      "validated_real_run_metadata_examples": [
+        {
+          "dtype": "float32",
+          "fixed_scalarization": {
+            "calibration_report_sha256": "76d65dc5dc1fd309daad9150af46653d555a73849a0bedb1bc9208b64ac25965",
+            "derivation": "lambda_i = geometric_mean(median_raw_gradient_norms) / median_raw_gradient_norm_i",
+            "fixed_weights": [
+              0.12466741802525343,
+              0.0149441680402846,
+              536.7540038734303
+            ]
+          },
+          "grid_chunk_size": 256,
+          "lr_schedule": {
+            "minimum_lr_ratio": 0.1,
+            "name": "cosine",
+            "same_shape_for_all_methods": true,
+            "total_updates": 150
+          },
+          "metadata_factory_validation": "PASS",
+          "method": "fixed",
+          "method_hyperparameters": {
+            "fixed_weights": [
+              0.12466741802525343,
+              0.0149441680402846,
+              536.7540038734303
+            ]
+          },
+          "one_stage_main_training": true,
+          "operator_protocol": "lap-weakform-ao-v1",
+          "optimizer": {
+            "betas": [
+              0.9,
+              0.999
+            ],
+            "decoupled_weight_decay": true,
+            "eps": 1e-08,
+            "learning_rate": 0.001,
+            "name": "RAdamW",
+            "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+            "weight_decay": 0.01
+          },
+          "protocol_file_sha256": "1a1d79c502a6dd74f8290c989f342db0d2564eb7f41f14fb1fd6bb9647309c59",
+          "protocol_metadata_sha256": "803efbc68a19a838afdf94272ca609deea25ee6faef0b110531a09de9d24e94f",
+          "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\lr_range_20261002\\fixed_1em3\\protocol.json",
+          "protocol_version": "lap-moo-one-stage-v1",
+          "run_complete": false,
+          "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+          "updates_completed": 2,
+          "updates_target": 150
+        },
+        {
+          "dtype": "float32",
+          "fixed_scalarization": null,
+          "grid_chunk_size": 256,
+          "lr_schedule": {
+            "minimum_lr_ratio": 0.1,
+            "name": "cosine",
+            "same_shape_for_all_methods": true,
+            "total_updates": 150
+          },
+          "metadata_factory_validation": "PASS",
+          "method": "imtl_g",
+          "method_hyperparameters": {},
+          "one_stage_main_training": true,
+          "operator_protocol": "lap-weakform-ao-v1",
+          "optimizer": {
+            "betas": [
+              0.9,
+              0.999
+            ],
+            "decoupled_weight_decay": true,
+            "eps": 1e-08,
+            "learning_rate": 0.001,
+            "name": "RAdamW",
+            "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+            "weight_decay": 0.01
+          },
+          "protocol_file_sha256": "0c22559372a2dd1c392fdfd93b675e76fb3fc7b5e923d90d507881e19815832c",
+          "protocol_metadata_sha256": "c7f4b8e26c6add6e42dd48b8e1207cab1c9c384aff1d52902eb38cf3029259a1",
+          "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\lr_range_20261002\\imtl_g_1em3\\protocol.json",
+          "protocol_version": "lap-moo-one-stage-v1",
+          "run_complete": false,
+          "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+          "updates_completed": 2,
+          "updates_target": 150
+        },
+        {
+          "dtype": "float32",
+          "fixed_scalarization": null,
+          "grid_chunk_size": 256,
+          "lr_schedule": {
+            "minimum_lr_ratio": 0.1,
+            "name": "cosine",
+            "same_shape_for_all_methods": true,
+            "total_updates": 150
+          },
+          "metadata_factory_validation": "PASS",
+          "method": "cagrad",
+          "method_hyperparameters": {
+            "c": 0.4,
+            "rescale": "paper_unscaled"
+          },
+          "one_stage_main_training": true,
+          "operator_protocol": "lap-weakform-ao-v1",
+          "optimizer": {
+            "betas": [
+              0.9,
+              0.999
+            ],
+            "decoupled_weight_decay": true,
+            "eps": 1e-08,
+            "learning_rate": 0.001,
+            "name": "RAdamW",
+            "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+            "weight_decay": 0.01
+          },
+          "protocol_file_sha256": "462afe490286210be0e34cee7a0a8a89e6285f6ea21b1fe901a124e9bb8053f4",
+          "protocol_metadata_sha256": "eae78432811359eb8a92be1c1e2508550fd0e18a12dd5f83b6e1cfae2f0de15a",
+          "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\lr_range_20261002\\cagrad_1em3\\protocol.json",
+          "protocol_version": "lap-moo-one-stage-v1",
+          "run_complete": false,
+          "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+          "updates_completed": 2,
+          "updates_target": 150
+        },
+        {
+          "dtype": "float32",
+          "fixed_scalarization": null,
+          "grid_chunk_size": 256,
+          "lr_schedule": {
+            "minimum_lr_ratio": 0.1,
+            "name": "cosine",
+            "same_shape_for_all_methods": true,
+            "total_updates": 150
+          },
+          "metadata_factory_validation": "PASS",
+          "method": "nash_mtl",
+          "method_hyperparameters": {
+            "max_iter": 100,
+            "solver": "newton_potential",
+            "tol": 1e-10,
+            "update_every": 1
+          },
+          "one_stage_main_training": true,
+          "operator_protocol": "lap-weakform-ao-v1",
+          "optimizer": {
+            "betas": [
+              0.9,
+              0.999
+            ],
+            "decoupled_weight_decay": true,
+            "eps": 1e-08,
+            "learning_rate": 0.001,
+            "name": "RAdamW",
+            "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+            "weight_decay": 0.01
+          },
+          "protocol_file_sha256": "81533c657c7cf49d804e33bb4fe91ee1a33095a88ddd0b49f1d120ad179a823e",
+          "protocol_metadata_sha256": "314d816647fb1e57fdbe08179b4f0c542da75a6da7a94aeca4b1889fa6eb2809",
+          "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\lr_range_20261002\\nash_mtl_1em3\\protocol.json",
+          "protocol_version": "lap-moo-one-stage-v1",
+          "run_complete": false,
+          "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+          "updates_completed": 2,
+          "updates_target": 150
+        }
+      ],
+      "validation_summary": "All four 0.001 LR-range trial protocol.json files passed the strict metadata validator and are marked one_stage_main_training=true. These are two-update range trials with target length 150, not selected final runs.",
+      "execution_fidelity_note": "Strict metadata validation confirmed declared fields but did not detect runtime scheduler omission. F1/F2 logs stayed constant despite cosine metadata; corrected source now passes scheduler=scheduler and focused regression tests.",
+      "prospective_v2_field": {
+        "name": "ao_cache_chunk_size",
+        "type": "exact positive integer",
+        "status": "implemented and focused-tested; fresh CLI launch currently blocked by shared sampling/training version coupling"
+      },
+      "historical_v1_note": "The validated example protocol records and cursor-100 experiment artifacts are historical v1. Preserve their bytes/hashes; the read-only compatibility validator must not retrofit an AO-cache chunk field."
+    },
+    "method_selection_and_gate3": {
+      "status": "completed; diagnostic recommendation, no superiority claim",
+      "primary_diagnostic_candidate": "nash_mtl",
+      "operator_priority_boundary": "imtl_g",
+      "reference_control": "fixed",
+      "recommended_optimizer": "RAdamW",
+      "learning_rate": 0.01,
+      "updates": 150,
+      "rationale": "Full 100-update method-screen route evidence; AdamW/Muon cursor-25 outcomes are objective tradeoffs, and Muon V100 BF16 compatibility is unresolved."
+    },
+    "objectives": {
+      "definitions": {
+        "chem": "existing Minnesota grouped reaction objective; stoichiometry, database weights, D3 treatment, kcal/mol retained",
+        "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+        "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO"
+      },
+      "gradient_order": "Compute each task gradient separately; all-reduce and average each raw task gradient before nonlinear aggregation; aggregate the same global triplet at every rank.",
+      "pairing": "At every update, one Minnesota reaction and one full mRKS system are paired; the mRKS system supplies both E and AO-operator objectives.",
+      "task_order": [
+        "chem",
+        "exc",
+        "op"
+      ]
+    },
+    "one_stage_main_training": true,
+    "optimizer_and_schedule": {
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "candidate_learning_rates_under_evaluation": [
+        0.01,
+        0.001,
+        0.0001,
+        1e-05
+      ],
+      "decoupled_weight_decay": true,
+      "epsilon": 1e-08,
+      "lr_selection_status": "Recommended for the first scoped V100 diagnostic based on full method-screen route evidence; not a quality winner.",
+      "optimizer": "RAdamW",
+      "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+      "schedule": {
+        "name": "cosine",
+        "minimum_lr_ratio": 0.1,
+        "total_updates": 150,
+        "same_shape_for_all_methods": true,
+        "update_budget_status": "Explicit next pilot budget: 150 updates. Local method screen reached 100/150 and optimizer panels 25/150."
+      },
+      "selected_learning_rate": 0.01,
+      "weight_decay": 0.01,
+      "optimizer_selection_status": "Use RAdamW for the first V100 pilot; cursor-25 comparisons show tradeoffs, while Muon BF16/V100 compatibility is unresolved.",
+      "predeclared_calibration_rule": {
+        "selection": "highest stable candidate",
+        "adamw_learning_rates": [
+          0.0003,
+          0.001,
+          0.01
+        ],
+        "muon_learning_rates": [
+          0.01,
+          0.02
+        ],
+        "muon_adamw_fallback_learning_rate": 0.0003,
+        "currently_reported_smoke": "AdamW 3e-4 two-step gate passed; gate artifact uses historical v1 metadata and does not establish v2 compatibility"
+      },
+      "calibration_grid_candidates": {
+        "selected_adamw_learning_rate": 0.001,
+        "selected_muon_learning_rate": 0.02,
+        "muon_adamw_fallback_learning_rate": 0.0003,
+        "status": "highest stable two-step calibration candidates; matched panels are descriptive and do not select Muon/AdamW over RAdamW for the first target pilot."
+      }
+    },
+    "precision_and_chunking": {
+      "ao_cache_chunk_size": 4096,
+      "ao_cache_storage_dtype": "float32",
+      "model_input_dtype": "float32",
+      "note": "These are the current validated LR/F1 trial settings. Final run metadata records them explicitly.",
+      "point_chunk_size": 256,
+      "reference_operator_and_overlap_dtype": "float64"
+    },
+    "reproducibility": {
+      "base_seed": 41,
+      "ddp_aggregation_order": "average raw task gradients first; aggregate afterward",
+      "deterministic_algorithms": true,
+      "per_rank_seed_rule": "seed + rank",
+      "resume_contract": "Every run binds protocol metadata, exact sampling manifest hash/cursor, aggregator state, optimizer/scheduler state, and RNG state per rank.",
+      "world_size_for_validated_trial_metadata": 1
+    },
+    "runner": "train_models/train_lap_moo.py",
+    "sampling_streams": {
+      "calibration_and_lr_range_panel": {
+        "file_sha256": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+        "manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json",
+        "reaction_cycle_length": 27,
+        "scope": "27 calibration reactions and 15 AO-cache systems; used for the gradient survey and current LR/F1 pilots only.",
+        "seed": 41,
+        "system_cycle_length": 15,
+        "updates_in_manifest": 150
+      },
+      "final_full_catalog_training_stream": {
+        "planned_catalog": "268 Minnesota groups and all systems in the chosen AO cache; persist and hash before any full training run",
+        "sha256": null,
+        "status": "pending final update budget and Gate3 scope"
+      },
+      "scoped_v100_diagnostic": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json",
+        "manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "file_sha256": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+        "seed": 41,
+        "reaction_cycle_length": 27,
+        "system_cycle_length": 15,
+        "scope": "scoped diagnostic stream only; all 268 Minnesota groups/all 90 AO factors are not claimed by this stream/cache"
+      }
+    },
+    "source_hashes": {
+      "all268_group_store_manifest_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json",
+      "all268_group_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "all90_central_operator_manifest_path": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json",
+      "all90_central_operator_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+      "current15_system_ao_cache_manifest_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json",
+      "current15_system_ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+      "mrks_dispersions_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+      "original_grouped_minnesota_pickle_sha256": "a888609de0807356dd6eadee288fcaf0caa0532426df2e1c2f8f5b1c25fef444",
+      "reaction_dispersions_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927"
+    },
+    "status": "One-stage v2 CLI and metadata verified. Corrected method screen complete to cursor 100; all matched cursor-25 optimizer panels and RAdamW/Muon SCF routes complete. Recommend scoped 150-update Nash-MTL/RAdamW diagnostic on 15 cached systems.",
+    "pilot_command": {
+      "description": "Linux two-rank template for the next scoped diagnostic. Set READWFN_ROOT to the verified mirrored data root on the target and RUN_OUTPUT_DIR to a new external path. Not a run receipt.",
+      "bash": "torchrun --standalone --nproc_per_node=2 train_models/train_lap_moo.py --predopt-checkpoint \"$READWFN_ROOT/lap_operator_runs_20261001/predopt_fgpu_20261001T192623/lap_pbe_predopt.pt\" --minnesota-store-manifest \"$READWFN_ROOT/lap_moo_runs_20261001/mn_group_store_268/manifest.json\" --central-data-dir \"$READWFN_ROOT/lap_operator_runs_20261001/all90\" --ao-cache-dir \"$READWFN_ROOT/lap_moo_runs_20261001/mrks_15system_ao_cache\" --panel-definition \"$READWFN_ROOT/lap_moo_runs_20261001/panel_definition.json\" --sampling-manifest \"$READWFN_ROOT/lap_moo_runs_20261001/raw_gradient_survey_20261001T/sampling_manifest.json\" --output-dir \"$RUN_OUTPUT_DIR\" --method nash_mtl --optimizer-family radamw --learning-rate 0.01 --updates 150 --stop-after 150 --seed 41 --dtype float32 --device auto --point-chunk-size 256 --ao-cache-chunk-size 4096",
+      "local_windows_data_root": "C:\\Dev\\readWFN_share_ms"
+    },
+    "optimizer_comparison": {
+      "schema": "lap-moo-matched-optimizer-cursor25-v1",
+      "status": "complete; descriptive single-seed comparison; no overall optimizer winner",
+      "source_commit": "408bdf4c991a64d6ef61185ce71dedfad6b67945",
+      "method": "nash_mtl",
+      "updates_completed": 25,
+      "updates_horizon": 150,
+      "run_complete": false,
+      "panel_rows": 27,
+      "common": {
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+        "seed": 41,
+        "point_chunk_size": 256,
+        "ao_cache_chunk_size": 4096,
+        "trainable_parameter_count": 9446
+      },
+      "median_ratios_to_predopt": {
+        "radamw": {
+          "chem": 1.23,
+          "exc": 2.105,
+          "op": 0.807
+        },
+        "adamw": {
+          "chem": 1.569,
+          "exc": 3.189,
+          "op": 0.764
+        },
+        "muon": {
+          "chem": 1.323,
+          "exc": 0.493,
+          "op": 0.744
+        }
+      },
+      "paired_median_loss_ratios_vs_radamw": {
+        "adamw": {
+          "chem": 1.127,
+          "exc": 1.604,
+          "op": 0.938
+        },
+        "muon": {
+          "chem": 1.149,
+          "exc": 0.248,
+          "op": 0.929
+        }
+      },
+      "wins_vs_radamw_by_task": {
+        "adamw": {
+          "chem": {
+            "wins": 8,
+            "ties": 1,
+            "losses": 18
+          },
+          "exc": {
+            "wins": 0,
+            "ties": 0,
+            "losses": 27
+          },
+          "op": {
+            "wins": 27,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "muon": {
+          "chem": {
+            "wins": 13,
+            "ties": 0,
+            "losses": 14
+          },
+          "exc": {
+            "wins": 27,
+            "ties": 0,
+            "losses": 0
+          },
+          "op": {
+            "wins": 22,
+            "ties": 0,
+            "losses": 5
+          }
+        }
+      },
+      "row_pareto_vs_radamw": {
+        "adamw": {
+          "candidate_dominates": 0,
+          "radamw_dominates": 0,
+          "tradeoffs": 27
+        },
+        "muon": {
+          "candidate_dominates": 11,
+          "radamw_dominates": 0,
+          "tradeoffs": 16
+        }
+      },
+      "absolute_panel_median_losses": {
+        "radamw": {
+          "chem": 40.17112,
+          "exc": 116.480642,
+          "op": 0.029797
+        },
+        "adamw": {
+          "chem": 40.257099,
+          "exc": 186.851949,
+          "op": 0.027906
+        },
+        "muon": {
+          "chem": 43.805943,
+          "exc": 15.431268,
+          "op": 0.028573
+        }
+      },
+      "actual_update_geometry_first25": {
+        "radamw": {
+          "median_raw_gradient_cosines_chem_exc_op": [
+            0.488254,
+            -0.687177,
+            -0.822843
+          ],
+          "median_abs_coeff_gradient_norm_share_chem_exc_op": [
+            0.257477,
+            0.334127,
+            0.447557
+          ],
+          "negative_actual_delta_dot_raw_task_gradient_fraction_chem_exc_op": [
+            0.92,
+            0.68,
+            0.76
+          ],
+          "median_cos_aggregate_direction_actual_delta": -0.137598,
+          "median_delta_norm": 0.023816,
+          "max_delta_norm": 0.032137,
+          "median_step_seconds": 18.793
+        },
+        "adamw": {
+          "median_raw_gradient_cosines_chem_exc_op": [
+            0.16162,
+            -0.626377,
+            -0.814644
+          ],
+          "median_abs_coeff_gradient_norm_share_chem_exc_op": [
+            0.281363,
+            0.33706,
+            0.390084
+          ],
+          "negative_actual_delta_dot_raw_task_gradient_fraction_chem_exc_op": [
+            0.76,
+            0.56,
+            0.76
+          ],
+          "median_cos_aggregate_direction_actual_delta": -0.10869,
+          "median_delta_norm": 0.036413,
+          "max_delta_norm": 0.096775,
+          "median_step_seconds": 14.985
+        },
+        "muon": {
+          "median_raw_gradient_cosines_chem_exc_op": [
+            0.815801,
+            -0.801009,
+            -0.943047
+          ],
+          "median_abs_coeff_gradient_norm_share_chem_exc_op": [
+            0.251542,
+            0.341045,
+            0.476209
+          ],
+          "negative_actual_delta_dot_raw_task_gradient_fraction_chem_exc_op": [
+            0.92,
+            0.76,
+            0.84
+          ],
+          "median_cos_aggregate_direction_actual_delta": -0.06844,
+          "median_delta_norm": 0.25484,
+          "max_delta_norm": 0.269868,
+          "initial_trainable_parameter_norm": 21.375251,
+          "max_delta_over_initial_trainable_norm": 0.012625,
+          "median_step_seconds": 14.837
+        }
+      },
+      "candidates": {
+        "radamw": {
+          "optimizer": "RAdamW",
+          "learning_rate": 0.01,
+          "protocol_version": "lap-moo-one-stage-v1",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\cursor25_immutable.pt",
+          "checkpoint_sha256": "0104d679ed050c11163344fb37bf6b0b5da85981d808e06265eb9aaabcb76f5e",
+          "panel_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_radamw_control.json",
+          "panel_sha256": "7996b706dbab7303a31e761f7892666506e9fe259824d80fb039a429b2695253",
+          "panel_elapsed_seconds": 356.252
+        },
+        "adamw": {
+          "optimizer": "AdamW",
+          "learning_rate": 0.001,
+          "protocol_version": "lap-moo-one-stage-v2",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\adamw_lr1e-3_nash_cursor25_v2\\latest.pt",
+          "checkpoint_sha256": "7fb20e7d1a676e5f4bf5f6222a462c85199cc95f0aefec335d20983c26a88483",
+          "panel_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_adamw_lr1e-3.json",
+          "panel_sha256": "815c8163bd79d8a88367182ad9eba7ebe0ebd978cb7fe8b9bdbb9b9ecbdeeb03",
+          "panel_elapsed_seconds": 390.17
+        },
+        "muon": {
+          "optimizer": "Muon plus AdamW fallback",
+          "muon_learning_rate": 0.02,
+          "adamw_fallback_learning_rate": 0.0003,
+          "protocol_version": "lap-moo-one-stage-v2",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\muon_adamw_muon2e-2_adamw3e-4_nash_cursor25_v2\\latest.pt",
+          "checkpoint_sha256": "51081e149d2de9d7ff87459d01653a920831480a4878080a6f84347f5f7588c0",
+          "panel_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_muon_lr2e-2.json",
+          "panel_sha256": "640394b9b95c208e40cbb172e9d7f0dc0f295828f102ccedd148d95a0960312f",
+          "panel_elapsed_seconds": 354.22
+        }
+      },
+      "route_checks": {
+        "radamw": {
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\scf_radamw_control_cursor25.json",
+          "sha256": "5e4a1ebe7acd41dd04949e4c74182e140f32fc902a90e85b373b5da771bee00e",
+          "systems": {
+            "H2": [
+              -1.181792775,
+              5
+            ],
+            "BeH2": [
+              -15.936697375,
+              7
+            ],
+            "CO": [
+              -113.512962191,
+              10
+            ]
+          },
+          "finite": true,
+          "vtau_zero": true,
+          "tau_independent": true
+        },
+        "muon": {
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\scf_muon_cursor25.json",
+          "sha256": "27c844367cd209e6275fb99b6f52e1adf7dbce41df1415810f7592a0a93e65f9",
+          "systems": {
+            "H2": [
+              -1.174942185,
+              5
+            ],
+            "BeH2": [
+              -15.886587609,
+              10
+            ],
+            "CO": [
+              -113.350592993,
+              9
+            ]
+          },
+          "finite": true,
+          "vtau_zero": true,
+          "tau_independent": true
+        }
+      },
+      "recommendation": {
+        "method": "nash_mtl",
+        "optimizer": "RAdamW",
+        "learning_rate": 0.01,
+        "updates": 150,
+        "reason": "Conservative scoped V100 diagnostic: full cursor-100 method-screen route evidence; avoids unresolved Muon BF16 compatibility. Not a quality superiority claim."
+      },
+      "limitations": [
+        "27 training-stream identities, one seed; no statistical-superiority evidence.",
+        "Muon is not selected for V100 due native BF16 capability rejection on V100 and a 1.263% maximum cursor-25 update-to-initial-trainable-norm ratio.",
+        "No optimizer candidate is trained to cursor 150 locally; no V100 timing/VRAM is measured."
+      ]
+    }
+  },
+  "objectives": {
+    "chem": "Existing Minnesota reaction objective and kcal/mol normalization/dispersion path from lap_training.reaction_loss.",
+    "exc": "Integrated mRKS XC energy against the preserved Exc target, using the existing once-added mRKS dispersion and batch_exc path.",
+    "op": "Validated h-free variational AO XC operator objective using the existing central AO factors, reference operator and overlap orthogonalization.",
+    "same_pairing": "Each survey update uses the same Minnesota reaction and mRKS system for all reported task gradients; E and operator terms share the mRKS system.",
+    "task_order": [
+      "chem",
+      "exc",
+      "op"
+    ]
+  },
+  "one_stage_main_training": true,
+  "protocol_version": "lap-moo-one-stage-v2",
+  "historical_training_metadata_version": "lap-moo-one-stage-v1",
+  "sampling_protocol_version": "lap-moo-one-stage-v1",
+  "repository": "lap_full_vxc",
+  "results_artifacts": {
+    "derived_summary": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\raw_gradient_survey_summary_v2.json",
+      "sha256": "753e891d654f6a7357fa64b6a880c7ee483da0834edaf0cab7638ca5b15f45eb"
+    },
+    "raw_flat_gradients": {
+      "dtype": "float64",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\raw_task_gradients.npz",
+      "sha256": "cc7c2f0de49044dc2bedd98cbd279ea871fd41aca69dc42b14cab978cdb97a2b",
+      "shape_by_task": {
+        "chem": [
+          27,
+          9446
+        ],
+        "exc": [
+          27,
+          9446
+        ],
+        "op": [
+          27,
+          9446
+        ]
+      }
+    },
+    "raw_json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\raw_gradient_survey.json",
+      "sha256": "edb7a786ad013d406307cfc326f90c2a1cb23dbf4ed70f6fa41b5a7490d0c981"
+    },
+    "repository_results_snapshot": "lap_moo_results.json",
+    "repository_results_snapshot_sha256": "6108a382721b19657820e8573f9c2e5bdd94b3802b3d27ac23f2e589402bc58a",
+    "f1_screen": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f1_20261002\\f1_runs.json",
+      "sha256": "4dc08bed6674bce7c8940663f228b06285fa25b27a88de4daa9661185ab34602",
+      "full27_diagnostics_sha256": "2166b9a28300acda801e1a807d98f3b2203ff1e2561dfb4bc06e16a0556b6d5f",
+      "cagrad_retry_sha256": "a66452548e2ba2b87cf52648668894bcf543078140bf538d629fe147a55ceb74",
+      "validity": "constant-rate diagnostic only"
+    },
+    "f2_extension": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_20261002\\f2_runs.json",
+      "sha256": "972e6c7516a7a4662a4d575b467804154588f5cd8b0dc0278f5857005b3f2e3e",
+      "fixed_checkpoint_sha256": "856836f75018155d426da60c9347c5488988435f925559249af55a344636384c",
+      "cagrad_checkpoint_sha256": "09dfe0fe67efc7fc6fc9d0b17ddce5c05561d2c617fd6722d9f02b8738c8d301",
+      "imtl_g_checkpoint_sha256": "837e8277de385b70b745a8347ebbb5c659ba473671e15bdbf8084063873ba048",
+      "nash_checkpoint_sha256": "e80025e91c314920caab526dce1970e00adda88b1fae55afa877f31652108be7",
+      "validity": "constant-rate diagnostic only"
+    },
+    "corrected_cosine_replay": {
+      "status": "Completed: four corrected 100/150 cosine method screens, matched 27-row panel and H2/BeH2/CO CPU SCFs. Historical v1 run hashes unchanged.",
+      "run_root": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002",
+      "protocol": {
+        "start_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "seed": 41,
+        "updates_horizon": 150,
+        "schedule": "cosine to 10% of base learning rate",
+        "nash_learning_rate": 0.001,
+        "screen_updates": 25,
+        "fixed_panel_size": 27
+      },
+      "completed_candidates": [
+        "fixed",
+        "cagrad",
+        "imtl_g",
+        "nash_mtl"
+      ],
+      "nash_mtl": {
+        "learning_rate": 0.001,
+        "status": "failed_solver",
+        "attempted_update_number_one_based": 11,
+        "attempted_update_index_zero_based": 10,
+        "last_good_cursor": 10,
+        "iterations": 100,
+        "residual": 1.938e-09,
+        "tolerance": 1e-10,
+        "fallback": false,
+        "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em3\\latest.pt",
+        "checkpoint_sha256": "f244edb7567a1182cf598ff7ad0850211aff212837ffaa760e9b98b3bff0921f",
+        "diagnostic_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em3\\nash_failed_attempt_0011_diagnostic.json",
+        "diagnostic_sha256": "72f51085ec98128f90a5e5e717761117fb66033cb3adef88552ad2fbef9d58a8",
+        "raw_gradients_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em3\\nash_failed_attempt_0011_raw_gradients.npz",
+        "raw_gradients_sha256": "4d23a2257e6b1f84b0a46ef991eed50ed38919a76082ea99a1eda34ef9c09994",
+        "updates_jsonl_sha256": "7b57118fc0955af2709de8f318fe72fcd75c0da0d5eb14d3681cf44f92b26ef6",
+        "run_protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em3\\protocol.json",
+        "run_protocol_sha256": "81533c657c7cf49d804e33bb4fe91ee1a33095a88ddd0b49f1d120ad179a823e",
+        "sampling_manifest_identity_sha256": "0b390f0aa99b8f6f85247dfb52527134d4ae49289eb8b01875378a1e11c9f391",
+        "failure_sample": {
+          "database": "IP13",
+          "reaction_id": 6,
+          "variant_suffix": "level2_gauss_chebyshev",
+          "mrks_system": "ClHS"
+        },
+        "cause": "Identified and fixed a numerical cancellation bug in CUDA Armijo potential-delta evaluation; the same captured input converges on CPU and the corrected CUDA replay passes strict tolerance. This is not evidence against Nash-MTL as a scientific method.",
+        "numerical_diagnosis": {
+          "gpu_cpu_reproduction": "captured failing sample fails on CUDA and converges on CPU",
+          "mechanism": "direct subtraction of near-equal potential values around -14.78 loses the tiny Newton-scale potential change (about -2.4e-18), stalling the line search above tolerance",
+          "stable_delta_formula": "g.T @ delta + 0.5 * delta.T @ K @ delta + sum(r - log1p(r)), where r = delta / alpha",
+          "implementation_change": "implemented and verified; exact captured CUDA replay converges under unchanged 1e-10 tolerance",
+          "solver_tolerance_unchanged": true,
+          "objective_unchanged": true,
+          "gram_regularization_or_fallback": false
+        },
+        "solver_fix_validation": {
+          "status": "verified",
+          "mechanism": "Armijo line search evaluated potential changes by subtracting near-equal objective values around -14.78; catastrophic cancellation stalled the CUDA replay near residual 1.938e-9 although CPU converged.",
+          "stable_delta": "g.T @ delta + 0.5 * delta.T @ K @ delta + sum(r - log1p(r)), r=delta/alpha, using a stable series for r-log1p(r) near zero",
+          "strict_tolerance_unchanged": 1e-10,
+          "regularization_or_fallback_added": false,
+          "captured_cuda_replay": "10 Newton iterations; residual 3.33e-16; coefficients [2.673772265e-4, 3.332773612e-5, 5.551655704]",
+          "regression": "original captured scaled-Gram/warm-alpha fixture passes at strict 1e-10",
+          "test_results": {
+            "windows": "27 passed",
+            "wsl": "27 passed",
+            "ruff": "passed",
+            "compileall": "passed"
+          },
+          "source_hashes": {
+            "train_models/moo_aggregators.py": "fca5fee863dbbab183c61da2ef76b5d9de68c079a17c277141c4b00ca8b2027b",
+            "train_models/test_moo_aggregators_independent.py": "a412e1095193f54ce3a1e2011b8d218179f65ea4ddb8867017673b566a2083ea"
+          }
+        }
+      },
+      "panel_evaluation": {
+        "fixed_cagrad_imtl_g": {
+          "status": "training-data diagnostics only; no optimizer updates or external test sets",
+          "schema": "lap-moo-checkpoint-full27-panel-v1",
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\final_panel_cosine_cursor25.json",
+          "sha256": "84299841b7e9b4ef2193c71a754cc0af91f9fa62b5838964493e928979e7e733",
+          "elapsed_seconds": 780.408518399985,
+          "sample_count": 27,
+          "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+          "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+          "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+          "candidates": {
+            "fixed": {
+              "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\latest.pt",
+              "checkpoint_sha256": "0163feb5b93e66067318360053cf780425822a2cdcc5451fd77782586f032520",
+              "sample_count": 27,
+              "maximum_loss_ratio_to_predopt": {
+                "chem": 89.11328293788931,
+                "exc": 3.5016875693220046,
+                "op": 0.9413033785544189
+              },
+              "all_task_ratios_below_100": true
+            },
+            "cagrad": {
+              "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\cagrad_lr1em7\\latest.pt",
+              "checkpoint_sha256": "18d3c94d52cf31aacf7b7cb71aa979bc3fb915748b039cdc6bf132824e77fff3",
+              "sample_count": 27,
+              "maximum_loss_ratio_to_predopt": {
+                "chem": 97.12723441649553,
+                "exc": 3.8749034790914063,
+                "op": 0.9368075385706698
+              },
+              "all_task_ratios_below_100": true
+            },
+            "imtl_g": {
+              "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\imtl_g_lr1em2\\latest.pt",
+              "checkpoint_sha256": "e67a505580165635d274e17e4238d06ea5111c6f4e8228348c8fdb8773f01b5f",
+              "sample_count": 27,
+              "maximum_loss_ratio_to_predopt": {
+                "chem": 82.36439498764389,
+                "exc": 3.2606131530160245,
+                "op": 0.9108543009566221
+              },
+              "all_task_ratios_below_100": true
+            }
+          },
+          "interpretation": "training-panel stability diagnostics; no Pareto/generalization ranking",
+          "panel_reported_initial_state_dict_l2_norm_including_buffers": 23.01958620991241,
+          "norm_note": "The panel JSON raw initial_parameter_l2_norm includes state_dict buffers; use the separate trainable-parameter norm 21.3752508588 from the passed Nash rate gate for parameter-update fractions."
+        },
+        "nash_mtl": {
+          "status": "training-data diagnostics only; no optimizer updates or external test sets",
+          "schema": "lap-moo-checkpoint-full27-panel-v1",
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_full27_panel.json",
+          "sha256": "210a108565bb25b9193f20c13220b8b29ceb8860958bd736a3d73460fee6cbc7",
+          "elapsed_seconds": 403.51351959997555,
+          "sample_count": 27,
+          "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+          "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+          "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\latest.pt",
+          "checkpoint_sha256": "0104d679ed050c11163344fb37bf6b0b5da85981d808e06265eb9aaabcb76f5e",
+          "loss_ratio_to_predopt": {
+            "chem": {
+              "max": 85.73325759451573,
+              "median": 1.2299073368659195,
+              "min": 0.11153840731695165
+            },
+            "exc": {
+              "max": 2.4548172935169674,
+              "median": 2.1053446848994297,
+              "min": 0.7512804383194577
+            },
+            "op": {
+              "max": 0.9104355189510767,
+              "median": 0.8074252640535629,
+              "min": 0.7497940756290137
+            }
+          },
+          "all_task_ratios_below_100": true,
+          "interpretation": "training-panel stability diagnostics; no Pareto/generalization ranking"
+        }
+      },
+      "extension_to_100": {
+        "status": "sequential queue active",
+        "order": [
+          "fixed",
+          "cagrad",
+          "imtl_g",
+          "nash_mtl"
+        ],
+        "fixed": "cursor 100 complete",
+        "cagrad": "active cursor-25-to-100 resume",
+        "imtl_g": "queued after CAGrad",
+        "nash_mtl": "queued after IMTL-G",
+        "schedule": "same 150-update cosine horizon; no concurrent GPU training"
+      },
+      "nash_retry_rule": {
+        "status": "solver fix/regression verified; fresh two-step rate smoke pending",
+        "first_candidate_learning_rate": 0.01,
+        "gate": "fresh two-step cosine smoke: finite, nonzero parameter update no greater than 1% of predopt parameter norm, and no paired-objective increase above 100x",
+        "pass_action": "fresh 25-update cosine run at 1e-2",
+        "fail_action": "use predeclared 1e-3 candidate under the same rule",
+        "rationale": "do not penalize Nash for the solver implementation defect or select its rate based on the failed run"
+      },
+      "nash_mtl_rate_smoke": {
+        "status": "passed; fresh cursor-25 cosine run passed the 27-pair stability panel and is queued for cursor-100 extension",
+        "method": "nash_mtl",
+        "learning_rate": 0.01,
+        "updates_completed": 2,
+        "schedule": "cosine to 10% over 150 updates",
+        "solver_residuals": [
+          2.55e-15,
+          6.22e-15
+        ],
+        "cumulative_parameter_delta_l2": 0.0192434,
+        "per_update_parameter_delta_l2": [
+          0.01736197,
+          0.00573727
+        ],
+        "trainable_parameter_l2_norm": 21.3752508588,
+        "max_per_update_delta_fraction_of_trainable_norm": 0.000812,
+        "delta_gate_limit": 0.01,
+        "update1_paired_objective_ratios_to_predopt": {
+          "chem": 1.64,
+          "exc": 0.169,
+          "op": 0.976
+        },
+        "paired_objective_ratio_limit": 100.0,
+        "directory": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_smoke2",
+        "latest_checkpoint_sha256": "cf23763582a7ee57e4eddfb02cf3aba3a0c946828b97516e9ede03fd53486bcd",
+        "run_summary_sha256": "ab2b7133b97e865ae0a5af1b2a6403a4cadecbec8f1fd87a765ede9b07bad858",
+        "updates_jsonl_sha256": "acb2c2faf3c49426bba68013a43a83050a9748a8207a48c5f39d604625824aaf",
+        "protocol_sha256": "acb3bfa8052510e5be932092c8611d951d88e2c670edd273bb6fc0f2b03ae79b",
+        "sampling_manifest_identity_sha256": "0b390f0aa99b8f6f85247dfb52527134d4ae49289eb8b01875378a1e11c9f391",
+        "gate_validation_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_smoke2\\lr_gate_validation.json",
+        "gate_validation_sha256": "1365b3ba878a8f49aeb8d7545a143cea504a5c37134fe5304266137b29446f1a",
+        "fresh_cursor25_run_directory": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25",
+        "fresh_cursor25_panel": {
+          "status": "training-data diagnostics only; no optimizer updates or external test sets",
+          "schema": "lap-moo-checkpoint-full27-panel-v1",
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_full27_panel.json",
+          "sha256": "210a108565bb25b9193f20c13220b8b29ceb8860958bd736a3d73460fee6cbc7",
+          "elapsed_seconds": 403.51351959997555,
+          "sample_count": 27,
+          "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+          "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+          "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\latest.pt",
+          "checkpoint_sha256": "0104d679ed050c11163344fb37bf6b0b5da85981d808e06265eb9aaabcb76f5e",
+          "loss_ratio_to_predopt": {
+            "chem": {
+              "max": 85.73325759451573,
+              "median": 1.2299073368659195,
+              "min": 0.11153840731695165
+            },
+            "exc": {
+              "max": 2.4548172935169674,
+              "median": 2.1053446848994297,
+              "min": 0.7512804383194577
+            },
+            "op": {
+              "max": 0.9104355189510767,
+              "median": 0.8074252640535629,
+              "min": 0.7497940756290137
+            }
+          },
+          "all_task_ratios_below_100": true,
+          "interpretation": "training-panel stability diagnostics; no Pareto/generalization ranking"
+        }
+      },
+      "optimizer_comparison_status": "Completed: three matched cursor-25 RAdamW/AdamW/Muon panels; see optimizer_cursor25_comparison."
+    },
+    "repository_report_snapshot": "lap_moo_local_report.md",
+    "repository_report_snapshot_sha256": "86132725737a0c074002f772e0264fb06abd88c14a684e59dc9acc16afd9e804",
+    "corrected_cosine_cursor25_panel": {
+      "status": "training-data diagnostics only; no optimizer updates or external test sets",
+      "schema": "lap-moo-checkpoint-full27-panel-v1",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\final_panel_cosine_cursor25.json",
+      "sha256": "84299841b7e9b4ef2193c71a754cc0af91f9fa62b5838964493e928979e7e733",
+      "elapsed_seconds": 780.408518399985,
+      "sample_count": 27,
+      "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+      "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+      "candidates": {
+        "fixed": {
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\latest.pt",
+          "checkpoint_sha256": "0163feb5b93e66067318360053cf780425822a2cdcc5451fd77782586f032520",
+          "sample_count": 27,
+          "maximum_loss_ratio_to_predopt": {
+            "chem": 89.11328293788931,
+            "exc": 3.5016875693220046,
+            "op": 0.9413033785544189
+          },
+          "all_task_ratios_below_100": true
+        },
+        "cagrad": {
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\cagrad_lr1em7\\latest.pt",
+          "checkpoint_sha256": "18d3c94d52cf31aacf7b7cb71aa979bc3fb915748b039cdc6bf132824e77fff3",
+          "sample_count": 27,
+          "maximum_loss_ratio_to_predopt": {
+            "chem": 97.12723441649553,
+            "exc": 3.8749034790914063,
+            "op": 0.9368075385706698
+          },
+          "all_task_ratios_below_100": true
+        },
+        "imtl_g": {
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\imtl_g_lr1em2\\latest.pt",
+          "checkpoint_sha256": "e67a505580165635d274e17e4238d06ea5111c6f4e8228348c8fdb8773f01b5f",
+          "sample_count": 27,
+          "maximum_loss_ratio_to_predopt": {
+            "chem": 82.36439498764389,
+            "exc": 3.2606131530160245,
+            "op": 0.9108543009566221
+          },
+          "all_task_ratios_below_100": true
+        }
+      },
+      "interpretation": "training-panel stability diagnostics; no Pareto/generalization ranking",
+      "panel_reported_initial_state_dict_l2_norm_including_buffers": 23.01958620991241,
+      "norm_note": "The panel JSON raw initial_parameter_l2_norm includes state_dict buffers; use the separate trainable-parameter norm 21.3752508588 from the passed Nash rate gate for parameter-update fractions."
+    },
+    "nash_1e-2_rate_smoke": {
+      "status": "passed; fresh cursor-25 cosine run passed the 27-pair stability panel and is queued for cursor-100 extension",
+      "method": "nash_mtl",
+      "learning_rate": 0.01,
+      "updates_completed": 2,
+      "schedule": "cosine to 10% over 150 updates",
+      "solver_residuals": [
+        2.55e-15,
+        6.22e-15
+      ],
+      "cumulative_parameter_delta_l2": 0.0192434,
+      "per_update_parameter_delta_l2": [
+        0.01736197,
+        0.00573727
+      ],
+      "trainable_parameter_l2_norm": 21.3752508588,
+      "max_per_update_delta_fraction_of_trainable_norm": 0.000812,
+      "delta_gate_limit": 0.01,
+      "update1_paired_objective_ratios_to_predopt": {
+        "chem": 1.64,
+        "exc": 0.169,
+        "op": 0.976
+      },
+      "paired_objective_ratio_limit": 100.0,
+      "directory": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_smoke2",
+      "latest_checkpoint_sha256": "cf23763582a7ee57e4eddfb02cf3aba3a0c946828b97516e9ede03fd53486bcd",
+      "run_summary_sha256": "ab2b7133b97e865ae0a5af1b2a6403a4cadecbec8f1fd87a765ede9b07bad858",
+      "updates_jsonl_sha256": "acb2c2faf3c49426bba68013a43a83050a9748a8207a48c5f39d604625824aaf",
+      "protocol_sha256": "acb3bfa8052510e5be932092c8611d951d88e2c670edd273bb6fc0f2b03ae79b",
+      "sampling_manifest_identity_sha256": "0b390f0aa99b8f6f85247dfb52527134d4ae49289eb8b01875378a1e11c9f391",
+      "gate_validation_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_smoke2\\lr_gate_validation.json",
+      "gate_validation_sha256": "1365b3ba878a8f49aeb8d7545a143cea504a5c37134fe5304266137b29446f1a",
+      "fresh_cursor25_run_directory": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25",
+      "fresh_cursor25_panel": {
+        "status": "training-data diagnostics only; no optimizer updates or external test sets",
+        "schema": "lap-moo-checkpoint-full27-panel-v1",
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_full27_panel.json",
+        "sha256": "210a108565bb25b9193f20c13220b8b29ceb8860958bd736a3d73460fee6cbc7",
+        "elapsed_seconds": 403.51351959997555,
+        "sample_count": 27,
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+        "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\latest.pt",
+        "checkpoint_sha256": "0104d679ed050c11163344fb37bf6b0b5da85981d808e06265eb9aaabcb76f5e",
+        "loss_ratio_to_predopt": {
+          "chem": {
+            "max": 85.73325759451573,
+            "median": 1.2299073368659195,
+            "min": 0.11153840731695165
+          },
+          "exc": {
+            "max": 2.4548172935169674,
+            "median": 2.1053446848994297,
+            "min": 0.7512804383194577
+          },
+          "op": {
+            "max": 0.9104355189510767,
+            "median": 0.8074252640535629,
+            "min": 0.7497940756290137
+          }
+        },
+        "all_task_ratios_below_100": true,
+        "interpretation": "training-panel stability diagnostics; no Pareto/generalization ranking"
+      }
+    },
+    "corrected_cosine_nash_cursor25_panel": {
+      "status": "training-data diagnostics only; no optimizer updates or external test sets",
+      "schema": "lap-moo-checkpoint-full27-panel-v1",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_full27_panel.json",
+      "sha256": "210a108565bb25b9193f20c13220b8b29ceb8860958bd736a3d73460fee6cbc7",
+      "elapsed_seconds": 403.51351959997555,
+      "sample_count": 27,
+      "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+      "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+      "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\latest.pt",
+      "checkpoint_sha256": "0104d679ed050c11163344fb37bf6b0b5da85981d808e06265eb9aaabcb76f5e",
+      "loss_ratio_to_predopt": {
+        "chem": {
+          "max": 85.73325759451573,
+          "median": 1.2299073368659195,
+          "min": 0.11153840731695165
+        },
+        "exc": {
+          "max": 2.4548172935169674,
+          "median": 2.1053446848994297,
+          "min": 0.7512804383194577
+        },
+        "op": {
+          "max": 0.9104355189510767,
+          "median": 0.8074252640535629,
+          "min": 0.7497940756290137
+        }
+      },
+      "all_task_ratios_below_100": true,
+      "interpretation": "training-panel stability diagnostics; no Pareto/generalization ranking"
+    },
+    "panel_norm_metadata_correction": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\panel_norm_metadata_correction.json",
+      "sha256": "d074af08d251fa1b6dbfda349af88a16ddf4280ff62b21bd06d2a1e2d0fdada7",
+      "corrected_trainable_parameter_l2_norm": 21.375250858775665
+    },
+    "corrected_rtx_runtime_observation": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\runtime_telemetry_fixed_progress.json",
+      "sha256": "6c043122d88e67006591508284ad659493707933a047539d6fad8133c924a981",
+      "observed_at_utc": "2026-10-02T06:15:27.1262070Z",
+      "method": "fixed",
+      "latest_logged_update": 84,
+      "logged_step_seconds": 16.4415337999817,
+      "gpu": "NVIDIA GeForce RTX 5070 Ti, cuda:0",
+      "cuda_memory_from_training_row": {
+        "peak_allocated_gib": 3.6902236938476562,
+        "peak_reserved_gib": 26.353515625,
+        "reported_total_gib": 15.92047119140625,
+        "allocated_bytes": 247885312
+      },
+      "nvidia_smi": {
+        "utilization": "27 %",
+        "total": "16303 MiB",
+        "used": "15931 MiB",
+        "free": "65 MiB"
+      },
+      "host": {
+        "free_physical_mib": 3237.7,
+        "total_physical_mib": 31653.4,
+        "process_private_gib": 30.152774810791016,
+        "process_working_set_gib": 11.326282501220703,
+        "process_page_faults": 27206619
+      },
+      "interpretation": "single RTX 5070 Ti observation with WDDM/host memory pressure; not a V100 runtime/capacity estimate"
+    },
+    "fixed_cursor100_interim_geometry": {
+      "status": "cursor 100 complete, horizon 150; single-method interim geometry, not comparative Gate 3",
+      "method": "fixed",
+      "learning_rate_base": 1e-06,
+      "updates_logged": 100,
+      "cursor_start": 0,
+      "cursor_end_zero_based": 99,
+      "scheduler_last_epoch": 100,
+      "scheduler_step_count": 101,
+      "protocol_metadata_sha256": "fdd7be30f49f9f9f60495d3cf00dbf26d620bc535be97c06d816d3e57cb5a592",
+      "run_summary_sha256": "35e7a1a3d22d2c6079f2a4fce94717dd0119559cf51827df3c1fd25bb53c5258",
+      "execution_provenance_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\execution_provenance_cursor100.json",
+      "execution_provenance_sha256": "48882a8c8d98fb6e74f1d33981427d6c0e595410073b6d1a90e49b5008e5c2b0",
+      "updates_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\updates.jsonl",
+      "updates_sha256": "1d758271b6be07e857bbb85098d5a4318db9bfc37130c1e7eb7881b608ac5e2c",
+      "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\latest.pt",
+      "checkpoint_sha256": "6b7bcf06635c7dd6be2d79978488748f13c2354d4f4f10ac165eaa494d114b1a",
+      "stream_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+      "fixed_effective_coefficients_per_update": {
+        "chem": 0.04155580600841781,
+        "exc": 0.004981389346761533,
+        "op": 178.91800129114344
+      },
+      "raw_gradient_pair_cosines": {
+        "chem:exc": {
+          "p10": -0.5508487959931955,
+          "median": 0.7449889968267428,
+          "p90": 0.9947521237433016,
+          "negative": 14,
+          "positive": 86
+        },
+        "chem:op": {
+          "p10": -0.8514046751586362,
+          "median": -0.27289277391441424,
+          "p90": 0.23012991851625586,
+          "negative": 75,
+          "positive": 25
+        },
+        "exc:op": {
+          "p10": -0.8893999528874618,
+          "median": -0.4840268217353219,
+          "p90": -0.04823474059347062,
+          "negative": 97,
+          "positive": 3
+        }
+      },
+      "raw_gradient_norms": {
+        "chem": {
+          "p10": 189.94806221525354,
+          "median": 1747.7779203106097,
+          "p90": 14662.512725547775
+        },
+        "exc": {
+          "p10": 2276.547158730577,
+          "median": 14663.167719825004,
+          "p90": 50421.09236175732
+        },
+        "op": {
+          "p10": 0.16851826049759433,
+          "median": 0.32000398297135974,
+          "p90": 0.6181365623643879
+        }
+      },
+      "combined_direction_dot_raw_task": {
+        "chem": {
+          "p10": -927.4374579366008,
+          "median": 114119.14404748366,
+          "p90": 8561855.404122684,
+          "negative": 12,
+          "positive": 88
+        },
+        "exc": {
+          "p10": -65994.27123457403,
+          "median": 1816692.9515328167,
+          "p90": 18261575.910531472,
+          "negative": 15,
+          "positive": 85
+        },
+        "op": {
+          "p10": -34.80624483761507,
+          "median": -1.2349221527414591,
+          "p90": 57.5931326955616,
+          "negative": 51,
+          "positive": 49
+        }
+      },
+      "actual_optimizer_update_dot_raw_task": {
+        "chem": {
+          "p10": -0.0028718668821798273,
+          "median": -8.166794461565423e-05,
+          "p90": 0.00021308602928740597,
+          "descent_linearized": 68,
+          "ascent_linearized": 32
+        },
+        "exc": {
+          "p10": -0.013789812979956908,
+          "median": -0.0021011560412213626,
+          "p90": 0.00040855712656335565,
+          "descent_linearized": 81,
+          "ascent_linearized": 19
+        },
+        "op": {
+          "p10": -8.752506935635922e-08,
+          "median": -8.179813367648853e-09,
+          "p90": 8.295778895066385e-08,
+          "descent_linearized": 53,
+          "ascent_linearized": 47
+        }
+      },
+      "joint_gradient_vs_radamw_update_cosine": {
+        "p10": -0.11487404626611347,
+        "median": -0.07981515155653582,
+        "p90": 0.04179893992861055,
+        "negative": 82,
+        "positive": 18
+      },
+      "step_seconds_p10_median_p90": {
+        "p10": 10.502157699980307,
+        "median": 16.972858750028536,
+        "p90": 27.125686110038078
+      },
+      "learning_rate_for_next_update_p10_median_p90": {
+        "p10": 4.100491181749101e-07,
+        "median": 7.708945766728859e-07,
+        "p90": 9.883160976966511e-07
+      },
+      "interpretation_limit": "loss-gradient dot signs are local linearizations; no starvation conclusion from this fixed-only stream",
+      "source_hashes": {
+        "train_models/lap_moo_training.py": "2e70d39c7bc1284236213c6700d84bfc13fd50f5eef14fcbc168b1290244f77c",
+        "train_models/moo_aggregators.py": "fca5fee863dbbab183c61da2ef76b5d9de68c079a17c277141c4b00ca8b2027b",
+        "train_models/train_lap_moo.py": "1204e2c255848ae0d97eeb2a42ec29d5553e866fb512181a07fc8002d2d0fb0c"
+      }
+    },
+    "fixed_cursor100_scf_smoke": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\scf_smoke_cursor100\\fixed.json",
+      "sha256": "941cd45f3cce212345440482cc7cbd6af17cee890ca2a23d2b78a1688a469083",
+      "schema": "lap-moo-cursor100-real-scf-smoke-v1",
+      "all_systems_passed": true,
+      "method": "fixed",
+      "checkpoint_cursor": 100,
+      "checkpoint_sha256": "6b7bcf06635c7dd6be2d79978488748f13c2354d4f4f10ac165eaa494d114b1a",
+      "execution_device": "cpu",
+      "pyscf_version": "2.14.0",
+      "systems": [
+        {
+          "system": "H2",
+          "total_energy_hartree": -1.1824877667724287,
+          "cycles_recorded": 5,
+          "converged": true,
+          "vtau_exactly_zero": true,
+          "tau_independent_exact": true,
+          "passed": true
+        },
+        {
+          "system": "BeH2",
+          "total_energy_hartree": -15.95420711891855,
+          "cycles_recorded": 6,
+          "converged": true,
+          "vtau_exactly_zero": true,
+          "tau_independent_exact": true,
+          "passed": true
+        },
+        {
+          "system": "CO",
+          "total_energy_hartree": -113.60826994365189,
+          "cycles_recorded": 8,
+          "converged": true,
+          "vtau_exactly_zero": true,
+          "tau_independent_exact": true,
+          "passed": true
+        }
+      ]
+    },
+    "corrected_cosine_cursor100_panel": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\final_panel_cosine_cursor100.json",
+      "sha256": "352a322c79fc80d3399994a5fb77d606b7a43ba78e7c0d5bde47e93ea0ab659a",
+      "schema": "lap-moo-checkpoint-full27-panel-v1",
+      "elapsed_seconds": 895.8256919000414,
+      "sample_count": 27,
+      "checkpoint_cursor": 100,
+      "horizon": 150
+    },
+    "cursor100_scf_smokes": {
+      "fixed": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\scf_smoke_cursor100\\fixed.json",
+        "sha256": "941cd45f3cce212345440482cc7cbd6af17cee890ca2a23d2b78a1688a469083",
+        "schema": "lap-moo-cursor100-real-scf-smoke-v1",
+        "all_systems_passed": true,
+        "checkpoint_sha256": "6b7bcf06635c7dd6be2d79978488748f13c2354d4f4f10ac165eaa494d114b1a",
+        "execution_device": "cpu",
+        "pyscf_version": "2.14.0",
+        "systems": [
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 60,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -1.1810151662610824,
+                "norm_ddm": 0.3862742500093778,
+                "norm_gorb": 0.0602456172190074
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -1.1823145514625686,
+                "norm_ddm": 0.052707116179524414,
+                "norm_gorb": 0.020695888228652506
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -1.1824877487969285,
+                "norm_ddm": 0.013644244308831826,
+                "norm_gorb": 0.000265490940340864
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -1.18248776675987,
+                "norm_ddm": 0.00016511231500939056,
+                "norm_gorb": 5.152161299723147e-06
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -1.1824877667724243,
+                "norm_ddm": 4.926656504384987e-06,
+                "norm_gorb": 1.594539809768742e-07
+              }
+            ],
+            "cycles_recorded": 5,
+            "electron_count": 2,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+            "npz_sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "H2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -1.1824877667724287,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 144,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -15.94469349927143,
+                "norm_ddm": 1.3094942604713835,
+                "norm_gorb": 0.14993694179351325
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -15.952318947663578,
+                "norm_ddm": 0.24569864486017498,
+                "norm_gorb": 0.061953105324551935
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -15.954202888072317,
+                "norm_ddm": 0.08155279413921204,
+                "norm_gorb": 0.0031689539644940974
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -15.954206658362153,
+                "norm_ddm": 0.005262513678155362,
+                "norm_gorb": 0.0010182110581365025
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -15.954207118376573,
+                "norm_ddm": 0.0012172387284352334,
+                "norm_gorb": 4.642561093512841e-05
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -15.954207118912972,
+                "norm_ddm": 6.654577988092698e-05,
+                "norm_gorb": 4.689774961953877e-06
+              }
+            ],
+            "cycles_recorded": 6,
+            "electron_count": 6,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+            "npz_sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "BeH2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -15.95420711891855,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 168,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -113.53525783448364,
+                "norm_ddm": 1.380039854549716,
+                "norm_gorb": 0.6684867182776776
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -112.80530341565981,
+                "norm_ddm": 0.9241164743576874,
+                "norm_gorb": 2.0526635081256086
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -113.60350292951424,
+                "norm_ddm": 0.7919272562203615,
+                "norm_gorb": 0.13777661495276408
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -113.60801071197463,
+                "norm_ddm": 0.20068817958724466,
+                "norm_gorb": 0.03456714880947801
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -113.60826029589359,
+                "norm_ddm": 0.03860831265588584,
+                "norm_gorb": 0.0068410947204381855
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -113.6082698300248,
+                "norm_ddm": 0.0043780076011069756,
+                "norm_gorb": 0.0008182863741260936
+              },
+              {
+                "cycle": 6.0,
+                "e_tot": -113.60826994212596,
+                "norm_ddm": 0.0003715553951419562,
+                "norm_gorb": 9.438157637403337e-05
+              },
+              {
+                "cycle": 7.0,
+                "e_tot": -113.60826994365223,
+                "norm_ddm": 6.566918531278573e-05,
+                "norm_gorb": 7.4251215359088114e-06
+              }
+            ],
+            "cycles_recorded": 8,
+            "electron_count": 14,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+            "npz_sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "CO",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -113.60826994365189,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          }
+        ]
+      },
+      "cagrad": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\scf_smoke_cursor100\\cagrad.json",
+        "sha256": "1103221166f326b50c65d70b2d6ce7704a4e3a0666ea09190614d92e64717fe1",
+        "schema": "lap-moo-cursor100-real-scf-smoke-v1",
+        "all_systems_passed": true,
+        "checkpoint_sha256": "e06e1c765b2280c93861e0661a8fe096181e5daebd2742044ab87c36db3b2f7d",
+        "execution_device": "cpu",
+        "pyscf_version": "2.14.0",
+        "systems": [
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 60,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -1.1825054165603681,
+                "norm_ddm": 0.3866169925968841,
+                "norm_gorb": 0.06025696591647706
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -1.183810392379027,
+                "norm_ddm": 0.05278872953038297,
+                "norm_gorb": 0.02060046789293706
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -1.1839821236237293,
+                "norm_ddm": 0.013602528763975084,
+                "norm_gorb": 0.0002474412335441771
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -1.183982137972406,
+                "norm_ddm": 0.0001544268189125682,
+                "norm_gorb": 5.264820130641123e-06
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -1.1839821379854885,
+                "norm_ddm": 5.057927314489969e-06,
+                "norm_gorb": 1.775402229976383e-07
+              }
+            ],
+            "cycles_recorded": 5,
+            "electron_count": 2,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+            "npz_sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "H2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -1.1839821379854973,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 144,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -15.952516538560104,
+                "norm_ddm": 1.3105508514740065,
+                "norm_gorb": 0.1500353817928669
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -15.960165619301044,
+                "norm_ddm": 0.2506188628426171,
+                "norm_gorb": 0.061533397463046306
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -15.962022321680287,
+                "norm_ddm": 0.08198655911515199,
+                "norm_gorb": 0.0032565639179508795
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -15.962026234986084,
+                "norm_ddm": 0.005589453852745437,
+                "norm_gorb": 0.0010538102198543256
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -15.96202672538503,
+                "norm_ddm": 0.0012552379381315978,
+                "norm_gorb": 5.143522661559135e-05
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -15.962026726102177,
+                "norm_ddm": 7.269699228519205e-05,
+                "norm_gorb": 4.83680647709627e-06
+              }
+            ],
+            "cycles_recorded": 6,
+            "electron_count": 6,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+            "npz_sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "BeH2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -15.96202672610805,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 168,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -113.56531197902362,
+                "norm_ddm": 1.3779951941368476,
+                "norm_gorb": 0.6718225405330248
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -112.82969580287025,
+                "norm_ddm": 0.9278314959790007,
+                "norm_gorb": 2.059937563219848
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -113.6342451502023,
+                "norm_ddm": 0.7950782461377601,
+                "norm_gorb": 0.13889008503139355
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -113.63882484135607,
+                "norm_ddm": 0.20165284182226448,
+                "norm_gorb": 0.03476797630559622
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -113.63907647732808,
+                "norm_ddm": 0.03857227355589324,
+                "norm_gorb": 0.00681861637485285
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -113.639085946481,
+                "norm_ddm": 0.004404763898073917,
+                "norm_gorb": 0.0007998044387508941
+              },
+              {
+                "cycle": 6.0,
+                "e_tot": -113.63908605100454,
+                "norm_ddm": 0.000380593314029104,
+                "norm_gorb": 9.674907566651754e-05
+              },
+              {
+                "cycle": 7.0,
+                "e_tot": -113.63908605256188,
+                "norm_ddm": 6.600924259546544e-05,
+                "norm_gorb": 8.975924008364458e-06
+              }
+            ],
+            "cycles_recorded": 8,
+            "electron_count": 14,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+            "npz_sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "CO",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -113.6390860525569,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          }
+        ]
+      },
+      "imtl_g": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\scf_smoke_cursor100\\imtl_g.json",
+        "sha256": "92ee426ecf260f658d486dcb4df5bfddbad31e7b9d1aff8500c01d690323c93a",
+        "schema": "lap-moo-cursor100-real-scf-smoke-v1",
+        "all_systems_passed": true,
+        "checkpoint_sha256": "3790b6bb3c2b2698349597cda3307b7c5a27fe3598e1d19fd3d44a49e295f00f",
+        "execution_device": "cpu",
+        "pyscf_version": "2.14.0",
+        "systems": [
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 60,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -1.1903618935465419,
+                "norm_ddm": 0.39118073888056215,
+                "norm_gorb": 0.06721197844968681
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -1.191675945365558,
+                "norm_ddm": 0.04966409393588988,
+                "norm_gorb": 0.017293381500092502
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -1.1917969600765377,
+                "norm_ddm": 0.012088845411683967,
+                "norm_gorb": 0.0006457852241236291
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -1.1917970916791696,
+                "norm_ddm": 0.00040631838185922894,
+                "norm_gorb": 8.75942572102794e-06
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -1.191797091705648,
+                "norm_ddm": 4.8663158953106985e-06,
+                "norm_gorb": 4.113895084665237e-07
+              }
+            ],
+            "cycles_recorded": 5,
+            "electron_count": 2,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+            "npz_sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "H2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -1.191797091705665,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 144,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -15.970774342816718,
+                "norm_ddm": 1.2763412321237895,
+                "norm_gorb": 0.1478155119212033
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -15.977888900383427,
+                "norm_ddm": 0.19872785736378823,
+                "norm_gorb": 0.047549101530682925
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -15.979050907900664,
+                "norm_ddm": 0.07926780692153766,
+                "norm_gorb": 0.005326911280885748
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -15.9790598062227,
+                "norm_ddm": 0.007651331392374323,
+                "norm_gorb": 0.0012250033849183933
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -15.9790603390272,
+                "norm_ddm": 0.0018492150170310096,
+                "norm_gorb": 0.00022535989415258594
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -15.979060357426945,
+                "norm_ddm": 0.00026449045575557926,
+                "norm_gorb": 7.222447243524483e-06
+              },
+              {
+                "cycle": 6.0,
+                "e_tot": -15.97906035743786,
+                "norm_ddm": 6.944928804605778e-06,
+                "norm_gorb": 6.521887436124654e-07
+              }
+            ],
+            "cycles_recorded": 7,
+            "electron_count": 6,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+            "npz_sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "BeH2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -15.979060357437916,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 168,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -113.68880855620043,
+                "norm_ddm": 1.3488226993332453,
+                "norm_gorb": 0.6982036595561527
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -112.92064505437574,
+                "norm_ddm": 0.9390018512822973,
+                "norm_gorb": 2.0911495381281844
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -113.76386214479763,
+                "norm_ddm": 0.8076854694835757,
+                "norm_gorb": 0.14899056046951364
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -113.7691660203154,
+                "norm_ddm": 0.19619445819985393,
+                "norm_gorb": 0.03489826905536561
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -113.76939354819586,
+                "norm_ddm": 0.035008410830266436,
+                "norm_gorb": 0.0062253916950192716
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -113.76939983793721,
+                "norm_ddm": 0.005833665737240515,
+                "norm_gorb": 0.0015094953736983921
+              },
+              {
+                "cycle": 6.0,
+                "e_tot": -113.76940015178099,
+                "norm_ddm": 0.0010968180048634127,
+                "norm_gorb": 0.0002473605766974206
+              },
+              {
+                "cycle": 7.0,
+                "e_tot": -113.76940016216469,
+                "norm_ddm": 0.0001304877126690482,
+                "norm_gorb": 3.3079424574591704e-05
+              },
+              {
+                "cycle": 8.0,
+                "e_tot": -113.76940016237049,
+                "norm_ddm": 1.7902380598640168e-05,
+                "norm_gorb": 1.257308617968597e-06
+              }
+            ],
+            "cycles_recorded": 9,
+            "electron_count": 14,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+            "npz_sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "CO",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -113.76940016236907,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          }
+        ]
+      },
+      "nash_mtl": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\scf_smoke_cursor100\\nash_mtl.json",
+        "sha256": "e170fd75201300f9b1b363b0c5e90a36d6159afa9fc01566f7e565b434cf9431",
+        "schema": "lap-moo-cursor-real-scf-smoke-v1",
+        "all_systems_passed": true,
+        "checkpoint_sha256": "954fdcc149f16f45bf4381d51a6e309face78c07e7500bd962c798af135a8b28",
+        "execution_device": "cpu",
+        "pyscf_version": "2.14.0",
+        "systems": [
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 60,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -1.1684565573945525,
+                "norm_ddm": 0.39182264910848136,
+                "norm_gorb": 0.07548302161014175
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -1.1697972312710985,
+                "norm_ddm": 0.051605697607745284,
+                "norm_gorb": 0.017154463933865147
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -1.1699071969604815,
+                "norm_ddm": 0.012791170746434577,
+                "norm_gorb": 0.0009168170569920139
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -1.1699075045137308,
+                "norm_ddm": 0.0006682615761749286,
+                "norm_gorb": 2.409026972428355e-05
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -1.1699075046166494,
+                "norm_ddm": 1.639652885368859e-05,
+                "norm_gorb": 1.9029373476209053e-06
+              }
+            ],
+            "cycles_recorded": 5,
+            "electron_count": 2,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+            "npz_sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "H2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -1.169907504617329,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 144,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -15.863688388109441,
+                "norm_ddm": 1.3148825517354792,
+                "norm_gorb": 0.14717435728012168
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -15.870122939475252,
+                "norm_ddm": 0.2058749346921228,
+                "norm_gorb": 0.05912912924659886
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -15.871018620820472,
+                "norm_ddm": 0.08835489687427925,
+                "norm_gorb": 0.013667633535959815
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -15.871032048308258,
+                "norm_ddm": 0.02921189549783554,
+                "norm_gorb": 0.013789355697489911
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -15.871041482110716,
+                "norm_ddm": 0.01276215145837001,
+                "norm_gorb": 0.005097316901313997
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -15.87104064045064,
+                "norm_ddm": 0.02503892216184901,
+                "norm_gorb": 0.011608308325321497
+              },
+              {
+                "cycle": 6.0,
+                "e_tot": -15.871044262517756,
+                "norm_ddm": 0.011640427734909023,
+                "norm_gorb": 0.0016080579401018826
+              },
+              {
+                "cycle": 7.0,
+                "e_tot": -15.871044399526308,
+                "norm_ddm": 0.00254088106821356,
+                "norm_gorb": 0.0002767668246329207
+              },
+              {
+                "cycle": 8.0,
+                "e_tot": -15.871044407685147,
+                "norm_ddm": 0.0008948425524349835,
+                "norm_gorb": 8.430411897894097e-05
+              }
+            ],
+            "cycles_recorded": 9,
+            "electron_count": 6,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+            "npz_sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "BeH2",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -15.871044407641506,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          },
+          {
+            "all_cycle_energies_finite": true,
+            "all_xc_outputs_finite": true,
+            "ao_dimension": 168,
+            "conv_tol": 1e-08,
+            "converged": true,
+            "convergence_trace": [
+              {
+                "cycle": 0.0,
+                "e_tot": -113.30858015090291,
+                "norm_ddm": 1.3647068046274997,
+                "norm_gorb": 0.6469311231673792
+              },
+              {
+                "cycle": 1.0,
+                "e_tot": -112.64792687355447,
+                "norm_ddm": 0.8899303070759695,
+                "norm_gorb": 1.9539624445179966
+              },
+              {
+                "cycle": 2.0,
+                "e_tot": -113.37524817867003,
+                "norm_ddm": 0.7459322918226845,
+                "norm_gorb": 0.1278504709043324
+              },
+              {
+                "cycle": 3.0,
+                "e_tot": -113.37888052275378,
+                "norm_ddm": 0.17244798751285553,
+                "norm_gorb": 0.030163841323581585
+              },
+              {
+                "cycle": 4.0,
+                "e_tot": -113.3790187972402,
+                "norm_ddm": 0.02922790574032374,
+                "norm_gorb": 0.01603330062275702
+              },
+              {
+                "cycle": 5.0,
+                "e_tot": -113.37902601314684,
+                "norm_ddm": 0.005139191843155666,
+                "norm_gorb": 0.0038129719504184337
+              },
+              {
+                "cycle": 6.0,
+                "e_tot": -113.37902769537283,
+                "norm_ddm": 0.0017246434079176824,
+                "norm_gorb": 0.0023818492389667914
+              },
+              {
+                "cycle": 7.0,
+                "e_tot": -113.379027776924,
+                "norm_ddm": 0.0007282997800699273,
+                "norm_gorb": 0.0008589027787849909
+              },
+              {
+                "cycle": 8.0,
+                "e_tot": -113.37902778599343,
+                "norm_ddm": 0.00020261117367318144,
+                "norm_gorb": 2.700820333232793e-05
+              }
+            ],
+            "cycles_recorded": 9,
+            "electron_count": 14,
+            "failure": null,
+            "failures": [],
+            "grid_level": 1,
+            "max_cycle": 40,
+            "npz_path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+            "npz_sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e",
+            "passed": true,
+            "pyscf_max_memory_mb": 2048,
+            "system": "CO",
+            "tau_independent_exact": true,
+            "tau_test_grid_points": 32,
+            "total_energy_hartree": -113.37902778494438,
+            "vtau_exactly_zero": true,
+            "vtau_max_abs": 0.0
+          }
+        ]
+      },
+      "status": "All four cursor-100 MOO methods passed H2/BeH2/CO CPU SCF route checks."
+    },
+    "cursor100_training_runs": {
+      "fixed": {
+        "method": "fixed",
+        "learning_rate": 1e-06,
+        "optimizer": {
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "decoupled_weight_decay": true,
+          "eps": 1e-08,
+          "learning_rate": 1e-06,
+          "name": "RAdamW",
+          "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+          "weight_decay": 0.01
+        },
+        "method_hyperparameters": {
+          "fixed_weights": [
+            0.12466741802525343,
+            0.0149441680402846,
+            536.7540038734303
+          ]
+        },
+        "schedule": {
+          "minimum_lr_ratio": 0.1,
+          "name": "cosine",
+          "same_shape_for_all_methods": true,
+          "total_updates": 150
+        },
+        "updates_completed": 100,
+        "updates_target": 150,
+        "run_complete": false,
+        "cursor_end": 100,
+        "scheduler_last_epoch": 100,
+        "scheduler_step_count": 101,
+        "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\cursor100_immutable.pt",
+        "checkpoint_sha256": "6b7bcf06635c7dd6be2d79978488748f13c2354d4f4f10ac165eaa494d114b1a",
+        "checkpoint_latest_sha256": "6b7bcf06635c7dd6be2d79978488748f13c2354d4f4f10ac165eaa494d114b1a",
+        "updates_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\updates.jsonl",
+        "updates_sha256": "1d758271b6be07e857bbb85098d5a4318db9bfc37130c1e7eb7881b608ac5e2c",
+        "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\protocol.json",
+        "protocol_file_sha256": "f9a57127dd4debb9d714513bc75a72b991df9ff50d0398cb6a718e0a4860fa06",
+        "protocol_metadata_sha256": "fdd7be30f49f9f9f60495d3cf00dbf26d620bc535be97c06d816d3e57cb5a592",
+        "run_summary_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\run_summary.json",
+        "run_summary_sha256": "35e7a1a3d22d2c6079f2a4fce94717dd0119559cf51827df3c1fd25bb53c5258",
+        "execution_provenance_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\fixed_lr1em6\\execution_provenance_cursor100.json",
+        "execution_provenance_sha256": "48882a8c8d98fb6e74f1d33981427d6c0e595410073b6d1a90e49b5008e5c2b0",
+        "execution_provenance_source_hashes": {
+          "train_models/lap_moo_training.py": "2e70d39c7bc1284236213c6700d84bfc13fd50f5eef14fcbc168b1290244f77c",
+          "train_models/moo_aggregators.py": "fca5fee863dbbab183c61da2ef76b5d9de68c079a17c277141c4b00ca8b2027b",
+          "train_models/train_lap_moo.py": "1204e2c255848ae0d97eeb2a42ec29d5553e866fb512181a07fc8002d2d0fb0c"
+        },
+        "immutable_copy_matches_latest": true,
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+        "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+        "objective_definitions": {
+          "chem": "existing Minnesota grouped reaction objective; stoichiometry, database weights, D3 treatment, kcal/mol retained",
+          "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+          "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO"
+        },
+        "stratum_sample_counts": {
+          "database": {
+            "ABDE4": 11,
+            "AE17": 11,
+            "DBH76": 11,
+            "EA13": 11,
+            "IP13": 12,
+            "MGAE109": 10,
+            "NCCE31": 11,
+            "PA8": 12,
+            "pTC13": 11
+          },
+          "system": {
+            "AlBeH": 7,
+            "BH": 7,
+            "BeH2": 7,
+            "C2H2_iso2": 7,
+            "CH2O": 7,
+            "CH4": 7,
+            "CO": 7,
+            "ClH": 6,
+            "ClHS": 6,
+            "H2": 6,
+            "H2O": 7,
+            "H4Si": 6,
+            "HLi": 7,
+            "HPSi_iso2": 6,
+            "N2": 7
+          }
+        },
+        "execution_scope": "100 observed updates on the declared 150-update cosine horizon; run_summary run_complete=false"
+      },
+      "cagrad": {
+        "method": "cagrad",
+        "learning_rate": 1e-07,
+        "optimizer": {
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "decoupled_weight_decay": true,
+          "eps": 1e-08,
+          "learning_rate": 1e-07,
+          "name": "RAdamW",
+          "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+          "weight_decay": 0.01
+        },
+        "method_hyperparameters": {
+          "c": 0.4,
+          "rescale": "paper_unscaled"
+        },
+        "schedule": {
+          "minimum_lr_ratio": 0.1,
+          "name": "cosine",
+          "same_shape_for_all_methods": true,
+          "total_updates": 150
+        },
+        "updates_completed": 100,
+        "updates_target": 150,
+        "run_complete": false,
+        "cursor_end": 100,
+        "scheduler_last_epoch": 100,
+        "scheduler_step_count": 101,
+        "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\cagrad_lr1em7\\cursor100_immutable.pt",
+        "checkpoint_sha256": "e06e1c765b2280c93861e0661a8fe096181e5daebd2742044ab87c36db3b2f7d",
+        "checkpoint_latest_sha256": "e06e1c765b2280c93861e0661a8fe096181e5daebd2742044ab87c36db3b2f7d",
+        "updates_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\cagrad_lr1em7\\updates.jsonl",
+        "updates_sha256": "34abb6e227e8e1bb824f1b179f7190f7a0ad46b525250c9f270a90a14c2c228f",
+        "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\cagrad_lr1em7\\protocol.json",
+        "protocol_file_sha256": "40c8cfca15cd6ad687fde482190636645a64bb384ed5f3250e9171b161e4df45",
+        "protocol_metadata_sha256": "5f2721ac9bdd240f842258a8273aa3ccb77fdc099c08bd9683b1af48f2307ef5",
+        "run_summary_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\cagrad_lr1em7\\run_summary.json",
+        "run_summary_sha256": "0535ac7f957fa66b5d59269ea28e6b8fb8f1f270266017e89a41ed0cd2411f68",
+        "execution_provenance_path": null,
+        "execution_provenance_sha256": null,
+        "execution_provenance_source_hashes": null,
+        "immutable_copy_matches_latest": true,
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+        "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+        "objective_definitions": {
+          "chem": "existing Minnesota grouped reaction objective; stoichiometry, database weights, D3 treatment, kcal/mol retained",
+          "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+          "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO"
+        },
+        "stratum_sample_counts": {
+          "database": {
+            "ABDE4": 11,
+            "AE17": 11,
+            "DBH76": 11,
+            "EA13": 11,
+            "IP13": 12,
+            "MGAE109": 10,
+            "NCCE31": 11,
+            "PA8": 12,
+            "pTC13": 11
+          },
+          "system": {
+            "AlBeH": 7,
+            "BH": 7,
+            "BeH2": 7,
+            "C2H2_iso2": 7,
+            "CH2O": 7,
+            "CH4": 7,
+            "CO": 7,
+            "ClH": 6,
+            "ClHS": 6,
+            "H2": 6,
+            "H2O": 7,
+            "H4Si": 6,
+            "HLi": 7,
+            "HPSi_iso2": 6,
+            "N2": 7
+          }
+        },
+        "execution_scope": "100 observed updates on the declared 150-update cosine horizon; run_summary run_complete=false"
+      },
+      "imtl_g": {
+        "method": "imtl_g",
+        "learning_rate": 0.01,
+        "optimizer": {
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "decoupled_weight_decay": true,
+          "eps": 1e-08,
+          "learning_rate": 0.01,
+          "name": "RAdamW",
+          "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+          "weight_decay": 0.01
+        },
+        "method_hyperparameters": {},
+        "schedule": {
+          "minimum_lr_ratio": 0.1,
+          "name": "cosine",
+          "same_shape_for_all_methods": true,
+          "total_updates": 150
+        },
+        "updates_completed": 100,
+        "updates_target": 150,
+        "run_complete": false,
+        "cursor_end": 100,
+        "scheduler_last_epoch": 100,
+        "scheduler_step_count": 101,
+        "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\imtl_g_lr1em2\\cursor100_immutable.pt",
+        "checkpoint_sha256": "3790b6bb3c2b2698349597cda3307b7c5a27fe3598e1d19fd3d44a49e295f00f",
+        "checkpoint_latest_sha256": "3790b6bb3c2b2698349597cda3307b7c5a27fe3598e1d19fd3d44a49e295f00f",
+        "updates_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\imtl_g_lr1em2\\updates.jsonl",
+        "updates_sha256": "a0363ddff773e9c3abbd57ff68b2e76c581cc6474f28915ecb75ef575036ec35",
+        "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\imtl_g_lr1em2\\protocol.json",
+        "protocol_file_sha256": "e86f4a2549fd1469a46a57da0f49c05d985b5cfb1cd1cf10b93f90218f4dccbc",
+        "protocol_metadata_sha256": "d1145bd6b3d3cb346cfb1b029dfeb9b64c0ae4fa1c09658fcdc4b4c4fc12cff3",
+        "run_summary_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\imtl_g_lr1em2\\run_summary.json",
+        "run_summary_sha256": "275ed0c93dd6321be7f091a4d2f5417b8100ae00c6cde8b9172ace20506d8b26",
+        "execution_provenance_path": null,
+        "execution_provenance_sha256": null,
+        "execution_provenance_source_hashes": null,
+        "immutable_copy_matches_latest": true,
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+        "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+        "objective_definitions": {
+          "chem": "existing Minnesota grouped reaction objective; stoichiometry, database weights, D3 treatment, kcal/mol retained",
+          "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+          "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO"
+        },
+        "stratum_sample_counts": {
+          "database": {
+            "ABDE4": 11,
+            "AE17": 11,
+            "DBH76": 11,
+            "EA13": 11,
+            "IP13": 12,
+            "MGAE109": 10,
+            "NCCE31": 11,
+            "PA8": 12,
+            "pTC13": 11
+          },
+          "system": {
+            "AlBeH": 7,
+            "BH": 7,
+            "BeH2": 7,
+            "C2H2_iso2": 7,
+            "CH2O": 7,
+            "CH4": 7,
+            "CO": 7,
+            "ClH": 6,
+            "ClHS": 6,
+            "H2": 6,
+            "H2O": 7,
+            "H4Si": 6,
+            "HLi": 7,
+            "HPSi_iso2": 6,
+            "N2": 7
+          }
+        },
+        "execution_scope": "100 observed updates on the declared 150-update cosine horizon; run_summary run_complete=false"
+      },
+      "nash_mtl": {
+        "method": "nash_mtl",
+        "learning_rate": 0.01,
+        "optimizer": {
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "decoupled_weight_decay": true,
+          "eps": 1e-08,
+          "learning_rate": 0.01,
+          "name": "RAdamW",
+          "parameter_groups": "Linear weights decayed; biases and norm weights excluded",
+          "weight_decay": 0.01
+        },
+        "method_hyperparameters": {
+          "max_iter": 100,
+          "solver": "newton_potential",
+          "tol": 1e-10,
+          "update_every": 1
+        },
+        "schedule": {
+          "minimum_lr_ratio": 0.1,
+          "name": "cosine",
+          "same_shape_for_all_methods": true,
+          "total_updates": 150
+        },
+        "updates_completed": 100,
+        "updates_target": 150,
+        "run_complete": false,
+        "cursor_end": 100,
+        "scheduler_last_epoch": 100,
+        "scheduler_step_count": 101,
+        "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\cursor100_immutable.pt",
+        "checkpoint_sha256": "954fdcc149f16f45bf4381d51a6e309face78c07e7500bd962c798af135a8b28",
+        "checkpoint_latest_sha256": "954fdcc149f16f45bf4381d51a6e309face78c07e7500bd962c798af135a8b28",
+        "updates_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\updates.jsonl",
+        "updates_sha256": "1313115daa3bfbc24449359f76a969e4b03a56f2f11a675828d24c44894945e6",
+        "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\protocol.json",
+        "protocol_file_sha256": "acb3bfa8052510e5be932092c8611d951d88e2c670edd273bb6fc0f2b03ae79b",
+        "protocol_metadata_sha256": "039aae84490d4680c17d09d252f0b123c375b4cc4c2ee9017bb94edbca269d43",
+        "run_summary_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\run_summary.json",
+        "run_summary_sha256": "f4de3646f5ef4dfc912e333239f6a724a46cd796eb22ae5e1d23f2ae0392913a",
+        "execution_provenance_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\execution_provenance.json",
+        "execution_provenance_sha256": "e9a96eb13807fbf0e6af8fbab8705fb52fbba092108d98b17b29de7f6d0c8764",
+        "execution_provenance_source_hashes": {
+          "train_models/lap_moo_training.py": "2e70d39c7bc1284236213c6700d84bfc13fd50f5eef14fcbc168b1290244f77c",
+          "train_models/moo_aggregators.py": "fca5fee863dbbab183c61da2ef76b5d9de68c079a17c277141c4b00ca8b2027b",
+          "train_models/train_lap_moo.py": "1204e2c255848ae0d97eeb2a42ec29d5553e866fb512181a07fc8002d2d0fb0c"
+        },
+        "immutable_copy_matches_latest": true,
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+        "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+        "objective_definitions": {
+          "chem": "existing Minnesota grouped reaction objective; stoichiometry, database weights, D3 treatment, kcal/mol retained",
+          "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+          "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO"
+        },
+        "stratum_sample_counts": {
+          "database": {
+            "ABDE4": 11,
+            "AE17": 11,
+            "DBH76": 11,
+            "EA13": 11,
+            "IP13": 12,
+            "MGAE109": 10,
+            "NCCE31": 11,
+            "PA8": 12,
+            "pTC13": 11
+          },
+          "system": {
+            "AlBeH": 7,
+            "BH": 7,
+            "BeH2": 7,
+            "C2H2_iso2": 7,
+            "CH2O": 7,
+            "CH4": 7,
+            "CO": 7,
+            "ClH": 6,
+            "ClHS": 6,
+            "H2": 6,
+            "H2O": 7,
+            "H4Si": 6,
+            "HLi": 7,
+            "HPSi_iso2": 6,
+            "N2": 7
+          }
+        },
+        "execution_scope": "100 observed updates on the declared 150-update cosine horizon; run_summary run_complete=false"
+      },
+      "status": "Four corrected runs completed at cursor 100 of horizon 150; run_complete=false; historical v1 metadata/hash receipts unchanged."
+    },
+    "cursor100_cost_estimate": {
+      "hardware": "NVIDIA GeForce RTX 5070 Ti, CUDA 0 (measured screen; not V100 estimate)",
+      "measured_cursor100_training_seconds_by_method": {
+        "fixed": 2223.845303199836,
+        "cagrad": 2092.724193200469,
+        "imtl_g": 2189.9942688997253,
+        "nash_mtl": 1984.404515000293
+      },
+      "measured_total_training_seconds_one_four_method_seed": 8490.968280300323,
+      "measured_average_method_training_minutes": 35.37903450125135,
+      "cursor100_panel_seconds_one_four_method_seed": 895.8256919000414,
+      "estimated_two_additional_seeds_training_seconds": 16981.936560600647,
+      "estimated_two_additional_seeds_panels_seconds": 1791.6513838000828,
+      "estimated_two_additional_seeds_total_hours": 5.214885540111314,
+      "estimated_three_seed_total_hours_including_panels": 7.822328310166971,
+      "estimation_limit": "Linear extrapolation from four measured 100-update trajectories and this matched 27-pair panel; excludes startup, SCF, queue/host overhead, and reruns. It is a compute-budget estimate, not a readiness gate or V100 timing prediction."
+    },
+    "adamw_two_step_gate_v1": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\gate_adamw_lr3e-4\\lr_gate_validation.json",
+      "sha256": "960420f571b6055759b49656d8b2ca5bb46cf8b54321acb58261bd2c500b0eaa",
+      "checkpoint_sha256": "42b4b4370fa7d5dd95f514f2720f0111e7b4f9e31da42e580b86edc090bac450",
+      "status": "passed two-step AdamW 3e-4 gate only; this does not select optimizer/LR",
+      "execution_chunks": {
+        "ao_cache_chunk_size": 4096,
+        "point_chunk_size": 256
+      },
+      "associated_protocol_version": "lap-moo-one-stage-v1",
+      "associated_protocol_metadata_sha256": "09c76b06b2da5cf8d446a57659c9a5c663722d246e0efa7ae9341f6c883e09a7",
+      "ao_cache_chunk_size_field_present_in_protocol": false,
+      "metadata_validation": "historical v1 artifact; not v2 validation"
+    },
+    "optimizer_calibration_grid_v2": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\calibration_grid_summary.json",
+      "sha256": "334652b59d4f7734c620597839a67511a5a8e0b7f67e7eabd61755dda195c80f",
+      "status": "Four v2 two-step gates complete; AdamW 1e-3 and Muon .02/fallback .0003 entered matched cursor-25 diagnostics. Calibration is not quality selection.",
+      "protocol_version": "lap-moo-one-stage-v2",
+      "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+      "ao_cache_chunk_size": 4096,
+      "grid_chunk_size": 256,
+      "selected_calibration_candidates": {
+        "adamw_learning_rate": 0.001,
+        "muon_learning_rate": 0.02,
+        "muon_adamw_fallback_learning_rate": 0.0003
+      },
+      "candidate_gate_results": [
+        {
+          "name": "adamw_lr1e-3_v2",
+          "passed": true,
+          "gate_json_sha256": "12be7809afc6624ff938bf799cf6264f4afe48f8c01bce5e8c6754b6840e4174",
+          "checkpoint_sha256": "c2c2a7005a422b317d9e2684e73ca439c58c760638c1c0f1e73d9132fb76c626",
+          "protocol_metadata_sha256": "7a6b0798881fbb223ac0a52a2ed01bb98d9bd21c4d897de39b105d94f029085c"
+        },
+        {
+          "name": "adamw_lr1e-2_v2",
+          "passed": false,
+          "failure": "per-update delta ratio 0.0452742685 exceeds 0.01",
+          "gate_json_sha256": "7e4724bc076f5dbc1d32df6f9de7d124f239382c1bf4631b207157b3052bd805",
+          "checkpoint_sha256": "22d2e578f6ba3a330de6c50ac4afe2e63414f071a6e34786d78dcfb7a5958d20",
+          "protocol_metadata_sha256": "dae42da1599172205d5d87524cf7d039a3cc2f7e6d8d0ab9a4d9c34fc7fe1a32"
+        },
+        {
+          "name": "muon_lr1e-2_fallback3e-4_v2",
+          "passed": true,
+          "gate_json_sha256": "5a3e0f4c21f2ca9e396f8b14c02681e13fcf7d060576b5bb68376ce3a3fafa9d",
+          "checkpoint_sha256": "66a67ba68ec6512b21e33a96ba78aca8f18a32dba918dce5ba7c12ffb300a04a",
+          "protocol_metadata_sha256": "b47fe105eaca5cea6ea3cac48fa63b0a5222e6c6dd866b84edfd6592ce6cd94c"
+        },
+        {
+          "name": "muon_lr2e-2_fallback3e-4_v2",
+          "passed": true,
+          "gate_json_sha256": "f4af9557ff12219a010972f3e179eec808002296b58c12ccee6c42288959e4a4",
+          "checkpoint_sha256": "6095d98eae5f39ba8eb8864e02376850a1177a5ee2ff5e282c179cfaf1ab42d2",
+          "protocol_metadata_sha256": "0a189548aae1a0841e91cf91c812bc106cdc4c35270bb90a7c541be664c4ef4c"
+        }
+      ]
+    },
+    "optimizer_cursor25_comparison": {
+      "schema": "lap-moo-matched-optimizer-cursor25-v1",
+      "status": "complete; descriptive single-seed comparison; no overall optimizer winner",
+      "source_commit": "408bdf4c991a64d6ef61185ce71dedfad6b67945",
+      "method": "nash_mtl",
+      "updates_completed": 25,
+      "updates_horizon": 150,
+      "run_complete": false,
+      "panel_rows": 27,
+      "common": {
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+        "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+        "seed": 41,
+        "point_chunk_size": 256,
+        "ao_cache_chunk_size": 4096,
+        "trainable_parameter_count": 9446
+      },
+      "median_ratios_to_predopt": {
+        "radamw": {
+          "chem": 1.23,
+          "exc": 2.105,
+          "op": 0.807
+        },
+        "adamw": {
+          "chem": 1.569,
+          "exc": 3.189,
+          "op": 0.764
+        },
+        "muon": {
+          "chem": 1.323,
+          "exc": 0.493,
+          "op": 0.744
+        }
+      },
+      "paired_median_loss_ratios_vs_radamw": {
+        "adamw": {
+          "chem": 1.127,
+          "exc": 1.604,
+          "op": 0.938
+        },
+        "muon": {
+          "chem": 1.149,
+          "exc": 0.248,
+          "op": 0.929
+        }
+      },
+      "wins_vs_radamw_by_task": {
+        "adamw": {
+          "chem": {
+            "wins": 8,
+            "ties": 1,
+            "losses": 18
+          },
+          "exc": {
+            "wins": 0,
+            "ties": 0,
+            "losses": 27
+          },
+          "op": {
+            "wins": 27,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "muon": {
+          "chem": {
+            "wins": 13,
+            "ties": 0,
+            "losses": 14
+          },
+          "exc": {
+            "wins": 27,
+            "ties": 0,
+            "losses": 0
+          },
+          "op": {
+            "wins": 22,
+            "ties": 0,
+            "losses": 5
+          }
+        }
+      },
+      "row_pareto_vs_radamw": {
+        "adamw": {
+          "candidate_dominates": 0,
+          "radamw_dominates": 0,
+          "tradeoffs": 27
+        },
+        "muon": {
+          "candidate_dominates": 11,
+          "radamw_dominates": 0,
+          "tradeoffs": 16
+        }
+      },
+      "absolute_panel_median_losses": {
+        "radamw": {
+          "chem": 40.17112,
+          "exc": 116.480642,
+          "op": 0.029797
+        },
+        "adamw": {
+          "chem": 40.257099,
+          "exc": 186.851949,
+          "op": 0.027906
+        },
+        "muon": {
+          "chem": 43.805943,
+          "exc": 15.431268,
+          "op": 0.028573
+        }
+      },
+      "actual_update_geometry_first25": {
+        "radamw": {
+          "median_raw_gradient_cosines_chem_exc_op": [
+            0.488254,
+            -0.687177,
+            -0.822843
+          ],
+          "median_abs_coeff_gradient_norm_share_chem_exc_op": [
+            0.257477,
+            0.334127,
+            0.447557
+          ],
+          "negative_actual_delta_dot_raw_task_gradient_fraction_chem_exc_op": [
+            0.92,
+            0.68,
+            0.76
+          ],
+          "median_cos_aggregate_direction_actual_delta": -0.137598,
+          "median_delta_norm": 0.023816,
+          "max_delta_norm": 0.032137,
+          "median_step_seconds": 18.793
+        },
+        "adamw": {
+          "median_raw_gradient_cosines_chem_exc_op": [
+            0.16162,
+            -0.626377,
+            -0.814644
+          ],
+          "median_abs_coeff_gradient_norm_share_chem_exc_op": [
+            0.281363,
+            0.33706,
+            0.390084
+          ],
+          "negative_actual_delta_dot_raw_task_gradient_fraction_chem_exc_op": [
+            0.76,
+            0.56,
+            0.76
+          ],
+          "median_cos_aggregate_direction_actual_delta": -0.10869,
+          "median_delta_norm": 0.036413,
+          "max_delta_norm": 0.096775,
+          "median_step_seconds": 14.985
+        },
+        "muon": {
+          "median_raw_gradient_cosines_chem_exc_op": [
+            0.815801,
+            -0.801009,
+            -0.943047
+          ],
+          "median_abs_coeff_gradient_norm_share_chem_exc_op": [
+            0.251542,
+            0.341045,
+            0.476209
+          ],
+          "negative_actual_delta_dot_raw_task_gradient_fraction_chem_exc_op": [
+            0.92,
+            0.76,
+            0.84
+          ],
+          "median_cos_aggregate_direction_actual_delta": -0.06844,
+          "median_delta_norm": 0.25484,
+          "max_delta_norm": 0.269868,
+          "initial_trainable_parameter_norm": 21.375251,
+          "max_delta_over_initial_trainable_norm": 0.012625,
+          "median_step_seconds": 14.837
+        }
+      },
+      "candidates": {
+        "radamw": {
+          "optimizer": "RAdamW",
+          "learning_rate": 0.01,
+          "protocol_version": "lap-moo-one-stage-v1",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\nash_mtl_lr1em2_stable_cosine25\\cursor25_immutable.pt",
+          "checkpoint_sha256": "0104d679ed050c11163344fb37bf6b0b5da85981d808e06265eb9aaabcb76f5e",
+          "panel_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_radamw_control.json",
+          "panel_sha256": "7996b706dbab7303a31e761f7892666506e9fe259824d80fb039a429b2695253",
+          "panel_elapsed_seconds": 356.252
+        },
+        "adamw": {
+          "optimizer": "AdamW",
+          "learning_rate": 0.001,
+          "protocol_version": "lap-moo-one-stage-v2",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\adamw_lr1e-3_nash_cursor25_v2\\latest.pt",
+          "checkpoint_sha256": "7fb20e7d1a676e5f4bf5f6222a462c85199cc95f0aefec335d20983c26a88483",
+          "panel_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_adamw_lr1e-3.json",
+          "panel_sha256": "815c8163bd79d8a88367182ad9eba7ebe0ebd978cb7fe8b9bdbb9b9ecbdeeb03",
+          "panel_elapsed_seconds": 390.17
+        },
+        "muon": {
+          "optimizer": "Muon plus AdamW fallback",
+          "muon_learning_rate": 0.02,
+          "adamw_fallback_learning_rate": 0.0003,
+          "protocol_version": "lap-moo-one-stage-v2",
+          "checkpoint_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\muon_adamw_muon2e-2_adamw3e-4_nash_cursor25_v2\\latest.pt",
+          "checkpoint_sha256": "51081e149d2de9d7ff87459d01653a920831480a4878080a6f84347f5f7588c0",
+          "panel_path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_muon_lr2e-2.json",
+          "panel_sha256": "640394b9b95c208e40cbb172e9d7f0dc0f295828f102ccedd148d95a0960312f",
+          "panel_elapsed_seconds": 354.22
+        }
+      },
+      "route_checks": {
+        "radamw": {
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\scf_radamw_control_cursor25.json",
+          "sha256": "5e4a1ebe7acd41dd04949e4c74182e140f32fc902a90e85b373b5da771bee00e",
+          "systems": {
+            "H2": [
+              -1.181792775,
+              5
+            ],
+            "BeH2": [
+              -15.936697375,
+              7
+            ],
+            "CO": [
+              -113.512962191,
+              10
+            ]
+          },
+          "finite": true,
+          "vtau_zero": true,
+          "tau_independent": true
+        },
+        "muon": {
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\scf_muon_cursor25.json",
+          "sha256": "27c844367cd209e6275fb99b6f52e1adf7dbce41df1415810f7592a0a93e65f9",
+          "systems": {
+            "H2": [
+              -1.174942185,
+              5
+            ],
+            "BeH2": [
+              -15.886587609,
+              10
+            ],
+            "CO": [
+              -113.350592993,
+              9
+            ]
+          },
+          "finite": true,
+          "vtau_zero": true,
+          "tau_independent": true
+        }
+      },
+      "recommendation": {
+        "method": "nash_mtl",
+        "optimizer": "RAdamW",
+        "learning_rate": 0.01,
+        "updates": 150,
+        "reason": "Conservative scoped V100 diagnostic: full cursor-100 method-screen route evidence; avoids unresolved Muon BF16 compatibility. Not a quality superiority claim."
+      },
+      "limitations": [
+        "27 training-stream identities, one seed; no statistical-superiority evidence.",
+        "Muon is not selected for V100 due native BF16 capability rejection on V100 and a 1.263% maximum cursor-25 update-to-initial-trainable-norm ratio.",
+        "No optimizer candidate is trained to cursor 150 locally; no V100 timing/VRAM is measured."
+      ]
+    },
+    "source_commit": {
+      "sha": "408bdf4c991a64d6ef61185ce71dedfad6b67945",
+      "base": "61837e4346ecaf46247572df24e3f2b757a7b415",
+      "scope": "19 MOO implementation/test Python files; report artifacts tracked separately"
+    },
+    "cursor25_optimizer_scf_routes": {
+      "radamw": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\scf_radamw_control_cursor25.json",
+        "sha256": "5e4a1ebe7acd41dd04949e4c74182e140f32fc902a90e85b373b5da771bee00e",
+        "systems": {
+          "H2": [
+            -1.181792775,
+            5
+          ],
+          "BeH2": [
+            -15.936697375,
+            7
+          ],
+          "CO": [
+            -113.512962191,
+            10
+          ]
+        },
+        "finite": true,
+        "vtau_zero": true,
+        "tau_independent": true
+      },
+      "muon": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\scf_muon_cursor25.json",
+        "sha256": "27c844367cd209e6275fb99b6f52e1adf7dbce41df1415810f7592a0a93e65f9",
+        "systems": {
+          "H2": [
+            -1.174942185,
+            5
+          ],
+          "BeH2": [
+            -15.886587609,
+            10
+          ],
+          "CO": [
+            -113.350592993,
+            9
+          ]
+        },
+        "finite": true,
+        "vtau_zero": true,
+        "tau_independent": true
+      }
+    },
+    "recommended_scoped_v100_pilot_command": {
+      "description": "Linux two-rank template for the next scoped diagnostic. Set READWFN_ROOT to the verified mirrored data root on the target and RUN_OUTPUT_DIR to a new external path. Not a run receipt.",
+      "bash": "torchrun --standalone --nproc_per_node=2 train_models/train_lap_moo.py --predopt-checkpoint \"$READWFN_ROOT/lap_operator_runs_20261001/predopt_fgpu_20261001T192623/lap_pbe_predopt.pt\" --minnesota-store-manifest \"$READWFN_ROOT/lap_moo_runs_20261001/mn_group_store_268/manifest.json\" --central-data-dir \"$READWFN_ROOT/lap_operator_runs_20261001/all90\" --ao-cache-dir \"$READWFN_ROOT/lap_moo_runs_20261001/mrks_15system_ao_cache\" --panel-definition \"$READWFN_ROOT/lap_moo_runs_20261001/panel_definition.json\" --sampling-manifest \"$READWFN_ROOT/lap_moo_runs_20261001/raw_gradient_survey_20261001T/sampling_manifest.json\" --output-dir \"$RUN_OUTPUT_DIR\" --method nash_mtl --optimizer-family radamw --learning-rate 0.01 --updates 150 --stop-after 150 --seed 41 --dtype float32 --device auto --point-chunk-size 256 --ao-cache-chunk-size 4096",
+      "local_windows_data_root": "C:\\Dev\\readWFN_share_ms"
+    },
+    "repository_results_snapshot_note": "This protocol hashes the final results file; the results file does not contain a self-hash.",
+    "current_result_snapshot_policy": "This protocol records the final report and results SHA-256 values; neither artifact contains a self-hash."
+  },
+  "sampling": {
+    "catalog_reaction_cycle_length": 27,
+    "mRKS_sample_counts": {
+      "AlBeH": 1,
+      "BH": 2,
+      "BeH2": 2,
+      "C2H2_iso2": 2,
+      "CH2O": 2,
+      "CH4": 2,
+      "CO": 2,
+      "ClH": 2,
+      "ClHS": 2,
+      "H2": 1,
+      "H2O": 2,
+      "H4Si": 2,
+      "HLi": 2,
+      "HPSi_iso2": 1,
+      "N2": 2
+    },
+    "mRKS_systems": [
+      "AlBeH",
+      "BH",
+      "BeH2",
+      "C2H2_iso2",
+      "CH2O",
+      "CH4",
+      "CO",
+      "ClH",
+      "ClHS",
+      "H2",
+      "H2O",
+      "H4Si",
+      "HLi",
+      "HPSi_iso2",
+      "N2"
+    ],
+    "manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+    "samples_each_database": {
+      "ABDE4": 3,
+      "AE17": 3,
+      "DBH76": 3,
+      "EA13": 3,
+      "IP13": 3,
+      "MGAE109": 3,
+      "NCCE31": 3,
+      "PA8": 3,
+      "pTC13": 3
+    },
+    "schedule": "Deterministic cycle over the frozen 27-reaction calibration panel and 15-system mRKS panel.",
+    "schema": "lap-moo-sampling-manifest-v1",
+    "seed": 41,
+    "survey_samples": 27,
+    "system_cycle_length": 15,
+    "variant_policy": "One seeded augmentation variant per reaction per reaction cycle; source panel retains all eight variants.",
+    "world_size": 1
+  },
+  "schema": "lap-moo-study-protocol-v3",
+  "scope_limits": [
+    "F1/F2 used constant rates despite cosine metadata and are excluded from method and learning-rate selection.",
+    "The cursor-100 Gate-3 panel contains 27 training-stream identities from one seed; it is descriptive evidence, not held-out generalization or statistical significance.",
+    "Four method-screen checkpoints contain 100/150 updates and optimizer diagnostics contain 25/150; the scoped pilot is explicitly budgeted for 150 cosine updates.",
+    "The AO cache and diagnostic stream cover 15 systems; the immutable central operator corpus covers 90. A 15-system pilot is supported; all-90 AO-factor coverage is not claimed.",
+    "No 2xV100 performance or VRAM estimate is supported by the RTX 5070 Ti timing. Target-hardware measurement belongs in the pilot.",
+    "The cursor-25 optimizer comparison is complete. Muon is not selected for the first V100 pilot because the native Muon factory rejects V100 compute capability 7.0; RAdamW is recommended for the scoped run.",
+    "Historical v1 run metadata omit AO cache chunk size; v2 metadata hardening applies prospectively and does not change historical run hashes.",
+    "The AdamW 3e-4 two-step preflight used AO-cache chunk 4096 and point chunk 256 but had v1 metadata; it is not counted as v2 validation.",
+    "Historical v1 Gate-3 metadata omits AO-cache chunk size and retains its exact hash. Prospective v2 requires and binds this field; four two-step calibration runs demonstrate v2 launch on the preserved frozen sampling-manifest hash. The matched cursor-25 optimizer comparison is recorded under results_artifacts.optimizer_cursor25_comparison."
+  ],
+  "source_provenance": {
+    "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "central_operator_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "minnesota_group_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "mrks_dispersions_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+    "reaction_dispersions_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927"
+  },
+  "survey_scope": "paired pre-training raw-gradient geometry; no optimizer updates",
+  "status": "Ready for a scoped 15-system 2xV100 diagnostic pilot: Nash-MTL/RAdamW 1e-2, 150 cosine updates; no all-90 AO or superiority claim.",
+  "execution_fidelity_review": {
+    "pre_fix_source_hashes_used_by_f1_f2": {
+      "train_models/train_lap_moo.py": "427ec1e655c593ad31052f2c5ccdb0fe27ae3774e7b5db3bf251e8e93eb1cefa",
+      "train_models/lap_moo_training.py": "cef616238faaaedf56c2d9b5e3d6260c2a853fd055530061f30b13c6bb26bcdc"
+    },
+    "corrected_source_hashes": {
+      "train_models/train_lap_moo.py": "1204e2c255848ae0d97eeb2a42ec29d5553e866fb512181a07fc8002d2d0fb0c",
+      "train_models/lap_moo_training.py": "2e70d39c7bc1284236213c6700d84bfc13fd50f5eef14fcbc168b1290244f77c",
+      "train_models/test_lap_moo_training.py": "15338f168761861619a27e26b9493222c88f568aa1d01625f9d568e91864382a",
+      "train_models/lap_moo_protocol.py": "f32317793b82f16facbae60ab70efc6998172fc85a3f8e1be0c8b00af941bb2b"
+    },
+    "observed_issue": "Pre-fix CLI omitted the scheduler in its train_moo_update call. All logged F1/F2 learning_rate_for_next_update values stayed constant.",
+    "validity": "F1/F2 are constant-rate diagnostics only; exclude from final method and LR selection.",
+    "f1_index": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f1_20261002\\f1_runs.json",
+      "sha256": "4dc08bed6674bce7c8940663f228b06285fa25b27a88de4daa9661185ab34602"
+    },
+    "f1_full27_panel": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f1_20261002\\f1_full27_fixed_panel_diagnostics.json",
+      "sha256": "2166b9a28300acda801e1a807d98f3b2203ff1e2561dfb4bc06e16a0556b6d5f"
+    },
+    "f1_cagrad_retry": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f1_20261002\\cagrad_lr1em7_full27_diagnostics.json",
+      "sha256": "a66452548e2ba2b87cf52648668894bcf543078140bf538d629fe147a55ceb74"
+    },
+    "f2_index": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_20261002\\f2_runs.json",
+      "sha256": "972e6c7516a7a4662a4d575b467804154588f5cd8b0dc0278f5857005b3f2e3e"
+    },
+    "nash_failures": [
+      {
+        "stage": "F1",
+        "lr": 0.01,
+        "attempted_update": 8,
+        "iterations": 100,
+        "residual": 9.621e-10,
+        "tolerance": 1e-10,
+        "fallback": false
+      },
+      {
+        "stage": "F1_retry/F2",
+        "lr": 0.001,
+        "f1_checkpoint_sha256": "e80025e91c314920caab526dce1970e00adda88b1fae55afa877f31652108be7",
+        "failed_attempted_update": 27,
+        "iterations": 100,
+        "residual": 6.004e-08,
+        "tolerance": 1e-10,
+        "checkpoint_unchanged": true,
+        "fallback": false,
+        "failing_sample": {
+          "database": "PA8",
+          "reaction_id": 0,
+          "variant_suffix": "level3_gauss_chebyshev",
+          "mrks_system": "AlBeH"
+        },
+        "cause": "unclassified; no failed-update gradients or Gram matrix were logged",
+        "f2_latest_checkpoint_is_f1_retry_checkpoint": true,
+        "f2_run_summary_is_stale": true
+      }
+    ],
+    "corrected_rerun_status": "fixed/CAGrad/IMTL-G completed finite cursor-25 screens; Nash-MTL’s corrected CUDA Armijo potential-delta solver fix and captured-failure replay pass strict tolerance; fixed panel and rate-gated restart are pending",
+    "nash_failure_artifact_note": "F2 log reaches update indices 0-26, but latest.pt is byte-identical to the F1 cursor-25 retry checkpoint and run_summary.json still says 25 updates. Treat no checkpoint as existing after failed update 27.",
+    "scheduler_fix_initial_source_sha256": "2c519563eaf74ffedef6237ded156bee3a16afcecc9a388ac68da645d109c25e"
+  },
+  "corrected_resume_cli_template": "Repeat the same protocol arguments with --stop-after 100 --resume <checkpoint-at-update-25>; keep --updates 150 and verify logged learning_rate_for_next_update changes according to cosine.",
+  "verification": {
+    "focused_post_fix_training": {
+      "windows": "python -m pytest train_models/test_lap_moo_training.py -q: 12 passed, 1 skipped; 3.64 s",
+      "wsl": "python -m pytest train_models/test_lap_moo_training.py -q: 11 passed, 2 skipped; 7.97 s; CPU two-rank Gloo passed"
+    },
+    "pre_fix_windows_new_suite": {
+      "python": "C:\\Users\\schne\\miniconda3\\envs\\libxc\\python.exe",
+      "environment": "PYTHONPATH=train_models; MKL_THREADING_LAYER=SEQUENTIAL; OMP_NUM_THREADS=1",
+      "command": "C:\\Users\\schne\\miniconda3\\envs\\libxc\\python.exe -m pytest train_models/test_moo_aggregators.py train_models/test_moo_aggregators_independent.py train_models/test_lap_moo_training.py train_models/test_lap_moo_panel.py train_models/test_lap_moo_analysis.py train_models/test_lap_moo_benchmark.py -q",
+      "result": "50 passed, 1 skipped; predates scheduler fix"
+    },
+    "windows_historical_suite": {
+      "python": "C:\\Users\\schne\\miniconda3\\envs\\libxc\\python.exe",
+      "environment": "PYTHONPATH=train_models; MKL_THREADING_LAYER=SEQUENTIAL; OMP_NUM_THREADS=1",
+      "command": "C:\\Users\\schne\\miniconda3\\envs\\libxc\\python.exe -m pytest train_models/test_lap.py train_models/test_lap_s5_training.py train_models/test_lap_s5_runner.py train_models/test_lap_s5_provenance.py train_models/test_lap_s5_protocol.py train_models/test_s5_timing_presets.py train_models/test_lap_operator_unit.py train_models/test_lap_operator_data.py train_models/test_lap_operator_validation.py train_models/test_lap_operator_pilot.py -q",
+      "result": "110 passed, 1 skipped"
+    },
+    "pre_fix_wsl_suite": "6 new MOO plus operator unit/validation and Lap SCF: 66 passed, 2 skipped; exact command recorded in results JSON",
+    "post_fix_full_suite": {
+      "source_commit": "408bdf4c991a64d6ef61185ce71dedfad6b67945",
+      "windows": "185 passed, 4 platform/CUDA skips; visible-device CUDA RNG restore separately passed 1 test",
+      "wsl": "93 passed, 2 CUDA-only skips; CPU two-rank Gloo passed",
+      "ruff": "passed",
+      "compileall": "passed",
+      "staged_diff_check": "passed",
+      "note": "Historical test stub leakage/zero-visible-device detection was test isolation/environment handling, not a production math defect."
+    },
+    "static_checks": "Ruff, compileall, and diff check passed in the optimizer implementation review; focused Windows training/protocol tests 14 passed/1 CUDA-only skip. Final full cross-platform rerun remains pending.",
+    "post_fix_focused_training_tests": {
+      "windows_python": "C:\\Users\\schne\\miniconda3\\envs\\libxc\\python.exe",
+      "windows_command": "C:\\Users\\schne\\miniconda3\\envs\\libxc\\python.exe -m pytest train_models/test_lap_moo_training.py -q",
+      "windows_env": "PYTHONPATH=train_models; MKL_THREADING_LAYER=SEQUENTIAL; OMP_NUM_THREADS=1",
+      "windows_result": "12 passed, 1 skipped (Linux-only Gloo), 3.64 s",
+      "wsl_python": "/home/schneidermu/.cache/pinn-lap-tests/bin/python",
+      "wsl_command": "/home/schneidermu/.cache/pinn-lap-tests/bin/python -m pytest train_models/test_lap_moo_training.py -q",
+      "wsl_env": "PYTHONPATH=train_models; OMP_NUM_THREADS=1",
+      "wsl_result": "11 passed, 2 skipped (CUDA-only), 7.97 s; CPU two-rank Gloo passed"
+    },
+    "pre_fix_wsl_new_operator_suite": {
+      "python": "/home/schneidermu/.cache/pinn-lap-tests/bin/python",
+      "environment": "PYTHONPATH=train_models; OMP_NUM_THREADS=1",
+      "command": "/home/schneidermu/.cache/pinn-lap-tests/bin/python -m pytest train_models/test_moo_aggregators.py train_models/test_moo_aggregators_independent.py train_models/test_lap_moo_training.py train_models/test_lap_moo_panel.py train_models/test_lap_moo_analysis.py train_models/test_lap_moo_benchmark.py train_models/test_lap_operator_unit.py train_models/test_lap_operator_validation.py train_models/test_lap_scf.py -q",
+      "result": "66 passed, 2 skipped; predates scheduler fix"
+    },
+    "nash_armijo_solver_fix": {
+      "source_hashes": {
+        "train_models/moo_aggregators.py": "fca5fee863dbbab183c61da2ef76b5d9de68c079a17c277141c4b00ca8b2027b",
+        "train_models/test_moo_aggregators_independent.py": "a412e1095193f54ce3a1e2011b8d218179f65ea4ddb8867017673b566a2083ea"
+      },
+      "focused_tests": {
+        "windows": "27 passed",
+        "wsl": "27 passed",
+        "ruff": "passed",
+        "compileall": "passed"
+      },
+      "captured_cuda_replay": "10 Newton iterations; residual 3.33e-16; coefficients [2.673772265e-4, 3.332773612e-5, 5.551655704]",
+      "strict_tolerance": 1e-10,
+      "full_combined_post_fix_suite": "pending"
+    },
+    "post_fix_windows_new_suite": {
+      "command": "python -m pytest train_models/test_moo_aggregators.py train_models/test_moo_aggregators_independent.py train_models/test_lap_moo_training.py train_models/test_lap_moo_panel.py train_models/test_lap_moo_analysis.py train_models/test_lap_moo_benchmark.py -q",
+      "result": "52 passed, 1 skipped (Linux-only Gloo)"
+    },
+    "post_fix_wsl_moo_operator_scf_suite": {
+      "command": "python -m pytest train_models/test_moo_aggregators.py train_models/test_moo_aggregators_independent.py train_models/test_lap_moo_training.py train_models/test_lap_moo_panel.py train_models/test_lap_moo_analysis.py train_models/test_lap_moo_benchmark.py train_models/test_lap_operator_unit.py train_models/test_lap_operator_validation.py train_models/test_lap_scf.py -q",
+      "result": "68 passed, 2 skipped (CUDA-only); CPU two-rank Gloo passed; 15.8 s"
+    },
+    "runtime_observation": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\f2_cosine_20261002\\runtime_telemetry_fixed_progress.json",
+      "sha256": "6c043122d88e67006591508284ad659493707933a047539d6fad8133c924a981",
+      "observed_at_utc": "2026-10-02T06:15:27.1262070Z",
+      "method": "fixed",
+      "latest_logged_update": 84,
+      "logged_step_seconds": 16.4415337999817,
+      "gpu": "NVIDIA GeForce RTX 5070 Ti, cuda:0",
+      "cuda_memory_from_training_row": {
+        "peak_allocated_gib": 3.6902236938476562,
+        "peak_reserved_gib": 26.353515625,
+        "reported_total_gib": 15.92047119140625,
+        "allocated_bytes": 247885312
+      },
+      "nvidia_smi": {
+        "utilization": "27 %",
+        "total": "16303 MiB",
+        "used": "15931 MiB",
+        "free": "65 MiB"
+      },
+      "host": {
+        "free_physical_mib": 3237.7,
+        "total_physical_mib": 31653.4,
+        "process_private_gib": 30.152774810791016,
+        "process_working_set_gib": 11.326282501220703,
+        "process_page_faults": 27206619
+      },
+      "interpretation": "single RTX 5070 Ti observation with WDDM/host memory pressure; not a V100 runtime/capacity estimate"
+    },
+    "post_fix_full_combined_rerun": "Windows 185 passed/4 platform-CUDA skips plus separate visible-device CUDA RNG restore pass; WSL 93 passed/2 CUDA-only skips including CPU two-rank Gloo; Ruff, compileall and staged diff clean.",
+    "v2_sampling_version_regression": {
+      "test_file": "train_models/test_lap_moo_training.py",
+      "result": "14 passed, 1 CUDA-only skip",
+      "invariant": "SAMPLING_PROTOCOL_VERSION remains v1 for frozen stream seed derivation while checkpoint metadata is v2",
+      "expected_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+      "end_to_end_v2_cli_launch": "four cursor-2 optimizer calibration runs completed successfully; matched 25-update comparison pending"
+    },
+    "optimizer_cursor25_panels": {
+      "status": "all three complete",
+      "panels": {
+        "radamw": {
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_radamw_control.json",
+          "sha256": "7996b706dbab7303a31e761f7892666506e9fe259824d80fb039a429b2695253"
+        },
+        "adamw": {
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_adamw_lr1e-3.json",
+          "sha256": "815c8163bd79d8a88367182ad9eba7ebe0ebd978cb7fe8b9bdbb9b9ecbdeeb03"
+        },
+        "muon": {
+          "path": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\optimizer_study_20261002\\matched_cursor25_panel_muon_lr2e-2.json",
+          "sha256": "640394b9b95c208e40cbb172e9d7f0dc0f295828f102ccedd148d95a0960312f"
+        }
+      }
+    }
+  },
+  "corrected_screen_cli_template_nonfixed": "python train_models/train_lap_moo.py --predopt-checkpoint C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt --minnesota-store-manifest C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json --central-data-dir C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90 --ao-cache-dir C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache --panel-definition C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\panel_definition.json --sampling-manifest C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json --output-dir <new-external-dir> --method <fixed|imtl_g|cagrad|nash_mtl> --updates 150 --stop-after 25 --seed 41 --learning-rate <candidate> --dtype float32 --device cuda:0 --point-chunk-size 256 --ao-cache-chunk-size 4096",
+  "corrected_fixed_cli_template": "python train_models/train_lap_moo.py --predopt-checkpoint C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt --minnesota-store-manifest C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json --central-data-dir C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90 --ao-cache-dir C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache --panel-definition C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\panel_definition.json --sampling-manifest C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json --output-dir <new-external-dir> --method <fixed|imtl_g|cagrad|nash_mtl> --updates 150 --stop-after 25 --seed 41 --learning-rate <candidate> --dtype float32 --device cuda:0 --point-chunk-size 256 --ao-cache-chunk-size 4096 --fixed-calibration-report C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\fixed_calibration.json",
+  "corrected_screen_cli_template_note": "The non-fixed template is used for IMTL-G/CAGrad/Nash-MTL; fixed scalarization must add the hash-verified fixed_calibration.json argument shown above. Replace output/method/rate placeholders; do not resume F1/F2 checkpoints.",
+  "pilot_readiness": {
+    "ready_for_scoped_pilot": true,
+    "method": "nash_mtl",
+    "optimizer": "RAdamW",
+    "learning_rate": 0.01,
+    "updates": 150,
+    "systems": 15,
+    "reactions": 27,
+    "status": "ready for diagnostic 2xV100 run, not full-90 AO coverage or a superiority result",
+    "blockers": [],
+    "pilot_measurements": [
+      "target V100 runtime and VRAM"
+    ],
+    "limitations": [
+      "one seed and training data only",
+      "no local 150-update run; existing method/optimizer screens are 100/150 and 25/150",
+      "Native Muon rejected on V100 by the capability guard and Muon is not selected for the first target run"
+    ]
+  },
+  "source_commit": "408bdf4c991a64d6ef61185ce71dedfad6b67945"
+}
