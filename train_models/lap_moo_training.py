@@ -739,6 +739,10 @@ def load_moo_checkpoint(
     states = payload.get("rng_states_by_rank")
     if not isinstance(states, (list, tuple)):
         raise TypeError("Checkpoint per-rank RNG states must be a list or tuple.")
+    if metadata.get("method") == "pcd" and len(states) != metadata["world_size"]:
+        raise ValueError(
+            "PCD checkpoint per-rank RNG state count does not match its protocol world size."
+        )
     for state in states:
         _validate_rng_state(state)
     rank = dist.get_rank() if dist.is_available() and dist.is_initialized() else 0

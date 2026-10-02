@@ -20,6 +20,7 @@ for _path in (str(REPO_ROOT), str(TRAIN_MODELS)):
     if _path not in sys.path:
         sys.path.insert(0, _path)
 
+import lap_moo_training as _lap_moo_training
 import optuna_joint as _REAL_OPTUNA_JOINT
 from lap_moo_protocol import (
     LEGACY_READ_ONLY_PROTOCOL_VERSION,
@@ -227,6 +228,19 @@ def _assert_tree_equal(actual, expected):
             _assert_tree_equal(left, right)
     else:
         assert actual == expected
+
+
+def _assert_rng_state_equal(actual, expected):
+    assert actual["python"] == expected["python"]
+    actual_numpy = actual["numpy"]
+    expected_numpy = expected["numpy"]
+    assert actual_numpy[0] == expected_numpy[0]
+    np.testing.assert_array_equal(actual_numpy[1], expected_numpy[1])
+    assert actual_numpy[2:] == expected_numpy[2:]
+    torch.testing.assert_close(actual["torch_cpu"], expected["torch_cpu"], rtol=0, atol=0)
+    assert len(actual["torch_cuda"]) == len(expected["torch_cuda"])
+    for actual_state, expected_state in zip(actual["torch_cuda"], expected["torch_cuda"]):
+        torch.testing.assert_close(actual_state, expected_state, rtol=0, atol=0)
 
 
 def _pcd_factories(model, *, step=0, rank=0):
@@ -988,7 +1002,7 @@ def test_pcd_checkpoint_resume_is_exact_and_rejects_bad_state_before_mutation(tm
     bad_rng_payload["rng_states_by_rank"] = []
     bad_rng = tmp_path / "pcd_missing_rng.pt"
     torch.save(bad_rng_payload, bad_rng)
-    with pytest.raises(ValueError, match="RNG state for this rank"):
+    with pytest.raises(ValueError, match="PCD checkpoint per-rank RNG state count"):
         load_moo_checkpoint(
             bad_rng,
             model=sentinel,
@@ -1000,6 +1014,89 @@ def test_pcd_checkpoint_resume_is_exact_and_rejects_bad_state_before_mutation(tm
         )
     _assert_tree_equal(sentinel.state_dict(), before_model)
     assert random.getstate() == before_rng
+
+
+@pytest.mark.parametrize("rank", [0, 1])
+@pytest.mark.parametrize("rng_state_count", [1, 3])
+def test_pcd_checkpoint_requires_exact_rank_rng_cardinality_before_mutation(
+    tmp_path, monkeypatch, rank, rng_state_count
+):
+    grouped = _small_grouped()
+    single_rank_manifest = build_sampling_manifest(
+        grouped, ["H2"], updates=4, seed=41, source_hashes=_hashes(), world_size=1
+    )
+    single_rank_metadata = _pcd_metadata(single_rank_manifest["manifest_sha256"])
+    source_model = _CheckpointModel()
+    source_optimizer = torch.optim.AdamW(source_model.parameters(), lr=0.003)
+    source_scheduler = make_cosine_scheduler(source_optimizer, total_updates=4)
+    source_loss = source_model(torch.tensor([[2.0, -1.0]], dtype=torch.float64)).square().sum()
+    source_loss.backward()
+    source_optimizer.step()
+    checkpoint = tmp_path / "pcd_rank_rng_cardinality.pt"
+    save_moo_checkpoint(
+        checkpoint,
+        model=source_model,
+        optimizer=source_optimizer,
+        scheduler=source_scheduler,
+        protocol_metadata=single_rank_metadata,
+        sampling_manifest=single_rank_manifest,
+        next_update=0,
+        aggregator_state=None,
+    )
+
+    two_rank_manifest = build_sampling_manifest(
+        grouped, ["H2"], updates=4, seed=41, source_hashes=_hashes(), world_size=2
+    )
+    two_rank_metadata = _pcd_metadata(
+        two_rank_manifest["manifest_sha256"], world_size=2
+    )
+    payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    valid_rng_state = payload["rng_states_by_rank"][0]
+    payload["protocol_metadata"] = two_rank_metadata
+    payload["protocol_metadata_sha256"] = canonical_sha256(two_rank_metadata)
+    payload["sampling_cursor"] = {
+        "sampling_manifest_sha256": two_rank_manifest["manifest_sha256"],
+        "next_update": 0,
+    }
+    payload["rng_states_by_rank"] = [
+        copy.deepcopy(valid_rng_state) for _ in range(rng_state_count)
+    ]
+    torch.save(payload, checkpoint)
+
+    sentinel_model = _CheckpointModel()
+    with torch.no_grad():
+        sentinel_model.linear.weight.fill_(123.0)
+        sentinel_model.linear.bias.fill_(-456.0)
+    sentinel_optimizer = torch.optim.AdamW(sentinel_model.parameters(), lr=0.007)
+    sentinel_scheduler = make_cosine_scheduler(sentinel_optimizer, total_updates=4)
+    sentinel_loss = sentinel_model(torch.tensor([[-1.0, 3.0]], dtype=torch.float64)).square().sum()
+    sentinel_loss.backward()
+    sentinel_optimizer.step()
+    sentinel_scheduler.step()
+    before_model = copy.deepcopy(sentinel_model.state_dict())
+    before_optimizer = copy.deepcopy(sentinel_optimizer.state_dict())
+    before_scheduler = copy.deepcopy(sentinel_scheduler.state_dict())
+    before_rng = _lap_moo_training.capture_rng_state()
+
+    monkeypatch.setattr(_lap_moo_training.dist, "is_available", lambda: True)
+    monkeypatch.setattr(_lap_moo_training.dist, "is_initialized", lambda: True)
+    monkeypatch.setattr(_lap_moo_training.dist, "get_world_size", lambda: 2)
+    monkeypatch.setattr(_lap_moo_training.dist, "get_rank", lambda: rank)
+    with pytest.raises(ValueError, match="PCD checkpoint per-rank RNG state count"):
+        load_moo_checkpoint(
+            checkpoint,
+            model=sentinel_model,
+            optimizer=sentinel_optimizer,
+            scheduler=sentinel_scheduler,
+            expected_protocol_metadata=two_rank_metadata,
+            sampling_manifest=two_rank_manifest,
+            restore_rng=True,
+        )
+
+    _assert_tree_equal(sentinel_model.state_dict(), before_model)
+    _assert_tree_equal(sentinel_optimizer.state_dict(), before_optimizer)
+    assert sentinel_scheduler.state_dict() == before_scheduler
+    _assert_rng_state_equal(_lap_moo_training.capture_rng_state(), before_rng)
 
 
 @pytest.mark.skipif(not _has_visible_cuda_device(), reason="CUDA checkpoint restoration requires a visible CUDA device")
