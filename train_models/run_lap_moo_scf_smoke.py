@@ -371,7 +371,7 @@ def main() -> int:
     parser.add_argument("--checkpoint", required=True, type=Path)
     parser.add_argument("--checkpoint-sha256", required=True)
     parser.add_argument(
-        "--method", required=True, choices=("fixed", "imtl_g", "cagrad", "nash_mtl")
+        "--method", required=True, choices=("fixed", "imtl_g", "cagrad", "nash_mtl", "pcd")
     )
     parser.add_argument(
         "--expected-cursor",

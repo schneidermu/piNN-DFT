@@ -15,6 +15,7 @@ for _path in (str(REPO_ROOT), str(TRAIN_MODELS)):
     if _path not in sys.path:
         sys.path.insert(0, _path)
 
+import run_lap_moo_scf_smoke as _scf_smoke
 from lap_moo_protocol import (
     LEGACY_READ_ONLY_PROTOCOL_VERSION,
     build_sampling_manifest,
@@ -269,3 +270,40 @@ def test_shorter_optimizer_pilot_requires_explicit_expected_cursor(tmp_path):
     assert metadata["checkpoint_cursor"] == metadata["expected_cursor"] == 25
     assert metadata["scheduler_last_epoch"] == 25
     assert metadata["scheduler_step_count"] == 26
+
+
+def test_scf_smoke_cli_accepts_pcd_checkpoint_method(tmp_path, monkeypatch):
+    class _ReachedAfterParse(Exception):
+        pass
+
+    checkpoint = tmp_path / "pcd-cursor25.pt"
+    npz_root = tmp_path / "npz"
+    output = tmp_path / "scf.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_lap_moo_scf_smoke.py",
+            "--checkpoint",
+            str(checkpoint),
+            "--checkpoint-sha256",
+            "a" * 64,
+            "--method",
+            "pcd",
+            "--expected-cursor",
+            "25",
+            "--npz-root",
+            str(npz_root),
+            "--output",
+            str(output),
+        ],
+    )
+
+    def stop_after_parse(path, label):
+        assert Path(path) == checkpoint
+        assert label == "MOO checkpoint"
+        raise _ReachedAfterParse
+
+    monkeypatch.setattr(_scf_smoke, "_require_external", stop_after_parse)
+    with pytest.raises(_ReachedAfterParse):
+        _scf_smoke.main()
