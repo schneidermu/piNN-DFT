@@ -1,0 +1,279 @@
+{
+  "acceptance_capture": {
+    "arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+    "full_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+    "receipt_sha256": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8",
+    "rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "cursor": true,
+      "ema": true,
+      "mode": true,
+      "model32_and_buffers": true,
+      "model64_and_buffers": true,
+      "rng_full_state": true
+    },
+    "runtime_caller_restored": true,
+    "schema": "lap-chem-precision-trace-full-v2",
+    "status": "complete_production_capture"
+  },
+  "independent_review": {
+    "classification": "Frozen-sample chemistry-path precision failure: F32 model/local-energy evaluation reverses the matched-F64 descent sign; F32 XC/HF/D3 component assembly produces the production sign flip.",
+    "final_sentence": "The chemistry signal is already lost in float32 model/local-energy evaluation; the next experiment is a double-precision chemistry-forward Armijo replay.",
+    "sha256": "9f917f483d7003e6194d75fcb0e0862d9a97456e1660f0d31791ab60a6b89774",
+    "status": "review_approved"
+  },
+  "operation_diagnostics": {
+    "receipt_sha256": "b31007d350b0eaf8b330093e417df693f004f288eb71ec7b18177c138fc87529",
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0
+    },
+    "schema": "lap-chem-precision-operation-diagnostics-v3",
+    "sha256": "e3e23f5143434edd0779f42641aacef9607e6c0b361523bc9fdca7dbf9cc9009",
+    "status": "complete",
+    "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+    "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2"
+  },
+  "paired_delta_diagnostic": {
+    "identity": {
+      "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+      "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+      "trace_receipt_sha256": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8"
+    },
+    "receipt_sha256": "fc22d70f8f4b3216257fa70742d46e76dfbf1772136d9c77dcbe14335e252871",
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0
+    },
+    "schema": "lap-chem-precision-paired-delta-v1",
+    "sha256": "e12ef979572bfe68dc002caadb3e1344c93b62e579b7e609b2f24a37eea99d2a",
+    "status": "complete_array_only_diagnostic"
+  },
+  "predeclared_protocol": {
+    "additional_parameter_states_allowed": false,
+    "analysis_head": "fd65500da7d8a34a9106b2405ad14468a62228d8",
+    "branch": "lap_full_vxc",
+    "frozen_structure": {
+      "dispersion": {
+        "by_component": {
+          "NH3-NH3_ncce31": -0.00192936,
+          "NH3_ncce31": -0.0005886
+        },
+        "file_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+        "integration_behavior": "In-place energy += constructed dispersion tensor retains requested accumulator dtype.",
+        "source_dtype": "numpy.float64",
+        "unit": "hartree"
+      },
+      "fchem_weight_path": {
+        "MEAN_WEIGHT": 0.11136325384169465,
+        "batch_fchem_argument": "reaction.Database passed unchanged",
+        "formula": "factor * sqrt(1e-20 + MSE), then sum database values / database count",
+        "listed_NCCE31_factor_if_passed_as_list": 2.896652477664184,
+        "reaction_Database_value": "NCCE31",
+        "single_row_zip_key": "N",
+        "unknown_database_fallback_factor": 8.979622680758972,
+        "value_type": "scalar string"
+      },
+      "frozen_state": {
+        "base_state": {
+          "bytes_sha256": "750ac52a10dc2a6ea319b9ef02b8c2fb1dd8eafd9481300be52de2d25fb36e08",
+          "dtype": "float32",
+          "key": "baseflat32",
+          "shape": [
+            9446
+          ]
+        },
+        "candidate_state": {
+          "bytes_sha256": "cf65691418ce4cbe88f143ec2aa786db884a4d34515b271b571f0c3d328c51d6",
+          "dtype": "float32",
+          "key": "candidate_t_2m15",
+          "shape": [
+            9446
+          ],
+          "t": 3.0517578125e-05
+        },
+        "capture_json_sha256": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+        "capture_npz_sha256": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+        "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+        "materialized_loaded_f32_inputs_sha256": "32f8dc30616f00f84fea675258e577083297dd5e101e1c6aa7efc3b7406f08ad",
+        "materialized_model_state_sha256": "3662f4df9a2ebde9853d95f0b6819c402830b3a35e9bc27902bb40ec57240b74",
+        "precision_scope": "Exact F32 post-update parameters and the same F32-loaded inputs widened for matched F64 objective arithmetic; not native-F64 sources or recomputed gradients.",
+        "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "protocol_metadata_sha256": "26f710fe7c00423a389d5a4416560faf4333b6e9f6f9daac5688b14bfff7fb67",
+        "raw_task_gradient_npz_sha256": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+        "reaction_payload_sha256": "98f90f0ca7cfd5f32017cc55a9a816f2e547da2df5de9c062f2d3e2984e130fa",
+        "sampling_manifest_sha256": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df"
+      },
+      "reaction": {
+        "backsplit_ind": [
+          52488,
+          78736
+        ],
+        "backsplit_ind_source_dtype": "torch.float32",
+        "coefficients": {
+          "source_dtype": "torch.float32",
+          "values": [
+            -1.0,
+            2.0
+          ]
+        },
+        "component_point_counts": [
+          52488,
+          26248
+        ],
+        "components_in_order": [
+          "NH3-NH3_ncce31",
+          "NH3_ncce31"
+        ],
+        "hf_energies_hartree": {
+          "source_dtype": "torch.float32",
+          "values": [
+            -97.13409423828125,
+            -48.567176818847656
+          ]
+        },
+        "reaction_indices": {
+          "fallback_from_code": [
+            0,
+            2
+          ],
+          "stored": false
+        },
+        "reaction_target_kcal_per_mol": {
+          "source_dtype": "torch.float32",
+          "values": [
+            3.1500000953674316
+          ]
+        },
+        "source_tensor_fields": {
+          "Densities": {
+            "dtype": "torch.float32",
+            "shape": [
+              78736,
+              2
+            ]
+          },
+          "Gradients": {
+            "dtype": "torch.float32",
+            "shape": [
+              78736,
+              3
+            ]
+          },
+          "Grid": {
+            "dtype": "torch.float32",
+            "shape": [
+              78736,
+              9
+            ]
+          },
+          "Weights": {
+            "dtype": "torch.float32",
+            "shape": [
+              78736
+            ]
+          }
+        }
+      },
+      "reaction_store": {
+        "canonical_group_point_count": 81328,
+        "component_paths": [
+          "data/NH3-NH3_ncce31__level2_mura.h5",
+          "data/NH3_ncce31__level2_mura.h5"
+        ],
+        "group_file": "groups/group_206_key_219_NCCE31_0.pickle",
+        "group_file_bytes": 54592280,
+        "group_file_sha256": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+        "group_source_key": 219,
+        "loader": "MinnesotaGroupStore.load_variant(('NCCE31', 0), 'level2_mura')",
+        "manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+        "selected_variant_point_count": 78736,
+        "variant_count": 8
+      },
+      "repository": {
+        "audit_source_revision": "79f89dda4c9b1ce7bcfdec609774bb005b3c3080",
+        "branch": "lap_full_vxc",
+        "head": "fd65500da7d8a34a9106b2405ad14468a62228d8",
+        "relevant_loss_module_diff_from_audit_revision_to_head": false
+      },
+      "sample": {
+        "cursor": 2,
+        "database": "NCCE31",
+        "mrks_system": "BH",
+        "rank": 0,
+        "reaction_id": 0,
+        "variant": "level2_mura"
+      },
+      "schema": "chem-precision-reaction-structure-v1",
+      "stored_chemistry_references": {
+        "F32": {
+          "base": 4.171715259552002,
+          "candidate": 4.214704513549805,
+          "delta_candidate_minus_base": 0.042989253997802734,
+          "eight_ulp_floor_at_base": 3.814697265625e-06,
+          "scalar_dtype": "torch.float32"
+        },
+        "matched_F64": {
+          "base": 4.189337818787933,
+          "candidate": 4.189335515742133,
+          "delta_candidate_minus_base": -2.3030457994011044e-06,
+          "delta_reproduction_abs_tolerance": 1e-10,
+          "eight_ulp_floor_at_base": 7.105427357601002e-15,
+          "scalar_dtype": "torch.float64"
+        }
+      }
+    },
+    "parameter_states": [
+      "baseflat32",
+      "candidate_t_2m15"
+    ],
+    "point_chunk": 256,
+    "precision_paths": [
+      "production-float32",
+      "matched-float64-on-same-source-values"
+    ],
+    "production_changes_allowed": false,
+    "reproduction": {
+      "float32": "exact preferred; fallback rtol=1e-6 atol=1e-8 must be labeled nonexact",
+      "matched_float64_delta_absolute_tolerance": 1e-10
+    },
+    "schema": "lap-chem-precision-trace-protocol-v1",
+    "seed": 41,
+    "shadow_acceptance": {
+      "armijo": "report frozen candidate margin using existing c,t,raw slope",
+      "closeness": "report continuous relative error, no posthoc binary cutoff",
+      "sign_floor": "8 upward float64 ULPs of base loss"
+    },
+    "shadow_boundaries": [
+      "after-component-totals",
+      "after-float32-xc-integral",
+      "before-xc-reduction",
+      "before-integrand-multiplication",
+      "after-float32-nn-adaptive-outputs-before-local-pbe",
+      "full-matched-float64-reference"
+    ],
+    "shadow_gradient_allowed": false,
+    "source_upgrade_allowed": false,
+    "status": "predeclared_pending_capture",
+    "training_allowed": false,
+    "world_size": 1
+  },
+  "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+  "prior_capture_caveat": "The first full capture is retained as provenance; its process ended nonzero in stale post-capture code. Acceptance uses the separate V2 capture and receipt.",
+  "schema": "lap-chem-precision-trace-final-protocol-v1",
+  "shadow_artifact": {
+    "receipt_sha256": "10b3408ca7d8e5b1b2d954fa8f5353525f452e26eb6be856005ea58d430678d6",
+    "sha256": "c89e7409665dbc8e0cd0087411222a7c5d8b82d29b047e2b599f9834b54dd463",
+    "status": "complete_shadow_evaluation"
+  },
+  "status": "complete"
+}

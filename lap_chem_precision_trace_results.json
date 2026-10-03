@@ -1,0 +1,3209 @@
+{
+  "capture_receipt": {
+    "arrays_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_trace_full_v2_arrays.npz",
+    "arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+    "caller_rng_full_state_restored": true,
+    "cuda_device_after": 0,
+    "cuda_device_before": 0,
+    "driver_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_trace_full_v2.py",
+    "driver_sha256": "90377a9ff71dfad92fb5b8b5228ee4a649f0f752fc09f24243fa99a5bfa27b34",
+    "input_sha256_end": {
+      "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\predeclared_protocol.json": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\groups\\group_206_key_219_NCCE31_0.pickle": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.json": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_receipt.json": "29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_trials.npz": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.json": "2b8c336a001cb91593cf71e77c63f39fc3a53f2ac6175857e33db34e865a8242",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2_receipt.json": "8a33397b9ce061259f8e716bf349deaf407a56c0fde1164b490cf3e72825f35e",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+    },
+    "input_sha256_start": {
+      "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\predeclared_protocol.json": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\groups\\group_206_key_219_NCCE31_0.pickle": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.json": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_receipt.json": "29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_trials.npz": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.json": "2b8c336a001cb91593cf71e77c63f39fc3a53f2ac6175857e33db34e865a8242",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2_receipt.json": "8a33397b9ce061259f8e716bf349deaf407a56c0fde1164b490cf3e72825f35e",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+    },
+    "result_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_trace_full_v2.json",
+    "result_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+    "rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "cursor": true,
+      "ema": true,
+      "mode": true,
+      "model32_and_buffers": true,
+      "model64_and_buffers": true,
+      "rng_full_state": true
+    },
+    "runtime_caller_restored": true,
+    "schema": "lap-chem-precision-trace-full-receipt-v2",
+    "source_file_sha256_end": {
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_checkpoint.py": "5ce857c565d94f7538a56104f68894ee59147e0caa3f9f4f098f7ec3abdc418d",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_panel.py": "663f93c147be6870d89de898694f9099da200f0388ea82a3ff033bccd7aba587",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "f023efc31a4ae8c6d86da27f2d7a82c25d0b184b9ea6e4e479666229329be6d3",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "e509e7becd7f81d9e9d930ce36677c67d918ff3ca3c607db6e6b16a674b84707",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "38fe2cf2d6230111f5052907569e02d370e1603aaf4f552469d82fcfffe62952",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003"
+    },
+    "source_file_sha256_start": {
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_checkpoint.py": "5ce857c565d94f7538a56104f68894ee59147e0caa3f9f4f098f7ec3abdc418d",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_panel.py": "663f93c147be6870d89de898694f9099da200f0388ea82a3ff033bccd7aba587",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "f023efc31a4ae8c6d86da27f2d7a82c25d0b184b9ea6e4e479666229329be6d3",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "e509e7becd7f81d9e9d930ce36677c67d918ff3ca3c607db6e6b16a674b84707",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "38fe2cf2d6230111f5052907569e02d370e1603aaf4f552469d82fcfffe62952",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003"
+    },
+    "status": "complete_production_capture"
+  },
+  "classification": "Frozen-sample chemistry-path precision failure: F32 model/local-energy evaluation reverses the matched-F64 descent sign; F32 XC/HF/D3 component assembly produces the production sign flip.",
+  "final_sentence": "The chemistry signal is already lost in float32 model/local-energy evaluation; the next experiment is a double-precision chemistry-forward Armijo replay.",
+  "frozen_armijo": {
+    "c": 0.0001,
+    "gdotv": -0.09193967105990453,
+    "t": 3.0517578125e-05
+  },
+  "independent_review": {
+    "answers": [
+      "Earliest tested sign-loss boundary: F32 adaptive NN outputs fed into F64 local PBE still give +1.815046882907012e-4 loss delta. This localizes to the output-precision boundary only; no NN layer or matmul is isolated.",
+      "The exact production sign flip is dominated by F32 component-local XC then in-place HF and D3 assembly. The candidate-minus-base assembly-rounding error is +9.5367431640625e-6 Ha, about +0.0537376264 weighted-loss units; upstream F32 local-energy error also remains.",
+      "F32 delta is +0.042989253997802734 (+90,155 ULP at the base). Matched-F64 delta is -2.3030457994011044e-6 (-2,592,999,051 ULP). Matched F64 uses the same saved F32 states and F32-loaded sources widened.",
+      "The after-F32-XC-integral shadow is negative (-0.0107475253) but 4,665.657 times the true delta. Subsequent F32 in-place HF/D3 component assembly shifts it upward and flips the production response; F32 PBE/integrand differences also contribute upstream.",
+      "No for this frozen sample: F32 adaptive NN outputs followed by F64 local PBE still produce a positive delta, 79.8107 relative-error units from the matched-F64 delta, and a negative Armijo margin.",
+      "No tested intermediate shadow is quantitatively faithful. Full matched-F64 chemistry is the sole tested quantitative match; the minimum mixed-precision repair boundary is not identified.",
+      "Only full matched F64 matches the reference (relative error 0; margin +2.3027652221e-6). The sign-only XC-integral shadow has a positive margin but is grossly too large; other mixed shadows have wrong signs and negative margins.",
+      "No shadow-gradient comparison was run; no gradient or backward pass was added.",
+      "This sample shows F32 adaptive outputs are inadequate at the tested boundary, not that every NN operation or workload requires F64. Full F64 model/local-energy evaluation is the only tested faithful path.",
+      "Run one double-precision chemistry-forward Armijo replay on the exact frozen state pair and same F32-loaded sources, using the already-frozen slope and no new optimization update."
+    ],
+    "classification": "Frozen-sample chemistry-path precision failure: F32 model/local-energy evaluation reverses the matched-F64 descent sign; F32 XC/HF/D3 component assembly produces the production sign flip.",
+    "earlieststage": "F32 adaptive NN outputs passed to F64 local PBE: candidate-minus-base loss delta +0.0001815046882907012 (wrong sign). This is the earliest tested boundary, not an internal NN layer or matrix operation.",
+    "evidence": [
+      {
+        "artifact": "predeclared_protocol.json",
+        "finding": "Pins the sample, exact two F32 parameter vectors, same-source matched-F64 scope, six boundaries, no training, and no shadow gradients.",
+        "sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968"
+      },
+      {
+        "artifact": "chem_precision_trace_full_v2.json",
+        "finding": "Exact original-objective F32 scalar replay and matched-F64 negative delta; per-point local energies, reductions, assembly, stoichiometry, residual, RMSE, and fchem factor.",
+        "sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2"
+      },
+      {
+        "artifact": "chem_precision_trace_full_v2_arrays.npz",
+        "finding": "36 captured arrays for exactly two states at F32/F64, including adaptive NN outputs, local PBE epsilon, component weights, densities, and point integrands.",
+        "sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5"
+      },
+      {
+        "artifact": "chem_precision_trace_full_v2_receipt.json",
+        "finding": "Binds V2 driver/result/arrays; pinned source/input start-end hashes match; model/buffers, caller RNG/runtime flags, CUDA device, EMA, cursor, mode restored.",
+        "sha256": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8"
+      },
+      {
+        "artifact": "chem_precision_trace_shadows_v2.json",
+        "finding": "Six frozen shadow boundaries with continuous relative errors and Armijo margins; F32-output/F64-PBE shadow remains wrong-sign; F32-XC sign-only shadow is grossly inaccurate.",
+        "sha256": "c89e7409665dbc8e0cd0087411222a7c5d8b82d29b047e2b599f9834b54dd463"
+      },
+      {
+        "artifact": "chem_precision_trace_shadows_v2_receipt.json",
+        "finding": "Caller RNG/runtime flags, CUDA device, and thread count are restored.",
+        "sha256": "10b3408ca7d8e5b1b2d954fa8f5353525f452e26eb6be856005ea58d430678d6"
+      },
+      {
+        "artifact": "chem_precision_trace_operation_diagnostics_v3.json",
+        "finding": "Exact same-F32-operand reduction comparisons; exact F32 component assembly reconstructions; candidate-minus-base weighted assembly error +9.5367431640625e-6 Ha; fixed F32 totals reduce to identical reaction sums in F32 and F64.",
+        "sha256": "e3e23f5143434edd0779f42641aacef9607e6c0b361523bc9fdca7dbf9cc9009"
+      },
+      {
+        "artifact": "chem_precision_trace_operation_diagnostics_v3_receipt.json",
+        "finding": "V3 diagnostics bind to the accepted capture and prove caller RNG/runtime/device rollback.",
+        "sha256": "b31007d350b0eaf8b330093e417df693f004f288eb71ec7b18177c138fc87529"
+      }
+    ],
+    "final_sentence": "The chemistry signal is already lost in float32 model/local-energy evaluation; the next experiment is a double-precision chemistry-forward Armijo replay.",
+    "frozen_armijo": {
+      "c": 0.0001,
+      "gdotv": -0.09193967105990453,
+      "t": 3.0517578125e-05
+    },
+    "minboundary": "No tested intermediate boundary is quantitatively faithful. Full matched-F64 chemistry is the only tested shadow with zero relative error to the reference delta; the true minimum mixed-precision repair boundary remains unlocalized.",
+    "schema": "lap-chem-precision-trace-review-v1",
+    "shadow_closeness": {
+      "relative_error_definition": "abs(boundary_delta - full_matched_F64_delta) / abs(full_matched_F64_delta)",
+      "rows": [
+        {
+          "armijo_margin": -0.04299010143560711,
+          "boundary": "after-component-totals",
+          "delta": 0.04299010115502977,
+          "relative_error": 18667.628846985644,
+          "sign_only": false
+        },
+        {
+          "armijo_margin": 0.010747525008182102,
+          "boundary": "after-float32-xc-integral",
+          "delta": -0.01074752528875944,
+          "relative_error": 4665.657211747279,
+          "sign_only": true
+        },
+        {
+          "armijo_margin": -0.00010447548980074828,
+          "boundary": "before-xc-reduction",
+          "delta": 0.00010447520922340914,
+          "relative_error": 46.363930344145736,
+          "sign_only": false
+        },
+        {
+          "armijo_margin": -0.00047924240325958323,
+          "boundary": "before-integrand-multiplication",
+          "delta": 0.0004792421226822441,
+          "relative_error": 209.09057414614534,
+          "sign_only": false
+        },
+        {
+          "armijo_margin": -0.00018150496886804035,
+          "boundary": "after-float32-nn-adaptive-outputs-before-local-pbe",
+          "delta": 0.0001815046882907012,
+          "relative_error": 79.81071593882353,
+          "sign_only": false
+        },
+        {
+          "armijo_margin": 2.3027652220619643e-06,
+          "boundary": "full-matched-float64-reference",
+          "delta": -2.3030457994011044e-06,
+          "relative_error": 0.0,
+          "sign_only": true
+        }
+      ]
+    },
+    "status": "review_approved"
+  },
+  "input_artifact_sha256": {
+    "arrays": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+    "full": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+    "operation_diagnostics": "e3e23f5143434edd0779f42641aacef9607e6c0b361523bc9fdca7dbf9cc9009",
+    "operation_receipt": "b31007d350b0eaf8b330093e417df693f004f288eb71ec7b18177c138fc87529",
+    "paired_delta": "e12ef979572bfe68dc002caadb3e1344c93b62e579b7e609b2f24a37eea99d2a",
+    "paired_delta_receipt": "fc22d70f8f4b3216257fa70742d46e76dfbf1772136d9c77dcbe14335e252871",
+    "prior_full": "774955b32fcb252981962427c32a87e3db8a83a18a12a0495f9074ebb9de1cad",
+    "prior_receipt": "5c97e5112b67788fcd0fa221817022b87471e6037a708dbeaca1135766163c3b",
+    "protocol": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+    "receipt": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8",
+    "review": "9f917f483d7003e6194d75fcb0e0862d9a97456e1660f0d31791ab60a6b89774",
+    "shadows": "c89e7409665dbc8e0cd0087411222a7c5d8b82d29b047e2b599f9834b54dd463",
+    "shadows_receipt": "10b3408ca7d8e5b1b2d954fa8f5353525f452e26eb6be856005ea58d430678d6"
+  },
+  "operation_diagnostic_tables": {
+    "assembly_reconstruction": [
+      {
+        "accumulator_dtype": "torch.float32",
+        "after_hf_dtype": "torch.float32",
+        "after_inplace_d3_add": -113.20592498779297,
+        "after_inplace_hf_add": -113.20399475097656,
+        "component": "NH3-NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float32",
+        "hf_value": -97.13409423828125,
+        "precision": "f32",
+        "production_molecule_total": -113.20592498779297,
+        "reconstructed_matches_production_exactly": true,
+        "state": "baseflat32",
+        "xc_dtype": "torch.float32",
+        "xc_integral": -16.069904327392578
+      },
+      {
+        "accumulator_dtype": "torch.float32",
+        "after_hf_dtype": "torch.float32",
+        "after_inplace_d3_add": -56.60008239746094,
+        "after_inplace_hf_add": -56.59949493408203,
+        "component": "NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float32",
+        "hf_value": -48.567176818847656,
+        "precision": "f32",
+        "production_molecule_total": -56.60008239746094,
+        "reconstructed_matches_production_exactly": true,
+        "state": "baseflat32",
+        "xc_dtype": "torch.float32",
+        "xc_integral": -8.032316207885742
+      },
+      {
+        "accumulator_dtype": "torch.float64",
+        "after_hf_dtype": "torch.float64",
+        "after_inplace_d3_add": -113.20592677197952,
+        "after_inplace_hf_add": -113.20399741197951,
+        "component": "NH3-NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float64",
+        "hf_value": -97.13409423828125,
+        "precision": "f64",
+        "production_molecule_total": -113.20592677197952,
+        "reconstructed_matches_production_exactly": true,
+        "state": "baseflat32",
+        "xc_dtype": "torch.float64",
+        "xc_integral": -16.069903173698265
+      },
+      {
+        "accumulator_dtype": "torch.float64",
+        "after_hf_dtype": "torch.float64",
+        "after_inplace_d3_add": -56.600081725723015,
+        "after_inplace_hf_add": -56.599493125723015,
+        "component": "NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float64",
+        "hf_value": -48.567176818847656,
+        "precision": "f64",
+        "production_molecule_total": -56.600081725723015,
+        "reconstructed_matches_production_exactly": true,
+        "state": "baseflat32",
+        "xc_dtype": "torch.float64",
+        "xc_integral": -8.032316306875355
+      },
+      {
+        "accumulator_dtype": "torch.float32",
+        "after_hf_dtype": "torch.float32",
+        "after_inplace_d3_add": -113.20608520507812,
+        "after_inplace_hf_add": -113.20415496826172,
+        "component": "NH3-NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float32",
+        "hf_value": -97.13409423828125,
+        "precision": "f32",
+        "production_molecule_total": -113.20608520507812,
+        "reconstructed_matches_production_exactly": true,
+        "state": "candidate_t_2m15",
+        "xc_dtype": "torch.float32",
+        "xc_integral": -16.0700626373291
+      },
+      {
+        "accumulator_dtype": "torch.float32",
+        "after_hf_dtype": "torch.float32",
+        "after_inplace_d3_add": -56.60015869140625,
+        "after_inplace_hf_add": -56.599571228027344,
+        "component": "NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float32",
+        "hf_value": -48.567176818847656,
+        "precision": "f32",
+        "production_molecule_total": -56.60015869140625,
+        "reconstructed_matches_production_exactly": true,
+        "state": "candidate_t_2m15",
+        "xc_dtype": "torch.float32",
+        "xc_integral": -8.03239631652832
+      },
+      {
+        "accumulator_dtype": "torch.float64",
+        "after_hf_dtype": "torch.float64",
+        "after_inplace_d3_add": -113.206086037173,
+        "after_inplace_hf_add": -113.20415667717299,
+        "component": "NH3-NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float64",
+        "hf_value": -97.13409423828125,
+        "precision": "f64",
+        "production_molecule_total": -113.206086037173,
+        "reconstructed_matches_production_exactly": true,
+        "state": "candidate_t_2m15",
+        "xc_dtype": "torch.float64",
+        "xc_integral": -16.070062438891732
+      },
+      {
+        "accumulator_dtype": "torch.float64",
+        "after_hf_dtype": "torch.float64",
+        "after_inplace_d3_add": -56.60016135852411,
+        "after_inplace_hf_add": -56.59957275852411,
+        "component": "NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "hf_dtype": "torch.float64",
+        "hf_value": -48.567176818847656,
+        "precision": "f64",
+        "production_molecule_total": -56.60016135852411,
+        "reconstructed_matches_production_exactly": true,
+        "state": "candidate_t_2m15",
+        "xc_dtype": "torch.float64",
+        "xc_integral": -8.032395939676457
+      }
+    ],
+    "fixed_f32_total_reductions": [
+      {
+        "manual_hartree_sum": 0.00576019287109375,
+        "matches_after_component_totals_shadow": null,
+        "matches_full_production_f32_loss": true,
+        "production_loss": 4.171715259552002,
+        "production_loss_dtype": "torch.float32",
+        "production_reaction_kcal": [
+          3.6145758628845215
+        ],
+        "production_reaction_kcal_dtype": "torch.float32",
+        "reduction_precision": "f32",
+        "state": "baseflat32",
+        "terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_dtype": "torch.float32",
+            "combination_operand_dtype": "torch.float32",
+            "fixed_f32_molecule_total": -113.20592498779297,
+            "ordinal": 0,
+            "partial_sum_dtype": "torch.float32",
+            "product": 113.20592498779297,
+            "product_dtype": "torch.float32",
+            "progressive_partial_sum": 113.20592498779297
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_dtype": "torch.float32",
+            "combination_operand_dtype": "torch.float32",
+            "fixed_f32_molecule_total": -56.60008239746094,
+            "ordinal": 1,
+            "partial_sum_dtype": "torch.float32",
+            "product": -113.20016479492188,
+            "product_dtype": "torch.float32",
+            "progressive_partial_sum": 0.00576019287109375
+          }
+        ]
+      },
+      {
+        "manual_hartree_sum": 0.00576019287109375,
+        "matches_after_component_totals_shadow": true,
+        "matches_full_production_f32_loss": null,
+        "production_loss": 4.171714071291204,
+        "production_loss_dtype": "torch.float64",
+        "production_reaction_kcal": [
+          3.6145757484436034
+        ],
+        "production_reaction_kcal_dtype": "torch.float64",
+        "reduction_precision": "f64",
+        "state": "baseflat32",
+        "terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_dtype": "torch.float64",
+            "combination_operand_dtype": "torch.float64",
+            "fixed_f32_molecule_total": -113.20592498779297,
+            "ordinal": 0,
+            "partial_sum_dtype": "torch.float64",
+            "product": 113.20592498779297,
+            "product_dtype": "torch.float64",
+            "progressive_partial_sum": 113.20592498779297
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_dtype": "torch.float64",
+            "combination_operand_dtype": "torch.float64",
+            "fixed_f32_molecule_total": -56.60008239746094,
+            "ordinal": 1,
+            "partial_sum_dtype": "torch.float64",
+            "product": -113.20016479492188,
+            "product_dtype": "torch.float64",
+            "progressive_partial_sum": 0.00576019287109375
+          }
+        ]
+      },
+      {
+        "manual_hartree_sum": 0.005767822265625,
+        "matches_after_component_totals_shadow": null,
+        "matches_full_production_f32_loss": true,
+        "production_loss": 4.214704513549805,
+        "production_loss_dtype": "torch.float32",
+        "production_reaction_kcal": [
+          3.619363307952881
+        ],
+        "production_reaction_kcal_dtype": "torch.float32",
+        "reduction_precision": "f32",
+        "state": "candidate_t_2m15",
+        "terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_dtype": "torch.float32",
+            "combination_operand_dtype": "torch.float32",
+            "fixed_f32_molecule_total": -113.20608520507812,
+            "ordinal": 0,
+            "partial_sum_dtype": "torch.float32",
+            "product": 113.20608520507812,
+            "product_dtype": "torch.float32",
+            "progressive_partial_sum": 113.20608520507812
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_dtype": "torch.float32",
+            "combination_operand_dtype": "torch.float32",
+            "fixed_f32_molecule_total": -56.60015869140625,
+            "ordinal": 1,
+            "partial_sum_dtype": "torch.float32",
+            "product": -113.2003173828125,
+            "product_dtype": "torch.float32",
+            "progressive_partial_sum": 0.005767822265625
+          }
+        ]
+      },
+      {
+        "manual_hartree_sum": 0.005767822265625,
+        "matches_after_component_totals_shadow": true,
+        "matches_full_production_f32_loss": null,
+        "production_loss": 4.2147041724462335,
+        "production_loss_dtype": "torch.float64",
+        "production_reaction_kcal": [
+          3.619363265991211
+        ],
+        "production_reaction_kcal_dtype": "torch.float64",
+        "reduction_precision": "f64",
+        "state": "candidate_t_2m15",
+        "terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_dtype": "torch.float64",
+            "combination_operand_dtype": "torch.float64",
+            "fixed_f32_molecule_total": -113.20608520507812,
+            "ordinal": 0,
+            "partial_sum_dtype": "torch.float64",
+            "product": 113.20608520507812,
+            "product_dtype": "torch.float64",
+            "progressive_partial_sum": 113.20608520507812
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_dtype": "torch.float64",
+            "combination_operand_dtype": "torch.float64",
+            "fixed_f32_molecule_total": -56.60015869140625,
+            "ordinal": 1,
+            "partial_sum_dtype": "torch.float64",
+            "product": -113.2003173828125,
+            "product_dtype": "torch.float64",
+            "progressive_partial_sum": 0.005767822265625
+          }
+        ]
+      }
+    ],
+    "point_reduction": [
+      {
+        "component": "NH3-NH3_ncce31",
+        "difference_of_separate_f64_sums_f64terms_minus_f32terms": 1.4122490838985868e-06,
+        "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+        "difference_sum_f32_accumulation_after_f64_pointwise_difference": 1.41224904837145e-06,
+        "difference_sum_f32_pointwise_difference_f32_accumulation": 1.4096896165938233e-06,
+        "difference_sum_f32_pointwise_difference_f64_accumulation": 1.4096896090989177e-06,
+        "difference_sum_f64_accumulation": 1.4122490835446397e-06,
+        "f32_point_terms_sum_abs": 16.240888977973167,
+        "f32_point_terms_sum_signed_f64": -16.06990458594735,
+        "f32_terms_cancellation_condition": 1.0106400377868665,
+        "f64_point_terms_sum_abs": 16.240887551437964,
+        "f64_point_terms_sum_signed": -16.069903173698265,
+        "f64_sum_of_exact_f32_point_terms": -16.06990458594735,
+        "f64_terms_cancellation_condition": 1.0106400378329317,
+        "point_count": 52488,
+        "production_f32_direct_sum": -16.069904327392578,
+        "production_f32_minus_f64_sum_same_f32_terms": 2.5855477048253306e-07,
+        "production_matched_f64_direct_sum": -16.069903173698265,
+        "recomputed_f32_sum_matches_production_exactly": true,
+        "recomputed_f32_sum_of_exact_f32_point_terms": -16.069904327392578,
+        "recomputed_f64_sum_matches_production_exactly": true,
+        "recomputed_f64_sum_of_exact_f64_point_terms": -16.069903173698265,
+        "same_f32_terms_reduction_difference_in_f32_ulps": 0.1355571635067463,
+        "separate_sum_delta_minus_pointwise_f64_difference_sum": 3.539471165703127e-16,
+        "state": "baseflat32"
+      },
+      {
+        "component": "NH3_ncce31",
+        "difference_of_separate_f64_sums_f64terms_minus_f32terms": 6.880514327178844e-07,
+        "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+        "difference_sum_f32_accumulation_after_f64_pointwise_difference": 6.880515002194443e-07,
+        "difference_sum_f32_pointwise_difference_f32_accumulation": 6.971393986532348e-07,
+        "difference_sum_f32_pointwise_difference_f64_accumulation": 6.971393976409275e-07,
+        "difference_sum_f64_accumulation": 6.880514350367337e-07,
+        "f32_point_terms_sum_abs": 8.117772494847175,
+        "f32_point_terms_sum_signed_f64": -8.032316994926788,
+        "f32_terms_cancellation_condition": 1.010638960087651,
+        "f64_point_terms_sum_abs": 8.117771800745896,
+        "f64_point_terms_sum_signed": -8.032316306875355,
+        "f64_sum_of_exact_f32_point_terms": -8.032316994926788,
+        "f64_terms_cancellation_condition": 1.0106389602458004,
+        "point_count": 26248,
+        "production_f32_direct_sum": -8.032316207885742,
+        "production_f32_minus_f64_sum_same_f32_terms": 7.870410456689569e-07,
+        "production_matched_f64_direct_sum": -8.032316306875355,
+        "recomputed_f32_sum_matches_production_exactly": true,
+        "recomputed_f32_sum_of_exact_f32_point_terms": -8.032316207885742,
+        "recomputed_f64_sum_matches_production_exactly": true,
+        "recomputed_f64_sum_of_exact_f64_point_terms": -8.032316306875355,
+        "same_f32_terms_reduction_difference_in_f32_ulps": 0.8252723515033722,
+        "separate_sum_delta_minus_pointwise_f64_difference_sum": -2.3188493607437526e-15,
+        "state": "baseflat32"
+      },
+      {
+        "component": "NH3-NH3_ncce31",
+        "difference_of_separate_f64_sums_f64terms_minus_f32terms": 8.359045935435461e-07,
+        "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+        "difference_sum_f32_accumulation_after_f64_pointwise_difference": 8.359045864381187e-07,
+        "difference_sum_f32_pointwise_difference_f32_accumulation": 8.358728109669755e-07,
+        "difference_sum_f32_pointwise_difference_f64_accumulation": 8.358727879237017e-07,
+        "difference_sum_f64_accumulation": 8.359045941479992e-07,
+        "f32_point_terms_sum_abs": 16.241049769730235,
+        "f32_point_terms_sum_signed_f64": -16.070063274796325,
+        "f32_terms_cancellation_condition": 1.010640063577228,
+        "f64_point_terms_sum_abs": 16.24104892805582,
+        "f64_point_terms_sum_signed": -16.070062438891732,
+        "f64_sum_of_exact_f32_point_terms": -16.070063274796325,
+        "f64_terms_cancellation_condition": 1.0106400637716428,
+        "point_count": 52488,
+        "production_f32_direct_sum": -16.0700626373291,
+        "production_f32_minus_f64_sum_same_f32_terms": 6.374672238962376e-07,
+        "production_matched_f64_direct_sum": -16.070062438891732,
+        "recomputed_f32_sum_matches_production_exactly": true,
+        "recomputed_f32_sum_of_exact_f32_point_terms": -16.0700626373291,
+        "recomputed_f64_sum_matches_production_exactly": true,
+        "recomputed_f64_sum_of_exact_f64_point_terms": -16.070062438891732,
+        "same_f32_terms_reduction_difference_in_f32_ulps": 0.3342164158821106,
+        "separate_sum_delta_minus_pointwise_f64_difference_sum": -6.044530873142726e-16,
+        "state": "candidate_t_2m15"
+      },
+      {
+        "component": "NH3_ncce31",
+        "difference_of_separate_f64_sums_f64terms_minus_f32terms": 3.9040428845282804e-07,
+        "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+        "difference_sum_f32_accumulation_after_f64_pointwise_difference": 3.904042955582554e-07,
+        "difference_sum_f32_pointwise_difference_f32_accumulation": 3.897039277944714e-07,
+        "difference_sum_f32_pointwise_difference_f64_accumulation": 3.8970391864753956e-07,
+        "difference_sum_f64_accumulation": 3.9040428901969404e-07,
+        "f32_point_terms_sum_abs": 8.117852880471151,
+        "f32_point_terms_sum_signed_f64": -8.032396330080745,
+        "f32_terms_cancellation_condition": 1.0106389857868912,
+        "f64_point_terms_sum_abs": 8.117852486963564,
+        "f64_point_terms_sum_signed": -8.032395939676457,
+        "f64_sum_of_exact_f32_point_terms": -8.032396330080745,
+        "f64_terms_cancellation_condition": 1.0106389859176375,
+        "point_count": 26248,
+        "production_f32_direct_sum": -8.03239631652832,
+        "production_f32_minus_f64_sum_same_f32_terms": 1.3552424960039389e-08,
+        "production_matched_f64_direct_sum": -8.032395939676457,
+        "recomputed_f32_sum_matches_production_exactly": true,
+        "recomputed_f32_sum_of_exact_f32_point_terms": -8.03239631652832,
+        "recomputed_f64_sum_matches_production_exactly": true,
+        "recomputed_f64_sum_of_exact_f64_point_terms": -8.032395939676457,
+        "same_f32_terms_reduction_difference_in_f32_ulps": 0.014210747554898262,
+        "separate_sum_delta_minus_pointwise_f64_difference_sum": -5.66866000279863e-16,
+        "state": "candidate_t_2m15"
+      }
+    ],
+    "same_operand_assembly_totals": [
+      {
+        "state": "baseflat32",
+        "weighted_sum_of_component_assembly_errors_hartree": -4.479335942164653e-06,
+        "weighted_sum_of_component_assembly_errors_kcal_per_mol": -0.0028108258573997704
+      },
+      {
+        "state": "candidate_t_2m15",
+        "weighted_sum_of_component_assembly_errors_hartree": 5.057407221897847e-06,
+        "weighted_sum_of_component_assembly_errors_kcal_per_mol": 0.003173571077109507
+      }
+    ],
+    "same_operand_component_assembly": [
+      {
+        "coefficient": -1.0,
+        "coefficient_weighted_assembly_error_hartree": -2.937880864806175e-06,
+        "component": "NH3-NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "f32_hf_source_widened_for_reconstruction": -97.13409423828125,
+        "f32_minus_f64_component_assembly_rounding": 2.937880864806175e-06,
+        "f32_xc_integral": -16.069904327392578,
+        "production_f32_component_total": -113.20592498779297,
+        "reconstructed_f32_component_total": -113.20592498779297,
+        "reconstructed_f32_matches_production": true,
+        "same_operands_component_total_f64": -113.20592792567383,
+        "state": "baseflat32"
+      },
+      {
+        "coefficient": 2.0,
+        "coefficient_weighted_assembly_error_hartree": -1.5414550773584779e-06,
+        "component": "NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "f32_hf_source_widened_for_reconstruction": -48.567176818847656,
+        "f32_minus_f64_component_assembly_rounding": -7.707275386792389e-07,
+        "f32_xc_integral": -8.032316207885742,
+        "production_f32_component_total": -56.60008239746094,
+        "reconstructed_f32_component_total": -56.60008239746094,
+        "reconstructed_f32_matches_production": true,
+        "same_operands_component_total_f64": -56.6000816267334,
+        "state": "baseflat32"
+      },
+      {
+        "coefficient": -1.0,
+        "coefficient_weighted_assembly_error_hartree": -1.030532231993675e-06,
+        "component": "NH3-NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "f32_hf_source_widened_for_reconstruction": -97.13409423828125,
+        "f32_minus_f64_component_assembly_rounding": 1.030532231993675e-06,
+        "f32_xc_integral": -16.0700626373291,
+        "production_f32_component_total": -113.20608520507812,
+        "reconstructed_f32_component_total": -113.20608520507812,
+        "reconstructed_f32_matches_production": true,
+        "same_operands_component_total_f64": -113.20608623561036,
+        "state": "candidate_t_2m15"
+      },
+      {
+        "coefficient": 2.0,
+        "coefficient_weighted_assembly_error_hartree": 6.087939453891522e-06,
+        "component": "NH3_ncce31",
+        "d3_constructed_tensor_dtype": "torch.float64",
+        "d3_source_numpy_dtype": "float64",
+        "f32_hf_source_widened_for_reconstruction": -48.567176818847656,
+        "f32_minus_f64_component_assembly_rounding": 3.043969726945761e-06,
+        "f32_xc_integral": -8.03239631652832,
+        "production_f32_component_total": -56.60015869140625,
+        "reconstructed_f32_component_total": -56.60015869140625,
+        "reconstructed_f32_matches_production": true,
+        "same_operands_component_total_f64": -56.60016173537598,
+        "state": "candidate_t_2m15"
+      }
+    ]
+  },
+  "operation_diagnostics": {
+    "assembly_reconstruction": {
+      "baseflat32": {
+        "f32": [
+          {
+            "accumulator_dtype": "torch.float32",
+            "after_hf_dtype": "torch.float32",
+            "after_inplace_d3_add": -113.20592498779297,
+            "after_inplace_hf_add": -113.20399475097656,
+            "component": "NH3-NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float32",
+            "hf_value": -97.13409423828125,
+            "production_molecule_total": -113.20592498779297,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float32",
+            "xc_integral": -16.069904327392578
+          },
+          {
+            "accumulator_dtype": "torch.float32",
+            "after_hf_dtype": "torch.float32",
+            "after_inplace_d3_add": -56.60008239746094,
+            "after_inplace_hf_add": -56.59949493408203,
+            "component": "NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float32",
+            "hf_value": -48.567176818847656,
+            "production_molecule_total": -56.60008239746094,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float32",
+            "xc_integral": -8.032316207885742
+          }
+        ],
+        "f64": [
+          {
+            "accumulator_dtype": "torch.float64",
+            "after_hf_dtype": "torch.float64",
+            "after_inplace_d3_add": -113.20592677197952,
+            "after_inplace_hf_add": -113.20399741197951,
+            "component": "NH3-NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float64",
+            "hf_value": -97.13409423828125,
+            "production_molecule_total": -113.20592677197952,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float64",
+            "xc_integral": -16.069903173698265
+          },
+          {
+            "accumulator_dtype": "torch.float64",
+            "after_hf_dtype": "torch.float64",
+            "after_inplace_d3_add": -56.600081725723015,
+            "after_inplace_hf_add": -56.599493125723015,
+            "component": "NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float64",
+            "hf_value": -48.567176818847656,
+            "production_molecule_total": -56.600081725723015,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float64",
+            "xc_integral": -8.032316306875355
+          }
+        ]
+      },
+      "candidate_t_2m15": {
+        "f32": [
+          {
+            "accumulator_dtype": "torch.float32",
+            "after_hf_dtype": "torch.float32",
+            "after_inplace_d3_add": -113.20608520507812,
+            "after_inplace_hf_add": -113.20415496826172,
+            "component": "NH3-NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float32",
+            "hf_value": -97.13409423828125,
+            "production_molecule_total": -113.20608520507812,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float32",
+            "xc_integral": -16.0700626373291
+          },
+          {
+            "accumulator_dtype": "torch.float32",
+            "after_hf_dtype": "torch.float32",
+            "after_inplace_d3_add": -56.60015869140625,
+            "after_inplace_hf_add": -56.599571228027344,
+            "component": "NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float32",
+            "hf_value": -48.567176818847656,
+            "production_molecule_total": -56.60015869140625,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float32",
+            "xc_integral": -8.03239631652832
+          }
+        ],
+        "f64": [
+          {
+            "accumulator_dtype": "torch.float64",
+            "after_hf_dtype": "torch.float64",
+            "after_inplace_d3_add": -113.206086037173,
+            "after_inplace_hf_add": -113.20415667717299,
+            "component": "NH3-NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float64",
+            "hf_value": -97.13409423828125,
+            "production_molecule_total": -113.206086037173,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float64",
+            "xc_integral": -16.070062438891732
+          },
+          {
+            "accumulator_dtype": "torch.float64",
+            "after_hf_dtype": "torch.float64",
+            "after_inplace_d3_add": -56.60016135852411,
+            "after_inplace_hf_add": -56.59957275852411,
+            "component": "NH3_ncce31",
+            "d3_constructed_tensor_dtype": "torch.float64",
+            "d3_source_numpy_dtype": "float64",
+            "hf_dtype": "torch.float64",
+            "hf_value": -48.567176818847656,
+            "production_molecule_total": -56.60016135852411,
+            "reconstructed_matches_production_exactly": true,
+            "xc_dtype": "torch.float64",
+            "xc_integral": -8.032395939676457
+          }
+        ]
+      }
+    },
+    "capture_component_reduction_diagnostics": {
+      "baseflat32": {
+        "0": [
+          {
+            "component": "NH3-NH3_ncce31",
+            "difference_of_separate_f64_sums_f64terms_minus_f32terms": 1.4122490838985868e-06,
+            "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+            "difference_sum_f32_accumulation_after_f64_pointwise_difference": 1.41224904837145e-06,
+            "difference_sum_f32_pointwise_difference_f32_accumulation": 1.4096896165938233e-06,
+            "difference_sum_f32_pointwise_difference_f64_accumulation": 1.4096896090989177e-06,
+            "difference_sum_f64_accumulation": 1.4122490835446397e-06,
+            "f32_point_terms_sum_abs": 16.240888977973167,
+            "f32_point_terms_sum_signed_f64": -16.06990458594735,
+            "f32_terms_cancellation_condition": 1.0106400377868665,
+            "f64_point_terms_sum_abs": 16.240887551437964,
+            "f64_point_terms_sum_signed": -16.069903173698265,
+            "f64_sum_of_exact_f32_point_terms": -16.06990458594735,
+            "f64_terms_cancellation_condition": 1.0106400378329317,
+            "point_count": 52488,
+            "production_f32_direct_sum": -16.069904327392578,
+            "production_f32_minus_f64_sum_same_f32_terms": 2.5855477048253306e-07,
+            "production_matched_f64_direct_sum": -16.069903173698265,
+            "recomputed_f32_sum_matches_production_exactly": true,
+            "recomputed_f32_sum_of_exact_f32_point_terms": -16.069904327392578,
+            "recomputed_f64_sum_matches_production_exactly": true,
+            "recomputed_f64_sum_of_exact_f64_point_terms": -16.069903173698265,
+            "same_f32_terms_reduction_difference_in_f32_ulps": 0.1355571635067463,
+            "separate_sum_delta_minus_pointwise_f64_difference_sum": 3.539471165703127e-16
+          }
+        ],
+        "1": [
+          {
+            "component": "NH3_ncce31",
+            "difference_of_separate_f64_sums_f64terms_minus_f32terms": 6.880514327178844e-07,
+            "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+            "difference_sum_f32_accumulation_after_f64_pointwise_difference": 6.880515002194443e-07,
+            "difference_sum_f32_pointwise_difference_f32_accumulation": 6.971393986532348e-07,
+            "difference_sum_f32_pointwise_difference_f64_accumulation": 6.971393976409275e-07,
+            "difference_sum_f64_accumulation": 6.880514350367337e-07,
+            "f32_point_terms_sum_abs": 8.117772494847175,
+            "f32_point_terms_sum_signed_f64": -8.032316994926788,
+            "f32_terms_cancellation_condition": 1.010638960087651,
+            "f64_point_terms_sum_abs": 8.117771800745896,
+            "f64_point_terms_sum_signed": -8.032316306875355,
+            "f64_sum_of_exact_f32_point_terms": -8.032316994926788,
+            "f64_terms_cancellation_condition": 1.0106389602458004,
+            "point_count": 26248,
+            "production_f32_direct_sum": -8.032316207885742,
+            "production_f32_minus_f64_sum_same_f32_terms": 7.870410456689569e-07,
+            "production_matched_f64_direct_sum": -8.032316306875355,
+            "recomputed_f32_sum_matches_production_exactly": true,
+            "recomputed_f32_sum_of_exact_f32_point_terms": -8.032316207885742,
+            "recomputed_f64_sum_matches_production_exactly": true,
+            "recomputed_f64_sum_of_exact_f64_point_terms": -8.032316306875355,
+            "same_f32_terms_reduction_difference_in_f32_ulps": 0.8252723515033722,
+            "separate_sum_delta_minus_pointwise_f64_difference_sum": -2.3188493607437526e-15
+          }
+        ]
+      },
+      "candidate_t_2m15": {
+        "0": [
+          {
+            "component": "NH3-NH3_ncce31",
+            "difference_of_separate_f64_sums_f64terms_minus_f32terms": 8.359045935435461e-07,
+            "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+            "difference_sum_f32_accumulation_after_f64_pointwise_difference": 8.359045864381187e-07,
+            "difference_sum_f32_pointwise_difference_f32_accumulation": 8.358728109669755e-07,
+            "difference_sum_f32_pointwise_difference_f64_accumulation": 8.358727879237017e-07,
+            "difference_sum_f64_accumulation": 8.359045941479992e-07,
+            "f32_point_terms_sum_abs": 16.241049769730235,
+            "f32_point_terms_sum_signed_f64": -16.070063274796325,
+            "f32_terms_cancellation_condition": 1.010640063577228,
+            "f64_point_terms_sum_abs": 16.24104892805582,
+            "f64_point_terms_sum_signed": -16.070062438891732,
+            "f64_sum_of_exact_f32_point_terms": -16.070063274796325,
+            "f64_terms_cancellation_condition": 1.0106400637716428,
+            "point_count": 52488,
+            "production_f32_direct_sum": -16.0700626373291,
+            "production_f32_minus_f64_sum_same_f32_terms": 6.374672238962376e-07,
+            "production_matched_f64_direct_sum": -16.070062438891732,
+            "recomputed_f32_sum_matches_production_exactly": true,
+            "recomputed_f32_sum_of_exact_f32_point_terms": -16.0700626373291,
+            "recomputed_f64_sum_matches_production_exactly": true,
+            "recomputed_f64_sum_of_exact_f64_point_terms": -16.070062438891732,
+            "same_f32_terms_reduction_difference_in_f32_ulps": 0.3342164158821106,
+            "separate_sum_delta_minus_pointwise_f64_difference_sum": -6.044530873142726e-16
+          }
+        ],
+        "1": [
+          {
+            "component": "NH3_ncce31",
+            "difference_of_separate_f64_sums_f64terms_minus_f32terms": 3.9040428845282804e-07,
+            "difference_operands_dtype": "float64 (full-F64 point term minus widened saved-F32 point term)",
+            "difference_sum_f32_accumulation_after_f64_pointwise_difference": 3.904042955582554e-07,
+            "difference_sum_f32_pointwise_difference_f32_accumulation": 3.897039277944714e-07,
+            "difference_sum_f32_pointwise_difference_f64_accumulation": 3.8970391864753956e-07,
+            "difference_sum_f64_accumulation": 3.9040428901969404e-07,
+            "f32_point_terms_sum_abs": 8.117852880471151,
+            "f32_point_terms_sum_signed_f64": -8.032396330080745,
+            "f32_terms_cancellation_condition": 1.0106389857868912,
+            "f64_point_terms_sum_abs": 8.117852486963564,
+            "f64_point_terms_sum_signed": -8.032395939676457,
+            "f64_sum_of_exact_f32_point_terms": -8.032396330080745,
+            "f64_terms_cancellation_condition": 1.0106389859176375,
+            "point_count": 26248,
+            "production_f32_direct_sum": -8.03239631652832,
+            "production_f32_minus_f64_sum_same_f32_terms": 1.3552424960039389e-08,
+            "production_matched_f64_direct_sum": -8.032395939676457,
+            "recomputed_f32_sum_matches_production_exactly": true,
+            "recomputed_f32_sum_of_exact_f32_point_terms": -8.03239631652832,
+            "recomputed_f64_sum_matches_production_exactly": true,
+            "recomputed_f64_sum_of_exact_f64_point_terms": -8.032395939676457,
+            "same_f32_terms_reduction_difference_in_f32_ulps": 0.014210747554898262,
+            "separate_sum_delta_minus_pointwise_f64_difference_sum": -5.66866000279863e-16
+          }
+        ]
+      }
+    },
+    "fixed_f32_component_totals_reduced_in_f32_vs_f64": {
+      "baseflat32": {
+        "f32": {
+          "manual_hartree_sum": 0.00576019287109375,
+          "matches_after_component_totals_shadow": null,
+          "matches_full_production_f32_loss": true,
+          "production_loss": 4.171715259552002,
+          "production_loss_dtype": "torch.float32",
+          "production_reaction_kcal": [
+            3.6145758628845215
+          ],
+          "production_reaction_kcal_dtype": "torch.float32",
+          "terms": [
+            {
+              "coefficient": -1.0,
+              "coefficient_dtype": "torch.float32",
+              "combination_operand_dtype": "torch.float32",
+              "fixed_f32_molecule_total": -113.20592498779297,
+              "ordinal": 0,
+              "partial_sum_dtype": "torch.float32",
+              "product": 113.20592498779297,
+              "product_dtype": "torch.float32",
+              "progressive_partial_sum": 113.20592498779297
+            },
+            {
+              "coefficient": 2.0,
+              "coefficient_dtype": "torch.float32",
+              "combination_operand_dtype": "torch.float32",
+              "fixed_f32_molecule_total": -56.60008239746094,
+              "ordinal": 1,
+              "partial_sum_dtype": "torch.float32",
+              "product": -113.20016479492188,
+              "product_dtype": "torch.float32",
+              "progressive_partial_sum": 0.00576019287109375
+            }
+          ]
+        },
+        "f64": {
+          "manual_hartree_sum": 0.00576019287109375,
+          "matches_after_component_totals_shadow": true,
+          "matches_full_production_f32_loss": null,
+          "production_loss": 4.171714071291204,
+          "production_loss_dtype": "torch.float64",
+          "production_reaction_kcal": [
+            3.6145757484436034
+          ],
+          "production_reaction_kcal_dtype": "torch.float64",
+          "terms": [
+            {
+              "coefficient": -1.0,
+              "coefficient_dtype": "torch.float64",
+              "combination_operand_dtype": "torch.float64",
+              "fixed_f32_molecule_total": -113.20592498779297,
+              "ordinal": 0,
+              "partial_sum_dtype": "torch.float64",
+              "product": 113.20592498779297,
+              "product_dtype": "torch.float64",
+              "progressive_partial_sum": 113.20592498779297
+            },
+            {
+              "coefficient": 2.0,
+              "coefficient_dtype": "torch.float64",
+              "combination_operand_dtype": "torch.float64",
+              "fixed_f32_molecule_total": -56.60008239746094,
+              "ordinal": 1,
+              "partial_sum_dtype": "torch.float64",
+              "product": -113.20016479492188,
+              "product_dtype": "torch.float64",
+              "progressive_partial_sum": 0.00576019287109375
+            }
+          ]
+        }
+      },
+      "candidate_t_2m15": {
+        "f32": {
+          "manual_hartree_sum": 0.005767822265625,
+          "matches_after_component_totals_shadow": null,
+          "matches_full_production_f32_loss": true,
+          "production_loss": 4.214704513549805,
+          "production_loss_dtype": "torch.float32",
+          "production_reaction_kcal": [
+            3.619363307952881
+          ],
+          "production_reaction_kcal_dtype": "torch.float32",
+          "terms": [
+            {
+              "coefficient": -1.0,
+              "coefficient_dtype": "torch.float32",
+              "combination_operand_dtype": "torch.float32",
+              "fixed_f32_molecule_total": -113.20608520507812,
+              "ordinal": 0,
+              "partial_sum_dtype": "torch.float32",
+              "product": 113.20608520507812,
+              "product_dtype": "torch.float32",
+              "progressive_partial_sum": 113.20608520507812
+            },
+            {
+              "coefficient": 2.0,
+              "coefficient_dtype": "torch.float32",
+              "combination_operand_dtype": "torch.float32",
+              "fixed_f32_molecule_total": -56.60015869140625,
+              "ordinal": 1,
+              "partial_sum_dtype": "torch.float32",
+              "product": -113.2003173828125,
+              "product_dtype": "torch.float32",
+              "progressive_partial_sum": 0.005767822265625
+            }
+          ]
+        },
+        "f64": {
+          "manual_hartree_sum": 0.005767822265625,
+          "matches_after_component_totals_shadow": true,
+          "matches_full_production_f32_loss": null,
+          "production_loss": 4.2147041724462335,
+          "production_loss_dtype": "torch.float64",
+          "production_reaction_kcal": [
+            3.619363265991211
+          ],
+          "production_reaction_kcal_dtype": "torch.float64",
+          "terms": [
+            {
+              "coefficient": -1.0,
+              "coefficient_dtype": "torch.float64",
+              "combination_operand_dtype": "torch.float64",
+              "fixed_f32_molecule_total": -113.20608520507812,
+              "ordinal": 0,
+              "partial_sum_dtype": "torch.float64",
+              "product": 113.20608520507812,
+              "product_dtype": "torch.float64",
+              "progressive_partial_sum": 113.20608520507812
+            },
+            {
+              "coefficient": 2.0,
+              "coefficient_dtype": "torch.float64",
+              "combination_operand_dtype": "torch.float64",
+              "fixed_f32_molecule_total": -56.60015869140625,
+              "ordinal": 1,
+              "partial_sum_dtype": "torch.float64",
+              "product": -113.2003173828125,
+              "product_dtype": "torch.float64",
+              "progressive_partial_sum": 0.005767822265625
+            }
+          ]
+        }
+      }
+    },
+    "interpretation_guard": "A high stoichiometric cancellation condition alone does not localize roundoff to coefficient summation. Compare production F32 ordered sums with F64 sums of the exact same F32 molecule totals; compare point reductions against F64 sums of exact same F32 point terms; compare separate F64 term sums against sum of F64 pointwise differences.",
+    "production_batch_fchem": {
+      "baseflat32": {
+        "f32": {
+          "database_argument": "NCCE31",
+          "database_argument_type": "str",
+          "final_loss": 4.171715259552002,
+          "final_loss_dtype": "torch.float32",
+          "group_rows": [
+            {
+              "database_key": "N",
+              "database_key_type": "str",
+              "mse": 0.21583063900470734,
+              "prediction_values": [
+                3.6145758628845215
+              ],
+              "reference_values": [
+                3.1500000953674316
+              ],
+              "residual_values": [
+                0.46457576751708984
+              ],
+              "rmse_sqrt_1e-20_plus_mse": 0.46457576751708984,
+              "weight_factor": 8.979622680758972,
+              "weighted_value": 4.171715259552002
+            }
+          ]
+        },
+        "f64": {
+          "database_argument": "NCCE31",
+          "database_argument_type": "str",
+          "final_loss": 4.189337818787933,
+          "final_loss_dtype": "torch.float64",
+          "group_rows": [
+            {
+              "database_key": "N",
+              "database_key_type": "str",
+              "mse": 0.21765797691535463,
+              "prediction_values": [
+                3.6165383863097236
+              ],
+              "reference_values": [
+                3.1500000953674316
+              ],
+              "residual_values": [
+                0.46653829094229193
+              ],
+              "rmse_sqrt_1e-20_plus_mse": 0.46653829094229193,
+              "weight_factor": 8.979622680758972,
+              "weighted_value": 4.189337818787933
+            }
+          ]
+        }
+      },
+      "candidate_t_2m15": {
+        "f32": {
+          "database_argument": "NCCE31",
+          "database_argument_type": "str",
+          "final_loss": 4.214704513549805,
+          "final_loss_dtype": "torch.float32",
+          "group_rows": [
+            {
+              "database_key": "N",
+              "database_key_type": "str",
+              "mse": 0.2203018218278885,
+              "prediction_values": [
+                3.619363307952881
+              ],
+              "reference_values": [
+                3.1500000953674316
+              ],
+              "residual_values": [
+                0.4693632125854492
+              ],
+              "rmse_sqrt_1e-20_plus_mse": 0.4693632125854492,
+              "weight_factor": 8.979622680758972,
+              "weighted_value": 4.214704513549805
+            }
+          ]
+        },
+        "f64": {
+          "database_argument": "NCCE31",
+          "database_argument_type": "str",
+          "final_loss": 4.189335515742133,
+          "final_loss_dtype": "torch.float64",
+          "group_rows": [
+            {
+              "database_key": "N",
+              "database_key_type": "str",
+              "mse": 0.2176577376049083,
+              "prediction_values": [
+                3.6165381298350496
+              ],
+              "reference_values": [
+                3.1500000953674316
+              ],
+              "residual_values": [
+                0.466538034467618
+              ],
+              "rmse_sqrt_1e-20_plus_mse": 0.466538034467618,
+              "weight_factor": 8.979622680758972,
+              "weighted_value": 4.189335515742133
+            }
+          ]
+        }
+      }
+    },
+    "production_ordered_stoichiometry": {
+      "baseflat32": {
+        "f32": [
+          {
+            "hartree_partial_sum": 0.00576019287109375,
+            "hartree_partial_sum_dtype": "torch.float32",
+            "kcal_conversion_factor": 627.5095,
+            "ordered_terms": [
+              {
+                "coefficient": -1.0,
+                "coefficient_dtype": "torch.float32",
+                "molecule_energy": -113.20592498779297,
+                "molecule_energy_dtype": "torch.float32",
+                "ordinal": 0,
+                "partial_sum": 113.20592498779297,
+                "partial_sum_dtype": "torch.float32",
+                "product": 113.20592498779297,
+                "product_dtype": "torch.float32"
+              },
+              {
+                "coefficient": 2.0,
+                "coefficient_dtype": "torch.float32",
+                "molecule_energy": -56.60008239746094,
+                "molecule_energy_dtype": "torch.float32",
+                "ordinal": 1,
+                "partial_sum": 0.00576019287109375,
+                "partial_sum_dtype": "torch.float32",
+                "product": -113.20016479492188,
+                "product_dtype": "torch.float32"
+              }
+            ],
+            "reaction_energy_kcal": 3.6145758628845215,
+            "reaction_energy_kcal_dtype": "torch.float32",
+            "reaction_index": 0,
+            "slice": [
+              0,
+              2
+            ]
+          }
+        ],
+        "f64": [
+          {
+            "hartree_partial_sum": 0.005763320533489491,
+            "hartree_partial_sum_dtype": "torch.float64",
+            "kcal_conversion_factor": 627.5095,
+            "ordered_terms": [
+              {
+                "coefficient": -1.0,
+                "coefficient_dtype": "torch.float64",
+                "molecule_energy": -113.20592677197952,
+                "molecule_energy_dtype": "torch.float64",
+                "ordinal": 0,
+                "partial_sum": 113.20592677197952,
+                "partial_sum_dtype": "torch.float64",
+                "product": 113.20592677197952,
+                "product_dtype": "torch.float64"
+              },
+              {
+                "coefficient": 2.0,
+                "coefficient_dtype": "torch.float64",
+                "molecule_energy": -56.600081725723015,
+                "molecule_energy_dtype": "torch.float64",
+                "ordinal": 1,
+                "partial_sum": 0.005763320533489491,
+                "partial_sum_dtype": "torch.float64",
+                "product": -113.20016345144603,
+                "product_dtype": "torch.float64"
+              }
+            ],
+            "reaction_energy_kcal": 3.6165383863097236,
+            "reaction_energy_kcal_dtype": "torch.float64",
+            "reaction_index": 0,
+            "slice": [
+              0,
+              2
+            ]
+          }
+        ]
+      },
+      "candidate_t_2m15": {
+        "f32": [
+          {
+            "hartree_partial_sum": 0.005767822265625,
+            "hartree_partial_sum_dtype": "torch.float32",
+            "kcal_conversion_factor": 627.5095,
+            "ordered_terms": [
+              {
+                "coefficient": -1.0,
+                "coefficient_dtype": "torch.float32",
+                "molecule_energy": -113.20608520507812,
+                "molecule_energy_dtype": "torch.float32",
+                "ordinal": 0,
+                "partial_sum": 113.20608520507812,
+                "partial_sum_dtype": "torch.float32",
+                "product": 113.20608520507812,
+                "product_dtype": "torch.float32"
+              },
+              {
+                "coefficient": 2.0,
+                "coefficient_dtype": "torch.float32",
+                "molecule_energy": -56.60015869140625,
+                "molecule_energy_dtype": "torch.float32",
+                "ordinal": 1,
+                "partial_sum": 0.005767822265625,
+                "partial_sum_dtype": "torch.float32",
+                "product": -113.2003173828125,
+                "product_dtype": "torch.float32"
+              }
+            ],
+            "reaction_energy_kcal": 3.619363307952881,
+            "reaction_energy_kcal_dtype": "torch.float32",
+            "reaction_index": 0,
+            "slice": [
+              0,
+              2
+            ]
+          }
+        ],
+        "f64": [
+          {
+            "hartree_partial_sum": 0.0057633201247710986,
+            "hartree_partial_sum_dtype": "torch.float64",
+            "kcal_conversion_factor": 627.5095,
+            "ordered_terms": [
+              {
+                "coefficient": -1.0,
+                "coefficient_dtype": "torch.float64",
+                "molecule_energy": -113.206086037173,
+                "molecule_energy_dtype": "torch.float64",
+                "ordinal": 0,
+                "partial_sum": 113.206086037173,
+                "partial_sum_dtype": "torch.float64",
+                "product": 113.206086037173,
+                "product_dtype": "torch.float64"
+              },
+              {
+                "coefficient": 2.0,
+                "coefficient_dtype": "torch.float64",
+                "molecule_energy": -56.60016135852411,
+                "molecule_energy_dtype": "torch.float64",
+                "ordinal": 1,
+                "partial_sum": 0.0057633201247710986,
+                "partial_sum_dtype": "torch.float64",
+                "product": -113.20032271704822,
+                "product_dtype": "torch.float64"
+              }
+            ],
+            "reaction_energy_kcal": 3.6165381298350496,
+            "reaction_energy_kcal_dtype": "torch.float64",
+            "reaction_index": 0,
+            "slice": [
+              0,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0
+    },
+    "same_f32_xc_hf_d3_operands_f32_vs_f64_component_assembly": {
+      "baseflat32": [
+        {
+          "coefficient": -1.0,
+          "coefficient_weighted_assembly_error_hartree": -2.937880864806175e-06,
+          "component": "NH3-NH3_ncce31",
+          "d3_constructed_tensor_dtype": "torch.float64",
+          "d3_source_numpy_dtype": "float64",
+          "f32_hf_source_widened_for_reconstruction": -97.13409423828125,
+          "f32_minus_f64_component_assembly_rounding": 2.937880864806175e-06,
+          "f32_xc_integral": -16.069904327392578,
+          "production_f32_component_total": -113.20592498779297,
+          "reconstructed_f32_component_total": -113.20592498779297,
+          "reconstructed_f32_matches_production": true,
+          "same_operands_component_total_f64": -113.20592792567383
+        },
+        {
+          "coefficient": 2.0,
+          "coefficient_weighted_assembly_error_hartree": -1.5414550773584779e-06,
+          "component": "NH3_ncce31",
+          "d3_constructed_tensor_dtype": "torch.float64",
+          "d3_source_numpy_dtype": "float64",
+          "f32_hf_source_widened_for_reconstruction": -48.567176818847656,
+          "f32_minus_f64_component_assembly_rounding": -7.707275386792389e-07,
+          "f32_xc_integral": -8.032316207885742,
+          "production_f32_component_total": -56.60008239746094,
+          "reconstructed_f32_component_total": -56.60008239746094,
+          "reconstructed_f32_matches_production": true,
+          "same_operands_component_total_f64": -56.6000816267334
+        },
+        {
+          "weighted_sum_of_component_assembly_errors_hartree": -4.479335942164653e-06,
+          "weighted_sum_of_component_assembly_errors_kcal_per_mol": -0.0028108258573997704
+        }
+      ],
+      "candidate_t_2m15": [
+        {
+          "coefficient": -1.0,
+          "coefficient_weighted_assembly_error_hartree": -1.030532231993675e-06,
+          "component": "NH3-NH3_ncce31",
+          "d3_constructed_tensor_dtype": "torch.float64",
+          "d3_source_numpy_dtype": "float64",
+          "f32_hf_source_widened_for_reconstruction": -97.13409423828125,
+          "f32_minus_f64_component_assembly_rounding": 1.030532231993675e-06,
+          "f32_xc_integral": -16.0700626373291,
+          "production_f32_component_total": -113.20608520507812,
+          "reconstructed_f32_component_total": -113.20608520507812,
+          "reconstructed_f32_matches_production": true,
+          "same_operands_component_total_f64": -113.20608623561036
+        },
+        {
+          "coefficient": 2.0,
+          "coefficient_weighted_assembly_error_hartree": 6.087939453891522e-06,
+          "component": "NH3_ncce31",
+          "d3_constructed_tensor_dtype": "torch.float64",
+          "d3_source_numpy_dtype": "float64",
+          "f32_hf_source_widened_for_reconstruction": -48.567176818847656,
+          "f32_minus_f64_component_assembly_rounding": 3.043969726945761e-06,
+          "f32_xc_integral": -8.03239631652832,
+          "production_f32_component_total": -56.60015869140625,
+          "reconstructed_f32_component_total": -56.60015869140625,
+          "reconstructed_f32_matches_production": true,
+          "same_operands_component_total_f64": -56.60016173537598
+        },
+        {
+          "weighted_sum_of_component_assembly_errors_hartree": 5.057407221897847e-06,
+          "weighted_sum_of_component_assembly_errors_kcal_per_mol": 0.003173571077109507
+        }
+      ]
+    },
+    "schema": "lap-chem-precision-operation-diagnostics-v3",
+    "scope": "Deterministic postprocessing of captured point terms/scalars only; no model, new reaction state, gradient, optimizer, or AO evaluation.",
+    "status": "complete",
+    "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+    "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2"
+  },
+  "operation_diagnostics_receipt": {
+    "driver_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_operation_diagnostics_v2.py",
+    "driver_sha256": "5986b66fdcc21a59449c02e80d1a3277442d1548cc426320fe57154295232276",
+    "result_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_trace_operation_diagnostics_v3.json",
+    "result_sha256": "e3e23f5143434edd0779f42641aacef9607e6c0b361523bc9fdca7dbf9cc9009",
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0
+    },
+    "schema": "lap-chem-precision-operation-diagnostics-receipt-v2",
+    "status": "complete",
+    "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+    "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2"
+  },
+  "paired_delta_diagnostic": {
+    "identity": {
+      "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+      "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+      "trace_receipt_sha256": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8"
+    },
+    "paired_point_term_diagnostics": {
+      "f32": {
+        "0": [
+          {
+            "abs_sum_dx": 0.00015868883929215372,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132616977841569,
+            "difference_of_separate_sums_candidate_minus_base": -0.0001583099365234375,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 0.00016079332867400712,
+            "sum_abs_dx_same_accumulator": 0.0001607933227205649,
+            "sum_base_terms": -16.069904327392578,
+            "sum_candidate_terms": -16.0700626373291,
+            "sum_dx_candidate_minus_base": -0.00015868883929215372,
+            "sum_dx_minus_difference_of_separate_sums": -3.789027687162161e-07
+          },
+          {
+            "abs_sum_dx": 0.00015868884897542477,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.013261673470883,
+            "difference_of_separate_sums_candidate_minus_base": -0.0001586888489768512,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 0.00016079332867400712,
+            "sum_abs_dx_same_accumulator": 0.00016079332867400712,
+            "sum_base_terms": -16.06990458594735,
+            "sum_candidate_terms": -16.070063274796325,
+            "sum_dx_candidate_minus_base": -0.00015868884897542477,
+            "sum_dx_minus_difference_of_separate_sums": 1.426430588230554e-15
+          },
+          {
+            "abs_sum_dx": 0.00015868883929215372,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132616977841569,
+            "difference_of_separate_sums_candidate_minus_base": -0.0001583099365234375,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 0.00016079332867400712,
+            "sum_abs_dx_same_accumulator": 0.0001607933227205649,
+            "sum_base_terms": -16.069904327392578,
+            "sum_candidate_terms": -16.0700626373291,
+            "sum_dx_candidate_minus_base": -0.00015868883929215372,
+            "sum_dx_minus_difference_of_separate_sums": -3.789027687162161e-07
+          },
+          {
+            "abs_sum_dx": 0.00015868884897542477,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.013261673470883,
+            "difference_of_separate_sums_candidate_minus_base": -0.0001586888489768512,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 0.00016079332867400712,
+            "sum_abs_dx_same_accumulator": 0.00016079332867400712,
+            "sum_base_terms": -16.06990458594735,
+            "sum_candidate_terms": -16.070063274796325,
+            "sum_dx_candidate_minus_base": -0.00015868884897542477,
+            "sum_dx_minus_difference_of_separate_sums": 1.426430588230554e-15
+          },
+          {
+            "captured_base_xc_integral": -16.069904327392578,
+            "captured_candidate_minus_base_xc_integral": -0.0001583099365234375,
+            "captured_candidate_xc_integral": -16.0700626373291,
+            "component": "NH3-NH3_ncce31",
+            "measurement": "captured_production_component_integral_delta",
+            "pointwise_difference_reduction_f64": -0.00015868884897542477,
+            "source_point_term_dtype": "f32"
+          }
+        ],
+        "1": [
+          {
+            "abs_sum_dx": 7.933515007607639e-05,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132410530698641,
+            "difference_of_separate_sums_candidate_minus_base": -8.0108642578125e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 8.038562397458372e-05,
+            "sum_abs_dx_same_accumulator": 8.038563100853935e-05,
+            "sum_base_terms": -8.032316207885742,
+            "sum_candidate_terms": -8.03239631652832,
+            "sum_dx_candidate_minus_base": -7.933515007607639e-05,
+            "sum_dx_minus_difference_of_separate_sums": 7.734925020486116e-07
+          },
+          {
+            "abs_sum_dx": 7.93351539577623e-05,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132409148330472,
+            "difference_of_separate_sums_candidate_minus_base": -7.933515395741608e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 8.038562397458372e-05,
+            "sum_abs_dx_same_accumulator": 8.038562397458372e-05,
+            "sum_base_terms": -8.032316994926788,
+            "sum_candidate_terms": -8.032396330080745,
+            "sum_dx_candidate_minus_base": -7.93351539577623e-05,
+            "sum_dx_minus_difference_of_separate_sums": -3.462128587289337e-16
+          },
+          {
+            "abs_sum_dx": 7.933515007607639e-05,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132410530698641,
+            "difference_of_separate_sums_candidate_minus_base": -8.0108642578125e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 8.038562397458372e-05,
+            "sum_abs_dx_same_accumulator": 8.038563100853935e-05,
+            "sum_base_terms": -8.032316207885742,
+            "sum_candidate_terms": -8.03239631652832,
+            "sum_dx_candidate_minus_base": -7.933515007607639e-05,
+            "sum_dx_minus_difference_of_separate_sums": 7.734925020486116e-07
+          },
+          {
+            "abs_sum_dx": 7.93351539577623e-05,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132409148330472,
+            "difference_of_separate_sums_candidate_minus_base": -7.933515395741608e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f32",
+            "sum_abs_dx_f64_accumulator": 8.038562397458372e-05,
+            "sum_abs_dx_same_accumulator": 8.038562397458372e-05,
+            "sum_base_terms": -8.032316994926788,
+            "sum_candidate_terms": -8.032396330080745,
+            "sum_dx_candidate_minus_base": -7.93351539577623e-05,
+            "sum_dx_minus_difference_of_separate_sums": -3.462128587289337e-16
+          },
+          {
+            "captured_base_xc_integral": -8.032316207885742,
+            "captured_candidate_minus_base_xc_integral": -8.0108642578125e-05,
+            "captured_candidate_xc_integral": -8.03239631652832,
+            "component": "NH3_ncce31",
+            "measurement": "captured_production_component_integral_delta",
+            "pointwise_difference_reduction_f64": -7.93351539577623e-05,
+            "source_point_term_dtype": "f32"
+          }
+        ]
+      },
+      "f64": {
+        "0": [
+          {
+            "abs_sum_dx": 0.00015926265041343868,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132657240028413,
+            "difference_of_separate_sums_candidate_minus_base": -0.0001583099365234375,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 0.0001613753928938261,
+            "sum_abs_dx_same_accumulator": 0.00016137538477778435,
+            "sum_base_terms": -16.069904327392578,
+            "sum_candidate_terms": -16.0700626373291,
+            "sum_dx_candidate_minus_base": -0.00015926265041343868,
+            "sum_dx_minus_difference_of_separate_sums": -9.527138900011778e-07
+          },
+          {
+            "abs_sum_dx": 0.0001592626657966,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132656770917319,
+            "difference_of_separate_sums_candidate_minus_base": -0.0001592626657966889,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 0.0001613753928938261,
+            "sum_abs_dx_same_accumulator": 0.0001613753928938261,
+            "sum_base_terms": -16.06990317625774,
+            "sum_candidate_terms": -16.070062438923536,
+            "sum_dx_candidate_minus_base": -0.0001592626657966,
+            "sum_dx_minus_difference_of_separate_sums": 8.890457814381136e-17
+          },
+          {
+            "abs_sum_dx": 0.00015926519699860364,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132666996874538,
+            "difference_of_separate_sums_candidate_minus_base": -0.0001583099365234375,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 0.00016137811700889704,
+            "sum_abs_dx_same_accumulator": 0.00016137812053784728,
+            "sum_base_terms": -16.069904327392578,
+            "sum_candidate_terms": -16.0700626373291,
+            "sum_dx_candidate_minus_base": -0.00015926519699860364,
+            "sum_dx_minus_difference_of_separate_sums": -9.55260475166142e-07
+          },
+          {
+            "abs_sum_dx": 0.00015926519346482143,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3-NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.013266700012155,
+            "difference_of_separate_sums_candidate_minus_base": -0.00015926519346720625,
+            "point_count": 52488,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 0.00016137811700889704,
+            "sum_abs_dx_same_accumulator": 0.00016137811700889704,
+            "sum_base_terms": -16.069903173698265,
+            "sum_candidate_terms": -16.070062438891732,
+            "sum_dx_candidate_minus_base": -0.00015926519346482143,
+            "sum_dx_minus_difference_of_separate_sums": 2.3848110985991156e-15
+          },
+          {
+            "captured_base_xc_integral": -16.069903173698265,
+            "captured_candidate_minus_base_xc_integral": -0.00015926519346720625,
+            "captured_candidate_xc_integral": -16.070062438891732,
+            "component": "NH3-NH3_ncce31",
+            "measurement": "captured_production_component_integral_delta",
+            "pointwise_difference_reduction_f64": -0.00015926519346482143,
+            "source_point_term_dtype": "f64"
+          }
+        ],
+        "1": [
+          {
+            "abs_sum_dx": 7.96425883891061e-05,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132306851255355,
+            "difference_of_separate_sums_candidate_minus_base": -8.0108642578125e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 8.069631964561477e-05,
+            "sum_abs_dx_same_accumulator": 8.069631439866498e-05,
+            "sum_base_terms": -8.032316207885742,
+            "sum_candidate_terms": -8.03239631652832,
+            "sum_dx_candidate_minus_base": -7.96425883891061e-05,
+            "sum_dx_minus_difference_of_separate_sums": 4.6605418901890516e-07
+          },
+          {
+            "abs_sum_dx": 7.964258943675569e-05,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132307376783103,
+            "difference_of_separate_sums_candidate_minus_base": -7.964258943715663e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float32",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 8.069631964561477e-05,
+            "sum_abs_dx_same_accumulator": 8.069631964561477e-05,
+            "sum_base_terms": -8.032316297787391,
+            "sum_candidate_terms": -8.032395940376828,
+            "sum_dx_candidate_minus_base": -7.964258943675569e-05,
+            "sum_dx_minus_difference_of_separate_sums": 4.0093796338513954e-16
+          },
+          {
+            "abs_sum_dx": 7.963280222611502e-05,
+            "accumulator_dtype": "torch.float32",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132284735673114,
+            "difference_of_separate_sums_candidate_minus_base": -8.0108642578125e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 8.068621766628673e-05,
+            "sum_abs_dx_same_accumulator": 8.068622264545411e-05,
+            "sum_base_terms": -8.032316207885742,
+            "sum_candidate_terms": -8.03239631652832,
+            "sum_dx_candidate_minus_base": -7.963280222611502e-05,
+            "sum_dx_minus_difference_of_separate_sums": 4.7584035200998187e-07
+          },
+          {
+            "abs_sum_dx": 7.963280110377935e-05,
+            "accumulator_dtype": "torch.float64",
+            "component": "NH3_ncce31",
+            "condition_sum_abs_dx_over_abs_sum_dx": 1.0132284253210502,
+            "difference_of_separate_sums_candidate_minus_base": -7.963280110168114e-05,
+            "point_count": 26248,
+            "pointwise_difference_dtype": "torch.float64",
+            "source_point_term_dtype": "f64",
+            "sum_abs_dx_f64_accumulator": 8.068621766628673e-05,
+            "sum_abs_dx_same_accumulator": 8.068621766628673e-05,
+            "sum_base_terms": -8.032316306875355,
+            "sum_candidate_terms": -8.032395939676457,
+            "sum_dx_candidate_minus_base": -7.963280110377935e-05,
+            "sum_dx_minus_difference_of_separate_sums": -2.0982158068297285e-15
+          },
+          {
+            "captured_base_xc_integral": -8.032316306875355,
+            "captured_candidate_minus_base_xc_integral": -7.963280110168114e-05,
+            "captured_candidate_xc_integral": -8.032395939676457,
+            "component": "NH3_ncce31",
+            "measurement": "captured_production_component_integral_delta",
+            "pointwise_difference_reduction_f64": -7.963280110377935e-05,
+            "source_point_term_dtype": "f64"
+          }
+        ]
+      }
+    },
+    "point_term_support": "For each precision and component, use only existing V2 NPZ arrays `<state>_<precision>_component{0,1}_point_terms` for exact saved states baseflat32 and candidate_t_2m15.",
+    "production_delta_f32_minus_f64": 0.004787701543033318,
+    "production_stoichiometric_delta_comparison": {
+      "f32": {
+        "accumulator_dtype": "torch.float32",
+        "difference_of_separate_production_reaction_kcal": 0.004787445068359375,
+        "ordered_molecule_total_delta_terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_times_molecule_total_delta": 0.00016021728515625,
+            "index": 0,
+            "molecule_total_candidate_minus_base": -0.00016021728515625,
+            "progressive_weighted_total_delta": 0.00016021728515625
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_times_molecule_total_delta": -0.000152587890625,
+            "index": 1,
+            "molecule_total_candidate_minus_base": -7.62939453125e-05,
+            "progressive_weighted_total_delta": 7.62939453125e-06
+          }
+        ],
+        "ordered_xc_integral_delta_terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_times_xc_integral_delta": 0.0001583099365234375,
+            "index": 0,
+            "progressive_weighted_xc_delta": 0.0001583099365234375,
+            "xc_integral_candidate_minus_base": -0.0001583099365234375
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_times_xc_integral_delta": -0.00016021728515625,
+            "index": 1,
+            "progressive_weighted_xc_delta": -1.9073486328125e-06,
+            "xc_integral_candidate_minus_base": -8.0108642578125e-05
+          }
+        ],
+        "per_state": {
+          "baseflat32": {
+            "component_molecule_totals": [
+              -113.20592498779297,
+              -56.60008239746094
+            ],
+            "component_xc_integrals": [
+              -16.069904327392578,
+              -8.032316207885742
+            ],
+            "reaction_kcal": 3.6145758628845215
+          },
+          "candidate_t_2m15": {
+            "component_molecule_totals": [
+              -113.20608520507812,
+              -56.60015869140625
+            ],
+            "component_xc_integrals": [
+              -16.0700626373291,
+              -8.03239631652832
+            ],
+            "reaction_kcal": 3.619363307952881
+          }
+        },
+        "sum_dx_kcal_minus_difference_of_separate_production_kcal": 7.264316082000732e-08,
+        "sum_of_weighted_molecule_total_dx_hartree": 7.62939453125e-06,
+        "sum_of_weighted_molecule_total_dx_kcal": 0.004787517711520195,
+        "sum_of_weighted_xc_integral_dx_hartree": -1.9073486328125e-06,
+        "sum_of_weighted_xc_integral_dx_kcal_before_hf_d3_rounding": -0.0011968794278800488
+      },
+      "f64": {
+        "accumulator_dtype": "torch.float64",
+        "difference_of_separate_production_reaction_kcal": -2.5647467394307455e-07,
+        "ordered_molecule_total_delta_terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_times_molecule_total_delta": 0.00015926519347431167,
+            "index": 0,
+            "molecule_total_candidate_minus_base": -0.00015926519347431167,
+            "progressive_weighted_total_delta": 0.00015926519347431167
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_times_molecule_total_delta": -0.00015926560219270414,
+            "index": 1,
+            "molecule_total_candidate_minus_base": -7.963280109635207e-05,
+            "progressive_weighted_total_delta": -4.0871839246392483e-10
+          }
+        ],
+        "ordered_xc_integral_delta_terms": [
+          {
+            "coefficient": -1.0,
+            "coefficient_times_xc_integral_delta": 0.00015926519346720625,
+            "index": 0,
+            "progressive_weighted_xc_delta": 0.00015926519346720625,
+            "xc_integral_candidate_minus_base": -0.00015926519346720625
+          },
+          {
+            "coefficient": 2.0,
+            "coefficient_times_xc_integral_delta": -0.00015926560220336228,
+            "index": 1,
+            "progressive_weighted_xc_delta": -4.0873615603231883e-10,
+            "xc_integral_candidate_minus_base": -7.963280110168114e-05
+          }
+        ],
+        "per_state": {
+          "baseflat32": {
+            "component_molecule_totals": [
+              -113.20592677197952,
+              -56.600081725723015
+            ],
+            "component_xc_integrals": [
+              -16.069903173698265,
+              -8.032316306875355
+            ],
+            "reaction_kcal": 3.6165383863097236
+          },
+          "candidate_t_2m15": {
+            "component_molecule_totals": [
+              -113.206086037173,
+              -56.60016135852411
+            ],
+            "component_xc_integrals": [
+              -16.070062438891732,
+              -8.032395939676457
+            ],
+            "reaction_kcal": 3.6165381298350496
+          }
+        },
+        "sum_dx_kcal_minus_difference_of_separate_production_kcal": -1.5276668014160854e-16,
+        "sum_of_weighted_molecule_total_dx_hartree": -4.0871839246392483e-10,
+        "sum_of_weighted_molecule_total_dx_kcal": -2.5647467409584123e-07,
+        "sum_of_weighted_xc_integral_dx_hartree": -4.0873615603231883e-10,
+        "sum_of_weighted_xc_integral_dx_kcal_before_hf_d3_rounding": -2.5648582090376236e-07
+      }
+    },
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0
+    },
+    "schema": "lap-chem-precision-paired-delta-v1",
+    "scope": "Read-only postprocessing of the already-captured NPZ arrays and scalar trace. No model, chemistry forward, gradient, optimizer, or additional state evaluation.",
+    "status": "complete_array_only_diagnostic"
+  },
+  "paired_delta_receipt": {
+    "driver_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_paired_delta_v1.py",
+    "driver_sha256": "a2d8affcadf8e16a40a1978e80834dcfde7abd9d6d9ae2d31ac43e0bea156c0c",
+    "identity": {
+      "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+      "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+      "trace_receipt_sha256": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8"
+    },
+    "result_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_paired_delta_v1.json",
+    "result_sha256": "e12ef979572bfe68dc002caadb3e1344c93b62e579b7e609b2f24a37eea99d2a",
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0
+    },
+    "schema": "lap-chem-precision-paired-delta-receipt-v1",
+    "status": "complete_array_only_diagnostic"
+  },
+  "paired_delta_tables": {
+    "f32_resolution": [
+      {
+        "f32_directional_spacing_at_base_hartree": 1.9073486328125e-06,
+        "f32_endpoint_signed_ulp_distance": -83,
+        "f32_observed_endpoint_delta_hartree": -0.0001583099365234375,
+        "matched_f64_delta_hartree": -0.00015926519346720625,
+        "matched_f64_delta_in_f32_ulps": -83.50082975253463,
+        "note": "Endpoint displacement is rounded; signed continuous ratio shown separately.",
+        "stage": "NH3-NH3_ncce31 integrated XC"
+      },
+      {
+        "f32_directional_spacing_at_base_hartree": 9.5367431640625e-07,
+        "f32_endpoint_signed_ulp_distance": -84,
+        "f32_observed_endpoint_delta_hartree": -8.0108642578125e-05,
+        "matched_f64_delta_hartree": -7.963280110168114e-05,
+        "matched_f64_delta_in_f32_ulps": -83.5010440479964,
+        "note": "Endpoint displacement is rounded; signed continuous ratio shown separately.",
+        "stage": "NH3_ncce31 integrated XC"
+      },
+      {
+        "f32_directional_spacing_at_base_hartree": 7.62939453125e-06,
+        "f32_endpoint_signed_ulp_distance": -21,
+        "f32_observed_endpoint_delta_hartree": -0.00016021728515625,
+        "matched_f64_delta_hartree": -0.00015926519347431167,
+        "matched_f64_delta_in_f32_ulps": -20.87520743906498,
+        "note": "Endpoint displacement is rounded; signed continuous ratio shown separately.",
+        "stage": "NH3-NH3_ncce31 molecule total"
+      },
+      {
+        "f32_directional_spacing_at_base_hartree": 3.814697265625e-06,
+        "f32_endpoint_signed_ulp_distance": -20,
+        "f32_observed_endpoint_delta_hartree": -7.62939453125e-05,
+        "matched_f64_delta_hartree": -7.963280109635207e-05,
+        "matched_f64_delta_in_f32_ulps": -20.875261010602117,
+        "note": "Endpoint displacement is rounded; signed continuous ratio shown separately.",
+        "stage": "NH3_ncce31 molecule total"
+      },
+      {
+        "component_total_ulp_comparisons": [
+          {
+            "component": "NH3-NH3_ncce31",
+            "f32_total_spacing_hartree": 7.62939453125e-06,
+            "reaction_delta_in_component_total_ulps": -5.3571537137031555e-05
+          },
+          {
+            "component": "NH3_ncce31",
+            "f32_total_spacing_hartree": 3.814697265625e-06,
+            "reaction_delta_in_component_total_ulps": -0.00010714307427406311
+          }
+        ],
+        "f32_directional_spacing_at_base_hartree": 4.656612873077393e-10,
+        "f32_endpoint_signed_ulp_distance": 16384,
+        "f32_observed_endpoint_delta_hartree": 7.62939453125e-06,
+        "matched_f64_delta_hartree": -4.0871839246392483e-10,
+        "matched_f64_delta_in_f32_ulps": -0.877716064453125,
+        "note": "True response is below one adjacent F32 step. Reaction \u0394 is also -5.3571537137031555e-05 NH3-NH3_ncce31 total ULP; -0.00010714307427406311 NH3_ncce31 total ULP.",
+        "stage": "Net reaction Hartree partial sum"
+      }
+    ],
+    "point_term_response": [
+      {
+        "captured_production_xc_delta": -0.0001583099365234375,
+        "component": "NH3-NH3_ncce31",
+        "component_index": 0,
+        "condition_sum_abs_dx_over_abs_sum_dx": 1.013261673470883,
+        "point_count": 52488,
+        "pointwise_difference_dtype": "torch.float64",
+        "production_delta_minus_pointwise_sum": 3.789124519872739e-07,
+        "source_precision": "f32",
+        "sum_abs_dx": 0.00016079332867400712,
+        "sum_dx_candidate_minus_base": -0.00015868884897542477
+      },
+      {
+        "captured_production_xc_delta": -8.0108642578125e-05,
+        "component": "NH3_ncce31",
+        "component_index": 1,
+        "condition_sum_abs_dx_over_abs_sum_dx": 1.0132409148330472,
+        "point_count": 26248,
+        "pointwise_difference_dtype": "torch.float64",
+        "production_delta_minus_pointwise_sum": -7.734886203627047e-07,
+        "source_precision": "f32",
+        "sum_abs_dx": 8.038562397458372e-05,
+        "sum_dx_candidate_minus_base": -7.93351539577623e-05
+      },
+      {
+        "captured_production_xc_delta": -0.00015926519346720625,
+        "component": "NH3-NH3_ncce31",
+        "component_index": 0,
+        "condition_sum_abs_dx_over_abs_sum_dx": 1.013266700012155,
+        "point_count": 52488,
+        "pointwise_difference_dtype": "torch.float64",
+        "production_delta_minus_pointwise_sum": -2.3848110985991156e-15,
+        "source_precision": "f64",
+        "sum_abs_dx": 0.00016137811700889704,
+        "sum_dx_candidate_minus_base": -0.00015926519346482143
+      },
+      {
+        "captured_production_xc_delta": -7.963280110168114e-05,
+        "component": "NH3_ncce31",
+        "component_index": 1,
+        "condition_sum_abs_dx_over_abs_sum_dx": 1.0132284253210502,
+        "point_count": 26248,
+        "pointwise_difference_dtype": "torch.float64",
+        "production_delta_minus_pointwise_sum": 2.0982158068297285e-15,
+        "source_precision": "f64",
+        "sum_abs_dx": 8.068621766628673e-05,
+        "sum_dx_candidate_minus_base": -7.963280110377935e-05
+      }
+    ]
+  },
+  "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+  "prior_capture_note": "The first full capture is retained as provenance; its process ended nonzero in stale post-capture code. Acceptance uses the separate V2 capture and receipt.",
+  "production_trace": {
+    "deltas": {
+      "f32": 0.042989253997802734,
+      "f64": -2.3030457994011044e-06
+    },
+    "identity": {
+      "input_sha256_end": {
+        "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\predeclared_protocol.json": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+        "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\groups\\group_206_key_219_NCCE31_0.pickle": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+        "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+        "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+        "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.json": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_receipt.json": "29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_trials.npz": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.json": "2b8c336a001cb91593cf71e77c63f39fc3a53f2ac6175857e33db34e865a8242",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2_receipt.json": "8a33397b9ce061259f8e716bf349deaf407a56c0fde1164b490cf3e72825f35e",
+        "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+        "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+      },
+      "input_sha256_start": {
+        "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\predeclared_protocol.json": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+        "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\groups\\group_206_key_219_NCCE31_0.pickle": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+        "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+        "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+        "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.json": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_receipt.json": "29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_trials.npz": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.json": "2b8c336a001cb91593cf71e77c63f39fc3a53f2ac6175857e33db34e865a8242",
+        "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2_receipt.json": "8a33397b9ce061259f8e716bf349deaf407a56c0fde1164b490cf3e72825f35e",
+        "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+        "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+      },
+      "loaded_f32_chem_inputs_sha256": "48e08c4a46b7213967b363636e19e183804b25ae6e5c87d4de4fa956d7b8035c",
+      "loaded_f32_chem_inputs_sha256_end": "48e08c4a46b7213967b363636e19e183804b25ae6e5c87d4de4fa956d7b8035c",
+      "loaded_model_state_sha256": "3662f4df9a2ebde9853d95f0b6819c402830b3a35e9bc27902bb40ec57240b74",
+      "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "reaction_dispersion_hash_tree_sha256": "5eb7281e10b36e28b2d7baf4cd38486a73c3041ece84725880738b44c96ecf7e",
+      "reaction_payload_sha256": "98f90f0ca7cfd5f32017cc55a9a816f2e547da2df5de9c062f2d3e2984e130fa",
+      "repo_head": "fd65500da7d8a34a9106b2405ad14468a62228d8",
+      "source_file_sha256_end": {
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_checkpoint.py": "5ce857c565d94f7538a56104f68894ee59147e0caa3f9f4f098f7ec3abdc418d",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_panel.py": "663f93c147be6870d89de898694f9099da200f0388ea82a3ff033bccd7aba587",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "f023efc31a4ae8c6d86da27f2d7a82c25d0b184b9ea6e4e479666229329be6d3",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "e509e7becd7f81d9e9d930ce36677c67d918ff3ca3c607db6e6b16a674b84707",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "38fe2cf2d6230111f5052907569e02d370e1603aaf4f552469d82fcfffe62952",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003"
+      },
+      "source_file_sha256_start": {
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_checkpoint.py": "5ce857c565d94f7538a56104f68894ee59147e0caa3f9f4f098f7ec3abdc418d",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_panel.py": "663f93c147be6870d89de898694f9099da200f0388ea82a3ff033bccd7aba587",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "f023efc31a4ae8c6d86da27f2d7a82c25d0b184b9ea6e4e479666229329be6d3",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "e509e7becd7f81d9e9d930ce36677c67d918ff3ca3c607db6e6b16a674b84707",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "38fe2cf2d6230111f5052907569e02d370e1603aaf4f552469d82fcfffe62952",
+        "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003"
+      },
+      "states": {
+        "baseflat32": {
+          "c_order_bytes_sha256": "750ac52a10dc2a6ea319b9ef02b8c2fb1dd8eafd9481300be52de2d25fb36e08",
+          "dtype": "float32",
+          "shape": [
+            9446
+          ]
+        },
+        "candidate_t_2m15": {
+          "c_order_bytes_sha256": "cf65691418ce4cbe88f143ec2aa786db884a4d34515b271b571f0c3d328c51d6",
+          "dtype": "float32",
+          "shape": [
+            9446
+          ]
+        }
+      }
+    },
+    "precision_scope": "Two exact saved F32 parameter vectors only; matched F64 uses widened parameters and same F32-loaded reaction source values.",
+    "production": {
+      "baseflat32": {
+        "f32": {
+          "batch": {
+            "database_argument": "NCCE31",
+            "database_argument_type": "str",
+            "final_loss": 4.171715259552002,
+            "final_loss_dtype": "torch.float32",
+            "group_rows": [
+              {
+                "database_key": "N",
+                "database_key_type": "str",
+                "mse": 0.21583063900470734,
+                "prediction_values": [
+                  3.6145758628845215
+                ],
+                "reference_values": [
+                  3.1500000953674316
+                ],
+                "residual_values": [
+                  0.46457576751708984
+                ],
+                "rmse_sqrt_1e-20_plus_mse": 0.46457576751708984,
+                "weight_factor": 8.979622680758972,
+                "weighted_value": 4.171715259552002
+              }
+            ]
+          },
+          "components": [
+            {
+              "cancellation_condition": 1.0106400377868665,
+              "density_dtype": "torch.float32",
+              "direct_minus_f64_term_sum": 2.5855477048253306e-07,
+              "direct_minus_f64_term_sum_in_f32_ulps": 0.1355571635067463,
+              "epsilon_dtype": "torch.float32",
+              "index": 0,
+              "molecule_total": -113.20592498779297,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3-NH3_ncce31",
+              "point_count": 52488,
+              "point_term_dtype": "torch.float32",
+              "sum_abs_f64_of_exact_point_terms": 16.240888977973167,
+              "sum_f64_of_exact_point_terms": -16.06990458594735,
+              "weight_dtype": "torch.float32",
+              "xc_integral": -16.069904327392578,
+              "xc_integral_dtype": "torch.float32"
+            },
+            {
+              "cancellation_condition": 1.010638960087651,
+              "density_dtype": "torch.float32",
+              "direct_minus_f64_term_sum": 7.870410456689569e-07,
+              "direct_minus_f64_term_sum_in_f32_ulps": 0.8252723515033722,
+              "epsilon_dtype": "torch.float32",
+              "index": 1,
+              "molecule_total": -56.60008239746094,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3_ncce31",
+              "point_count": 26248,
+              "point_term_dtype": "torch.float32",
+              "sum_abs_f64_of_exact_point_terms": 8.117772494847175,
+              "sum_f64_of_exact_point_terms": -8.032316994926788,
+              "weight_dtype": "torch.float32",
+              "xc_integral": -8.032316207885742,
+              "xc_integral_dtype": "torch.float32"
+            }
+          ],
+          "factory_scalar_equal_to_batch_result": true,
+          "factory_scalar_identity": true,
+          "molecule_totals": [
+            {
+              "dispersion": -0.00192936,
+              "dispersion_accumulator_dtype": "torch.float32",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -97.13409423828125,
+              "hf_dtype": "torch.float32",
+              "key": "NH3-NH3_ncce310",
+              "molecule_total": -113.20592498779297,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3-NH3_ncce31",
+              "xc_integral": -16.069904327392578,
+              "xc_integral_dtype": "torch.float32"
+            },
+            {
+              "dispersion": -0.0005886,
+              "dispersion_accumulator_dtype": "torch.float32",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -48.567176818847656,
+              "hf_dtype": "torch.float32",
+              "key": "NH3_ncce311",
+              "molecule_total": -56.60008239746094,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3_ncce31",
+              "xc_integral": -8.032316207885742,
+              "xc_integral_dtype": "torch.float32"
+            }
+          ],
+          "reaction_energy_kcal_vector": [
+            3.6145758628845215
+          ],
+          "scalar": 4.171715259552002,
+          "scalar_dtype": "torch.float32",
+          "source_dispersion_hash_tree": "5eb7281e10b36e28b2d7baf4cd38486a73c3041ece84725880738b44c96ecf7e",
+          "stoich_reconstruction_equal": true,
+          "stoichiometry": [
+            {
+              "hartree_partial_sum": 0.00576019287109375,
+              "hartree_partial_sum_dtype": "torch.float32",
+              "kcal_conversion_factor": 627.5095,
+              "ordered_terms": [
+                {
+                  "coefficient": -1.0,
+                  "coefficient_dtype": "torch.float32",
+                  "molecule_energy": -113.20592498779297,
+                  "molecule_energy_dtype": "torch.float32",
+                  "ordinal": 0,
+                  "partial_sum": 113.20592498779297,
+                  "partial_sum_dtype": "torch.float32",
+                  "product": 113.20592498779297,
+                  "product_dtype": "torch.float32"
+                },
+                {
+                  "coefficient": 2.0,
+                  "coefficient_dtype": "torch.float32",
+                  "molecule_energy": -56.60008239746094,
+                  "molecule_energy_dtype": "torch.float32",
+                  "ordinal": 1,
+                  "partial_sum": 0.00576019287109375,
+                  "partial_sum_dtype": "torch.float32",
+                  "product": -113.20016479492188,
+                  "product_dtype": "torch.float32"
+                }
+              ],
+              "reaction_energy_kcal": 3.6145758628845215,
+              "reaction_energy_kcal_dtype": "torch.float32",
+              "reaction_index": 0,
+              "slice": [
+                0,
+                2
+              ]
+            }
+          ]
+        },
+        "f64": {
+          "batch": {
+            "database_argument": "NCCE31",
+            "database_argument_type": "str",
+            "final_loss": 4.189337818787933,
+            "final_loss_dtype": "torch.float64",
+            "group_rows": [
+              {
+                "database_key": "N",
+                "database_key_type": "str",
+                "mse": 0.21765797691535463,
+                "prediction_values": [
+                  3.6165383863097236
+                ],
+                "reference_values": [
+                  3.1500000953674316
+                ],
+                "residual_values": [
+                  0.46653829094229193
+                ],
+                "rmse_sqrt_1e-20_plus_mse": 0.46653829094229193,
+                "weight_factor": 8.979622680758972,
+                "weighted_value": 4.189337818787933
+              }
+            ]
+          },
+          "components": [
+            {
+              "cancellation_condition": 1.0106400378329317,
+              "density_dtype": "torch.float64",
+              "direct_minus_f64_term_sum": 0.0,
+              "direct_minus_f64_term_sum_in_f32_ulps": null,
+              "epsilon_dtype": "torch.float64",
+              "index": 0,
+              "molecule_total": -113.20592677197952,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3-NH3_ncce31",
+              "point_count": 52488,
+              "point_term_dtype": "torch.float64",
+              "sum_abs_f64_of_exact_point_terms": 16.240887551437964,
+              "sum_f64_of_exact_point_terms": -16.069903173698265,
+              "weight_dtype": "torch.float64",
+              "xc_integral": -16.069903173698265,
+              "xc_integral_dtype": "torch.float64"
+            },
+            {
+              "cancellation_condition": 1.0106389602458004,
+              "density_dtype": "torch.float64",
+              "direct_minus_f64_term_sum": 0.0,
+              "direct_minus_f64_term_sum_in_f32_ulps": null,
+              "epsilon_dtype": "torch.float64",
+              "index": 1,
+              "molecule_total": -56.600081725723015,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3_ncce31",
+              "point_count": 26248,
+              "point_term_dtype": "torch.float64",
+              "sum_abs_f64_of_exact_point_terms": 8.117771800745896,
+              "sum_f64_of_exact_point_terms": -8.032316306875355,
+              "weight_dtype": "torch.float64",
+              "xc_integral": -8.032316306875355,
+              "xc_integral_dtype": "torch.float64"
+            }
+          ],
+          "factory_scalar_equal_to_batch_result": true,
+          "factory_scalar_identity": true,
+          "molecule_totals": [
+            {
+              "dispersion": -0.00192936,
+              "dispersion_accumulator_dtype": "torch.float64",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -97.13409423828125,
+              "hf_dtype": "torch.float64",
+              "key": "NH3-NH3_ncce310",
+              "molecule_total": -113.20592677197952,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3-NH3_ncce31",
+              "xc_integral": -16.069903173698265,
+              "xc_integral_dtype": "torch.float64"
+            },
+            {
+              "dispersion": -0.0005886,
+              "dispersion_accumulator_dtype": "torch.float64",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -48.567176818847656,
+              "hf_dtype": "torch.float64",
+              "key": "NH3_ncce311",
+              "molecule_total": -56.600081725723015,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3_ncce31",
+              "xc_integral": -8.032316306875355,
+              "xc_integral_dtype": "torch.float64"
+            }
+          ],
+          "reaction_energy_kcal_vector": [
+            3.6165383863097236
+          ],
+          "scalar": 4.189337818787933,
+          "scalar_dtype": "torch.float64",
+          "source_dispersion_hash_tree": "5eb7281e10b36e28b2d7baf4cd38486a73c3041ece84725880738b44c96ecf7e",
+          "stoich_reconstruction_equal": true,
+          "stoichiometry": [
+            {
+              "hartree_partial_sum": 0.005763320533489491,
+              "hartree_partial_sum_dtype": "torch.float64",
+              "kcal_conversion_factor": 627.5095,
+              "ordered_terms": [
+                {
+                  "coefficient": -1.0,
+                  "coefficient_dtype": "torch.float64",
+                  "molecule_energy": -113.20592677197952,
+                  "molecule_energy_dtype": "torch.float64",
+                  "ordinal": 0,
+                  "partial_sum": 113.20592677197952,
+                  "partial_sum_dtype": "torch.float64",
+                  "product": 113.20592677197952,
+                  "product_dtype": "torch.float64"
+                },
+                {
+                  "coefficient": 2.0,
+                  "coefficient_dtype": "torch.float64",
+                  "molecule_energy": -56.600081725723015,
+                  "molecule_energy_dtype": "torch.float64",
+                  "ordinal": 1,
+                  "partial_sum": 0.005763320533489491,
+                  "partial_sum_dtype": "torch.float64",
+                  "product": -113.20016345144603,
+                  "product_dtype": "torch.float64"
+                }
+              ],
+              "reaction_energy_kcal": 3.6165383863097236,
+              "reaction_energy_kcal_dtype": "torch.float64",
+              "reaction_index": 0,
+              "slice": [
+                0,
+                2
+              ]
+            }
+          ]
+        }
+      },
+      "candidate_t_2m15": {
+        "f32": {
+          "batch": {
+            "database_argument": "NCCE31",
+            "database_argument_type": "str",
+            "final_loss": 4.214704513549805,
+            "final_loss_dtype": "torch.float32",
+            "group_rows": [
+              {
+                "database_key": "N",
+                "database_key_type": "str",
+                "mse": 0.2203018218278885,
+                "prediction_values": [
+                  3.619363307952881
+                ],
+                "reference_values": [
+                  3.1500000953674316
+                ],
+                "residual_values": [
+                  0.4693632125854492
+                ],
+                "rmse_sqrt_1e-20_plus_mse": 0.4693632125854492,
+                "weight_factor": 8.979622680758972,
+                "weighted_value": 4.214704513549805
+              }
+            ]
+          },
+          "components": [
+            {
+              "cancellation_condition": 1.010640063577228,
+              "density_dtype": "torch.float32",
+              "direct_minus_f64_term_sum": 6.374672238962376e-07,
+              "direct_minus_f64_term_sum_in_f32_ulps": 0.3342164158821106,
+              "epsilon_dtype": "torch.float32",
+              "index": 0,
+              "molecule_total": -113.20608520507812,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3-NH3_ncce31",
+              "point_count": 52488,
+              "point_term_dtype": "torch.float32",
+              "sum_abs_f64_of_exact_point_terms": 16.241049769730235,
+              "sum_f64_of_exact_point_terms": -16.070063274796325,
+              "weight_dtype": "torch.float32",
+              "xc_integral": -16.0700626373291,
+              "xc_integral_dtype": "torch.float32"
+            },
+            {
+              "cancellation_condition": 1.0106389857868912,
+              "density_dtype": "torch.float32",
+              "direct_minus_f64_term_sum": 1.3552424960039389e-08,
+              "direct_minus_f64_term_sum_in_f32_ulps": 0.014210747554898262,
+              "epsilon_dtype": "torch.float32",
+              "index": 1,
+              "molecule_total": -56.60015869140625,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3_ncce31",
+              "point_count": 26248,
+              "point_term_dtype": "torch.float32",
+              "sum_abs_f64_of_exact_point_terms": 8.117852880471151,
+              "sum_f64_of_exact_point_terms": -8.032396330080745,
+              "weight_dtype": "torch.float32",
+              "xc_integral": -8.03239631652832,
+              "xc_integral_dtype": "torch.float32"
+            }
+          ],
+          "factory_scalar_equal_to_batch_result": true,
+          "factory_scalar_identity": true,
+          "molecule_totals": [
+            {
+              "dispersion": -0.00192936,
+              "dispersion_accumulator_dtype": "torch.float32",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -97.13409423828125,
+              "hf_dtype": "torch.float32",
+              "key": "NH3-NH3_ncce310",
+              "molecule_total": -113.20608520507812,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3-NH3_ncce31",
+              "xc_integral": -16.0700626373291,
+              "xc_integral_dtype": "torch.float32"
+            },
+            {
+              "dispersion": -0.0005886,
+              "dispersion_accumulator_dtype": "torch.float32",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -48.567176818847656,
+              "hf_dtype": "torch.float32",
+              "key": "NH3_ncce311",
+              "molecule_total": -56.60015869140625,
+              "molecule_total_dtype": "torch.float32",
+              "name": "NH3_ncce31",
+              "xc_integral": -8.03239631652832,
+              "xc_integral_dtype": "torch.float32"
+            }
+          ],
+          "reaction_energy_kcal_vector": [
+            3.619363307952881
+          ],
+          "scalar": 4.214704513549805,
+          "scalar_dtype": "torch.float32",
+          "source_dispersion_hash_tree": "5eb7281e10b36e28b2d7baf4cd38486a73c3041ece84725880738b44c96ecf7e",
+          "stoich_reconstruction_equal": true,
+          "stoichiometry": [
+            {
+              "hartree_partial_sum": 0.005767822265625,
+              "hartree_partial_sum_dtype": "torch.float32",
+              "kcal_conversion_factor": 627.5095,
+              "ordered_terms": [
+                {
+                  "coefficient": -1.0,
+                  "coefficient_dtype": "torch.float32",
+                  "molecule_energy": -113.20608520507812,
+                  "molecule_energy_dtype": "torch.float32",
+                  "ordinal": 0,
+                  "partial_sum": 113.20608520507812,
+                  "partial_sum_dtype": "torch.float32",
+                  "product": 113.20608520507812,
+                  "product_dtype": "torch.float32"
+                },
+                {
+                  "coefficient": 2.0,
+                  "coefficient_dtype": "torch.float32",
+                  "molecule_energy": -56.60015869140625,
+                  "molecule_energy_dtype": "torch.float32",
+                  "ordinal": 1,
+                  "partial_sum": 0.005767822265625,
+                  "partial_sum_dtype": "torch.float32",
+                  "product": -113.2003173828125,
+                  "product_dtype": "torch.float32"
+                }
+              ],
+              "reaction_energy_kcal": 3.619363307952881,
+              "reaction_energy_kcal_dtype": "torch.float32",
+              "reaction_index": 0,
+              "slice": [
+                0,
+                2
+              ]
+            }
+          ]
+        },
+        "f64": {
+          "batch": {
+            "database_argument": "NCCE31",
+            "database_argument_type": "str",
+            "final_loss": 4.189335515742133,
+            "final_loss_dtype": "torch.float64",
+            "group_rows": [
+              {
+                "database_key": "N",
+                "database_key_type": "str",
+                "mse": 0.2176577376049083,
+                "prediction_values": [
+                  3.6165381298350496
+                ],
+                "reference_values": [
+                  3.1500000953674316
+                ],
+                "residual_values": [
+                  0.466538034467618
+                ],
+                "rmse_sqrt_1e-20_plus_mse": 0.466538034467618,
+                "weight_factor": 8.979622680758972,
+                "weighted_value": 4.189335515742133
+              }
+            ]
+          },
+          "components": [
+            {
+              "cancellation_condition": 1.0106400637716428,
+              "density_dtype": "torch.float64",
+              "direct_minus_f64_term_sum": 0.0,
+              "direct_minus_f64_term_sum_in_f32_ulps": null,
+              "epsilon_dtype": "torch.float64",
+              "index": 0,
+              "molecule_total": -113.206086037173,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3-NH3_ncce31",
+              "point_count": 52488,
+              "point_term_dtype": "torch.float64",
+              "sum_abs_f64_of_exact_point_terms": 16.24104892805582,
+              "sum_f64_of_exact_point_terms": -16.070062438891732,
+              "weight_dtype": "torch.float64",
+              "xc_integral": -16.070062438891732,
+              "xc_integral_dtype": "torch.float64"
+            },
+            {
+              "cancellation_condition": 1.0106389859176375,
+              "density_dtype": "torch.float64",
+              "direct_minus_f64_term_sum": 0.0,
+              "direct_minus_f64_term_sum_in_f32_ulps": null,
+              "epsilon_dtype": "torch.float64",
+              "index": 1,
+              "molecule_total": -56.60016135852411,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3_ncce31",
+              "point_count": 26248,
+              "point_term_dtype": "torch.float64",
+              "sum_abs_f64_of_exact_point_terms": 8.117852486963564,
+              "sum_f64_of_exact_point_terms": -8.032395939676457,
+              "weight_dtype": "torch.float64",
+              "xc_integral": -8.032395939676457,
+              "xc_integral_dtype": "torch.float64"
+            }
+          ],
+          "factory_scalar_equal_to_batch_result": true,
+          "factory_scalar_identity": true,
+          "molecule_totals": [
+            {
+              "dispersion": -0.00192936,
+              "dispersion_accumulator_dtype": "torch.float64",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -97.13409423828125,
+              "hf_dtype": "torch.float64",
+              "key": "NH3-NH3_ncce310",
+              "molecule_total": -113.206086037173,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3-NH3_ncce31",
+              "xc_integral": -16.070062438891732,
+              "xc_integral_dtype": "torch.float64"
+            },
+            {
+              "dispersion": -0.0005886,
+              "dispersion_accumulator_dtype": "torch.float64",
+              "dispersion_constructed_tensor_dtype": "torch.float64",
+              "dispersion_source_numpy_dtype": "float64",
+              "dispersion_source_type": "ndarray",
+              "hf": -48.567176818847656,
+              "hf_dtype": "torch.float64",
+              "key": "NH3_ncce311",
+              "molecule_total": -56.60016135852411,
+              "molecule_total_dtype": "torch.float64",
+              "name": "NH3_ncce31",
+              "xc_integral": -8.032395939676457,
+              "xc_integral_dtype": "torch.float64"
+            }
+          ],
+          "reaction_energy_kcal_vector": [
+            3.6165381298350496
+          ],
+          "scalar": 4.189335515742133,
+          "scalar_dtype": "torch.float64",
+          "source_dispersion_hash_tree": "5eb7281e10b36e28b2d7baf4cd38486a73c3041ece84725880738b44c96ecf7e",
+          "stoich_reconstruction_equal": true,
+          "stoichiometry": [
+            {
+              "hartree_partial_sum": 0.0057633201247710986,
+              "hartree_partial_sum_dtype": "torch.float64",
+              "kcal_conversion_factor": 627.5095,
+              "ordered_terms": [
+                {
+                  "coefficient": -1.0,
+                  "coefficient_dtype": "torch.float64",
+                  "molecule_energy": -113.206086037173,
+                  "molecule_energy_dtype": "torch.float64",
+                  "ordinal": 0,
+                  "partial_sum": 113.206086037173,
+                  "partial_sum_dtype": "torch.float64",
+                  "product": 113.206086037173,
+                  "product_dtype": "torch.float64"
+                },
+                {
+                  "coefficient": 2.0,
+                  "coefficient_dtype": "torch.float64",
+                  "molecule_energy": -56.60016135852411,
+                  "molecule_energy_dtype": "torch.float64",
+                  "ordinal": 1,
+                  "partial_sum": 0.0057633201247710986,
+                  "partial_sum_dtype": "torch.float64",
+                  "product": -113.20032271704822,
+                  "product_dtype": "torch.float64"
+                }
+              ],
+              "reaction_energy_kcal": 3.6165381298350496,
+              "reaction_energy_kcal_dtype": "torch.float64",
+              "reaction_index": 0,
+              "slice": [
+                0,
+                2
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "references": {
+      "f32_capture": {
+        "base": 4.171715259552002,
+        "candidate": 4.214704513549805,
+        "delta": 0.042989253997802734
+      },
+      "matched_f64": {
+        "base": 4.189337818787933,
+        "candidate": 4.189335515742133,
+        "delta": -2.3030457994011044e-06
+      }
+    },
+    "rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "cursor": true,
+      "ema": true,
+      "mode": true,
+      "model32_and_buffers": true,
+      "model64_and_buffers": true,
+      "rng_full_state": true
+    },
+    "runtime": {
+      "caller_restored": true,
+      "caller_start": {
+        "autocast_cpu_enabled": false,
+        "autocast_cuda_enabled": false,
+        "cuda_cudnn_benchmark": false,
+        "cuda_cudnn_deterministic": false,
+        "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+        "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": true,
+        "default_dtype": "torch.float32",
+        "deterministic_algorithms": false,
+        "float32_matmul_precision": "highest",
+        "num_threads": 1
+      },
+      "cuda_device_caller_end": 0,
+      "cuda_device_caller_start": 0,
+      "cuda_device_execution": 0,
+      "cuda_device_restored": true,
+      "execution": {
+        "autocast_cpu_enabled": false,
+        "autocast_cuda_enabled": false,
+        "cuda_cudnn_benchmark": false,
+        "cuda_cudnn_deterministic": false,
+        "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+        "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": true,
+        "default_dtype": "torch.float32",
+        "deterministic_algorithms": false,
+        "float32_matmul_precision": "highest",
+        "num_threads": 1
+      },
+      "mode": {
+        "f32": true,
+        "f64": true
+      }
+    },
+    "sample": {
+      "cursor": 2,
+      "database": "NCCE31",
+      "rank": 0,
+      "reaction_id": 0,
+      "system_context": "BH",
+      "variant": "level2_mura"
+    },
+    "schema": "lap-chem-precision-trace-full-v2",
+    "status": "complete_production_capture",
+    "trace_scope": "Original reaction_loss factory, compute_local_energy_tensors, integrate_xc_energy, integration, get_energy_reaction, and batch_fchem. No gradient or AO/operator evaluation."
+  },
+  "report_table": [
+    {
+      "f32_base": -16.069904327392578,
+      "f32_candidate": -16.0700626373291,
+      "f32_delta": -0.0001583099365234375,
+      "f64_base": -16.069903173698265,
+      "f64_candidate": -16.070062438891732,
+      "f64_delta": -0.00015926519346720625,
+      "stage": "NH3-NH3_ncce31: integrated XC (Ha)",
+      "ulp_conditioning_note": "F32 83 ULP downward; matched-F64 -44829166622 ULP; F32-term condition(base,cand)=(1.0106400377868665, 1.0106400635772279); direct\u2212F64-term sum Ha=(2.5855477048253306e-07, 6.3746722389623756e-07); ULP=(0.13555716350674629, 0.3342164158821106)"
+    },
+    {
+      "f32_base": -113.20592498779297,
+      "f32_candidate": -113.20608520507812,
+      "f32_delta": -0.00016021728515625,
+      "f64_base": -113.20592677197952,
+      "f64_candidate": -113.206086037173,
+      "f64_delta": -0.00015926519347431167,
+      "stage": "NH3-NH3_ncce31: total molecule energy (Ha)",
+      "ulp_conditioning_note": "F32 21 ULP downward; matched-F64 -11207291656 ULP"
+    },
+    {
+      "f32_base": 113.20592498779297,
+      "f32_candidate": 113.20608520507812,
+      "f32_delta": 0.00016021728515625,
+      "f64_base": 113.20592677197952,
+      "f64_candidate": 113.206086037173,
+      "f64_delta": 0.00015926519347431167,
+      "stage": "NH3-NH3_ncce31: stoichiometric contribution (Ha)",
+      "ulp_conditioning_note": "F32 21 ULP upward; matched-F64 +11207291656 ULP"
+    },
+    {
+      "f32_base": -8.032316207885742,
+      "f32_candidate": -8.03239631652832,
+      "f32_delta": -8.0108642578125e-05,
+      "f64_base": -8.032316306875355,
+      "f64_candidate": -8.032395939676457,
+      "f64_delta": -7.963280110168114e-05,
+      "stage": "NH3_ncce31: integrated XC (Ha)",
+      "ulp_conditioning_note": "F32 84 ULP downward; matched-F64 -44829281671 ULP; F32-term condition(base,cand)=(1.0106389600876511, 1.0106389857868912); direct\u2212F64-term sum Ha=(7.8704104566895694e-07, 1.3552424960039389e-08); ULP=(0.82527235150337219, 0.014210747554898262)"
+    },
+    {
+      "f32_base": -56.60008239746094,
+      "f32_candidate": -56.60015869140625,
+      "f32_delta": -7.62939453125e-05,
+      "f64_base": -56.600081725723015,
+      "f64_candidate": -56.60016135852411,
+      "f64_delta": -7.963280109635207e-05,
+      "stage": "NH3_ncce31: total molecule energy (Ha)",
+      "ulp_conditioning_note": "F32 20 ULP downward; matched-F64 -11207320417 ULP"
+    },
+    {
+      "f32_base": -113.20016479492188,
+      "f32_candidate": -113.2003173828125,
+      "f32_delta": -0.000152587890625,
+      "f64_base": -113.20016345144603,
+      "f64_candidate": -113.20032271704822,
+      "f64_delta": -0.00015926560219270414,
+      "stage": "NH3_ncce31: stoichiometric contribution (Ha)",
+      "ulp_conditioning_note": "F32 20 ULP downward; matched-F64 -11207320417 ULP"
+    },
+    {
+      "f32_base": 0.00576019287109375,
+      "f32_candidate": 0.005767822265625,
+      "f32_delta": 7.62939453125e-06,
+      "f64_base": 0.005763320533489491,
+      "f64_candidate": 0.0057633201247710986,
+      "f64_delta": -4.0871839246392483e-10,
+      "stage": "Reaction energy (Ha)",
+      "ulp_conditioning_note": "F32 16384 ULP upward; matched-F64 -471220224 ULP"
+    },
+    {
+      "f32_base": 3.6145758628845215,
+      "f32_candidate": 3.619363307952881,
+      "f32_delta": 0.004787445068359375,
+      "f64_base": 3.6165383863097236,
+      "f64_candidate": 3.6165381298350496,
+      "f64_delta": -2.5647467394307455e-07,
+      "stage": "Reaction energy (kcal/mol)",
+      "ulp_conditioning_note": "F32 20080 ULP upward; matched-F64 -577529623 ULP"
+    },
+    {
+      "f32_base": 0.46457576751708984,
+      "f32_candidate": 0.4693632125854492,
+      "f32_delta": 0.004787445068359375,
+      "f64_base": 0.46653829094229193,
+      "f64_candidate": 0.466538034467618,
+      "f64_delta": -2.5647467394307455e-07,
+      "stage": "Residual (kcal/mol)",
+      "ulp_conditioning_note": "F32 160640 ULP upward; matched-F64 -4620236984 ULP"
+    },
+    {
+      "f32_base": 0.46457576751708984,
+      "f32_candidate": 0.4693632125854492,
+      "f32_delta": 0.004787445068359375,
+      "f64_base": 0.46653829094229193,
+      "f64_candidate": 0.466538034467618,
+      "f64_delta": -2.5647467394307455e-07,
+      "stage": "Raw RMSE (kcal/mol)",
+      "ulp_conditioning_note": "F32 160640 ULP upward; matched-F64 -4620236984 ULP"
+    },
+    {
+      "f32_base": 4.171715259552002,
+      "f32_candidate": 4.214704513549805,
+      "f32_delta": 0.042989253997802734,
+      "f64_base": 4.189337818787933,
+      "f64_candidate": 4.189335515742133,
+      "f64_delta": -2.3030457994011044e-06,
+      "stage": "Weighted fchem loss",
+      "ulp_conditioning_note": "F32 90155 ULP upward; matched-F64 -2592999051 ULP"
+    }
+  ],
+  "scalar_reproduction": {
+    "f32_actual": {
+      "baseflat32": 4.171715259552002,
+      "candidate_t_2m15": 4.214704513549805
+    },
+    "f32_exact": true,
+    "f32_expected": {
+      "baseflat32": 4.171715259552002,
+      "candidate_t_2m15": 4.214704513549805
+    },
+    "f32_label": "exact",
+    "f32_within_rtol_1e-6_atol_1e-8": true,
+    "matched_f64_delta": -2.3030457994011044e-06,
+    "matched_f64_delta_abs_error": 0.0,
+    "matched_f64_delta_abs_tolerance": 1e-10,
+    "matched_f64_delta_expected": -2.3030457994011044e-06
+  },
+  "schema": "lap-chem-precision-trace-final-results-v1",
+  "shadow_artifact": {
+    "boundary_metrics": [
+      {
+        "base_loss": 4.171714071291204,
+        "boundary": "after-component-totals",
+        "candidate_loss": 4.2147041724462335,
+        "candidate_state_is_exact_saved_rounded_f32_vector": true,
+        "delta_candidate_minus_base": 0.04299010115502977,
+        "frozen_armijo_margin": -0.04299010143560711,
+        "relative_error_to_full_matched_f64_delta": 18667.628846985644,
+        "sign_only_negative_beyond_8_matched_f64_ulps": false
+      },
+      {
+        "base_loss": 4.196954226911976,
+        "boundary": "after-float32-xc-integral",
+        "candidate_loss": 4.186206701623217,
+        "candidate_state_is_exact_saved_rounded_f32_vector": true,
+        "delta_candidate_minus_base": -0.01074752528875944,
+        "frozen_armijo_margin": 0.010747525008182102,
+        "relative_error_to_full_matched_f64_delta": 4665.657211747279,
+        "sign_only_negative_beyond_8_matched_f64_ulps": true
+      },
+      {
+        "base_loss": 4.189541495446905,
+        "boundary": "before-xc-reduction",
+        "candidate_loss": 4.189645970656128,
+        "candidate_state_is_exact_saved_rounded_f32_vector": true,
+        "delta_candidate_minus_base": 0.00010447520922340914,
+        "frozen_armijo_margin": -0.00010447548980074828,
+        "relative_error_to_full_matched_f64_delta": 46.363930344145736,
+        "sign_only_negative_beyond_8_matched_f64_ulps": false
+      },
+      {
+        "base_loss": 4.189381634392438,
+        "boundary": "before-integrand-multiplication",
+        "candidate_loss": 4.18986087651512,
+        "candidate_state_is_exact_saved_rounded_f32_vector": true,
+        "delta_candidate_minus_base": 0.0004792421226822441,
+        "frozen_armijo_margin": -0.00047924240325958323,
+        "relative_error_to_full_matched_f64_delta": 209.09057414614534,
+        "sign_only_negative_beyond_8_matched_f64_ulps": false
+      },
+      {
+        "base_loss": 4.189494442477961,
+        "boundary": "after-float32-nn-adaptive-outputs-before-local-pbe",
+        "candidate_loss": 4.1896759471662515,
+        "candidate_state_is_exact_saved_rounded_f32_vector": true,
+        "delta_candidate_minus_base": 0.0001815046882907012,
+        "frozen_armijo_margin": -0.00018150496886804035,
+        "relative_error_to_full_matched_f64_delta": 79.81071593882353,
+        "sign_only_negative_beyond_8_matched_f64_ulps": false
+      },
+      {
+        "base_loss": 4.189337818787933,
+        "boundary": "full-matched-float64-reference",
+        "candidate_loss": 4.189335515742133,
+        "candidate_state_is_exact_saved_rounded_f32_vector": true,
+        "delta_candidate_minus_base": -2.3030457994011044e-06,
+        "frozen_armijo_margin": 2.3027652220619643e-06,
+        "relative_error_to_full_matched_f64_delta": 0.0,
+        "sign_only_negative_beyond_8_matched_f64_ulps": true
+      }
+    ],
+    "boundary_order": [
+      "after-component-totals",
+      "after-float32-xc-integral",
+      "before-xc-reduction",
+      "before-integrand-multiplication",
+      "after-float32-nn-adaptive-outputs-before-local-pbe",
+      "full-matched-float64-reference"
+    ],
+    "execution_scope": "Postprocess only: no model/checkpoint forward, gradients, optimizer, new parameter state, or AO/operator evaluation. Captured constants and production functions are used for fixed shadow boundaries.",
+    "frozen_armijo": {
+      "c": 0.0001,
+      "c_source": "latest.pt protocol_metadata.vector_armijo.c",
+      "candidate_t_source": "precision_capture32_v2.json trials[tag=2m15].t",
+      "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+      "gdotv": -0.09193967105990453,
+      "rounded_candidate_note": "Each candidate loss is evaluated at the exact stored F32 candidate vector. The frozen raw gdotv is the pre-step requested-direction slope; no rounded-displacement slope is substituted.",
+      "slope_capture_sha256": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+      "slope_source": "precision_capture32_v2.json trials[tag=2m15].tasks.chem.autograd_dot_direction_v32; precomputed frozen raw slope, no new gradient evaluation",
+      "t": 3.0517578125e-05
+    },
+    "full_matched_f64_delta": -2.3030457994011044e-06,
+    "identity": {
+      "capture_json_sha256": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+      "capture_npz_sha256": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+      "capture_receipt_sha256": "29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51",
+      "dispersion_source_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "group_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "raw_gradient_npz_sha256": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+      "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+      "trace_receipt_sha256": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8"
+    },
+    "relative_error_definition": "abs(boundary_delta - full_matched_F64_delta) / abs(full_matched_F64_delta)",
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0,
+      "threads_after": 1,
+      "threads_before": 1
+    },
+    "schema": "lap-chem-precision-trace-shadows-v2",
+    "sign_floor": {
+      "floor": 7.105427357601002e-15,
+      "floor_source": "predeclared_protocol.frozen_structure.reaction.stored_chemistry_references.matched_F64.eight_ulp_floor_at_base",
+      "negative_beyond_floor": "delta < -floor"
+    },
+    "states": {
+      "baseflat32": {
+        "after-component-totals": {
+          "loss": 4.171714071291204,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6145757484436034
+          ]
+        },
+        "after-float32-nn-adaptive-outputs-before-local-pbe": {
+          "loss": 4.189494442477961,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.616555828433474
+          ]
+        },
+        "after-float32-xc-integral": {
+          "loss": 4.196954226911976,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6173865743010034
+          ]
+        },
+        "before-integrand-multiplication": {
+          "loss": 4.189381634392438,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6165432657580103
+          ]
+        },
+        "before-xc-reduction": {
+          "loss": 4.189541495446905,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6165610684051983
+          ]
+        },
+        "full-matched-float64-reference": {
+          "loss": 4.189337818787933,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6165383863097236
+          ]
+        }
+      },
+      "candidate_t_2m15": {
+        "after-component-totals": {
+          "loss": 4.2147041724462335,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.619363265991211
+          ]
+        },
+        "after-float32-nn-adaptive-outputs-before-local-pbe": {
+          "loss": 4.1896759471662515,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6165760413861494
+          ]
+        },
+        "after-float32-xc-integral": {
+          "loss": 4.186206701623217,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6161896949141012
+          ]
+        },
+        "before-integrand-multiplication": {
+          "loss": 4.18986087651512,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.61659663572017
+          ]
+        },
+        "before-xc-reduction": {
+          "loss": 4.189645970656128,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6165727031044432
+          ]
+        },
+        "full-matched-float64-reference": {
+          "loss": 4.189335515742133,
+          "loss_dtype": "torch.float64",
+          "prediction_dtype": "torch.float64",
+          "reaction_kcal": [
+            3.6165381298350496
+          ]
+        }
+      }
+    },
+    "status": "complete_shadow_evaluation"
+  },
+  "shadow_metrics": [
+    {
+      "base_loss": 4.171714071291204,
+      "boundary": "after-component-totals",
+      "candidate_loss": 4.2147041724462335,
+      "delta": 0.04299010115502977,
+      "frozen_armijo_margin": -0.04299010143560711,
+      "relative_error_to_full_f64_delta": 18667.628846985644,
+      "sign_only_negative_beyond_8_f64_ulp": false
+    },
+    {
+      "base_loss": 4.196954226911976,
+      "boundary": "after-float32-xc-integral",
+      "candidate_loss": 4.186206701623217,
+      "delta": -0.01074752528875944,
+      "frozen_armijo_margin": 0.010747525008182102,
+      "relative_error_to_full_f64_delta": 4665.657211747279,
+      "sign_only_negative_beyond_8_f64_ulp": true
+    },
+    {
+      "base_loss": 4.189541495446905,
+      "boundary": "before-xc-reduction",
+      "candidate_loss": 4.189645970656128,
+      "delta": 0.00010447520922340914,
+      "frozen_armijo_margin": -0.00010447548980074828,
+      "relative_error_to_full_f64_delta": 46.363930344145736,
+      "sign_only_negative_beyond_8_f64_ulp": false
+    },
+    {
+      "base_loss": 4.189381634392438,
+      "boundary": "before-integrand-multiplication",
+      "candidate_loss": 4.18986087651512,
+      "delta": 0.0004792421226822441,
+      "frozen_armijo_margin": -0.00047924240325958323,
+      "relative_error_to_full_f64_delta": 209.09057414614534,
+      "sign_only_negative_beyond_8_f64_ulp": false
+    },
+    {
+      "base_loss": 4.189494442477961,
+      "boundary": "after-float32-nn-adaptive-outputs-before-local-pbe",
+      "candidate_loss": 4.1896759471662515,
+      "delta": 0.0001815046882907012,
+      "frozen_armijo_margin": -0.00018150496886804035,
+      "relative_error_to_full_f64_delta": 79.81071593882353,
+      "sign_only_negative_beyond_8_f64_ulp": false
+    },
+    {
+      "base_loss": 4.189337818787933,
+      "boundary": "full-matched-float64-reference",
+      "candidate_loss": 4.189335515742133,
+      "delta": -2.3030457994011044e-06,
+      "frozen_armijo_margin": 2.3027652220619643e-06,
+      "relative_error_to_full_f64_delta": 0.0,
+      "sign_only_negative_beyond_8_f64_ulp": true
+    }
+  ],
+  "shadow_receipt": {
+    "driver_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_shadows_v2.py",
+    "driver_sha256": "72c9b9f0ca4feec4cba714477a426c63b12a9488ffb8a4246ce86de02095f2ca",
+    "identity": {
+      "capture_json_sha256": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+      "capture_npz_sha256": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+      "capture_receipt_sha256": "29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51",
+      "dispersion_source_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "group_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "predeclared_protocol_sha256": "7293dd32bd5cde8c0fda8fbd1845c6c9f52e654dc0536fda9e504fc32a0e8968",
+      "raw_gradient_npz_sha256": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "trace_arrays_sha256": "029d9838d7d94118eb53672b9822f69d5f05c2810e7f297839b27d0bfa2de5f5",
+      "trace_json_sha256": "47c159d78373f4323e6d96cdc30b1ab47a45276b560ae108489414e057c994c2",
+      "trace_receipt_sha256": "0d50454d539f7a797e7b6d86a57272ed9e5b406415028068931e05c482d773b8"
+    },
+    "result_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_precision_trace_runs_20261003\\chem_precision_trace_shadows_v2.json",
+    "result_sha256": "c89e7409665dbc8e0cd0087411222a7c5d8b82d29b047e2b599f9834b54dd463",
+    "runtime_rollback": {
+      "caller_rng_full_state": true,
+      "caller_runtime_flags": true,
+      "cuda_device": true,
+      "device_after": 0,
+      "device_before": 0,
+      "threads_after": 1,
+      "threads_before": 1
+    },
+    "schema": "lap-chem-precision-trace-shadows-receipt-v2",
+    "shadow_helper_sha256": "3c00cb8152dbc4a1bab5677fb8b0523b8a4f6bec4aa755f83482d4fe6a79fd4f",
+    "status": "complete_shadow_evaluation"
+  },
+  "status": "review_approved"
+}
