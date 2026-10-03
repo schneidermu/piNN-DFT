@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "protocol_status": "direction_diagnostic_complete_guard_limited_armijo_rejection_reviewed",
+  "frozen_source_commit": "5b913c02545e4528562ffef69abda24cc999acb0",
+  "objective_order": [
+    "chem",
+    "exc",
+    "op"
+  ],
+  "priority": "Require strict improvement for all three objectives for any successful candidate and report chemistry first. PCD retains its chemistry-primary role; native FS is a symmetric diagnostic, not the priority trainer.",
+  "frozen_input": {
+    "cursor": 2,
+    "sample": "NCCE31/reaction 0/BH/level2_mura",
+    "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+    "raw_task_gradients_path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/failure_cursor2/cursor2_raw_task_gradients.npz",
+    "raw_task_gradients_sha256": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+    "losses": {
+      "chemistry": 4.171715259552002,
+      "exc": 4.201424223042639,
+      "operator": 0.03975781681939568
+    }
+  },
+  "completed_pcd_geometry": {
+    "taus": [
+      0.0,
+      0.001,
+      0.0025,
+      0.005,
+      0.01,
+      0.02
+    ],
+    "state_mutation": false,
+    "armijo_run": false,
+    "result": "tau=0 passes KKT projection and chemistry slope but E_xc is numerically flat; every scanned positive tau has negative chemistry slope; no strict all-three PCD direction",
+    "review": "independent review accepted CASE B",
+    "geometry_artifact_sha256": "34d48cad8c26718a59e0c31feeb79536569a0ac2bbbaed3ba595408b72a58071",
+    "receipt_sha256": "30f8ade82bc4f09ccd85790d2dac557b1081420e1f45a8bc26e2107a2116197c",
+    "driver_sha256": "151e8d4a9c36671632fcc0a2e1ead26db7a3d3011876fd5408a7f6772d9f7882",
+    "decision_case": "B",
+    "geometry_gate_cosine_margin": 1e-06,
+    "selection": "no_positive_tau_selected; all tested positive taus fail chemistry geometry",
+    "tau_zero_projection": "independent float64 KKT projection matched canonical normalized direction exactly; E_xc active and flat first-order progress allowed",
+    "external_geometry_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/frozen_tau_geometry.json",
+    "receipt_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/frozen_tau_geometry_receipt.json",
+    "driver_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/frozen_tau_geometry.py",
+    "source_replay_receipt_sha256": "4ab29379dfafd5c03dffa41cbf415591a3e505e7c63d9ad82a62bdc937562475",
+    "stored_common_descent_witness_sha256": "8ebe9435089a57b47bdc737b1608c7642f1b7509234a93104c8dd2b959d80aab",
+    "stored_witness_role": "comparison_only; not a native FS solver result"
+  },
+  "authorized_next_stage": {
+    "method": "one frozen-state realized-parameter-direction and precision audit",
+    "state": "same pinned cursor-2 checkpoint, raw gradients, task reductions, and objective factories",
+    "direction_gate": "The native FS raw-gradient minimum-norm simplex geometry and sign mapping passed independent v2 review.",
+    "step_gate": {
+      "completed_result": "v1 and hardened v2 rejected all 21 tested steps t=1 through 2^-20; independent review accepts this as guard-limited for the tested interval only",
+      "candidate_accepted": false,
+      "next_action": "measure the realized rounded parameter displacement and its alignment with requested t*v at a small predeclared subset of already-tested t values",
+      "new_alpha_sweep": false
+    },
+    "panel_gate": {
+      "status": "not_applicable_no_accepted_candidate",
+      "condition": "only after a reviewed same-batch pass",
+      "candidate_count": 0,
+      "comparison_if_triggered": "single candidate divided by cursor-2 base on the exact frozen panel"
+    },
+    "direction_construction": {
+      "method": "native Fliege-Svaiter steepest common descent via raw-gradient minimum-norm convex-hull point",
+      "dual_problem": "minimize 0.5 * ||sum_i lambda_i g_i||^2 subject to lambda >= 0 and sum_i lambda_i = 1",
+      "raw_gradient_scaling": "use raw objective gradients without PCD EMA normalization, task rescaling, or objective normalization",
+      "independence": "recompute the simplex solution; the stored witness is comparison-only",
+      "verification": [
+        "simplex and nonnegativity residuals",
+        "active/inactive KKT residuals",
+        "minimum-norm point norm",
+        "strict raw common-descent dots",
+        "non-Pareto-critical status"
+      ],
+      "sign_convention": "v = -sum_i lambda_i g_i; trial theta_trial = theta + t*v; require raw g_i dot v < 0 for every objective"
+    }
+  },
+  "conditional_fallback": {
+    "condition": "same-batch FS Armijo passes but frozen-panel gate fails",
+    "experiment": "one complete immutable 27-entry training-manifest gradient cycle followed by unchanged canonical PCD",
+    "training": false,
+    "not_in_scope": [
+      "PCD Armijo at unselected tau",
+      "tau sweep training",
+      "architecture or objective changes",
+      "trust-region substitution",
+      "PMGDA implementation"
+    ],
+    "status": "not_triggered_no_accepted_batch_step_or_panel_failure"
+  },
+  "state_preservation": [
+    "no optimizer step",
+    "no parameter or buffer update",
+    "no EMA update",
+    "no RNG/cursor advance",
+    "no optimizer/scheduler mutation",
+    "no source or test edits",
+    "accepted candidate retained only as scratch for paired panel evaluation"
+  ],
+  "literature": [
+    {
+      "method": "PCD v2; Proposition 4.7 is scoped to K=2",
+      "primary_source": "https://arxiv.org/abs/2606.29521"
+    },
+    {
+      "method": "Fliege-Svaiter common descent and componentwise Armijo",
+      "primary_source": "https://doi.org/10.1007/s001860000043"
+    },
+    {
+      "method": "PMGDA preference-aware predict-correct ascent; deferred",
+      "primary_source": "https://arxiv.org/abs/2402.09492"
+    },
+    {
+      "method": "Multiobjective trust regions; not justified without repeated model failures",
+      "primary_source": "https://doi.org/10.1007/s10107-015-0962-6"
+    },
+    {
+      "method": "Stochastic MGDA; relevant only for conditional full-cycle diagnostic",
+      "primary_source": "https://doi.org/10.1016/j.ejor.2018.05.064"
+    }
+  ],
+  "arena_decision": {
+    "arena_skill_available": false,
+    "method": "four independent Luna MAX solver memos manually adjudicated against the identical locked task",
+    "ranked_candidates": [
+      "1: smaller fixed canonical PCD tau plus existing vector Armijo",
+      "2: native Fliege-Svaiter/MGDA plus Armijo",
+      "3: one full training-manifest gradient cycle then unchanged PCD",
+      "4: PMGDA/EPO or trust region"
+    ],
+    "current_branch": "PCD geometry rejected all tested positive taus; native FS diagnostic authorized"
+  },
+  "validation_summary": {
+    "windows_focused": "58 passed, 2 skipped",
+    "wsl_pyscf_operator_and_unit": "14 passed; one existing Torch deprecation warning",
+    "compileall_train_models": "passed",
+    "git_diff_check": "passed",
+    "ruff": "frozen external PCD driver has F401 TASK_NAMES unused and remains immutable; do not claim Ruff all-pass; fresh FS driver must pass Ruff",
+    "repository_source_or_test_changes": false,
+    "fs_v2_independent_review": "accepted native geometry/sign/KKT, bounded Armijo rejection, zero-step helper equality, and rollback",
+    "fs_v2_ruff": "python -m ruff check --no-cache native_fs_batch_v2.py passed (Ruff 0.13.0)",
+    "source_and_test_loc_delta": 0,
+    "source_or_test_changes": false,
+    "frozen_external_pcd_driver_ruff": "F401 TASK_NAMES unused; immutable and hash-preserved; do not claim Ruff all-pass for all external artifacts",
+    "modified_scope": "three report artifacts only; no production source or test files changed"
+  },
+  "completed_fs_v2": {
+    "result_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_v2.json",
+    "result_sha256": "05ea74cfea1f3f171783a4238f17b5f39925778fe2e97eebebb086fa5c9448cf",
+    "receipt_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_v2_receipt.json",
+    "receipt_sha256": "9e0c61dda08fcfff288433b259e171af834f334e69dd1e20072a736b6de173be",
+    "driver_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py",
+    "driver_sha256": "b24102c52e7c36cbb10b8f3a671b0f53fbc5c20eecc2b2c1c9a186c714dc1be3",
+    "direction_weights": [
+      0.0014191159014695647,
+      0.0,
+      0.9985808840985304
+    ],
+    "g_dot_bar_g": [
+      0.09193967105990364,
+      879.0715722461432,
+      0.09193991043109707
+    ],
+    "g_dot_native_v": [
+      -0.09193967105990364,
+      -879.0715722461432,
+      -0.09193991043109707
+    ],
+    "simplex_sum_error": 0.0,
+    "simplex_negative_violation": 0.0,
+    "active_stationarity_abs": 3.982925100842749e-15,
+    "inactive_reduced_gradient_violation_abs": 0.0,
+    "gradient_kkt_scaled_residual": 2.0606974633638814e-22,
+    "zero_step_minus_gradient_losses": {
+      "chemistry": 0.0,
+      "exc": 0.0,
+      "operator": 0.0
+    },
+    "armijo": {
+      "accepted": false,
+      "trial_count": 21,
+      "first_t": 1.0,
+      "last_t": 9.5367431640625e-07,
+      "stop_reason": "no_accepted_step_within_backtrack_cap"
+    },
+    "candidate_snapshot_sha256": null,
+    "rollback_verified": {
+      "model_and_buffers": true,
+      "rng": true,
+      "ema": true,
+      "cursor": true
+    },
+    "independent_review": "accepted geometry, sign mapping, guard-limited rejection, zero-step helper agreement, and rollback; no claim that all useful representable steps fail",
+    "static_review_note": "v1 mixed dimensionless simplex and gradient-squared KKT residuals in one scaled check; v2 reports separate simplex and gradient KKT residuals"
+  },
+  "next_diagnostic": {
+    "status": "recommended_not_run",
+    "single_experiment": "frozen-state realized-direction and precision audit",
+    "step_subset": "small predeclared subset of already-tested t values; no new step-size sweep",
+    "measure": [
+      "actual rounded parameter displacement",
+      "cosine between realized displacement and requested t*v",
+      "raw-gradient dots with realized displacement"
+    ],
+    "compare": "same-objective local response using float64 scratch evaluation from identical checkpoint, gradients, and reductions, if the factory supports it",
+    "commit": false,
+    "scope": "diagnostic only; does not itself justify a trust-region method",
+    "historical_v2_command_is_not_the_next_diagnostic": true
+  },
+  "independent_review_path": ".planning/direction_recovery/independent_fs_review.md",
+  "display_labels": {
+    "chem": "chemistry",
+    "exc": "E_xc",
+    "op": "operator"
+  },
+  "pending_gates": {
+    "pcd_positive_tau_geometry": "completed_case_b_no_positive_tau_passed",
+    "native_fs_simplex_and_strict_common_descent": "accepted_by_independent_v2_review",
+    "native_fs_armijo_t_1_through_2^-20": "guard_limited_rejection_accepted_for_tested_interval; no claim outside it",
+    "frozen_panel_transfer": "not_applicable_no_accepted_candidate",
+    "27_entry_training_manifest_cycle": "not_triggered_no_same_batch_pass_plus_panel_failure",
+    "single_realized_direction_precision_audit": "recommended_not_run"
+  },
+  "historical_v2_invocation": {
+    "kind": "historical_v2_execution",
+    "working_directory": "C:/Dev/readWFN_share_ms/lap_full_vxc",
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "MKL_THREADING_LAYER": "SEQUENTIAL",
+      "PYTHONPATH": "train_models",
+      "PYTHONIOENCODING": "utf-8"
+    },
+    "python": "C:/Users/schne/miniconda3/envs/libxc/python.exe",
+    "script": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py",
+    "reproduction_note": "Historical invocation only; rerunning overwrites the immutable result and receipt. The recommended next precision audit was not run."
+  }
+}

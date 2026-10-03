@@ -1,0 +1,672 @@
+{
+  "schema_version": 1,
+  "status": "direction_diagnostic_complete_precision_audit_recommended",
+  "final_selection": null,
+  "repository_head": "5b913c02545e4528562ffef69abda24cc999acb0",
+  "review": {
+    "independent_geometry_review": "accepted_case_b",
+    "path": ".planning/direction_recovery/independent_geometry_review.md",
+    "independent_fs_review": "accepted_v2_geometry_guard_limited_armijo_and_rollback",
+    "independent_fs_review_path": ".planning/direction_recovery/independent_fs_review.md",
+    "independent_fs_review_decision": "accepted_v2_direction_geometry_guard_limited_armijo_rejection_zero_step_agreement_and_rollback"
+  },
+  "frozen_case": {
+    "cursor": 2,
+    "sample": "NCCE31/reaction 0/BH/level2_mura",
+    "losses": {
+      "chemistry": 4.171715259552002,
+      "exc": 4.201424223042639,
+      "operator": 0.03975781681939568
+    },
+    "update_convention": "theta_trial = theta - alpha * d; descent requires raw g_i dot d > 0",
+    "geometry_replay_seconds": 19.6,
+    "no_armijo_trials_in_geometry_stage": true,
+    "state_and_input_hashes_unchanged": true
+  },
+  "pcd_tau_scan": [
+    {
+      "tau": 0.0,
+      "g_dot_d": {
+        "chem": 15310.59982947018,
+        "exc": -0.0009186180141114164,
+        "op": 5.671532176838729
+      },
+      "cosine": {
+        "chem": 0.7284359911188598,
+        "exc": -1.4412542391512701e-09,
+        "op": 0.10671320576072799
+      },
+      "kkt_projection_match": true,
+      "geometry_gate_pass": false,
+      "note": "E_xc active and numerically flat; does not satisfy strict all-three descent",
+      "normalized_direction_coefficients": {
+        "chem": 5.97275389781392e-06,
+        "exc": 1.3494096982457555e-07,
+        "op": 0.0
+      },
+      "normalized_multipliers": {
+        "exc": 0.0004480599080114519,
+        "op": 0.0
+      },
+      "active_constraints": [
+        "exc"
+      ],
+      "feasible": true,
+      "max_kkt_residual": 0.0,
+      "raw_direction_norm": 144.9774338977927,
+      "angle_from_raw_chemistry_gradient_degrees": 43.244562576112024
+    },
+    {
+      "tau": 0.001,
+      "g_dot_d": {
+        "chem": -6415.389402098391,
+        "exc": 575414.721260079,
+        "op": 47.12225000511563
+      },
+      "cosine": {
+        "chem": -0.30522649826205306,
+        "exc": 0.9027897724611685,
+        "op": 0.8866328280385736
+      },
+      "geometry_gate_pass": false,
+      "normalized_direction_coefficients": {
+        "chem": 5.97275389781392e-06,
+        "exc": 4.3610821869417664e-07,
+        "op": 0.0
+      },
+      "normalized_multipliers": {
+        "exc": 0.0014480599080114516,
+        "op": 0.0
+      },
+      "active_constraints": [
+        "exc"
+      ],
+      "feasible": true,
+      "max_kkt_residual": 6.505213034913027e-19,
+      "raw_direction_norm": 144.9774266163541,
+      "angle_from_raw_chemistry_gradient_degrees": 107.77179109911889
+    },
+    {
+      "tau": 0.0025,
+      "g_dot_d": {
+        "chem": -11279.529533876535,
+        "exc": 626107.7736679163,
+        "op": 49.681170253675035
+      },
+      "cosine": {
+        "chem": -0.5366488306162996,
+        "exc": 0.982323983605323,
+        "op": 0.934780394401151
+      },
+      "geometry_gate_pass": false,
+      "normalized_direction_coefficients": {
+        "chem": 5.97275389781392e-06,
+        "exc": 8.878590919985783e-07,
+        "op": 0.0
+      },
+      "normalized_multipliers": {
+        "exc": 0.0029480599080114515,
+        "op": 0.0
+      },
+      "active_constraints": [
+        "exc"
+      ],
+      "feasible": true,
+      "max_kkt_residual": 0.0,
+      "raw_direction_norm": 144.97743003082667,
+      "angle_from_raw_chemistry_gradient_degrees": 122.45580028575334
+    },
+    {
+      "tau": 0.005,
+      "g_dot_d": {
+        "chem": -12882.921781254296,
+        "exc": 634500.5326779089,
+        "op": 49.809190318835675
+      },
+      "cosine": {
+        "chem": -0.6129337891591902,
+        "exc": 0.9954916792285281,
+        "op": 0.9371891492562104
+      },
+      "geometry_gate_pass": false,
+      "normalized_direction_coefficients": {
+        "chem": 5.97275389781392e-06,
+        "exc": 1.6407772141725812e-06,
+        "op": 0.0
+      },
+      "normalized_multipliers": {
+        "exc": 0.0054480599080114515,
+        "op": 0.0
+      },
+      "active_constraints": [
+        "exc"
+      ],
+      "feasible": true,
+      "max_kkt_residual": 0.0,
+      "raw_direction_norm": 144.97743279254738,
+      "angle_from_raw_chemistry_gradient_degrees": 127.80193867247317
+    },
+    {
+      "tau": 0.01,
+      "g_dot_d": {
+        "chem": -13655.16349437048,
+        "exc": 636651.9779799802,
+        "op": 49.70820043600054
+      },
+      "cosine": {
+        "chem": -0.6496749249357848,
+        "exc": 0.9988671790296234,
+        "op": 0.9352889808714111
+      },
+      "geometry_gate_pass": false,
+      "normalized_direction_coefficients": {
+        "chem": 5.97275389781392e-06,
+        "exc": 3.1466134585205864e-06,
+        "op": 0.0
+      },
+      "normalized_multipliers": {
+        "exc": 0.01044805990801145,
+        "op": 0.0
+      },
+      "active_constraints": [
+        "exc"
+      ],
+      "feasible": true,
+      "max_kkt_residual": 0.0,
+      "raw_direction_norm": 144.97743038488238,
+      "angle_from_raw_chemistry_gradient_degrees": 130.51709708947962
+    },
+    {
+      "tau": 0.02,
+      "g_dot_d": {
+        "chem": -14031.362973635285,
+        "exc": 637193.2897334304,
+        "op": 49.61540903002623
+      },
+      "cosine": {
+        "chem": -0.6675734359882559,
+        "exc": 0.9997164333337505,
+        "op": 0.9335430280470847
+      },
+      "geometry_gate_pass": false,
+      "normalized_direction_coefficients": {
+        "chem": 5.97275389781392e-06,
+        "exc": 6.158285947216599e-06,
+        "op": 0.0
+      },
+      "normalized_multipliers": {
+        "exc": 0.020448059908011452,
+        "op": 0.0
+      },
+      "active_constraints": [
+        "exc"
+      ],
+      "feasible": true,
+      "max_kkt_residual": 0.0,
+      "raw_direction_norm": 144.9774347381848,
+      "angle_from_raw_chemistry_gradient_degrees": 131.88005655680232
+    }
+  ],
+  "question_answers": {
+    "1_was_tau_002_specifically_responsible": "Positive secondary pressure is implicated at this frozen cursor, but tau=0.02 is not isolated: tau=0 has positive chemistry slope and every tested positive tau from 0.001 to 0.02 has negative chemistry slope. The transition below 0.001 was not located.",
+    "2_any_smaller_fixed_canonical_pcd_tau_with_strict_all_three_descent": false,
+    "3_if_yes_did_pcd_vector_armijo_produce_actual_all_three_decrease": "not_applicable_no_positive_canonical_pcd_tau_passed_geometry; no_pcd_armijo_trial_ran",
+    "4_did_pcd_one_step_improvement_transfer_to_frozen_panel": "not_applicable_no_accepted_pcd_or_fs_candidate; panel_not_run",
+    "5_if_pcd_fails_did_native_fs_reproduce_strict_common_descent": "yes; v2 independently recomputed raw-gradient simplex solution passed separate simplex and gradient KKT checks and all three native step dots were strictly negative; independent review accepted",
+    "6_did_fs_vector_armijo_produce_actual_all_three_batch_decrease": "no; v1_and_v2_rejected_all_21_tested_steps_t1_through_2^-20; independent review classifies this as guard_limited_only",
+    "7_did_fs_step_improve_all_three_panel_medians": "not_applicable_no_accepted_step; panel_not_run_and_not_a_transfer_failure",
+    "8_established_remaining_bottleneck": "PCD secondary-pressure direction failure is established. FS common-descent geometry is established, but the tested finite-step rejection does not identify curvature or numerical response as the cause. Stochastic-gradient estimation was not triggered.",
+    "9_single_next_experiment": "One frozen-state realized-direction/precision audit on a small predeclared subset of already-tested step values: compare actual rounded parameter displacement and raw-gradient dots with requested t*v, then compare the same local response in float64 scratch from identical inputs. No new alpha sweep or state commit."
+  },
+  "pending_gates": {
+    "pcd_positive_tau_geometry": "completed_case_b_no_positive_tau_passed",
+    "native_fs_minimum_norm_simplex_and_strict_common_descent": "accepted_by_independent_v2_review",
+    "fs_v1_and_v2_armijo_t_1_through_2^-20": "guard_limited_rejection_accepted_for_tested_interval_only",
+    "frozen_panel_candidate_vs_cursor2_base": "not_applicable_no_accepted_candidate",
+    "27_entry_training_manifest_cycle": "not_triggered_no_batch_pass_plus_panel_failure",
+    "single_realized_direction_precision_audit": "recommended_not_run"
+  },
+  "provenance": {
+    "geometry_json": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/frozen_tau_geometry.json",
+      "sha256": "34d48cad8c26718a59e0c31feeb79536569a0ac2bbbaed3ba595408b72a58071"
+    },
+    "receipt_json": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/frozen_tau_geometry_receipt.json",
+      "sha256": "30f8ade82bc4f09ccd85790d2dac557b1081420e1f45a8bc26e2107a2116197c"
+    },
+    "driver": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/frozen_tau_geometry.py",
+      "sha256": "151e8d4a9c36671632fcc0a2e1ead26db7a3d3011876fd5408a7f6772d9f7882"
+    },
+    "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+    "raw_task_gradients_sha256": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+    "source_replay_receipt": {
+      "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/failure_cursor2/cursor2_replay_receipt.json",
+      "sha256": "4ab29379dfafd5c03dffa41cbf415591a3e505e7c63d9ad82a62bdc937562475"
+    },
+    "stored_common_descent_witness": {
+      "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/failure_cursor2/common_descent_feasibility.json",
+      "sha256": "8ebe9435089a57b47bdc737b1608c7642f1b7509234a93104c8dd2b959d80aab",
+      "role": "comparison_only; native FS solver must recompute"
+    },
+    "checkpoint_path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/latest.pt",
+    "raw_task_gradients_path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/failure_cursor2/cursor2_raw_task_gradients.npz",
+    "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+    "protocol_metadata_sha256": "26f710fe7c00423a389d5a4416560faf4333b6e9f6f9daac5688b14bfff7fb67",
+    "external_artifacts_outside_git": true,
+    "fs_v1_result": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo.json",
+      "sha256": "4a14bdd794428008c3d3778d4a6169ff7b878145a073b5fa0e45ecc695ad8454"
+    },
+    "fs_v1_receipt": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_receipt.json",
+      "sha256": "ba5b44ed5fbb694f0b7e4173d943942781da06781968a9b322eaaea063d77675"
+    },
+    "fs_v1_driver": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch.py",
+      "sha256": "8d1b825d305014d6770e2888d71cc34391d54854fbfd8f211853561e0f9a9d3b",
+      "immutable": true
+    },
+    "fs_v2_driver": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py",
+      "sha256": "b24102c52e7c36cbb10b8f3a671b0f53fbc5c20eecc2b2c1c9a186c714dc1be3",
+      "outside_git": true
+    },
+    "fs_v2_result": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_v2.json",
+      "sha256": "05ea74cfea1f3f171783a4238f17b5f39925778fe2e97eebebb086fa5c9448cf"
+    },
+    "fs_v2_receipt": {
+      "path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_v2_receipt.json",
+      "sha256": "9e0c61dda08fcfff288433b259e171af834f334e69dd1e20072a736b6de173be"
+    }
+  },
+  "validation": {
+    "windows_focused": {
+      "passed": 58,
+      "skipped": 2
+    },
+    "wsl_pyscf_operator_and_unit": {
+      "passed": 14,
+      "warning": "one existing Torch deprecation warning"
+    },
+    "compileall_train_models": "passed",
+    "git_diff_check": "passed",
+    "ruff": {
+      "frozen_external_pcd_driver": "F401 TASK_NAMES unused; immutable out-of-repository diagnostic, hash preserved",
+      "fresh_external_fs_driver": "python -m ruff check --no-cache native_fs_batch_v2.py: passed (Ruff 0.13.0)",
+      "all_ruff_pass": false,
+      "fs_v1_external_driver": "not asserted in v1 result; final external FS driver must pass Ruff"
+    },
+    "repository_source_changes": false,
+    "report_and_planning_artifacts_only": true,
+    "fs_v1_rollback": "checkpoint, model/buffers, EMA, RNG, and cursor verified restored",
+    "zero_step_baseline_and_float32_armijo_interpretation": "v2 same-helper zero-step deltas exactly zero; independent review accepted bounded rejection and does not infer curvature",
+    "independent_fs_review": "accepted native direction/KKT, bounded Armijo rejection, zero-step helper agreement, and rollback",
+    "source_test_loc_changes": 0,
+    "source_test_changes": false
+  },
+  "arena": {
+    "mode": "Arena skill unavailable; four independent Luna MAX solver memos were manually adjudicated against the identical locked task and repository evidence",
+    "head": "5b913c02545e4528562ffef69abda24cc999acb0",
+    "judge_ranking": [
+      {
+        "rank": 1,
+        "candidate": "smaller fixed canonical PCD tau plus vector Armijo",
+        "rubric": {
+          "causal_fit": "high",
+          "chemistry_priority": "high",
+          "all_objective_descent": "high",
+          "literature_fit": "high",
+          "minimal_compute": "high",
+          "minimal_code_change": "high",
+          "interpretability": "high"
+        }
+      },
+      {
+        "rank": 2,
+        "candidate": "native Fliege-Svaiter/MGDA plus Armijo",
+        "rubric": {
+          "causal_fit": "high",
+          "chemistry_priority": "low",
+          "all_objective_descent": "high",
+          "literature_fit": "high",
+          "minimal_compute": "medium",
+          "minimal_code_change": "medium",
+          "interpretability": "high"
+        }
+      },
+      {
+        "rank": 3,
+        "candidate": "one complete training-manifest gradient cycle followed by unchanged PCD",
+        "rubric": {
+          "causal_fit": "medium",
+          "chemistry_priority": "high",
+          "all_objective_descent": "medium",
+          "literature_fit": "medium",
+          "minimal_compute": "low",
+          "minimal_code_change": "high",
+          "interpretability": "medium"
+        }
+      },
+      {
+        "rank": 4,
+        "candidate": "PMGDA/EPO or trust region",
+        "rubric": {
+          "causal_fit": "low",
+          "chemistry_priority": "medium",
+          "all_objective_descent": "medium",
+          "literature_fit": "high",
+          "minimal_compute": "low",
+          "minimal_code_change": "low",
+          "interpretability": "medium"
+        }
+      }
+    ],
+    "decision": "Run fixed-state PCD tau geometry first; no tested positive tau passed, so proceed to the native FS diagnostic. Do not make the symmetric diagnostic the production rule automatically."
+  },
+  "stored_common_descent_witness_comparison": {
+    "equivalent_positive_gradient_direction_dots_g_dot_d": [
+      0.09193991163347623,
+      879.0715828473836,
+      0.0919399116334749
+    ],
+    "pcd_raw_direction_dots_by_tau": {
+      "0.0": {
+        "chem": 15310.59982947018,
+        "exc": -0.0009186180141114164,
+        "op": 5.671532176838729
+      },
+      "0.001": {
+        "chem": -6415.389402098391,
+        "exc": 575414.721260079,
+        "op": 47.12225000511563
+      },
+      "0.0025": {
+        "chem": -11279.529533876535,
+        "exc": 626107.7736679163,
+        "op": 49.681170253675035
+      },
+      "0.005": {
+        "chem": -12882.921781254296,
+        "exc": 634500.5326779089,
+        "op": 49.809190318835675
+      },
+      "0.01": {
+        "chem": -13655.16349437048,
+        "exc": 636651.9779799802,
+        "op": 49.70820043600054
+      },
+      "0.02": {
+        "chem": -14031.362973635285,
+        "exc": 637193.2897334304,
+        "op": 49.61540903002623
+      }
+    },
+    "witness_has_strict_common_descent": true,
+    "witness_parameter_displacement_raw_dots_g_dot_v": [
+      -0.09193991163347623,
+      -879.0715828473836,
+      -0.0919399116334749
+    ],
+    "witness_simplex_coefficients": [
+      0.0014191159014695649,
+      0.0,
+      0.9985808840985304
+    ]
+  },
+  "tau_zero_projection_check": {
+    "canonical_normalized_direction_coefficients": {
+      "chem": 5.97275389781392e-06,
+      "exc": 1.3494096982457555e-07,
+      "op": 0.0
+    },
+    "canonical_vs_independent_relative_direction_error": 0.0,
+    "chem_dot_equals_norm_squared_abs_error": 5.293955920339377e-23,
+    "flat_secondary_progress_is_allowed": true,
+    "independent_active_secondary": [
+      "exc"
+    ],
+    "independent_direction_norm": 0.0006307633003757446,
+    "independent_multipliers": [
+      0.0004480599080114519,
+      0.0
+    ],
+    "independent_normalized_gram": [
+      [
+        7.498079550680157e-07,
+        -0.0007854878503392429,
+        -0.0005687462343195351
+      ],
+      [
+        -0.0007854878503392429,
+        1.7530866660785163,
+        1.4454612918063336
+      ],
+      [
+        -0.0005687462343195351,
+        1.4454612918063336,
+        1.3742384216588264
+      ]
+    ],
+    "independent_projection_kkt": {
+      "active_equality_residual": 0.0,
+      "complementarity": 0.0,
+      "dual_violation": 0.0,
+      "feasible": true,
+      "max_residual": 0.0,
+      "primal_violation": 0.0
+    },
+    "independent_secondary_slack": [
+      0.0,
+      7.89070191213252e-05
+    ],
+    "independent_weights": [
+      1.0,
+      0.0004480599080114519,
+      0.0
+    ],
+    "method": "independent float64 active-face KKT projection of normalized chemistry gradient onto secondary non-ascent halfspaces",
+    "normalized_chem_dot_direction": 3.9786234110090175e-07,
+    "normalized_direction_norm_squared": 3.978623411009018e-07,
+    "secondary_strict_progress_required_at_tau_zero": false
+  },
+  "fs_v1": {
+    "status": "armijo_rejected",
+    "result_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo.json",
+    "result_sha256": "4a14bdd794428008c3d3778d4a6169ff7b878145a073b5fa0e45ecc695ad8454",
+    "receipt_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_receipt.json",
+    "receipt_sha256": "ba5b44ed5fbb694f0b7e4173d943942781da06781968a9b322eaaea063d77675",
+    "driver_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch.py",
+    "driver_sha256": "8d1b825d305014d6770e2888d71cc34391d54854fbfd8f211853561e0f9a9d3b",
+    "native_direction": {
+      "method": "native Fliege-Svaiter raw-gradient minimum-norm convex hull",
+      "normalization_applied": false,
+      "weights": [
+        0.0014191159014695647,
+        0.0,
+        0.9985808840985304
+      ],
+      "minimum_norm": 0.3032159488441776,
+      "minimum_norm_squared": 0.09193991163347491,
+      "simplex_sum_abs_error": 0.0,
+      "simplex_negative_violation": 0.0,
+      "maximum_scaled_kkt_residual": 2.0606974633638814e-22,
+      "qp_kkt_pass_1e-8_scaled": true,
+      "raw_dots_bar_g": {
+        "chem": 0.09193967105990364,
+        "exc": 879.0715722461432,
+        "op": 0.09193991043109707
+      },
+      "raw_dots_native_step_v": {
+        "chem": -0.09193967105990364,
+        "exc": -879.0715722461432,
+        "op": -0.09193991043109707
+      },
+      "raw_gradient_cosines": {
+        "chem": 0.0020914645627519383,
+        "exc": 0.6594445003319852,
+        "op": 0.8271232283533333
+      },
+      "agrees_with_stored_witness_weights": true,
+      "agrees_with_negated_stored_witness_step_dots": true
+    },
+    "armijo": {
+      "accepted": false,
+      "accepted_t": null,
+      "attempted_trials": 21,
+      "t_first": 1.0,
+      "t_last": 9.5367431640625e-07,
+      "c": 0.0001,
+      "rho": 0.5,
+      "all_trials_failed_strict_all_task_decrease": true,
+      "all_trials_failed_componentwise_armijo": true,
+      "smallest_t_chem_predicted_reduction": 8.768050294866951e-08,
+      "smallest_t_chem_actual_reduction": -0.042989253997802734,
+      "candidate_snapshot_sha256": null,
+      "panel_evaluated": false,
+      "full_cycle_gate_triggered": false
+    },
+    "state_rollback": {
+      "cursor": true,
+      "ema": true,
+      "model_and_buffers": true,
+      "rng": true
+    },
+    "zero_step_baseline_consistency_audit": "superseded_by_v2_exact_zero_helper_check",
+    "failure_interpretation": "historical v1 measurement; final interpretation superseded by independently reviewed v2 guard-limited result"
+  },
+  "fs_v2": {
+    "status": "armijo_rejected",
+    "result_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_v2.json",
+    "result_sha256": "05ea74cfea1f3f171783a4238f17b5f39925778fe2e97eebebb086fa5c9448cf",
+    "receipt_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/fs_direction_armijo_v2_receipt.json",
+    "receipt_sha256": "9e0c61dda08fcfff288433b259e171af834f334e69dd1e20072a736b6de173be",
+    "driver_path": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py",
+    "driver_sha256": "b24102c52e7c36cbb10b8f3a671b0f53fbc5c20eecc2b2c1c9a186c714dc1be3",
+    "native_direction": {
+      "method": "native Fliege-Svaiter raw-gradient minimum-norm convex hull",
+      "raw_gradients_used_without_pcd_ema_or_objective_rescaling": true,
+      "weights": [
+        0.0014191159014695647,
+        0.0,
+        0.9985808840985304
+      ],
+      "support": [
+        "chem",
+        "op"
+      ],
+      "minimum_norm": 0.3032159488441776,
+      "minimum_norm_squared": 0.09193991163347491,
+      "simplex_sum_abs_error": 0.0,
+      "simplex_negative_violation": 0.0,
+      "active_stationarity_abs": 3.982925100842749e-15,
+      "inactive_reduced_gradient_violation_abs": 0.0,
+      "max_scaled_gradient_kkt_residual": 2.0606974633638814e-22,
+      "simplex_pass_1e-12": true,
+      "gradient_kkt_pass_1e-8_scaled": true,
+      "raw_dots_bar_g": {
+        "chem": 0.09193967105990364,
+        "exc": 879.0715722461432,
+        "op": 0.09193991043109707
+      },
+      "raw_dots_native_step_v": {
+        "chem": -0.09193967105990364,
+        "exc": -879.0715722461432,
+        "op": -0.09193991043109707
+      },
+      "raw_gradient_cosines": {
+        "chem": 0.0020914645627519383,
+        "exc": 0.6594445003319852,
+        "op": 0.8271232283533333
+      },
+      "agrees_with_stored_witness": true
+    },
+    "zero_step_consistency": {
+      "same_armijo_path_losses": {
+        "chem": 4.171715259552002,
+        "exc": 4.201424223042639,
+        "op": 0.03975781681939568
+      },
+      "zero_step_minus_gradient_pass_losses": {
+        "chem": 0.0,
+        "exc": 0.0,
+        "op": 0.0
+      },
+      "all_objective_deltas_zero": true
+    },
+    "armijo": {
+      "accepted": false,
+      "accepted_t": null,
+      "attempted_trials": 21,
+      "t_first": 1.0,
+      "t_last": 9.5367431640625e-07,
+      "c": 0.0001,
+      "rho": 0.5,
+      "all_trials_failed_strict_all_task_decrease": true,
+      "all_trials_failed_componentwise_armijo": true,
+      "smallest_t_actual_reductions": {
+        "chem": -0.042989253997802734,
+        "exc": 0.00065388860774096,
+        "op": -2.18658811792366e-06
+      },
+      "smallest_t_predicted_reductions": {
+        "chem": 8.768050294866951e-08,
+        "exc": 0.000838347980734008,
+        "op": 8.768073123082836e-08
+      },
+      "stop_reason": "no_accepted_step_within_backtrack_cap",
+      "interpretation": "guard-limited for the tested interval; does not establish that every useful representable step fails",
+      "candidate_snapshot_sha256": null,
+      "panel_evaluated": false,
+      "full_cycle_gate_triggered": false,
+      "parameter_delta_norm_semantics": "reported parameter_delta_norm is requested t*||v||, not the norm of the rounded realized parameter displacement; measure realized displacement in the recommended next diagnostic"
+    },
+    "rollback": {
+      "cursor": true,
+      "ema": true,
+      "model_and_buffers": true,
+      "rng": true
+    },
+    "independent_review": "accepted_geometry_bounded_armijo_rejection_and_rollback",
+    "next_diagnostic": "one frozen-state realized-parameter-direction and precision audit on a small predeclared subset of already-tested t values; no new step-size sweep"
+  },
+  "task_order": [
+    "chem",
+    "exc",
+    "op"
+  ],
+  "display_labels": {
+    "chem": "chemistry",
+    "exc": "E_xc",
+    "op": "operator"
+  },
+  "next_diagnostic": {
+    "status": "recommended_not_run",
+    "single_experiment": "frozen-state realized-direction and precision audit",
+    "step_subset": "small predeclared subset of already-tested t values; no new step-size sweep",
+    "measure": [
+      "actual rounded parameter displacement",
+      "cosine between realized displacement and requested t*v",
+      "raw-gradient dots with the realized displacement"
+    ],
+    "compare": "same-objective local response in float64 scratch from identical inputs/reductions, if supported",
+    "no_commit": true,
+    "does_not_establish": "global curvature failure or justify trust-region method",
+    "historical_v2_command_is_not_the_next_diagnostic": true
+  },
+  "historical_v2_invocation": {
+    "kind": "historical_v2_execution",
+    "working_directory": "C:/Dev/readWFN_share_ms/lap_full_vxc",
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "MKL_THREADING_LAYER": "SEQUENTIAL",
+      "PYTHONPATH": "train_models",
+      "PYTHONIOENCODING": "utf-8"
+    },
+    "python": "C:/Users/schne/miniconda3/envs/libxc/python.exe",
+    "script": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py",
+    "reproduction_note": "Historical invocation only; rerunning overwrites the immutable result and receipt. The recommended next precision audit was not run."
+  }
+}
