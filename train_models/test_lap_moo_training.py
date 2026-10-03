@@ -24,6 +24,8 @@ import lap_moo_training as _lap_moo_training
 import optuna_joint as _REAL_OPTUNA_JOINT
 from lap_moo_protocol import (
     LEGACY_READ_ONLY_PROTOCOL_VERSION,
+    PCD_ARMIJO_PROTOCOL_VERSION,
+    PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
     PCD_PROTOCOL_VERSION,
     PCD_QP_TOLERANCE,
     PCD_SOURCE_FILE_PATHS,
@@ -59,6 +61,7 @@ from train_lap_moo import (
     _initial_aggregator_state,
     _method_configuration,
     _run_scheduled_update,
+    _vector_armijo_rejection_record,
 )
 
 
@@ -161,7 +164,11 @@ def _metadata(manifest_sha: str) -> dict:
 
 
 def _pcd_metadata(
-    manifest_sha: str, *, world_size: int = 1, manifest_file_sha256: str = "a" * 64
+    manifest_sha: str,
+    *,
+    world_size: int = 1,
+    manifest_file_sha256: str = "a" * 64,
+    vector_armijo: dict | None = None,
 ) -> dict:
     hashes = _hashes()
     return make_protocol_metadata(
@@ -174,8 +181,8 @@ def _pcd_metadata(
             "qp_tolerance": PCD_QP_TOLERANCE,
         },
         fixed_scalarization=None,
-        optimizer={"name": "RAdamW", "lr": 0.01, "weight_decay": 0.01},
-        lr_schedule={"name": "cosine", "total_updates": 4, "min_lr_ratio": 0.1},
+        optimizer={"name": "none"} if vector_armijo is not None else {"name": "RAdamW", "lr": 0.01, "weight_decay": 0.01},
+        lr_schedule={"name": "none"} if vector_armijo is not None else {"name": "cosine", "total_updates": 4, "min_lr_ratio": 0.1},
         predopt_checkpoint_sha256=hashes["predopt"],
         sampling_manifest_sha256=manifest_sha,
         minnesota_data_sha256=hashes["mn"],
@@ -192,6 +199,8 @@ def _pcd_metadata(
         source_code_sha256={
             path: f"{index + 100:064x}" for index, path in enumerate(PCD_SOURCE_FILE_PATHS)
         },
+        step_rule=PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE if vector_armijo is not None else None,
+        vector_armijo=vector_armijo,
     )
 
 
@@ -997,7 +1006,6 @@ def test_pcd_checkpoint_resume_is_exact_and_rejects_bad_state_before_mutation(tm
         )
     _assert_tree_equal(sentinel.state_dict(), before_model)
     assert random.getstate() == before_rng
-
     bad_rng_payload = copy.deepcopy(payload)
     bad_rng_payload["rng_states_by_rank"] = []
     bad_rng = tmp_path / "pcd_missing_rng.pt"
@@ -1014,6 +1022,251 @@ def test_pcd_checkpoint_resume_is_exact_and_rejects_bad_state_before_mutation(tm
         )
     _assert_tree_equal(sentinel.state_dict(), before_model)
     assert random.getstate() == before_rng
+
+
+def test_direct_vector_armijo_checkpoint_resumes_without_optimizer_or_scheduler(tmp_path):
+    class ScalarModel(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.theta = nn.Parameter(torch.tensor(1.0, dtype=torch.float64))
+            self.register_buffer("objective_calls", torch.tensor(0, dtype=torch.int64))
+            self.model_kwargs = {"kind": "scalar-test"}
+
+    def factories(model, targets):
+        output = {}
+        for task, target in zip(("chem", "exc", "op"), targets):
+            def objective(target=target):
+                model.objective_calls.add_(1)
+                return (model.theta - target).square() + torch.rand((), dtype=torch.float64) * 0.0
+            output[task] = objective
+        return output
+
+    config = {
+        "c": 1.0e-4,
+        "rho": 0.5,
+        "max_backtracks": 20,
+        "initial_step_size": 3.0,
+    }
+    manifest = build_sampling_manifest(
+        _small_grouped(), ["H2"], updates=4, seed=91, source_hashes=_hashes()
+    )
+    metadata = _pcd_metadata(manifest["manifest_sha256"], vector_armijo=config)
+    validate_protocol_metadata(metadata)
+    assert metadata["protocol_version"] == PCD_ARMIJO_PROTOCOL_VERSION
+    assert metadata["optimizer"] == {"name": "none"}
+    assert metadata["lr_schedule"] == {"name": "none"}
+
+    torch.manual_seed(71)
+    random.seed(72)
+    np.random.seed(73)
+    model = ScalarModel()
+    first = train_moo_update(
+        model,
+        None,
+        factories(model, (0.0, -0.5, -1.0)),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=None,
+        scheduler=None,
+        step_rule=PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+        vector_armijo=config,
+    )
+    assert first.accepted is True
+    assert first.stop_reason is None
+    assert 0.0 < first.diagnostics["vector_armijo"]["accepted_t"] < 1.0
+    assert all(
+        trial["armijo_pass"] and trial["strict_all_task_decrease"]
+        for trial in first.diagnostics["vector_armijo"]["trials"]
+        if trial["finite"] and trial["t"] == first.diagnostics["vector_armijo"]["accepted_t"]
+    )
+    assert model.objective_calls.item() == 3
+
+    checkpoint = tmp_path / "pcd_direct_armijo.pt"
+    save_moo_checkpoint(
+        checkpoint,
+        model=model,
+        optimizer=None,
+        scheduler=None,
+        protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        next_update=1,
+        aggregator_state=first.aggregator_state,
+    )
+    payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    assert payload["optimizer_state_dict"] is None
+    assert payload["scheduler_state_dict"] is None
+    expected_second = train_moo_update(
+        model,
+        None,
+        factories(model, (-1.0, -2.0, -3.0)),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=first.aggregator_state,
+        scheduler=None,
+        step_rule=PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+        vector_armijo=config,
+    )
+    assert expected_second.accepted is True
+    expected_model = copy.deepcopy(model.state_dict())
+    expected_ema = copy.deepcopy(expected_second.aggregator_state)
+    expected_rng = (random.random(), np.random.random(), torch.rand(3))
+
+    resumed_model = ScalarModel()
+    cursor, resumed_ema = load_moo_checkpoint(
+        checkpoint,
+        model=resumed_model,
+        optimizer=None,
+        scheduler=None,
+        expected_protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        restore_rng=True,
+    )
+    assert cursor == 1
+    assert resumed_ema == first.aggregator_state
+    resumed_second = train_moo_update(
+        resumed_model,
+        None,
+        factories(resumed_model, (-1.0, -2.0, -3.0)),
+        method="pcd",
+        hyperparameters=metadata["method_hyperparameters"],
+        aggregator_state=resumed_ema,
+        scheduler=None,
+        step_rule=PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+        vector_armijo=config,
+    )
+    assert resumed_second.accepted is True
+    assert resumed_second.aggregator_state == expected_ema
+    _assert_tree_equal(resumed_model.state_dict(), expected_model)
+    assert (random.random(), np.random.random()) == expected_rng[:2]
+    torch.testing.assert_close(torch.rand(3), expected_rng[2], rtol=0, atol=0)
+
+
+@pytest.mark.parametrize("cursor", [0, 5])
+def test_direct_vector_armijo_rejection_checkpoint_keeps_last_accepted_cursor(tmp_path, cursor):
+    config = {
+        "c": 1.0e-4,
+        "rho": 0.5,
+        "max_backtracks": 4,
+        "initial_step_size": 1.0e-3,
+    }
+    manifest = build_sampling_manifest(
+        _small_grouped(), ["H2"], updates=cursor + 1, seed=41, source_hashes=_hashes()
+    )
+    metadata = _pcd_metadata(manifest["manifest_sha256"], vector_armijo=config)
+    hyperparameters = metadata["method_hyperparameters"]
+    model = _CheckpointModel()
+
+    def aligned_factories():
+        return {task: (lambda: model.linear.weight.sum()) for task in ("chem", "exc", "op")}
+
+    state = None
+    for _ in range(cursor):
+        accepted = train_moo_update(
+            model,
+            None,
+            aligned_factories(),
+            method="pcd",
+            hyperparameters=hyperparameters,
+            aggregator_state=state,
+            scheduler=None,
+            step_rule=PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+            vector_armijo=config,
+        )
+        assert accepted.accepted is True
+        state = accepted.aggregator_state
+
+    checkpoint = tmp_path / "latest.pt"
+    if cursor == 5:
+        # The periodic checkpoint at five accepted updates must be replaceable
+        # by the same cursor after a controlled rejection.
+        save_moo_checkpoint(
+            checkpoint,
+            model=model,
+            optimizer=None,
+            scheduler=None,
+            protocol_metadata=metadata,
+            sampling_manifest=manifest,
+            next_update=cursor,
+            aggregator_state=state,
+        )
+    before_model = copy.deepcopy(model.state_dict())
+    before_state = copy.deepcopy(state)
+    before_rng = _lap_moo_training.capture_rng_state()
+
+    def noncommon_direction(raw, **kwargs):
+        parameters = next(iter(raw.values()))
+        direction = {name: torch.ones_like(value) for name, value in parameters.items()}
+        return direction, {"test_forced_noncommon_direction": True}, copy.deepcopy(kwargs["state"])
+
+    rejected = train_moo_update(
+        model,
+        None,
+        {
+            "chem": lambda: model.linear.weight.sum(),
+            "exc": lambda: -model.linear.weight.sum(),
+            "op": lambda: model.linear.weight.sum(),
+        },
+        method="pcd",
+        hyperparameters=hyperparameters,
+        aggregator_state=state,
+        aggregator=noncommon_direction,
+        scheduler=None,
+        step_rule=PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+        vector_armijo=config,
+    )
+    assert rejected.accepted is False
+    assert rejected.stop_reason == "no_finite_common_descent_direction"
+    _assert_tree_equal(model.state_dict(), before_model)
+    _assert_tree_equal(rejected.aggregator_state, before_state)
+    _assert_rng_state_equal(_lap_moo_training.capture_rng_state(), before_rng)
+    stop_record = _vector_armijo_rejection_record(
+        update_index=cursor,
+        rank_samples=manifest["entries"][cursor]["per_rank"],
+        result=rejected,
+    )
+    assert stop_record["gradient_diagnostics"]["raw_gradient_norms"] == (
+        rejected.diagnostics["raw_gradient_norms"]
+    )
+    assert stop_record["gradient_diagnostics"]["test_forced_noncommon_direction"] is True
+    assert stop_record["step_diagnostics"] == rejected.diagnostics["vector_armijo"]
+    assert stop_record["sampling_cursor_next_update"] == cursor
+    json.dumps(stop_record, sort_keys=True, allow_nan=False)
+
+    # This is the CLI stop-branch checkpoint operation: save the restored
+    # model/EMA at the unchanged cursor so rejection cannot leave a stale file.
+    save_moo_checkpoint(
+        checkpoint,
+        model=model,
+        optimizer=None,
+        scheduler=None,
+        protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        next_update=cursor,
+        aggregator_state=state,
+    )
+    payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    assert payload["sampling_cursor"]["next_update"] == cursor
+    assert payload["optimizer_state_dict"] is None
+    assert payload["scheduler_state_dict"] is None
+    resumed_model = _CheckpointModel()
+    resumed_cursor, resumed_state = load_moo_checkpoint(
+        checkpoint,
+        model=resumed_model,
+        optimizer=None,
+        scheduler=None,
+        expected_protocol_metadata=metadata,
+        sampling_manifest=manifest,
+        restore_rng=True,
+    )
+    assert resumed_cursor == cursor
+    _assert_tree_equal(resumed_model.state_dict(), before_model)
+    _assert_tree_equal(resumed_state, payload["aggregator_state"])
+    if before_state is None:
+        assert resumed_state["t"] == 0
+        assert resumed_state["v"] == [0.0, 0.0, 0.0]
+    else:
+        _assert_tree_equal(resumed_state, before_state)
+    _assert_rng_state_equal(_lap_moo_training.capture_rng_state(), before_rng)
 
 
 @pytest.mark.parametrize("rank", [0, 1])

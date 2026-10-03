@@ -17,6 +17,7 @@ from torch import nn
 
 try:
     from .lap_moo_protocol import (
+        PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
         TASK_NAMES,
         canonical_sha256,
         validate_cursor,
@@ -34,6 +35,7 @@ try:
     from .lap_vxc import integrated_energy
 except ImportError:  # pragma: no cover - direct script imports
     from lap_moo_protocol import (
+        PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
         TASK_NAMES,
         canonical_sha256,
         validate_cursor,
@@ -76,8 +78,10 @@ class MRKSOperatorSystem:
 class UpdateResult:
     losses: dict[str, float]
     diagnostics: dict[str, Any]
-    aggregator_state: dict[str, Any]
+    aggregator_state: dict[str, Any] | None
     learning_rate: float
+    accepted: bool = True
+    stop_reason: str | None = None
 
 
 def named_trainable_parameters(model: nn.Module) -> dict[str, nn.Parameter]:
@@ -237,6 +241,78 @@ def _average_task_losses(losses: Mapping[str, float], model: nn.Module) -> dict[
     return {task: float(value.cpu()) for task, value in zip(TASK_NAMES, values)}
 
 
+def _all_ranks_true(value: bool, model: nn.Module) -> bool:
+    if not dist.is_available() or not dist.is_initialized():
+        return value
+    parameter = next(iter(named_trainable_parameters(model).values()))
+    flag = torch.tensor([int(value)], dtype=torch.int32, device=parameter.device)
+    dist.all_reduce(flag, op=dist.ReduceOp.MIN)
+    return bool(flag.item())
+
+
+def _evaluate_trial_losses(
+    model: nn.Module,
+    objective_factories: Mapping[str, Callable[[], torch.Tensor]],
+) -> tuple[dict[str, float] | None, str | None]:
+    """Evaluate three local scalars, then take the existing unweighted rank mean."""
+    local_losses: dict[str, float] = {}
+    for task in TASK_NAMES:
+        error = None
+        try:
+            value = objective_factories[task]()
+            loss = value[0] if isinstance(value, tuple) else value
+            if not isinstance(loss, torch.Tensor) or loss.numel() != 1:
+                raise ValueError(f"Objective {task!r} must return one scalar tensor.")
+            loss_value = float(loss.detach().double().cpu())
+            if not math.isfinite(loss_value):
+                raise FloatingPointError(f"Objective {task!r} is nonfinite.")
+            local_losses[task] = loss_value
+        except Exception as exc:  # noqa: BLE001 - sync a rank-local trial failure before loss reduction
+            error = exc
+        if not _all_ranks_true(error is None, model):
+            return None, "nonfinite_or_failed_task_evaluation"
+    losses = _average_task_losses(local_losses, model)
+    if not all(math.isfinite(value) for value in losses.values()):
+        return None, "nonfinite_global_task_mean"
+    return losses, None
+
+
+def _clone_model_state(model: nn.Module) -> dict[str, torch.Tensor]:
+    return {name: value.detach().clone() for name, value in model.state_dict().items()}
+
+
+def _restore_model_state(model: nn.Module, state: Mapping[str, torch.Tensor]) -> None:
+    model.load_state_dict(state, strict=True)
+
+
+def _validate_vector_armijo_options(options: Mapping[str, Any] | None) -> dict[str, Any]:
+    if not isinstance(options, Mapping) or set(options) != {
+        "c",
+        "rho",
+        "max_backtracks",
+        "initial_step_size",
+    }:
+        raise ValueError("Direct PCD stepping requires c, rho, max_backtracks, and initial_step_size.")
+    c = options["c"]
+    rho = options["rho"]
+    alpha0 = options["initial_step_size"]
+    max_backtracks = options["max_backtracks"]
+    if isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(float(c)) or not 0.0 < float(c) < 1.0:
+        raise ValueError("Vector-Armijo c must be finite and in (0, 1).")
+    if isinstance(rho, bool) or not isinstance(rho, (int, float)) or not math.isfinite(float(rho)) or not 0.0 < float(rho) < 1.0:
+        raise ValueError("Vector-Armijo rho must be finite and in (0, 1).")
+    if type(max_backtracks) is not int or max_backtracks < 0:
+        raise ValueError("Vector-Armijo max_backtracks must be a nonnegative integer.")
+    if isinstance(alpha0, bool) or not isinstance(alpha0, (int, float)) or not math.isfinite(float(alpha0)) or float(alpha0) <= 0.0:
+        raise ValueError("Vector-Armijo initial_step_size must be finite and positive.")
+    return {
+        "c": float(c),
+        "rho": float(rho),
+        "max_backtracks": max_backtracks,
+        "initial_step_size": float(alpha0),
+    }
+
+
 def apply_joint_gradient(
     model: nn.Module,
     optimizer: torch.optim.Optimizer,
@@ -265,7 +341,7 @@ def apply_joint_gradient(
 
 def train_moo_update(
     model: nn.Module,
-    optimizer: torch.optim.Optimizer,
+    optimizer: torch.optim.Optimizer | None,
     objective_factories: Mapping[str, Callable[[], torch.Tensor]],
     *,
     method: str,
@@ -275,13 +351,39 @@ def train_moo_update(
     scheduler: Any = None,
     world_size: int | None = None,
     record_update_geometry: bool = True,
+    step_rule: str = "optimizer",
+    vector_armijo: Mapping[str, Any] | None = None,
 ) -> UpdateResult:
     """One canonical update: raw local tasks -> all-reduce -> MOO -> optimizer."""
-    optimizer.zero_grad(set_to_none=True)
-    losses, sparse_grads = compute_isolated_task_gradients(model, objective_factories)
-    losses = _average_task_losses(losses, model)
-    dense_local = materialize_task_zeros(model, sparse_grads)
-    raw = average_raw_task_gradients(dense_local, world_size=world_size)
+    direct_armijo = step_rule == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
+    if step_rule not in ("optimizer", PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE):
+        raise ValueError(f"Unsupported MOO step rule {step_rule!r}.")
+    if direct_armijo:
+        if method != "pcd" or optimizer is not None or scheduler is not None:
+            raise ValueError("Direct vector-Armijo requires PCD with no optimizer or scheduler.")
+        armijo = _validate_vector_armijo_options(vector_armijo)
+        model_before = _clone_model_state(model)
+        rng_before = capture_rng_state()
+    else:
+        if optimizer is None:
+            raise ValueError("The optimizer step rule requires an optimizer.")
+        if vector_armijo is not None:
+            raise ValueError("Vector-Armijo parameters require the direct vector-Armijo step rule.")
+        optimizer.zero_grad(set_to_none=True)
+        model_before = None
+        rng_before = None
+        armijo = None
+    try:
+        losses, sparse_grads = compute_isolated_task_gradients(model, objective_factories)
+        losses = _average_task_losses(losses, model)
+        dense_local = materialize_task_zeros(model, sparse_grads)
+        raw = average_raw_task_gradients(dense_local, world_size=world_size)
+    except Exception:
+        if direct_armijo:
+            assert model_before is not None and rng_before is not None
+            _restore_model_state(model, model_before)
+            restore_rng_state(rng_before)
+        raise
     if aggregator is None:
         try:
             from .moo_aggregators import aggregate_task_gradients
@@ -289,12 +391,19 @@ def train_moo_update(
             from moo_aggregators import aggregate_task_gradients
 
         aggregator = aggregate_task_gradients
-    joint, method_diagnostics, next_state = aggregator(
-        raw,
-        method=method,
-        hyperparameters=hyperparameters,
-        state=aggregator_state,
-    )
+    try:
+        joint, method_diagnostics, next_state = aggregator(
+            raw,
+            method=method,
+            hyperparameters=hyperparameters,
+            state=copy.deepcopy(aggregator_state) if direct_armijo else aggregator_state,
+        )
+    except Exception:
+        if direct_armijo:
+            assert model_before is not None and rng_before is not None
+            _restore_model_state(model, model_before)
+            restore_rng_state(rng_before)
+        raise
     parameters = named_trainable_parameters(model)
     dense_joint = {
         name: (torch.zeros_like(parameter) if joint.get(name) is None else joint[name])
@@ -302,7 +411,142 @@ def train_moo_update(
     }
     diagnostics = _gradient_diagnostics(raw, dense_joint)
     diagnostics.update(method_diagnostics)
+    if direct_armijo:
+        assert model_before is not None and rng_before is not None and armijo is not None
+        model_at_base = _clone_model_state(model)
+        rng_after_gradients = capture_rng_state()
+        alpha0 = armijo["initial_step_size"]
+        proposal = {name: -alpha0 * gradient for name, gradient in dense_joint.items()}
+        slopes = {task: _dot(raw[task], proposal) for task in TASK_NAMES}
+        diagnostics["vector_armijo"] = {
+            **armijo,
+            "step_rule": PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+            "directional_slopes": slopes,
+            "trials": [],
+        }
+        accepted_t: float | None = None
+        accepted_delta: dict[str, torch.Tensor] | None = None
+        accepted_parameters: dict[str, torch.Tensor] | None = None
+        try:
+            if not all(torch.isfinite(value).all() for value in proposal.values()) or not all(
+                math.isfinite(value) and value < 0.0 for value in slopes.values()
+            ):
+                stop_reason = "no_finite_common_descent_direction"
+            else:
+                stop_reason = "no_accepted_step_within_backtrack_cap"
+                for backtrack in range(armijo["max_backtracks"] + 1):
+                    t = armijo["rho"] ** backtrack
+                    trial_parameters = {}
+                    with torch.no_grad():
+                        _restore_model_state(model, model_at_base)
+                        parameters = named_trainable_parameters(model)
+                        for name, parameter in parameters.items():
+                            trial_parameters[name] = model_at_base[name] + t * proposal[name]
+                        no_op = all(
+                            torch.equal(trial_parameters[name], parameters[name].detach())
+                            for name in parameters
+                        )
+                        if not no_op:
+                            for name, parameter in parameters.items():
+                                parameter.copy_(trial_parameters[name])
+                    if no_op:
+                        diagnostics["vector_armijo"]["trials"].append(
+                            {"t": t, "finite": True, "no_op": True}
+                        )
+                        stop_reason = "candidate_unchanged_at_float_precision"
+                        break
+                    trial_record: dict[str, Any] = {"t": t, "finite": False, "no_op": False}
+                    try:
+                        restore_rng_state(rng_after_gradients)
+                        trial_losses, trial_error = _evaluate_trial_losses(model, objective_factories)
+                        if trial_losses is not None:
+                            predicted = {task: -t * slopes[task] for task in TASK_NAMES}
+                            actual = {task: losses[task] - trial_losses[task] for task in TASK_NAMES}
+                            margins = {
+                                task: losses[task] + armijo["c"] * t * slopes[task] - trial_losses[task]
+                                for task in TASK_NAMES
+                            }
+                            ratios = {
+                                task: actual[task] / predicted[task]
+                                for task in TASK_NAMES
+                            }
+                            armijo_pass = all(margins[task] >= 0.0 for task in TASK_NAMES)
+                            strict_decrease = all(actual[task] > 0.0 for task in TASK_NAMES)
+                            trial_record.update(
+                                {
+                                    "finite": True,
+                                    "losses": trial_losses,
+                                    "predicted_reductions": predicted,
+                                    "actual_reductions": actual,
+                                    "actual_to_predicted_ratios": ratios,
+                                    "armijo_margins": margins,
+                                    "armijo_pass": armijo_pass,
+                                    "strict_all_task_decrease": strict_decrease,
+                                }
+                            )
+                            if armijo_pass and strict_decrease:
+                                accepted_t = t
+                                accepted_parameters = trial_parameters
+                                accepted_delta = {
+                                    name: accepted_parameters[name] - model_at_base[name]
+                                    for name in accepted_parameters
+                                }
+                                stop_reason = None
+                        else:
+                            trial_record["error"] = trial_error
+                    finally:
+                        _restore_model_state(model, model_at_base)
+                        restore_rng_state(rng_after_gradients)
+                    trial_record["parameter_delta_norm"] = _norm(
+                        {name: t * proposal[name] for name in proposal}
+                    )
+                    diagnostics["vector_armijo"]["trials"].append(trial_record)
+                    if stop_reason is None:
+                        break
+        except Exception:
+            _restore_model_state(model, model_before)
+            restore_rng_state(rng_before)
+            raise
+        diagnostics["vector_armijo"]["accepted_t"] = accepted_t
+        diagnostics["vector_armijo"]["backtracks"] = (
+            len(diagnostics["vector_armijo"]["trials"]) - 1
+            if diagnostics["vector_armijo"]["trials"]
+            else 0
+        )
+        if stop_reason is not None:
+            _restore_model_state(model, model_before)
+            restore_rng_state(rng_before)
+            diagnostics["vector_armijo"]["accepted"] = False
+            diagnostics["vector_armijo"]["stop_reason"] = stop_reason
+            return UpdateResult(
+                losses,
+                diagnostics,
+                copy.deepcopy(aggregator_state) if aggregator_state is not None else None,
+                alpha0,
+                accepted=False,
+                stop_reason=stop_reason,
+            )
+        assert accepted_t is not None and accepted_delta is not None and accepted_parameters is not None
+        with torch.no_grad():
+            parameters = named_trainable_parameters(model)
+            for name, parameter in parameters.items():
+                parameter.copy_(accepted_parameters[name])
+        delta_norm = _norm(accepted_delta)
+        diagnostics["parameter_update_norm"] = delta_norm
+        diagnostics["joint_gradient_update_cosine"] = (
+            _dot(dense_joint, accepted_delta)
+            / (diagnostics["joint_gradient_norm"] * delta_norm)
+            if diagnostics["joint_gradient_norm"] and delta_norm
+            else 0.0
+        )
+        diagnostics["task_update_dots"] = {
+            task: _dot(raw[task], accepted_delta) for task in TASK_NAMES
+        }
+        diagnostics["vector_armijo"]["accepted"] = True
+        diagnostics["vector_armijo"]["stop_reason"] = None
+        return UpdateResult(losses, diagnostics, dict(next_state), alpha0)
     if record_update_geometry:
+        assert optimizer is not None
         update = apply_joint_gradient(model, optimizer, joint)
         delta_norm = _norm(update)
         diagnostics["parameter_update_norm"] = delta_norm
@@ -315,9 +559,11 @@ def train_moo_update(
             task: _dot(raw[task], update) for task in TASK_NAMES
         }
     else:
+        assert optimizer is not None
         apply_joint_gradient(model, optimizer, joint)
     if scheduler is not None:
         scheduler.step()
+    assert optimizer is not None
     learning_rate = float(optimizer.param_groups[0]["lr"])
     return UpdateResult(losses, diagnostics, dict(next_state), learning_rate)
 
@@ -623,7 +869,7 @@ def save_moo_checkpoint(
     path: str | Path,
     *,
     model: nn.Module,
-    optimizer: torch.optim.Optimizer,
+    optimizer: torch.optim.Optimizer | None,
     scheduler: Any,
     protocol_metadata: Mapping[str, Any],
     sampling_manifest: Mapping[str, Any],
@@ -632,6 +878,12 @@ def save_moo_checkpoint(
 ) -> None:
     """Atomically save an h-free MOO checkpoint plus exact resume state."""
     validate_protocol_metadata(protocol_metadata)
+    direct_armijo = protocol_metadata.get("step_rule") == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
+    if direct_armijo:
+        if optimizer is not None or scheduler is not None:
+            raise ValueError("Direct vector-Armijo checkpoints cannot contain optimizer or scheduler state.")
+    elif optimizer is None:
+        raise ValueError("Optimizer-based MOO checkpoints require optimizer state.")
     manifest_hash = validate_sampling_manifest(sampling_manifest)
     cursor = {
         "sampling_manifest_sha256": manifest_hash,
@@ -662,7 +914,7 @@ def save_moo_checkpoint(
             "operator_protocol": OPERATOR_PROTOCOL,
             "model_kwargs": dict(getattr(model, "model_kwargs", {})),
             "model_state_dict": model.state_dict(),
-            "optimizer_state_dict": optimizer.state_dict(),
+            "optimizer_state_dict": None if optimizer is None else optimizer.state_dict(),
             "scheduler_state_dict": None if scheduler is None else scheduler.state_dict(),
             "sampling_cursor": cursor,
             "aggregator_state": saved_aggregator_state,
@@ -682,7 +934,7 @@ def load_moo_checkpoint(
     path: str | Path,
     *,
     model: nn.Module,
-    optimizer: torch.optim.Optimizer,
+    optimizer: torch.optim.Optimizer | None,
     scheduler: Any,
     expected_protocol_metadata: Mapping[str, Any],
     sampling_manifest: Mapping[str, Any],
@@ -691,6 +943,12 @@ def load_moo_checkpoint(
 ) -> tuple[int, dict[str, Any]]:
     """Fail closed if protocol/data identity differs; return the next cursor."""
     validate_protocol_metadata(expected_protocol_metadata)
+    direct_armijo = expected_protocol_metadata.get("step_rule") == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
+    if direct_armijo:
+        if optimizer is not None or scheduler is not None:
+            raise ValueError("Direct vector-Armijo resume cannot load optimizer or scheduler state.")
+    elif optimizer is None:
+        raise ValueError("Optimizer-based MOO resume requires an optimizer.")
     manifest_hash = validate_sampling_manifest(sampling_manifest)
     if expected_protocol_metadata.get("sampling_manifest_sha256") != manifest_hash:
         raise ValueError("Requested protocol and sampling manifest identities differ.")
@@ -715,7 +973,11 @@ def load_moo_checkpoint(
         metadata, payload.get("aggregator_state"), cursor=cursor_value
     )
     scheduler_state = payload.get("scheduler_state_dict")
-    if scheduler is not None:
+    optimizer_state = payload.get("optimizer_state_dict")
+    if direct_armijo:
+        if scheduler_state is not None or optimizer_state is not None:
+            raise ValueError("Direct vector-Armijo checkpoint has unexpected optimizer or scheduler state.")
+    elif scheduler is not None:
         if scheduler_state is None:
             raise ValueError("Checkpoint is missing the learning-rate scheduler state.")
         scheduler_epoch = scheduler_state.get("last_epoch")
@@ -726,6 +988,8 @@ def load_moo_checkpoint(
             )
     elif scheduler_state is not None:
         raise ValueError("Checkpoint has an unexpected learning-rate scheduler.")
+    if not direct_armijo and not isinstance(optimizer_state, Mapping):
+        raise ValueError("Optimizer-based MOO checkpoint is missing optimizer state.")
     operator_metadata = payload.get("operator_metadata")
     validate_operator_metadata(operator_metadata)
     if operator_metadata != operator_checkpoint_metadata().to_dict():
@@ -749,7 +1013,8 @@ def load_moo_checkpoint(
     if rank >= len(states):
         raise ValueError("Checkpoint does not contain RNG state for this rank.")
     model.load_state_dict(payload["model_state_dict"], strict=True)
-    optimizer.load_state_dict(payload["optimizer_state_dict"])
+    if optimizer is not None:
+        optimizer.load_state_dict(optimizer_state)
     if scheduler is not None:
         scheduler.load_state_dict(scheduler_state)
     if restore_rng:

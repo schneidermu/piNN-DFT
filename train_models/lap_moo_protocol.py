@@ -16,6 +16,8 @@ from typing import Any
 
 PROTOCOL_VERSION = "lap-moo-one-stage-v2"
 PCD_PROTOCOL_VERSION = "lap-moo-one-stage-v3"
+PCD_ARMIJO_PROTOCOL_VERSION = "lap-moo-one-stage-v4"
+PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE = "pcd_direct_vector_armijo"
 LEGACY_READ_ONLY_PROTOCOL_VERSION = "lap-moo-one-stage-v1"
 # Sampling identity is frozen independently from training/checkpoint metadata.
 # The v2 AO-cache chunk field changes checkpoint provenance, not which samples
@@ -403,6 +405,8 @@ def make_protocol_metadata(
     world_size: int | None = None,
     sampling_manifest_file_sha256: str | None = None,
     source_code_sha256: Mapping[str, str] | None = None,
+    step_rule: str | None = None,
+    vector_armijo: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build the explicit, h-free metadata contract for a new MOO run."""
     required_hashes = (
@@ -421,12 +425,23 @@ def make_protocol_metadata(
         raise ValueError("All source/checkpoint identities must be SHA-256 hex digests.")
     if not architecture or not method:
         raise ValueError("architecture and method are required.")
+    if step_rule is None:
+        if vector_armijo is not None:
+            raise ValueError("Vector-Armijo parameters require an explicit step rule.")
+        protocol_version = PCD_PROTOCOL_VERSION if method == "pcd" else PROTOCOL_VERSION
+    else:
+        if method != "pcd" or step_rule != PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE:
+            raise ValueError("The direct vector-Armijo step rule is available only with PCD.")
+        _validate_vector_armijo(vector_armijo)
+        if dict(optimizer) != {"name": "none"} or dict(lr_schedule) != {"name": "none"}:
+            raise ValueError("Direct vector-Armijo requires optimizer and scheduler set to none.")
+        protocol_version = PCD_ARMIJO_PROTOCOL_VERSION
     if type(grid_chunk_size) is not int or grid_chunk_size <= 0:
         raise ValueError("grid_chunk_size must be a positive integer.")
     if type(ao_cache_chunk_size) is not int or ao_cache_chunk_size <= 0:
         raise ValueError("ao_cache_chunk_size must be a positive integer.")
     metadata = {
-        "protocol_version": PCD_PROTOCOL_VERSION if method == "pcd" else PROTOCOL_VERSION,
+        "protocol_version": protocol_version,
         "architecture": architecture,
         "operator_protocol": "lap-weakform-ao-v1",
         "objective_definitions": {
@@ -469,7 +484,44 @@ def make_protocol_metadata(
                 "source_code_sha256": dict(sorted(source_code_sha256.items())),
             }
         )
+    if step_rule is not None:
+        metadata.update(
+            {
+                "step_rule": step_rule,
+                "vector_armijo": dict(vector_armijo or {}),
+            }
+        )
     return metadata
+
+
+def _validate_vector_armijo(value: Mapping[str, Any] | None) -> None:
+    if not isinstance(value, Mapping) or set(value) != {
+        "c",
+        "rho",
+        "max_backtracks",
+        "initial_step_size",
+    }:
+        raise ValueError("Vector-Armijo metadata must define c, rho, max_backtracks, and initial_step_size.")
+    c = value.get("c")
+    rho = value.get("rho")
+    if (
+        isinstance(c, bool)
+        or not isinstance(c, (int, float))
+        or not math.isfinite(float(c))
+        or not 0.0 < float(c) < 1.0
+    ):
+        raise ValueError("Vector-Armijo c must be finite and in (0, 1).")
+    if (
+        isinstance(rho, bool)
+        or not isinstance(rho, (int, float))
+        or not math.isfinite(float(rho))
+        or not 0.0 < float(rho) < 1.0
+    ):
+        raise ValueError("Vector-Armijo rho must be finite and in (0, 1).")
+    max_backtracks = value.get("max_backtracks")
+    if type(max_backtracks) is not int or max_backtracks < 0:
+        raise ValueError("Vector-Armijo max_backtracks must be a nonnegative integer.")
+    _positive_finite_number(value.get("initial_step_size"), "initial step size")
 
 
 def _validate_no_legacy_controls(value: Any) -> None:
@@ -507,11 +559,12 @@ def validate_protocol_metadata(
     version = metadata.get("protocol_version")
     legacy_read_only = allow_v1_read_only and version == LEGACY_READ_ONLY_PROTOCOL_VERSION
     method = metadata.get("method")
-    pcd_v3 = version == PCD_PROTOCOL_VERSION
-    if version not in (PROTOCOL_VERSION, PCD_PROTOCOL_VERSION) and not legacy_read_only:
+    pcd_protocol = version in (PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION)
+    direct_vector_armijo = version == PCD_ARMIJO_PROTOCOL_VERSION
+    if version not in (PROTOCOL_VERSION, PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION) and not legacy_read_only:
         raise ValueError("Incompatible one-stage Lap MOO protocol version.")
-    if pcd_v3 and method != "pcd":
-        raise ValueError("The v3 one-stage Lap MOO protocol is reserved for PCD.")
+    if pcd_protocol and method != "pcd":
+        raise ValueError("The v3/v4 one-stage Lap MOO protocols are reserved for PCD.")
     if version == PROTOCOL_VERSION and method == "pcd":
         raise ValueError("PCD checkpoints require the v3 protocol provenance contract.")
     if legacy_read_only and method == "pcd":
@@ -532,7 +585,7 @@ def validate_protocol_metadata(
         raise TypeError("Lap MOO objective definitions must be a mapping.")
     if not isinstance(metadata.get("method_hyperparameters"), Mapping):
         raise TypeError("Lap MOO method hyperparameters must be a mapping.")
-    if pcd_v3:
+    if pcd_protocol:
         hparams = metadata["method_hyperparameters"]
         if set(hparams) != {"tau", "beta", "eps", "qp_tolerance"}:
             raise ValueError("PCD metadata must contain only tau, beta, eps, and qp_tolerance.")
@@ -574,6 +627,14 @@ def validate_protocol_metadata(
                 or any(char not in "0123456789abcdef" for char in digest.lower())
             ):
                 raise ValueError(f"PCD metadata has an invalid current source hash for {path!r}.")
+    if direct_vector_armijo:
+        if metadata.get("step_rule") != PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE:
+            raise ValueError("PCD v4 metadata must declare direct vector-Armijo stepping.")
+        _validate_vector_armijo(metadata.get("vector_armijo"))
+        if metadata.get("optimizer") != {"name": "none"} or metadata.get("lr_schedule") != {"name": "none"}:
+            raise ValueError("Direct vector-Armijo metadata must disable optimizer and scheduler state.")
+    elif "step_rule" in metadata or "vector_armijo" in metadata:
+        raise ValueError("Step-rule metadata requires the dedicated PCD v4 protocol.")
     if metadata["method"] == "fixed":
         fixed = metadata.get("fixed_scalarization")
         weights = fixed.get("fixed_weights") if isinstance(fixed, Mapping) else None
@@ -660,6 +721,8 @@ __all__ = [
     "METHOD_IDS",
     "OPTIMIZER_FAMILIES",
     "PCD_ALGORITHM_METADATA",
+    "PCD_ARMIJO_PROTOCOL_VERSION",
+    "PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE",
     "PCD_PROTOCOL_VERSION",
     "PCD_PROVENANCE",
     "PCD_QP_TOLERANCE",

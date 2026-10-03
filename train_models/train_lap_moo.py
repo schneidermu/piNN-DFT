@@ -33,6 +33,7 @@ from lap_moo_panel import MinnesotaGroupStore
 from lap_moo_protocol import (
     METHOD_IDS,
     OPTIMIZER_FAMILIES,
+    PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
     PCD_QP_TOLERANCE,
     PCD_SOURCE_FILE_PATHS,
     SamplingStream,
@@ -95,7 +96,7 @@ def _initial_aggregator_state(method: str) -> dict[str, Any] | None:
 
 def _run_scheduled_update(
     model: torch.nn.Module,
-    optimizer: torch.optim.Optimizer,
+    optimizer: torch.optim.Optimizer | None,
     objective_factories,
     *,
     method: str,
@@ -103,8 +104,10 @@ def _run_scheduled_update(
     aggregator_state: dict[str, Any] | None,
     scheduler,
     world_size: int,
+    step_rule: str = "optimizer",
+    vector_armijo: dict[str, Any] | None = None,
 ):
-    """Apply one CLI update and advance the declared smooth LR schedule."""
+    """Apply one CLI update through the declared optimizer or PCD step rule."""
     return train_moo_update(
         model,
         optimizer,
@@ -115,7 +118,26 @@ def _run_scheduled_update(
         scheduler=scheduler,
         world_size=world_size,
         record_update_geometry=True,
+        step_rule=step_rule,
+        vector_armijo=vector_armijo,
     )
+
+
+def _vector_armijo_rejection_record(
+    *, update_index: int, rank_samples: list[dict[str, Any]], result: Any
+) -> dict[str, Any]:
+    if result.accepted:
+        raise ValueError("A vector-Armijo stop record requires a rejected update.")
+    return {
+        "event": "vector_armijo_search_stopped",
+        "update": update_index,
+        "rank_samples": rank_samples,
+        "losses": result.losses,
+        "gradient_diagnostics": result.diagnostics,
+        "step_diagnostics": result.diagnostics.get("vector_armijo"),
+        "stop_reason": result.stop_reason,
+        "sampling_cursor_next_update": update_index,
+    }
 
 
 def _capture_nash_aggregation_failure(
@@ -586,6 +608,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=41)
     parser.add_argument("--learning-rate", type=float, required=True)
     parser.add_argument(
+        "--step-rule",
+        choices=("optimizer", PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE),
+        default="optimizer",
+        help="Use the existing optimizer/schedule path or direct PCD vector-Armijo steps.",
+    )
+    parser.add_argument(
         "--optimizer-family",
         choices=OPTIMIZER_FAMILIES,
         default="radamw",
@@ -596,7 +624,12 @@ def _parse_args() -> argparse.Namespace:
         type=float,
         help="Required only for muon_adamw. --learning-rate remains the AdamW fallback rate.",
     )
-    parser.add_argument("--weight-decay", type=float, default=1e-2)
+    parser.add_argument(
+        "--weight-decay",
+        type=float,
+        default=None,
+        help="Optimizer weight decay (defaults to 1e-2 for optimizer mode; direct PCD requires 0).",
+    )
     parser.add_argument("--dtype", choices=("float32", "float64"), default="float32")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--point-chunk-size", type=int, default=256)
@@ -615,12 +648,21 @@ def main() -> None:
     args = _parse_args()
     if min(args.updates, args.point_chunk_size, args.ao_cache_chunk_size, args.checkpoint_every) <= 0:
         raise ValueError("Update count, chunk sizes, and checkpoint interval must be positive.")
+    direct_armijo = args.step_rule == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
+    if args.weight_decay is None:
+        args.weight_decay = 0.0 if direct_armijo else 1.0e-2
     if args.learning_rate <= 0 or args.weight_decay < 0:
         raise ValueError("Optimizer learning rate and weight decay are invalid.")
-    if args.optimizer_family == "muon_adamw":
+    if direct_armijo and args.method != "pcd":
+        raise ValueError("Direct vector-Armijo stepping requires --method pcd.")
+    if direct_armijo and args.weight_decay != 0.0:
+        raise ValueError("Direct vector-Armijo stepping does not accept weight decay.")
+    if direct_armijo and args.muon_learning_rate is not None:
+        raise ValueError("Direct vector-Armijo stepping does not use optimizer learning rates.")
+    if not direct_armijo and args.optimizer_family == "muon_adamw":
         if args.muon_learning_rate is None or args.muon_learning_rate <= 0:
             raise ValueError("muon_adamw requires --muon-learning-rate > 0.")
-    elif args.muon_learning_rate is not None:
+    elif not direct_armijo and args.muon_learning_rate is not None:
         raise ValueError("--muon-learning-rate is only valid with --optimizer-family muon_adamw.")
     stop_after = args.updates if args.stop_after is None else args.stop_after
     if not 0 < stop_after <= args.updates:
@@ -711,14 +753,33 @@ def main() -> None:
     method_hparams, fixed_scalarization = _method_configuration(
         args.method, args.method_hyperparameters, args.fixed_calibration_report
     )
-    optimizer, optimizer_metadata = build_optimizer(
-        model,
-        family=args.optimizer_family,
-        learning_rate=args.learning_rate,
-        weight_decay=args.weight_decay,
-        muon_learning_rate=args.muon_learning_rate,
-    )
-    scheduler = make_cosine_scheduler(optimizer, total_updates=args.updates)
+    vector_armijo = None
+    if direct_armijo:
+        optimizer = None
+        scheduler = None
+        optimizer_metadata = {"name": "none"}
+        lr_schedule = {"name": "none"}
+        vector_armijo = {
+            "c": 1.0e-4,
+            "rho": 0.5,
+            "max_backtracks": 20,
+            "initial_step_size": args.learning_rate,
+        }
+    else:
+        optimizer, optimizer_metadata = build_optimizer(
+            model,
+            family=args.optimizer_family,
+            learning_rate=args.learning_rate,
+            weight_decay=args.weight_decay,
+            muon_learning_rate=args.muon_learning_rate,
+        )
+        scheduler = make_cosine_scheduler(optimizer, total_updates=args.updates)
+        lr_schedule = {
+            "name": "cosine",
+            "total_updates": args.updates,
+            "minimum_lr_ratio": 0.1,
+            "same_shape_for_all_methods": True,
+        }
     pcd_protocol_kwargs: dict[str, Any] = {}
     pcd_source_git_commit: str | None = None
     pcd_source_hashes: dict[str, str] | None = None
@@ -735,12 +796,7 @@ def main() -> None:
         method_hyperparameters=method_hparams,
         fixed_scalarization=fixed_scalarization,
         optimizer=optimizer_metadata,
-        lr_schedule={
-            "name": "cosine",
-            "total_updates": args.updates,
-            "minimum_lr_ratio": 0.1,
-            "same_shape_for_all_methods": True,
-        },
+        lr_schedule=lr_schedule,
         predopt_checkpoint_sha256=predopt_sha,
         sampling_manifest_sha256=manifest["manifest_sha256"],
         minnesota_data_sha256=group_store.manifest_sha256,
@@ -752,6 +808,8 @@ def main() -> None:
         dtype=args.dtype,
         grid_chunk_size=args.point_chunk_size,
         ao_cache_chunk_size=args.ao_cache_chunk_size,
+        step_rule=PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE if direct_armijo else None,
+        vector_armijo=vector_armijo,
         **pcd_protocol_kwargs,
     )
     validate_protocol_metadata(protocol)
@@ -795,6 +853,8 @@ def main() -> None:
     history_path = output_dir / "updates.jsonl"
     history = history_path.open("a" if args.resume is not None else "x", encoding="utf-8") if rank == 0 else None
     completed_updates = next_update
+    stopped_update = None
+    stop_reason = None
     try:
         for update_index in range(next_update, stop_after):
             sample = stream.entry(update_index, rank)
@@ -828,8 +888,10 @@ def main() -> None:
                     aggregator_state=aggregator_state,
                     scheduler=scheduler,
                     world_size=world_size,
+                    step_rule=args.step_rule,
+                    vector_armijo=vector_armijo,
                 )
-            except RuntimeError as exc:
+            except Exception as exc:
                 if args.method == "nash_mtl" and "Nash-MTL" in str(exc):
                     failure_report = _capture_nash_aggregation_failure(
                         output_dir,
@@ -852,7 +914,43 @@ def main() -> None:
                         ),
                         flush=True,
                     )
+                if direct_armijo and rank == 0:
+                    failure_row = {
+                        "event": "vector_armijo_update_error",
+                        "update": update_index,
+                        "rank_samples": manifest["entries"][update_index]["per_rank"],
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                        "sampling_cursor_next_update": update_index,
+                    }
+                    history.write(json.dumps(_json_safe(failure_row), sort_keys=True, allow_nan=False) + "\n")
+                    history.flush()
+                    print(json.dumps(_json_safe(failure_row), sort_keys=True, allow_nan=False), flush=True)
                 raise
+            if not result.accepted:
+                failure_row = _vector_armijo_rejection_record(
+                    update_index=update_index,
+                    rank_samples=manifest["entries"][update_index]["per_rank"],
+                    result=result,
+                )
+                if rank == 0:
+                    history.write(json.dumps(_json_safe(failure_row), sort_keys=True, allow_nan=False) + "\n")
+                    history.flush()
+                    print(json.dumps(_json_safe(failure_row), sort_keys=True, allow_nan=False), flush=True)
+                save_moo_checkpoint(
+                    output_dir / "latest.pt",
+                    model=model,
+                    optimizer=optimizer,
+                    scheduler=scheduler,
+                    protocol_metadata=protocol,
+                    sampling_manifest=manifest,
+                    next_update=update_index,
+                    aggregator_state=aggregator_state,
+                )
+                stopped_update = update_index
+                stop_reason = result.stop_reason
+                del objective_factories, reaction, system, result
+                break
             aggregator_state = result.aggregator_state
             if device.type == "cuda":
                 torch.cuda.synchronize(device)
@@ -863,7 +961,7 @@ def main() -> None:
                 "gradient_diagnostics": result.diagnostics,
                 "aggregator_state": aggregator_state,
                 "learning_rate_for_next_update": result.learning_rate,
-                "optimizer_learning_rates_for_next_update": (
+                "optimizer_learning_rates_for_next_update": None if optimizer is None else (
                     optimizer.learning_rates()
                     if hasattr(optimizer, "learning_rates")
                     else {"main": float(optimizer.param_groups[0]["lr"])}
@@ -921,6 +1019,11 @@ def main() -> None:
         if args.method == "pcd":
             summary["source_code_git_commit"] = pcd_source_git_commit
             summary["source_code_sha256"] = pcd_source_hashes
+        if stop_reason is not None:
+            summary["stop_reason"] = stop_reason
+            summary["stopped_update"] = stopped_update
+        if direct_armijo:
+            summary["step_rule"] = PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
         _write_json(output_dir / "run_summary.json", summary)
         print(json.dumps(summary, indent=2, sort_keys=True), flush=True)
     if world_size > 1:

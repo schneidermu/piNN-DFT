@@ -26,6 +26,7 @@ for _path in (str(REPO_ROOT), str(TRAIN_MODELS)):
 from lap_checkpoint import load_lap_checkpoint
 from lap_moo_panel import MinnesotaGroupStore
 from lap_moo_protocol import (
+    PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
     SamplingStream,
     canonical_sha256,
     file_sha256,
@@ -124,7 +125,11 @@ def _validate_candidate_checkpoint(
     if cursor != updates:
         raise ValueError(f"{method} checkpoint cursor does not match its recorded update count.")
     scheduler_state = payload.get("scheduler_state_dict")
-    if scheduler_state is None or scheduler_state.get("last_epoch") != updates:
+    direct_armijo = protocol.get("step_rule") == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
+    if direct_armijo:
+        if scheduler_state is not None or payload.get("optimizer_state_dict") is not None:
+            raise ValueError("Direct vector-Armijo checkpoint has unexpected optimizer or scheduler state.")
+    elif scheduler_state is None or scheduler_state.get("last_epoch") != updates:
         raise ValueError(f"{method} checkpoint scheduler epoch does not match its cursor.")
     if dict(payload.get("model_kwargs", {})) != model_kwargs:
         raise ValueError(f"{method} checkpoint architecture differs from the PBE model.")

@@ -30,7 +30,11 @@ for _path in (str(REPO_ROOT), str(REPO_ROOT / "train_models")):
         sys.path.insert(0, _path)
 
 from build_mrks_stencils import _make_mol
-from lap_moo_protocol import canonical_sha256, validate_protocol_metadata
+from lap_moo_protocol import (
+    PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+    canonical_sha256,
+    validate_protocol_metadata,
+)
 from lap_moo_training import _reject_stencil_checkpoint_fields
 from lap_operator import (
     OPERATOR_PROTOCOL,
@@ -147,19 +151,27 @@ def _load_moo_model_at_cursor(
     if protocol.get("predopt_checkpoint_sha256") != PREDOPT_SHA256:
         raise ValueError("MOO checkpoint is not bound to the reviewed canonical predopt source.")
 
+    direct_armijo = protocol.get("step_rule") == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
     lr_schedule = protocol.get("lr_schedule")
-    if not isinstance(lr_schedule, dict) or lr_schedule.get("name") != "cosine":
-        raise ValueError("MOO checkpoint does not declare the reviewed cosine schedule.")
-    total_updates = lr_schedule.get("total_updates")
-    if type(total_updates) is not int or total_updates < expected_cursor:
-        raise ValueError("MOO schedule horizon is shorter than the requested checkpoint cursor.")
-    minimum_lr_ratio = lr_schedule.get("minimum_lr_ratio")
-    if not isinstance(minimum_lr_ratio, (int, float)) or not math.isclose(
-        float(minimum_lr_ratio), 0.1, rel_tol=0.0, abs_tol=1e-12
-    ):
-        raise ValueError("MOO checkpoint does not declare the reviewed 10% cosine floor.")
-    if lr_schedule.get("same_shape_for_all_methods") is not True:
-        raise ValueError("MOO checkpoint does not bind the shared cosine schedule shape.")
+    if direct_armijo:
+        if lr_schedule != {"name": "none"}:
+            raise ValueError("Direct vector-Armijo checkpoint must declare no LR scheduler.")
+        if payload.get("optimizer_state_dict") is not None or payload.get("scheduler_state_dict") is not None:
+            raise ValueError("Direct vector-Armijo checkpoint contains optimizer or scheduler state.")
+        total_updates = None
+    else:
+        if not isinstance(lr_schedule, dict) or lr_schedule.get("name") != "cosine":
+            raise ValueError("MOO checkpoint does not declare the reviewed cosine schedule.")
+        total_updates = lr_schedule.get("total_updates")
+        if type(total_updates) is not int or total_updates < expected_cursor:
+            raise ValueError("MOO schedule horizon is shorter than the requested checkpoint cursor.")
+        minimum_lr_ratio = lr_schedule.get("minimum_lr_ratio")
+        if not isinstance(minimum_lr_ratio, (int, float)) or not math.isclose(
+            float(minimum_lr_ratio), 0.1, rel_tol=0.0, abs_tol=1e-12
+        ):
+            raise ValueError("MOO checkpoint does not declare the reviewed 10% cosine floor.")
+        if lr_schedule.get("same_shape_for_all_methods") is not True:
+            raise ValueError("MOO checkpoint does not bind the shared cosine schedule shape.")
 
     cursor = payload.get("sampling_cursor")
     if not isinstance(cursor, dict) or cursor.get("next_update") != expected_cursor:
@@ -167,10 +179,18 @@ def _load_moo_model_at_cursor(
     if cursor.get("sampling_manifest_sha256") != protocol.get("sampling_manifest_sha256"):
         raise ValueError("Checkpoint cursor and MOO protocol sampling stream disagree.")
     scheduler = payload.get("scheduler_state_dict")
-    if not isinstance(scheduler, dict) or scheduler.get("last_epoch") != expected_cursor:
-        raise ValueError("MOO checkpoint scheduler position does not match its cursor.")
-    if scheduler.get("_step_count") != expected_cursor + 1:
-        raise ValueError("MOO checkpoint scheduler step count does not match its cursor.")
+    if direct_armijo:
+        if scheduler is not None:
+            raise ValueError("Direct vector-Armijo checkpoint unexpectedly contains scheduler state.")
+        scheduler_last_epoch = None
+        scheduler_step_count = None
+    else:
+        if not isinstance(scheduler, dict) or scheduler.get("last_epoch") != expected_cursor:
+            raise ValueError("MOO checkpoint scheduler position does not match its cursor.")
+        if scheduler.get("_step_count") != expected_cursor + 1:
+            raise ValueError("MOO checkpoint scheduler step count does not match its cursor.")
+        scheduler_last_epoch = scheduler["last_epoch"]
+        scheduler_step_count = scheduler["_step_count"]
 
     model_kwargs = payload.get("model_kwargs")
     if not isinstance(model_kwargs, dict) or model_kwargs != CANONICAL_MODEL_KWARGS:
@@ -207,8 +227,8 @@ def _load_moo_model_at_cursor(
         "predopt_checkpoint_sha256": protocol["predopt_checkpoint_sha256"],
         "training_dtype": protocol["dtype"],
         "scf_model_dtype": str(next(model.parameters()).dtype),
-        "scheduler_last_epoch": scheduler["last_epoch"],
-        "scheduler_step_count": scheduler["_step_count"],
+        "scheduler_last_epoch": scheduler_last_epoch,
+        "scheduler_step_count": scheduler_step_count,
         "lr_schedule_total_updates": total_updates,
         "protocol_metadata": protocol,
     }
