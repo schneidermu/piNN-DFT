@@ -1,0 +1,186 @@
+{
+  "schema": "lap-step-globalization-results-v2",
+  "status": "final_result_next_experiment_proposed_unrun",
+  "t2_known_second_response": {
+    "passed": true,
+    "frozen_samples_match_historical": true,
+    "full_step_loss_ratios_after_over_before": {
+      "chem": 56.636732078537506,
+      "exc": 21.77831730383202,
+      "op": 0.4478671097932213
+    },
+    "accepted_backtrack_index": 5,
+    "accepted_fraction": 0.03125,
+    "accepted_alpha": 2.072679271589589e-08,
+    "losses_before": {
+      "chem": 903.0133056640625,
+      "exc": 5.173920839923693,
+      "op": 0.0506497109718042
+    },
+    "losses_after": {
+      "chem": 838.7528686523438,
+      "exc": 1.2594540452346497,
+      "op": 0.04901525944356092
+    },
+    "actual_over_predicted_ratio": {
+      "chem": 0.03686801864835793,
+      "exc": 0.9994742939696036,
+      "op": 0.9839530949571529
+    },
+    "armijo_margin": {
+      "chem": 64.08613842077841,
+      "exc": 3.914075142115455,
+      "op": 0.0016342854175275742
+    },
+    "nonselecting_linear_window": {
+      "tolerance": 0.1,
+      "indices": [8, 9],
+      "ratios_j8": {
+        "chem": 1.0007490562577468,
+        "exc": 0.9999260268823082,
+        "op": 1.000494930633591
+      },
+      "ratios_j9": {
+        "chem": 0.9994612495725981,
+        "exc": 1.0000506528578286,
+        "op": 0.9986692817989832
+      },
+      "accepted_multiplier_unchanged": 5
+    },
+    "rollback_exact": true,
+    "optimization_commit": false,
+    "step0_sample": {"database": "pTC13", "reaction_id": 12, "system": "BeH2", "variant": "level3_mura"},
+    "step1_sample": {"database": "AE17", "reaction_id": 16, "system": "H2", "variant": "level2_gauss_chebyshev"},
+    "base_g_dot_d": {"chem": 84093372925.32036, "exc": 188959565.02150577, "op": 80142.99075730353},
+    "base_slopes_for_full_proposal": {"chem": -55775.549100916694, "exc": -125.32882354837125, "op": -0.0531554290258749}
+  },
+  "t2_tested_trials": [
+    {"j": 0, "alpha": 6.632573669086685e-7, "step_norm": 0.1923370649862258, "actual_over_predicted": {"chem": -0.9007658402373345, "exc": -0.8577864682129674, "op": 0.5261056456413382}, "all_three_decrease": false, "armijo": false},
+    {"j": 1, "alpha": 3.3162868345433423e-7, "step_norm": 0.09616853119075434, "actual_over_predicted": {"chem": -0.912624166578313, "exc": -0.8152006081503231, "op": 0.7472416368442371}, "all_three_decrease": false, "armijo": false},
+    {"j": 2, "alpha": 1.6581434172716712e-7, "step_norm": 0.048084263358499725, "actual_over_predicted": {"chem": -0.8622727452279498, "exc": -0.6628017405222378, "op": 0.8716871742060437}, "all_three_decrease": false, "armijo": false},
+    {"j": 3, "alpha": 8.290717086358356e-8, "step_norm": 0.024042133880983443, "actual_over_predicted": {"chem": -0.7376822370944847, "exc": -0.3367672292598444, "op": 0.9357873304296485}, "all_three_decrease": false, "armijo": false},
+    {"j": 4, "alpha": 4.145358543179178e-8, "step_norm": 0.012021065020521932, "actual_over_predicted": {"chem": -0.48049164873994105, "exc": 0.32221371592901915, "op": 0.9680313102589301}, "all_three_decrease": false, "armijo": false},
+    {"j": 5, "alpha": 2.072679271589589e-8, "step_norm": 0.006010534164768921, "actual_over_predicted": {"chem": 0.03686801864835793, "exc": 0.9994742939696036, "op": 0.9839530949571529}, "all_three_decrease": true, "armijo": true, "selected": true},
+    {"j": 6, "alpha": 1.0363396357947945e-8, "step_norm": 0.0030052670059898057, "actual_over_predicted": {"chem": 0.9997831968666873, "exc": 0.9997604537172797, "op": 0.992041404661882}, "all_three_decrease": true, "armijo": true},
+    {"j": 7, "alpha": 5.181698178973972e-9, "step_norm": 0.0015026336141495244, "actual_over_predicted": {"chem": 1.0001051529151725, "exc": 0.9998933393582352, "op": 0.9965252356129178}, "all_three_decrease": true, "armijo": true},
+    {"j": 8, "alpha": 2.590849089486986e-9, "step_norm": 0.0007513171264880355, "actual_over_predicted": {"chem": 1.0007490562577468, "exc": 0.9999260268823082, "op": 1.000494930633591}, "all_three_decrease": true, "armijo": true, "linear_window": true},
+    {"j": 9, "alpha": 1.295424544743493e-9, "step_norm": 0.00037565952596660694, "actual_over_predicted": {"chem": 0.9994612495725981, "exc": 1.0000506528578286, "op": 0.9986692817989832}, "all_three_decrease": true, "armijo": true, "linear_window": true}
+  ],
+  "direct_vector_armijo_run": {
+    "source_git_commit": "b20d153c175a9d8e2d762b5e3ccf2473d55509ac",
+    "checkpoint_sha256_at_cursor2": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+    "accepted_updates": [
+      {"update": 0, "t": 1.0, "backtracks": 0, "step_norm": 0.0009361311853372999, "base_losses": {"chem": 92.12895965576172, "exc": 24.72181286525273, "op": 0.033298858643358166}, "accepted_losses": {"chem": 91.61309051513672, "exc": 24.091498303527374, "op": 0.03328859741710323}, "actual_over_predicted": {"chem": 0.8847433412774466, "exc": 0.9990614003632219, "op": 0.9495314250901415}},
+      {"update": 1, "t": 0.03125, "backtracks": 5, "step_norm": 0.006010534164768921, "base_losses": {"chem": 903.0133056640625, "exc": 5.17392252160561, "op": 0.050649678625426124}, "accepted_losses": {"chem": 838.7528686523438, "exc": 1.2594554259622979, "op": 0.049015111213834395}, "actual_over_predicted": {"chem": 0.03686801820680371, "exc": 0.9994743599285789, "op": 0.9840239303587791}}
+    ],
+    "updates_completed": 2,
+    "next_cursor": 2,
+    "stop_update": 2,
+    "stop_sample": {
+      "database": "NCCE31",
+      "reaction_id": 0,
+      "system": "BH",
+      "variant": "level2_mura"
+    },
+    "stop_reason": "no_finite_common_descent_direction",
+    "pcd_proposal_slopes": {
+      "chem": 0.009306404889039567,
+      "exc": -0.4226231443936085,
+      "op": -3.2907785671477e-05
+    },
+    "raw_gradient_convex_hull_feasibility": {
+      "strict_common_descent_exists": true,
+      "simplex_weights_chem_exc_op": [0.0014191159014695649, 0.0, 0.9985808840985304],
+      "common_descent_raw_dots": [-0.09193991163347623, -879.0715828473836, -0.0919399116334749],
+      "max_projection_kkt_violation": 2.7755575615628914e-17,
+      "interpretation": "A strict common-descent direction exists, but the canonical PCD ray is non-common-descent at cursor 2."
+    },
+    "raw_gradient_cosines": {"chem_exc": -0.6851138651941241, "chem_op": -0.5602894810335292, "exc_op": 0.9312659617763132},
+    "no_update2_parameter_or_ema_commit": true
+  },
+  "panel_cursor2": {
+    "panel_unit_note": "27 reaction rows across 15 cached systems; row summaries are not 27 independent molecules.",
+    "reaction_rows": 27,
+    "cached_systems": 15,
+    "loss_ratio_medians_after_over_before": {
+      "chem": 1.01452039,
+      "exc": 0.64866504,
+      "op": 0.95511256
+    },
+    "p90_ratio_to_predopt": {"chem": 2.460416011299176, "exc": 0.8138462106912618, "op": 0.9630363520357005},
+    "max_ratio_to_predopt": {"chem": 35.0920741269402, "exc": 0.8215461943438663, "op": 0.9676958571153864},
+    "rows_below_one_of_27": {"chem": 11, "exc": 27, "op": 27},
+    "only_two_accepted_updates": true
+  },
+  "runtime": {
+    "device": "NVIDIA GeForce RTX 5070 Ti",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "dtype": "float32",
+    "seed": 41,
+    "world_size": 1,
+    "grid_chunk_size": 256,
+    "ao_cache_chunk_size": 4096,
+    "direct_accepted_update_seconds": [17.9680298, 22.596137],
+    "cursor2_panel_seconds": 332.8978619,
+    "t2_curve_seconds": 26.6695188,
+    "t2_linear_window_extension_seconds": 11.6227186,
+    "peak_allocated_bytes": 10572644864,
+    "peak_reserved_bytes": 14692646912,
+    "cuda_total_bytes": 17094475776
+  },
+  "claims_not_supported": {
+    "five_ten_twentyfive_or_one_hundred_update_gate": false,
+    "training_success": false,
+    "scf_shortlist": false,
+    "slurm_run": false,
+    "diet_or_cluster_run": false,
+    "full_ninety_operator_training_readiness": false,
+    "global_pcd_failure": false
+  },
+  "validation": {
+    "windows": {"passed": 194, "skipped": 3},
+    "wsl_pyscf": {"passed": 90, "skipped": 2},
+    "independent_armijo": {"passed": 16, "includes_two_rank_cpu_gloo_trial_mean_and_resume": true},
+    "ruff": "pass_seven_changed_files",
+    "compileall": "pass_train_models",
+    "git_diff_check": "pass",
+    "source_frozen": true,
+    "no_slurm": true
+  },
+  "implementation_diff_from_base": {
+    "base_commit": "b20d153c175a9d8e2d762b5e3ccf2473d55509ac",
+    "validated_commit": "e017768329a15f1389a6fdf94bc8fdb4c647f344",
+    "production_python_files": {"count": 5, "added": 521, "deleted": 65},
+    "test_files": {"count": 2, "added": 1004, "deleted": 4},
+    "total_files": 7,
+    "total_added": 1525,
+    "total_deleted": 69,
+    "report_artifacts_source_or_test_edits": 0
+  },
+  "receipt_sha256": {
+    "t2_summary": "19c0d3bde1d5f4681378fe2bb462755ce7de4b42e73cc8313374e4ddd40e0e8f",
+    "t2_attempt2": "f9c659cae6c8b99a84f3f30a2f930df83c36eef0397fdc9bfc96ca45fd99bde3",
+    "t2_linear_window_extension": "82c4b45967749ffe1549b09980c5534a3572e534c04fd504ca46e624d70ec340",
+    "direct_numerical_gate": "a8d03746861caacc95d29df826709803ec8ca69865318c7e98b86a6ecb284510",
+    "direct_run_summary": "c177389d1bb65fcae21871461872365b4cfc4c837b49b3a80bad7fb644579022",
+    "direct_protocol": "27da894e72f9f5ef5aa138a1ff23a3bc9553cc896bc5716c9450c5bbe03a9349",
+    "direct_updates": "765642b05f34d8790ad9b8d4df1614a2f884ae6706d1424883be230bd00f9890",
+    "panel_cursor2": "053c3a1949247c6442195585c30032fdad2c889fd603e8d175117b128f3b270f",
+    "validation": "fbff038f3e88f85a61697bf31355ed6591de1426415dcab1672a269f1678b0dc",
+    "cursor2_read_only_replay": "4ab29379dfafd5c03dffa41cbf415591a3e505e7c63d9ad82a62bdc937562475",
+    "cursor2_common_descent_feasibility": "8ebe9435089a57b47bdc737b1608c7642f1b7509234a93104c8dd2b959d80aab"
+  },
+  "next_experiment_decision": {
+    "status": "proposed_unrun",
+    "primary": "Frozen-state native Fliege-Svaiter common-descent direction plus existing componentwise vector Armijo on the exact cursor-2 batch, starting at t=1 and halving; evaluate the paired cursor-2 panel only after the batch gate passes.",
+    "native_trial_schedule": {"initial_t": 1.0, "contraction": 0.5, "max_halvings": 20, "max_halvings_note": "Reuse the existing implementation's finite-precision/runtime guard only to bound the diagnostic; not a paper parameter. Exhaustion rejects without state change."},
+    "chemistry_priority": "The diagnostic direction is symmetric and does not encode priority; strict improvement in all three objectives is required on both batch and paired panel, with chemistry reported first and primary among successful three-objective solutions.",
+    "single_conditional_fallback": "Only if the same-batch three-loss step passes but the paired panel fails the strict all-three gate: use one complete immutable 27-entry training-manifest cycle to estimate gradients, retaining canonical PCD and existing task reductions/weights; keep the panel evaluation-only and require strict improvement in all three objectives, with chemistry reported first and primary among successful three-objective solutions.",
+    "decision_artifact": ".planning/step_globalization/next_arena/decision.md"
+  },
+  "not_executed": [
+    "The selected cursor-2 diagnostic is a proposal only and has not been run.",
+    "Cursor 5/10/25/100 gates, full-90 operator-training readiness, SCF shortlist, and Diet/cluster/Slurm execution remain unrun."
+  ]
+}

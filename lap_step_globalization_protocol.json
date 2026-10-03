@@ -1,0 +1,143 @@
+{
+  "schema": "lap-step-globalization-protocol-v2",
+  "status": "final_result_next_experiment_proposed_unrun",
+  "source": {
+    "git_commit": "b20d153c175a9d8e2d762b5e3ccf2473d55509ac",
+    "run_source_hashes": {
+      "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+      "train_models/lap_moo_protocol.py": "3c3234fe5011933a1cfa35722d223c152d72d8ad40bf69f83189b8befcee1b6e",
+      "train_models/lap_moo_training.py": "f023efc31a4ae8c6d86da27f2d7a82c25d0b184b9ea6e4e479666229329be6d3",
+      "train_models/moo_aggregators.py": "75a1631a627bb3e081ddaeed65bc3caec9bc214e96f04eabd15b51921df18bb1",
+      "train_models/train_lap_moo.py": "381675d2c7f5793479dd46dae31e7a9cafe57efa2c4759c12a9d3947b882cd20"
+    },
+    "note": "The direct run used a dirty working tree at b20d153. Its train_lap_moo.py run hash is 381675d2c7f5793479dd46dae31e7a9cafe57efa2c4759c12a9d3947b882cd20; the current validated file hash is 521f6bfa9fdd28c07649c449e0f3b6ea582170df9b02dfef64c08283b13b9643 after later stop-receipt logging changes only. Checkpoint hardening was included before the frozen run. The other four direct-run hashes match. T2 diagnostic hashes are recorded separately because the external frozen runs captured different dirty-tree states.",
+    "validated_implementation_commit": "e017768329a15f1389a6fdf94bc8fdb4c647f344",
+    "t2_known_second_source_hashes": {
+      "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+      "train_models/lap_moo_protocol.py": "3723abd5468ef235b343a27796f1d0b77d5e660a32c3450a7b7bf27afa01775f",
+      "train_models/lap_moo_training.py": "ffe8ddcdb8976650ebc3606395bf37ec2a64433bcf678c49797b54518089c249",
+      "train_models/moo_aggregators.py": "75a1631a627bb3e081ddaeed65bc3caec9bc214e96f04eabd15b51921df18bb1",
+      "train_models/train_lap_moo.py": "8dab96e2fb01da5349b1d00c6a321925d187d55acc71dae93426d1921ef0d275"
+    },
+    "t2_linear_window_extension_source_hashes": {
+      "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+      "train_models/lap_moo_protocol.py": "3723abd5468ef235b343a27796f1d0b77d5e660a32c3450a7b7bf27afa01775f",
+      "train_models/lap_moo_training.py": "ffe8ddcdb8976650ebc3606395bf37ec2a64433bcf678c49797b54518089c249",
+      "train_models/moo_aggregators.py": "75a1631a627bb3e081ddaeed65bc3caec9bc214e96f04eabd15b51921df18bb1",
+      "train_models/train_lap_moo.py": "8dab96e2fb01da5349b1d00c6a321925d187d55acc71dae93426d1921ef0d275"
+    }
+  },
+  "runtime": {
+    "python": "C:/Users/schne/miniconda3/envs/libxc/python.exe",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5070 Ti",
+    "seed": 41,
+    "dtype": "float32",
+    "world_size": 1,
+    "grid_chunk_size": 256,
+    "ao_cache_chunk_size": 4096,
+    "direct_accepted_update_seconds": [17.9680298, 22.596137],
+    "cursor2_panel_seconds": 332.8978619,
+    "t2_curve_seconds": 26.6695188,
+    "t2_linear_window_extension_seconds": 11.6227186,
+    "peak_allocated_bytes": 10572644864,
+    "peak_reserved_bytes": 14692646912,
+    "cuda_total_bytes": 17094475776
+  },
+  "data_identities": {
+    "sampling_manifest_sha256": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+    "sampling_manifest_file_sha256": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+    "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "minnesota_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "reaction_dispersions_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcbfe7ed7ab768635d28112df",
+    "mrks_dispersions_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "panel_definition_sha256": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+    "protocol_metadata_sha256": "26f710fe7c00423a389d5a4416560faf4333b6e9f6f9daac5688b14bfff7fb67"
+  },
+  "objective_protocol": {
+    "order": ["chem", "exc", "op"],
+    "definitions": {
+      "chem": "Existing grouped Minnesota reaction objective.",
+      "exc": "Existing mRKS integrated Exc target with historical dispersion treatment.",
+      "op": "Existing h-free variational AO XC operator loss."
+    },
+    "pcd": {
+      "method": "pcd",
+      "tau": 0.02,
+      "ema_beta": 0.999,
+      "epsilon": 1e-8,
+      "qp_tolerance": 1e-9,
+      "primary": "chem"
+    },
+    "vector_armijo": {
+      "c": 0.0001,
+      "rho": 0.5,
+      "initial_step_size": 6.632573669086685e-7,
+      "initial_step_size_scope": "Calibrated PCD proposal step for the adaptive direct-step run; not reused for the native Fliege-Svaiter direction diagnostic.",
+      "maximum_backtracks": 20,
+      "cap_note": "The finite-precision/runtime cap is an engineering guard, not a theorem parameter."
+    }
+  },
+  "trajectory_interpretation": {
+    "historical_five_step_fixed_sgd": "Reference trajectory; keep distinct from adaptive direct-step results.",
+    "adaptive_direct_step": "Two accepted updates at t=1 and t=1/32, then stopped at cursor 2 before committing that update.",
+    "t2_known_second": "Frozen diagnostic only; accepted t=1/32 with no optimization commit.",
+    "next_mechanism": "Proposed one frozen-state native Fliege-Svaiter common-descent direction diagnostic at cursor 2, using t=1,1/2,... with existing componentwise vector Armijo; see .planning/step_globalization/next_arena/decision.md. Proposed only, not run.",
+    "unrun": ["cursor-2 common-descent direction diagnostic", "panel cursor 5/10/25/100 gate", "full-90 operator-training readiness", "SCF shortlist", "Diet/cluster/Slurm execution"]
+  },
+  "next_experiment_decision": {
+    "status": "proposed_unrun",
+    "primary": "Frozen-state native Fliege-Svaiter common-descent direction plus existing componentwise vector Armijo on the exact cursor-2 batch, starting at t=1 and halving; evaluate the paired cursor-2 panel only after the batch gate passes.",
+    "native_trial_schedule": {"initial_t": 1.0, "contraction": 0.5, "max_halvings": 20, "max_halvings_note": "Reuse the existing implementation's finite-precision/runtime guard only to bound the diagnostic; not a paper parameter. Exhaustion rejects without state change."},
+    "chemistry_priority": "The diagnostic direction is symmetric and does not encode priority; strict improvement in all three objectives is required on both batch and paired panel, with chemistry reported first and primary among successful three-objective solutions.",
+    "single_conditional_fallback": "Only if the same-batch three-loss step passes but the paired panel fails the strict all-three gate: accumulate one full 27-entry cycle from the immutable training manifest and recompute canonical PCD with existing reductions/weights. Panel rows remain evaluation-only; all three objectives must strictly improve, with chemistry reported first and primary among successful three-objective solutions.",
+    "decision_artifact": ".planning/step_globalization/next_arena/decision.md"
+  },
+  "cursor2_feasibility": {
+    "sample": "NCCE31 reaction 0 / BH / level2_mura",
+    "canonical_pcd_ray_is_common_descent": false,
+    "strict_common_descent_exists": true,
+    "simplex_weights_chem_exc_op": [0.0014191159014695649, 0.0, 0.9985808840985304],
+    "raw_common_descent_dots_chem_exc_op": [-0.09193991163347623, -879.0715828473836, -0.0919399116334749],
+    "max_projection_kkt_violation": 2.7755575615628914e-17,
+    "state_preservation": {"model_and_buffers": true, "rng": true, "ema": true},
+    "interpretation": "Directional feasibility only; it does not establish a finite-step Armijo acceptance or training/panel benefit."
+  },
+  "change_scope": {
+    "validated_implementation_commit": "e017768329a15f1389a6fdf94bc8fdb4c647f344",
+    "base_commit": "b20d153c175a9d8e2d762b5e3ccf2473d55509ac",
+    "production_python_files": {"count": 5, "added": 521, "deleted": 65},
+    "test_files": {"count": 2, "added": 1004, "deleted": 4},
+    "total_files": 7,
+    "total_added": 1525,
+    "total_deleted": 69,
+    "this_report_added_or_modified_source_test_files": 0
+  },
+  "validation": {
+    "windows": {"passed": 194, "skipped": 3},
+    "wsl_pyscf": {"passed": 90, "skipped": 2},
+    "independent_armijo_passed": 16,
+    "ruff": "pass_seven_changed_files",
+    "compileall": "pass_train_models",
+    "git_diff_check": "pass",
+    "no_slurm": true
+  },
+  "external_receipts": [
+    {"label": "Historical SGD reference", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/t2_response_curves/historical_sgd_tau_0p02_diagnostic.json", "sha256": "283543f47d76debe4a159c0639e417ab4dee42f2429fe32efb0c54180f88e8e4"},
+    {"label": "T2 deterministic summary", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/t2_response_curves/t2_summary.json", "sha256": "19c0d3bde1d5f4681378fe2bb462755ce7de4b42e73cc8313374e4ddd40e0e8f"},
+    {"label": "T2 immutable attempt 2 response receipt", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/t2_response_curves/t2_known_second_response_curve_attempt2.json", "sha256": "f9c659cae6c8b99a84f3f30a2f930df83c36eef0397fdc9bfc96ca45fd99bde3"},
+    {"label": "T2 linear-window extension", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/t2_response_curves/t2_step1_linear_window_extension.json", "sha256": "82c4b45967749ffe1549b09980c5534a3572e534c04fd504ca46e624d70ec340"},
+    {"label": "Direct numerical gate", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/numerical_gate.json", "sha256": "a8d03746861caacc95d29df826709803ec8ca69865318c7e98b86a6ecb284510"},
+    {"label": "Direct run summary", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/run_summary.json", "sha256": "c177389d1bb65fcae21871461872365b4cfc4c837b49b3a80bad7fb644579022"},
+    {"label": "Direct run protocol", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/protocol.json", "sha256": "27da894e72f9f5ef5aa138a1ff23a3bc9553cc896bc5716c9450c5bbe03a9349"},
+    {"label": "Direct updates log", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/updates.jsonl", "sha256": "765642b05f34d8790ad9b8d4df1614a2f884ae6706d1424883be230bd00f9890"},
+    {"label": "Cursor-2 panel", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/panel_cursor2.json", "sha256": "053c3a1949247c6442195585c30032fdad2c889fd603e8d175117b128f3b270f"},
+    {"label": "Validation", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/validation_receipt.json", "sha256": "fbff038f3e88f85a61697bf31355ed6591de1426415dcab1672a269f1678b0dc"},
+    {"label": "Cursor-2 read-only replay", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/failure_cursor2/cursor2_replay_receipt.json", "sha256": "4ab29379dfafd5c03dffa41cbf415591a3e505e7c63d9ad82a62bdc937562475"},
+    {"label": "Raw cursor-2 task-gradient vectors", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/failure_cursor2/cursor2_raw_task_gradients.npz", "sha256": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0"},
+    {"label": "Cursor-2 common-descent feasibility", "path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/failure_cursor2/common_descent_feasibility.json", "sha256": "8ebe9435089a57b47bdc737b1608c7642f1b7509234a93104c8dd2b959d80aab"}
+  ]
+}

@@ -1,0 +1,31 @@
+# Step-globalization implementation contract
+
+## Decision
+
+The first mechanism is a **same-batch, componentwise Armijo response curve along the existing PCD proposal**. It changes only one scalar step length and preserves chemistry-primary PCD, task order, objective definitions, and AO operator. [Arena decision](arena/decision.md), [literature contract](literature_contract.md), and [reuse audit](reuse_audit.md) are the controlling references. Use `c=1e-4`, `rho=1/2`, and `t0=1`; Mita et al. (2019) used these numerical settings, while Fliege–Svaiter specify only `0<c<1`, start at one, and halve.
+
+## T2: reproduce, curve, and gate
+
+First retain an exact five-update historical fixed-SGD replay. Rebuild from canonical predopt/seed 41 and replay update 0 unchanged (pTC13 reaction 12 / BeH2); freeze the reconstructed state immediately before the failing update 1 (AE17 reaction 16 / H2). Do not fabricate a snapshot from the old receipt: it lacks pre-update weights and the PCD EMA vector. Keep the historical reference optimizer/configuration untouched: plain SGD, `LR=6.632573669086685e-7`, no momentum, weight decay, or scheduler; `tau=.02`, EMA `beta=.999`, `eps=1e-8`, unchanged dtype and losses.
+
+At update 1 compute the isolated gradients and canonical PCD direction once. Set `alpha0=6.632573669086685e-7` as the initial upper-bound proposal and `Delta0=-alpha0*d`; record `s_i = grad(F_i)·Delta0`, and proceed only when all three finite raw-loss slopes are strictly negative. Score the frozen candidate points `theta + t*Delta0`, starting at canonical `t=1` and halving through `2^-20`; stop if a candidate is bitwise identical to the base parameter vector. For every scored candidate record finiteness, parameter-delta norm, predicted reduction `-t*s_i`, actual reduction `F_i(theta)-F_i(theta+t*Delta0)`, actual/predicted ratio, and componentwise Armijo margin. Accept the largest candidate satisfying, for each unchanged raw task loss,
+
+`F_i(theta+t*Delta0) <= F_i(theta) + 1e-4*t*s_i`
+
+and independently verify strict actual decrease for chemistry, E_xc, and AO operator. The cap/no-op check is a finite-precision/runtime guard, not a theorem parameter. If available within the cap, also score the two smaller fractions after first rescue as non-selecting curve points.
+
+Every trial restores full model state (parameters and buffers), RNG, optimizer state, and pre-update PCD EMA exactly. Keep sample/cursor fixed. Trials never call `train_moo_update` or `optimizer.step`, advance EMA/scheduler/RNG/cursor, checkpoint, or modify the source optimizer. **T2 passes** only if the unchanged `t=1` candidate reproduces chemistry/E_xc increase with operator decrease, all slopes are negative, and a smaller representable `t` satisfies Armijo and strict all-three same-batch decrease. On failed reproduction, adverse/zero slope, or no accepted representable step, restore the control state and stop before T3.
+
+The T2 curve augments the historical five-step fixed-SGD record; it does not replace it. After a T2 pass, T3 may run a *separate* safeguarded follow-on from the frozen state: commit the accepted second step once and then replay stream updates 2–4, each with its own frozen proposal and response curve. Label this trajectory separately from historical SGD.
+
+## T3–T7 after the T2 gate
+
+- **T3 direct-step layer:** Reuse the objective factories, isolated gradients, zero materialization, global gradient average, and PCD aggregator. The only line-search commit is the direct displacement `Delta=-t*alpha0*d` after acceptance: `alpha0` is the constant initial upper-bound proposal, while accepted `t` adapts the effective step. This is PCD with adaptive vector Armijo and a direct parameter update; it has no optimizer, momentum, weight decay, or scheduler. Leave the historical fixed-SGD optimizer control unchanged as a comparison. Commit parameters, PCD EMA, sample cursor, and normal post-gradient RNG state exactly once; no optimizer/scheduler state advances on this line-search path.
+- **T4 state/DDP checks:** Verify finite common-descent slopes, all-three Armijo/strict decrease, exact candidate rollback, single commit/EMA/cursor/RNG advancement, and checkpoint/resume. Persist `c`, contraction, cap, accepted `t`, and backtrack count in run/checkpoint history. In DDP, average the existing one-per-rank raw task scalars equally (count one per rank), use globally averaged raw gradients for slopes, and have all ranks use the same proposal, multiplier, and decision. Do not weight by grid-point count or system size. Rank-local acceptance is invalid.
+- **T5 staged panel:** Score the existing fixed panel at updates 0, 5, 10, and 25 with existing reductions. Run 0→10 first; proceed 10→25 only if finite and the current chemistry safety gate passes. Consider 100 only if all three fixed-panel task aggregates improve at update 25. Report chemistry first and retain paired row outcomes and median/p90/max.
+- **T6 single fallback gate:** The only initial fallback is multiobjective trust-region globalization, considered only if T2 has no practical common-decrease step despite verified finite negative slopes and after evaluator/float32-movement audit. Do not automatically implement or run it. If a later accepted step is panel-local only, seek a fresh Arena decision on balanced batches/variance reduction. If accepted steps are chronically tiny, seek a fresh Arena decision comparing BBDMO/nonmonotone/TR. Do not stack mechanisms.
+- **T7 closeout:** Record source/config/data identities, all actual/predicted trial vectors, selected multipliers, state/rollback evidence, panel summaries, and limits. Do not claim population generalization from a frozen-batch Armijo pass.
+
+## Non-goals
+
+Do not change task losses, reductions, order, PCD formulation, `tau`, EMA constants, operator, architecture, or learning-rate calibration. Do not implement the direct-step path before the T2 rescue. The no-search historical fixed-SGD run remains unchanged for comparison; the line-search path uses the initial proposal bound `alpha0` and an adaptively accepted effective step `t*alpha0`, committed directly without an optimizer. Do not permit nonmonotone task increases or test multiple mechanisms together.
