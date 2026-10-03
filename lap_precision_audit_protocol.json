@@ -1,0 +1,105 @@
+{
+  "schema": "lap-precision-audit-protocol-v1",
+  "status": "complete_independently_reviewed",
+  "branch": "lap_full_vxc",
+  "analysis_head": "79f89dda4c9b1ce7bcfdec609774bb005b3c3080",
+  "task_order": [
+    "chem",
+    "exc",
+    "op"
+  ],
+  "cursor": 2,
+  "sample": {
+    "mrks_system": "BH",
+    "rank": 0,
+    "reaction": {
+      "database": "NCCE31",
+      "reaction_id": 0
+    },
+    "variant_suffix": "level2_mura"
+  },
+  "model": "pcPBELMLOptimizerV2Lap",
+  "world_size": 1,
+  "seed": 41,
+  "point_chunk": 256,
+  "ao_cache_chunk": 4096,
+  "objective_source_code_sha256": "79f89dda4c9b1ce7bcfdec609774bb005b3c3080",
+  "source_identities": {
+    "cursor": 2,
+    "sample": "NCCE31/reaction 0/BH/level2_mura",
+    "checkpoint_path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/latest.pt",
+    "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+    "group_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "selected_group_file": "groups/group_206_key_219_NCCE31_0.pickle",
+    "selected_group_sha256": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+    "central_BH_hdf5_sha256": "50fcdab3e44e65297b94da9b77611bc85b9e36ef11a8370b38491b3110fb0688",
+    "ao_cache_BH_sha256": "5c24e7b2b636776e23764349fa8cd181340f9fe1c1d84aa550259c04e2545859"
+  },
+  "t_values": [
+    1.0,
+    0.03125,
+    0.0009765625,
+    3.0517578125e-05,
+    9.5367431640625e-07
+  ],
+  "matched_state_t_values": [
+    3.0517578125e-05,
+    9.5367431640625e-07
+  ],
+  "double_policy": "float64 arithmetic on exact float32-loaded source values; existing float64 references retained",
+  "native_float64_source_claim": false,
+  "runtime_flags": {
+    "end": {
+      "autocast_cpu_enabled": false,
+      "autocast_cuda_enabled": false,
+      "cuda_cudnn_benchmark": false,
+      "cuda_cudnn_deterministic": false,
+      "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "default_dtype": "torch.float32",
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest"
+    },
+    "start": {
+      "autocast_cpu_enabled": false,
+      "autocast_cuda_enabled": false,
+      "cuda_cudnn_benchmark": false,
+      "cuda_cudnn_deterministic": false,
+      "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "default_dtype": "torch.float32",
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest"
+    },
+    "unchanged": true
+  },
+  "materialized_input_identities": {
+    "model_state_sha256": "3662f4df9a2ebde9853d95f0b6819c402830b3a35e9bc27902bb40ec57240b74",
+    "reaction_payload_sha256": "98f90f0ca7cfd5f32017cc55a9a816f2e547da2df5de9c062f2d3e2984e130fa",
+    "system_float32_fields_sha256": "9ec42ed57c90233a9fcc15c1bd2d9401de0d3105420a449dfaa32baa046a97c3",
+    "system_preserved_float64_fields_sha256": "370a7431401eaa1b59c7d35a1931bff2f705e88fd63392a4001e0176f45415ca"
+  },
+  "state_policy": "restore parameters, buffers, RNG, EMA, cursor; no optimizer or training update",
+  "threshold_source": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\.planning\\precision_audit\\spec.md",
+    "sha256": "ed822574072bb403d7666156aac017112ae9b5d24ea3e4d3d84b7da85652c431"
+  },
+  "installed_skills_used": [
+    "caveman",
+    "ponytail",
+    "to-spec",
+    "to-tickets"
+  ],
+  "primary_classification": "B",
+  "secondary_classification": "A",
+  "next_experiment": "higher-precision line-search evaluation diagnostic: trace F32/F64 chemistry components and reductions at the exact frozen t=2^-15 candidate",
+  "training_authorized_by_this_audit": false,
+  "independent_review": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\.planning\\precision_audit\\independent_review.md",
+    "sha256": "f04ce990ae4da1526243d85ac3c41c720053e83ca1bd9092b41b01c934b1d2b4"
+  }
+}

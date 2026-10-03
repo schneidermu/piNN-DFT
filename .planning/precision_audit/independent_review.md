@@ -1,0 +1,29 @@
+# Independent numerical review
+
+**Disposition: accepted.** The available measurements support **B — objective precision** as primary and **A — parameter quantization** as secondary. They do not support C or D.
+
+## Evidence reviewed
+
+I read `spec.md`, `dtype_audit.md/json`, `loss_path_audit.md/json`, and `protocol_review.md`, plus the actual F32 v2, matched-F64 v2, and F64 scratch v2 drivers, JSON outputs, receipts, and NPZ arrays under `C:/Dev/readWFN_share_ms/lap_precision_audit_runs_20261003`. The replay identity is cursor 2, NCCE31 reaction 0 / BH / `level2_mura`, task order chem/exc/op, 9,446 trainable coordinates. The five requested t values match the spec, and all inspected arrays are finite.
+
+The F32 v2 receipt digests recompute from disk: driver `2d2f0de5598d84d8dc973244347fedf78ae68340bb9d4255e5caabf5a391649b`, JSON `b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1`, NPZ `87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b`, receipt `29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51`. Matched-F64 v2 hashes also recompute: driver `30bdaeff45178e48ab8a4694fb51db81e03a7d9f09e0be538772b8130654d04e`, JSON `2b8c336a001cb91593cf71e77c63f39fc3a53f2ac6175857e33db34e865a8242`, NPZ `2f7eec77c981473a3e055f2b67c01c0a66c8502105d0f76293a75e6204289c7e`, receipt `8a33397b9ce061259f8e716bf349deaf407a56c0fde1164b490cf3e72825f35e`. Its input-file start/end maps match, including both dispersion maps; its materialized-input digest is unchanged (`32f8dc30616f00f84fea675258e577083297dd5e101e1c6aa7efc3b7406f08ad`), float32-to-float64-to-float32 checks pass for model/reaction/system/AO fields, and preserved float64 fields are Exc target, reference operator, and overlap. Both runners report unchanged runtime flags and restored model/buffers, RNG, EMA, and cursor. The F64 scratch NPZ and F32 gradient container agree exactly on the stored F32 gradient matrix. F32 and matched-F64 NPZs also agree bitwise on base parameters, v32, and both trial candidates.
+
+The clean F64 scratch v3 receipt closes the earlier v2 provenance defect. Its driver, JSON, arrays, and receipt hashes are `31d3923e9e5b94aad29780bae1d774fce66cf2d6a9987a708a7329b5ef372880`, `09daccfe0a528c49b0e99d549bbfaa72b63c1473f2d41e4ca667d10263a650a4`, `319d8a83db372e0a6a70f1aab37e1911b6dc98ba30f0fe79737fc051cfad5344`, and `b8e02e396796ee632b918a44bae90c791f24692fc43c7e88a76d235ba7d91070`. I recomputed them from disk; receipt links match the driver, JSON, and arrays. The v3 arrays are bitwise identical to the v2 arrays. V3 records matching materialized-input SHA-256 before and after (`32f8dc30616f00f84fea675258e577083297dd5e101e1c6aa7efc3b7406f08ad`), exact float32 round trips for model, reaction, feature/weight, and AO fields, and matching hashes for 12 immutable source files. I rehashed all 12 current files; every digest matches both recorded endpoints. Runtime flags and rollback checks pass. Existing float64 Exc/reference/overlap and dispersion inputs are preserved.
+
+The static code-path audit and direct inspection of `train_models/lap_moo_training.py` (`compute_isolated_task_gradients` and `_evaluate_trial_losses`) confirm both paths receive the same objective-factory mapping and scalar for each task. This supports **C unsupported**: no code-path identity mismatch is present. Gradient/direction differences alone do not establish C.
+
+## Numerical classification
+
+The scratch-F64 FS solve passes: weights `[0.001420266473347473, 0, 0.9985797335266526]`, `||c||=0.3032662805`, with `g·v=[−0.0919704369, −879.8107099, −0.0919704369]`. The F32 solve also passes its simplex/KKT gate. The chem F32/F64 gradient relative error is `0.00117057`, above the declared `1e-3` geometry-alignment threshold; this is arithmetic-sensitivity evidence only.
+
+At `t=2^-15`, the F32 candidate is bitwise identical to the matched-F64 candidate. F32 chemistry rises by `+0.042989254` (above its `3.8147e-6` eight-ULP floor), although its realized chemistry dot is negative (`−2.20422e-6`). F64 evaluation of that exact candidate falls by `−2.30305e-6`, also resolved above the `7.1054e-15` floor; its raw chemistry dot on the candidate is `−2.30432e-6`. This isolates objective-evaluation precision and supports **B**.
+
+At `t=2^-20`, requested F32 chemistry dot is `−8.76805e-8`, but the realized rounded displacement dot is `+3.08747e-7`. F64 on the same candidate has chemistry dot `+3.05471e-7` and loss change `+3.05487e-7`, so the candidate rounding explains the chemistry ascent and supports **A**. For op at this same point, F32 loss rises `+2.18659e-6` despite a negative realized dot, while matched F64 loss falls `−8.55914e-8`; this is further B evidence. Thus A and B are both observed; the independent-FS direction difference does not confound either matched-state attribution.
+
+**D is ineligible** while A/B are supported. The scratch one-sided residuals approach the slopes at smaller steps in several channels, but that trend cannot establish curvature while the rounded candidate and objective arithmetic already explain observed sign failures. Do not run a centered follow-up from this review.
+
+## Blocker and next diagnostic
+
+The old F64 v2 result did not substantiate its `rollback.frozen_input_hashes` flag: the value was literal and its final predicate omitted loaded-input hashes and cast round trips. V3 replaces it with the verified checks above, so this blocker is closed. No further audit experiment is required for the B/A classification.
+
+The single useful follow-up is a fixed-candidate chemistry arithmetic trace at `t=2^-15`: record reaction component energies before and after dispersion, coefficient combination, kcal conversion, and final RMSE in F32 and F64 at the exact same candidate and base. This localizes the supported B discrepancy without changing the candidate or diagnostic step.

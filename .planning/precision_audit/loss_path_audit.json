@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "status": "static_loss_path_audit_complete",
+  "repository": {
+    "branch": "lap_full_vxc",
+    "head": "79f89dda4c9b1ce7bcfdec609774bb005b3c3080",
+    "frozen_run_source_commit": "5b913c02545e4528562ffef69abda24cc999acb0",
+    "relevant_source_diff_between_frozen_commit_and_head": false,
+    "pinned_driver": "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py",
+    "pinned_driver_sha256": "b24102c52e7c36cbb10b8f3a671b0f53fbc5c20eecc2b2c1c9a186c714dc1be3"
+  },
+  "method": "read-only static code-path trace; no source execution, no loss/gradient evaluation, no training",
+  "frozen_path": {
+    "driver_builds_objectives_once": "native_fs_batch_v2.py:177-189",
+    "driver_calls_train_moo_update": "native_fs_batch_v2.py:247-260",
+    "task_order": ["chem", "exc", "op"],
+    "world_size": 1,
+    "gradient_path": "lap_moo_training.py:106-134,377-380",
+    "armijo_path": "lap_moo_training.py:253-277,438-487",
+    "same_factory_mapping_passed_to_both": true,
+    "same_base_model_state_restored_before_trials": true,
+    "gradient_path_unwraps_optional_tuple_and_scalarizes": true,
+    "trial_path_unwraps_optional_tuple_and_converts_post_forward_scalar_to_float": true,
+    "all_three_factories_return_scalar_tensors": true,
+    "model_mode": "train throughout; driver calls model.train() at native_fs_batch_v2.py:161-163",
+    "lap_dropout": 0.0,
+    "mode_dependent_formula_split_found": false
+  },
+  "tasks": {
+    "chem": {
+      "factory": "lap_moo_training.py:571-588",
+      "scalar_path": [
+        "lap_training.py:36-62 reaction_loss",
+        "reaction_energy_calculation.py:86-126 integration and reaction combination",
+        "reaction_energy_calculation.py:129-151 calculate_reaction_energy",
+        "optuna_joint.py:779-801 batch_fchem"
+      ],
+      "identity": "same mathematical scalar",
+      "same_reaction_and_reference": true,
+      "same_dispersion_path": true,
+      "same_component_combination": true,
+      "same_units_and_reduction": true,
+      "notes": [
+        "The closure captures one reaction record and passes reaction['Energy'] as target on every call.",
+        "reaction_loss casts floating reaction data and target to requested device/dtype.",
+        "calculate_reaction_energy integrates component XC energies, adds HF and configured component dispersions, combines reaction coefficients, and converts by 627.5095 kcal/Hartree.",
+        "batch_fchem applies the same database/frequency weighting and RMSE reduction to the single frozen reaction identity."
+      ]
+    },
+    "exc": {
+      "factory": "lap_moo_training.py:608-624",
+      "scalar_path": [
+        "lap_vxc.py:127-146 LapEnergy",
+        "lap_vxc.py:327-344 integrated_energy",
+        "optuna_joint.py:418-436 _add_mrks_dispersion_once",
+        "optuna_joint.py:804-821 batch_exc"
+      ],
+      "identity": "same mathematical scalar",
+      "same_system_target_and_dispersion": true,
+      "same_units_and_reduction": true,
+      "same_chunk_size": 256,
+      "notes": [
+        "The closure captures the same BH system features, quadrature weights, Exc target, and dispersion mapping.",
+        "integrated_energy uses the same 256-point chunks and float64 accumulation for every call.",
+        "The named-system dispersion is added once, then batch_exc computes one-system RMSE in kcal/mol using 627.5095."
+      ]
+    },
+    "op": {
+      "factory": "lap_moo_training.py:626-652",
+      "scalar_path": [
+        "lap_vxc.py:149-171 local_partials",
+        "lap_operator.py:257-309 assemble_spin_operators and assemble_rks_operator",
+        "lap_operator.py:341-384 overlap transform and operator_loss"
+      ],
+      "identity": "same mathematical scalar",
+      "same_ao_chunks_reference_overlap": true,
+      "same_orthogonalization_and_normalization": true,
+      "same_chunk_order_and_coverage": true,
+      "notes": [
+        "The same cached AO factors, fixed reference operator, and overlap matrix are captured by the objective closure.",
+        "Each call assembles chunks in the same order, checks contiguous full-grid coverage, and uses the same inner point chunk size.",
+        "operator_loss uses S^-1/2 V S^-1/2, squared Hilbert-Schmidt error, and division by nAO.",
+        "Descriptor inputs are detached only to define local derivatives; create_graph=True preserves model-parameter dependence through the AO operator."
+      ]
+    }
+  },
+  "cross_path": {
+    "dtype": {
+      "model_and_configured_feature_ao_dtype": "float32",
+      "integrated_energy_accumulator_dtype": "float64",
+      "operator_reference_overlap_and_loss_dtype": "float64",
+      "same_captured_inputs_used_by_gradient_and_trial": true,
+      "source_precision_claim": "not assessed here; parent dtype/provenance audit owns source precision"
+    },
+    "reductions": {
+      "both_paths_use_average_task_losses": true,
+      "world_size_one": true,
+      "task_order_same": true,
+      "no_per_trial_batch_change": true
+    },
+    "detach_and_backward": {
+      "armijo_detaches_only_after_forward": true,
+      "autograd_gradient_uses_scalar_graph": true,
+      "chemistry_and_exc_checkpoint_recompute": true,
+      "dropout_disabled": true,
+      "operator_local_partials_create_graph": true
+    },
+    "objective_mismatch_found": false,
+    "numerical_derivative_consistency_established": false
+  },
+  "conclusion": "For each task, the gradient path differentiates the same mathematical scalar the Armijo path reevaluates. No formula, unit, weight, dispersion, reduction, batch identity, mode, reference, normalization, cache, or chunk-path mismatch was found.",
+  "limitation": "Static identity does not establish float32 directional-derivative convergence or exclude cancellation, rounded-displacement distortion, or finite-step response. No computation was run.",
+  "blocker": null,
+  "next_evidence_needed": "Complete the separately authorized frozen-state realized-displacement and directional-response audit; do not infer precision classification from this static code audit alone.",
+  "inspected_functions": [
+    "native_fs_batch_v2.py: main objective construction and frozen call",
+    "lap_moo_training.py: _scalar_loss, compute_isolated_task_gradients, _evaluate_trial_losses, train_moo_update, make_reaction_objective, make_mrks_objective_factories, make_three_objective_factories, _average_task_losses",
+    "lap_training.py: tensor_record, reaction_loss",
+    "reaction_energy_calculation.py: integration, get_energy_reaction, calculate_reaction_energy",
+    "optuna_joint.py: _add_mrks_dispersion_once, batch_fchem, batch_exc",
+    "lap_vxc.py: LapEnergy, local_partials, integrated_energy",
+    "lap_operator.py: assemble_rks_operator, _inverse_sqrt_overlap, operator_loss",
+    "train_lap_moo.py: CentralAOCache",
+    "NN_models_lap.py and NN_models.py: dropout configuration and inherited module behavior"
+  ]
+}

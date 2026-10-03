@@ -1,0 +1,1300 @@
+{
+  "schema": "lap-precision-audit-results-v1",
+  "status": "complete_independently_reviewed",
+  "analysis_head": "79f89dda4c9b1ce7bcfdec609774bb005b3c3080",
+  "task_order": [
+    "chem",
+    "exc",
+    "op"
+  ],
+  "source_dtype_audit": {
+    "schema": "lap-precision-dtype-audit-v1",
+    "scope": "read-only dtype and source-provenance audit; no training, objective evaluation, or source regeneration",
+    "frozen_state": {
+      "cursor": 2,
+      "sample": "NCCE31/reaction 0/BH/level2_mura",
+      "checkpoint_path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/latest.pt",
+      "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+      "group_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "selected_group_file": "groups/group_206_key_219_NCCE31_0.pickle",
+      "selected_group_sha256": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+      "central_BH_hdf5_sha256": "50fcdab3e44e65297b94da9b77611bc85b9e36ef11a8370b38491b3110fb0688",
+      "ao_cache_BH_sha256": "5c24e7b2b636776e23764349fa8cd181340f9fe1c1d84aa550259c04e2545859"
+    },
+    "runtime": {
+      "torch": "2.11.0+cu128",
+      "device": "cuda:0",
+      "model_mode": "train",
+      "replay_model_dtype": "torch.float32",
+      "float32_matmul_precision": "highest",
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "fp16_reduced_precision_reduction": true,
+      "bf16_reduced_precision_reduction": true,
+      "autocast_cpu": false,
+      "autocast_cuda": false,
+      "default_dtype": "torch.float32",
+      "flag_source": "libxc runtime defaults; FS-v2 driver and imported training code set no matmul/TF32/autocast flags"
+    },
+    "model_state": {
+      "floating_state_tensor_count": 35,
+      "floating_state_dtypes": [
+        "torch.float32"
+      ],
+      "floating_buffer": {
+        "name": "scaling_array",
+        "dtype": "torch.float32"
+      },
+      "integer_buffer": {
+        "name": "lap_architecture_version",
+        "dtype": "torch.int64"
+      },
+      "native_double_checkpoint": false,
+      "double_conversion": "cast-up of exact cursor-2 float32 checkpoint values"
+    },
+    "original_BH_legacy_source": {
+      "path": "C:/Users/schne/Downloads/data_vxc_train.pickle",
+      "bytes": 496371047,
+      "sha256": "0ccc0cfb09814cadcc9e0537953cc324fe6ce5551654fe3254f310a25cc6ee49",
+      "BH_fields": {
+        "Grid": {
+          "dtype": "torch.float32",
+          "shape": [
+            56883,
+            13
+          ]
+        },
+        "Weights": {
+          "dtype": "torch.float32",
+          "shape": [
+            56883
+          ]
+        },
+        "Vrho": {
+          "dtype": "torch.float32",
+          "shape": [
+            56883
+          ]
+        },
+        "E_xc": {
+          "dtype": "torch.float32",
+          "shape": []
+        }
+      },
+      "read_only_inspection": true
+    },
+    "objects": [
+      {
+        "object": "cursor-2 model parameters and float buffer",
+        "storage_dtype": "torch.float32",
+        "computation_dtype_replay": "torch.float32 forward/autograd",
+        "original_source_precision": "float32 checkpoint values",
+        "native_float64_reconstructable": false,
+        "double_label": "float64-arithmetic-on-float32-source"
+      },
+      {
+        "object": "Minnesota NCCE31/0/level2_mura floating inputs and references",
+        "storage_dtype": "torch.float32 in frozen group pickle",
+        "computation_dtype_replay": "torch.float32 after reaction_loss tensor_record conversion",
+        "original_source_precision": "float32 in frozen training artifact; upstream 13-GB source pickle not opened",
+        "native_float64_reconstructable": false,
+        "double_label": "float64-arithmetic-on-float32-source",
+        "details": "Energy, Grid, Weights, Densities, Gradients, HF_energies, Coefficients and backsplit_ind are float32. PBE_local_energies is float32 and not used by reaction_loss."
+      },
+      {
+        "object": "Minnesota reaction dispersion constants",
+        "storage_dtype": "zero-dimensional NumPy float64 arrays in dispersion pickle",
+        "computation_dtype_replay": "torch.tensor infers float64 on CPU/CUDA; in-place addition into float32 component-energy accumulator stores sum back as float32",
+        "original_source_precision": "float64 stored constants",
+        "native_float64_reconstructable": true,
+        "double_label": "native-float64 correction; replay accumulation rounds component energy to float32"
+      },
+      {
+        "object": "BH NPZ grid coordinates and dm_ks",
+        "storage_dtype": "float64 in NPZ and central record",
+        "computation_dtype_replay": "features are later cast to model dtype; dm_ks is provenance/reconstruction input",
+        "original_source_precision": "float64 source arrays",
+        "native_float64_reconstructable": true,
+        "double_label": "native-float64"
+      },
+      {
+        "object": "BH central mRKS features",
+        "storage_dtype": "float64 in central HDF5",
+        "computation_dtype_replay": "float32 after CentralAOCache cast",
+        "original_source_precision": "recomputed in double from float64 NPZ coordinates, dm_ks and PySCF AO; audited compatible with legacy float32 descriptors",
+        "native_float64_reconstructable": true,
+        "double_label": "native-float64 source, but use replay-loaded float32 values widened for first controlled comparison"
+      },
+      {
+        "object": "BH mRKS weights, VxcLegacy, Exc target",
+        "storage_dtype": "float64 in central HDF5",
+        "computation_dtype_replay": "weights float32 in the system; Exc target float64; integrated energy/reduction float64",
+        "original_source_precision": "float32 in hashed legacy source pickle; promoted to float64 for HDF5; Exc target retained from legacy, not NPZ exc_wf",
+        "native_float64_reconstructable": false,
+        "double_label": "float64-arithmetic-on-float32-source"
+      },
+      {
+        "object": "BH reference operator RefAO",
+        "storage_dtype": "float64 in central HDF5",
+        "computation_dtype_replay": "float64 operator loss",
+        "original_source_precision": "double AO contraction using float32-origin legacy weights and Vrho",
+        "native_float64_reconstructable": false,
+        "double_label": "float64-arithmetic-on-float32-source"
+      },
+      {
+        "object": "BH overlap",
+        "storage_dtype": "float64 in central HDF5",
+        "computation_dtype_replay": "float64 eigendecomposition/orthogonalization/loss",
+        "original_source_precision": "PySCF double integral",
+        "native_float64_reconstructable": true,
+        "double_label": "native-float64"
+      },
+      {
+        "object": "BH AO factor cache phi/grad_phi/lap_phi",
+        "storage_dtype": "float32 in HDF5 cache",
+        "computation_dtype_replay": "float32 operator assembly; chunk cast to float64 before final loss",
+        "original_source_precision": "PySCF AO factors quantized to float32 on cache write",
+        "native_float64_reconstructable": "not from cached bytes; regenerable from pinned central molecule/coordinates with PySCF, not done",
+        "double_label": "float64-arithmetic-on-float32-source"
+      },
+      {
+        "object": "BH mRKS dispersion constant",
+        "storage_dtype": "Python float from dispersion pickle",
+        "computation_dtype_replay": "float64 because integrated_energy returns float64 and correction uses prediction.dtype",
+        "original_source_precision": "float64 scalar",
+        "native_float64_reconstructable": true,
+        "double_label": "native-float64"
+      },
+      {
+        "object": "intermediate activations and reductions",
+        "storage_dtype": "not persisted as objective tensors",
+        "computation_dtype_replay": "network/input path float32; integrated E reduction float64; operator reference algebra/loss float64",
+        "original_source_precision": "mixed as above",
+        "native_float64_reconstructable": true,
+        "double_label": "mixed provenance; scalar loss dtype does not imply native-double forward inputs"
+      }
+    ],
+    "recommended_primary_double_input_policy": {
+      "policy": "Load exact frozen inputs through existing float32 path; widen those materialized float32 tensors and cursor-2 parameter values to float64. Preserve already-float64 RefAO, Overlap and Exc values unchanged. Keep exact objective helpers/reductions and do not substitute central descriptor doubles or regenerate AO in the first comparison.",
+      "reason": "Isolates arithmetic/autograd precision while fixing actual replay source values; prevents central feature or AO source upgrades from confounding the comparison.",
+      "label": "mixed-provenance float64 arithmetic on float32-loaded model, chemistry, feature and AO values"
+    },
+    "reaction_dispersion_dtype_check": {
+      "torch_version": "2.11.0+cu128",
+      "default_dtype": "torch.float32",
+      "components": [
+        {
+          "name": "NH3-NH3_ncce31",
+          "source_type": "numpy.ndarray",
+          "source_dtype": "float64",
+          "shape": [],
+          "value": -0.00192936,
+          "torch_tensor_dtype_cpu": "torch.float64",
+          "torch_tensor_dtype_cuda": "torch.float64"
+        },
+        {
+          "name": "NH3_ncce31",
+          "source_type": "numpy.ndarray",
+          "source_dtype": "float64",
+          "shape": [],
+          "value": -0.0005886,
+          "torch_tensor_dtype_cpu": "torch.float64",
+          "torch_tensor_dtype_cuda": "torch.float64"
+        }
+      ],
+      "float32_inplace_add_result_dtype": "torch.float32",
+      "float64_inplace_add_result_dtype": "torch.float64",
+      "code": "reaction_energy_calculation.integration:106"
+    },
+    "files_functions_inspected": [
+      "lap_direction_recovery_report.md; lap_direction_recovery_protocol.json; lap_direction_recovery_results.json",
+      "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py:161-186",
+      "train_models/lap_checkpoint.py:117-130",
+      "train_models/lap_moo_panel.py:821-930,1019-1112",
+      "train_models/lap_training.py:17-56",
+      "train_models/lap_moo_training.py:571-655",
+      "train_models/train_lap_moo.py:288-438",
+      "train_models/build_lap_operator_data.py:102-163,167-198,228-235",
+      "train_models/lap_operator_data.py:122-160,210-230",
+      "train_models/lap_vxc.py:327-341",
+      "train_models/lap_operator.py:369-390",
+      "train_models/reaction_energy_calculation.py:89-107",
+      "train_models/optuna_joint.py:418-435",
+      "train_models/mrks_source_audit_v2.json; lap_operator_validation_report.md:113"
+    ],
+    "blocker": null
+  },
+  "frozen_cursor": 2,
+  "frozen_sample": {
+    "mrks_system": "BH",
+    "rank": 0,
+    "reaction": {
+      "database": "NCCE31",
+      "reaction_id": 0
+    },
+    "variant_suffix": "level2_mura"
+  },
+  "float32_fs_geometry": {
+    "c64_norm": 0.3032159488441776,
+    "lambda": [
+      0.0014191159014695647,
+      0.0,
+      0.9985808840985304
+    ],
+    "raw_gradient_dots_with_c64": [
+      0.0919399116334731,
+      879.0715828473836,
+      0.09193991163347491
+    ],
+    "raw_gradient_dots_with_emitted_c32": [
+      0.09193967105990364,
+      879.0715722461432,
+      0.09193991043109707
+    ],
+    "raw_gradient_norms": [
+      144.9774315679545,
+      4396.367123702198,
+      0.3665910224382641
+    ],
+    "simplex_kkt": {
+      "gradient_kkt_pass": true,
+      "gram": [
+        [
+          21018.45566404094,
+          -436673.77418535,
+          -29.777943098103638
+        ],
+        [
+          -436673.77418535,
+          19328043.88636954,
+          1500.8922195637188
+        ],
+        [
+          -29.777943098103638,
+          1500.8922195637188,
+          0.13438897773233185
+        ]
+      ],
+      "kkt_pass": true,
+      "kkt_residuals": {
+        "active_stationarity_abs": 3.982925100842749e-15,
+        "active_stationarity_scaled": 2.0606974633638814e-22,
+        "complementarity_abs": 1.3858093618459166e-17,
+        "complementarity_scaled": 7.169941096952975e-25,
+        "inactive_reduced_gradient_violation_abs": 0.0,
+        "inactive_reduced_gradient_violation_scaled": 0.0,
+        "max_gradient_kkt_scaled": 2.0606974633638814e-22,
+        "simplex_negative_violation": 0.0,
+        "simplex_sum_abs_error": 0.0
+      },
+      "minimum_norm": 0.3032159488441776,
+      "minimum_norm_squared": 0.09193991163347491,
+      "simplex_pass": true,
+      "support": [
+        "chem",
+        "op"
+      ]
+    },
+    "v32_coordinate_count": 9446,
+    "v32_norm": 0.3032159437584514,
+    "weights_match_stored_witness_after_independent_solve": true
+  },
+  "float64_fs_geometry": {
+    "qp": {
+      "gradient_kkt_pass_1e-8_scaled": true,
+      "gram": [
+        [
+          21010.84885851573,
+          -436425.7866506832,
+          -29.791345422524746
+        ],
+        [
+          -436425.7866506832,
+          19328023.21158982,
+          1501.784557020099
+        ],
+        [
+          -29.791345422524746,
+          1501.784557020099,
+          0.13447307359319613
+        ]
+      ],
+      "kkt_pass": true,
+      "kkt_residuals": {
+        "active_stationarity_abs": 1.466882171285988e-14,
+        "active_stationarity_scaled": 7.589406093047268e-22,
+        "complementarity_abs": 2.7716155302133578e-17,
+        "complementarity_scaled": 1.433988101044597e-24,
+        "inactive_reduced_gradient_violation_abs": 0.0,
+        "inactive_reduced_gradient_violation_scaled": 0.0,
+        "max_gradient_kkt_scaled": 7.589406093047268e-22,
+        "simplex_negative_violation": 0.0,
+        "simplex_sum_abs_error": 0.0
+      },
+      "minimum_norm": 0.3032662805121568,
+      "minimum_norm_squared": 0.09197043689567817,
+      "simplex_pass_1e-12": true,
+      "support": [
+        "chem",
+        "op"
+      ]
+    },
+    "raw_gradient_dots_with_c": [
+      0.09197043689569312,
+      879.8107098793099,
+      0.09197043689567812
+    ],
+    "raw_gradient_dots_with_v": [
+      -0.09197043689569312,
+      -879.8107098793099,
+      -0.09197043689567812
+    ],
+    "raw_gradient_norms64": [
+      144.9511947467689,
+      4396.364772353383,
+      0.3667057043368649
+    ],
+    "task_order": [
+      "chem",
+      "exc",
+      "op"
+    ],
+    "v64_norm": 0.3032662805121568,
+    "weights": [
+      0.001420266473347473,
+      0.0,
+      0.9985797335266526
+    ]
+  },
+  "objective_source_code_sha256": "79f89dda4c9b1ce7bcfdec609774bb005b3c3080",
+  "table_1_float32": [
+    {
+      "t": 1.0,
+      "displacement": {
+        "cosine_realized_displacement_v32": 0.9999999999984833,
+        "error_norm": 5.281348701759008e-07,
+        "error_to_requested_norm_ratio": 1.7417780332706544e-06,
+        "nonzero_requested_count": 9409,
+        "realized_norm": 0.3032159491504462,
+        "realized_to_requested_norm_ratio": 1.0000000177826889,
+        "requested_norm": 0.3032159437584514,
+        "requested_realized_cosine": 0.9999999999984833,
+        "sign_mismatch_count_over_nonzero_requested": 34,
+        "sign_mismatch_fraction_over_nonzero_requested_including_zero_realized": 0.0036135614836858326,
+        "zero_fraction_realized": 0.007516409062036841,
+        "zero_fraction_requested": 0.003917001905568495,
+        "zero_mismatch_fraction": 0.0035994071564683463,
+        "sign_mismatch_count_among_nonzero_requested_including_zero_realized": 34,
+        "sign_mismatch_fraction_among_nonzero_requested_including_zero_realized": 0.0036135614836858326,
+        "zero_coordinate_count": 71,
+        "trainable_coordinate_count": 9446
+      },
+      "tasks": {
+        "chem": {
+          "ideal_predicted_delta": -0.09193967105990354,
+          "realized_predicted_delta": -0.0919397638300028,
+          "actual_delta": 1.63362455368042,
+          "scalar_dtype": "float32",
+          "response_floor_8ulp": 3.814697265625e-06,
+          "actual_over_ideal": -17.76844027009872,
+          "actual_over_realized": -17.768422341186366,
+          "directional_quotient": 1.63362455368042,
+          "autograd_directional_derivative": -0.09193967105990354,
+          "absolute_directional_derivative_error": 1.7255642247403236
+        },
+        "exc": {
+          "ideal_predicted_delta": -879.0715722461433,
+          "realized_predicted_delta": -879.071590377561,
+          "actual_delta": 828.0504944098244,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_ideal": -0.9419602687117349,
+          "actual_over_realized": -0.9419602492831977,
+          "directional_quotient": 828.0504944098244,
+          "autograd_directional_derivative": -879.0715722461433,
+          "absolute_directional_derivative_error": 1707.1220666559677
+        },
+        "op": {
+          "ideal_predicted_delta": -0.09193991043109707,
+          "realized_predicted_delta": -0.0919399119363811,
+          "actual_delta": 0.012053302327577169,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_ideal": -0.13109978322863744,
+          "actual_over_realized": -0.13109978108220935,
+          "directional_quotient": 0.012053302327577169,
+          "autograd_directional_derivative": -0.09193991043109707,
+          "absolute_directional_derivative_error": 0.10399321275867424
+        }
+      }
+    },
+    {
+      "t": 0.03125,
+      "displacement": {
+        "cosine_realized_displacement_v32": 0.9999999983871861,
+        "error_norm": 5.381580917765373e-07,
+        "error_to_requested_norm_ratio": 5.6794701239615134e-05,
+        "nonzero_requested_count": 9409,
+        "realized_norm": 0.009475497258153897,
+        "realized_to_requested_norm_ratio": 0.9999998961217992,
+        "requested_norm": 0.009475498242451606,
+        "requested_realized_cosine": 0.9999999983871861,
+        "sign_mismatch_count_over_nonzero_requested": 123,
+        "sign_mismatch_fraction_over_nonzero_requested_including_zero_realized": 0.013072590073334042,
+        "zero_fraction_realized": 0.01693838661867457,
+        "zero_fraction_requested": 0.003917001905568495,
+        "zero_mismatch_fraction": 0.013021384713106076,
+        "sign_mismatch_count_among_nonzero_requested_including_zero_realized": 123,
+        "sign_mismatch_fraction_among_nonzero_requested_including_zero_realized": 0.013072590073334042,
+        "zero_coordinate_count": 160,
+        "trainable_coordinate_count": 9446
+      },
+      "tasks": {
+        "chem": {
+          "ideal_predicted_delta": -0.0028731147206219857,
+          "realized_predicted_delta": -0.0028726182180955524,
+          "actual_delta": 0.042989253997802734,
+          "scalar_dtype": "float32",
+          "response_floor_8ulp": 3.814697265625e-06,
+          "actual_over_ideal": -14.962595711631108,
+          "actual_over_realized": -14.965181842473706,
+          "directional_quotient": 1.3756561279296875,
+          "autograd_directional_derivative": -0.09193967105990354,
+          "absolute_directional_derivative_error": 1.4675957989895911
+        },
+        "exc": {
+          "ideal_predicted_delta": -27.47098663269198,
+          "realized_predicted_delta": -27.470997351333637,
+          "actual_delta": 19.07368248248134,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_ideal": -0.6943209844448256,
+          "actual_over_realized": -0.6943207135344639,
+          "directional_quotient": 610.3578394394028,
+          "autograd_directional_derivative": -879.0715722461433,
+          "absolute_directional_derivative_error": 1489.4294116855463
+        },
+        "op": {
+          "ideal_predicted_delta": -0.0028731222009717836,
+          "realized_predicted_delta": -0.0028731226030484346,
+          "actual_delta": -0.0027641755536752313,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_ideal": 0.962080747119039,
+          "actual_over_realized": 0.9620806124814832,
+          "directional_quotient": -0.0884536177176074,
+          "autograd_directional_derivative": -0.09193991043109707,
+          "absolute_directional_derivative_error": 0.003486292713489672
+        }
+      }
+    },
+    {
+      "t": 0.0009765625,
+      "displacement": {
+        "cosine_realized_displacement_v32": 0.9999985381039328,
+        "error_norm": 5.063304370582819e-07,
+        "error_to_requested_norm_ratio": 0.0017099442764154755,
+        "nonzero_requested_count": 9409,
+        "realized_norm": 0.00029611212321021445,
+        "realized_to_requested_norm_ratio": 1.0000094665497223,
+        "requested_norm": 0.0002961093200766127,
+        "requested_realized_cosine": 0.9999985381039328,
+        "sign_mismatch_count_over_nonzero_requested": 1738,
+        "sign_mismatch_fraction_over_nonzero_requested_including_zero_realized": 0.1847167605484111,
+        "zero_fraction_realized": 0.18791022655092102,
+        "zero_fraction_requested": 0.003917001905568495,
+        "zero_mismatch_fraction": 0.18399322464535253,
+        "sign_mismatch_count_among_nonzero_requested_including_zero_realized": 1738,
+        "sign_mismatch_fraction_among_nonzero_requested_including_zero_realized": 0.1847167605484111,
+        "zero_coordinate_count": 1775,
+        "trainable_coordinate_count": 9446
+      },
+      "tasks": {
+        "chem": {
+          "ideal_predicted_delta": -8.978483501943705e-05,
+          "realized_predicted_delta": -8.995816324002365e-05,
+          "actual_delta": 0.0,
+          "scalar_dtype": "float32",
+          "response_floor_8ulp": 3.814697265625e-06,
+          "actual_over_ideal": -0.0,
+          "actual_over_realized": -0.0,
+          "directional_quotient": 0.0,
+          "autograd_directional_derivative": -0.09193967105990354,
+          "absolute_directional_derivative_error": 0.09193967105990354
+        },
+        "exc": {
+          "ideal_predicted_delta": -0.8584683322716243,
+          "realized_predicted_delta": -0.8584717164589747,
+          "actual_delta": -0.8583357336526207,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_ideal": 0.9998455404654791,
+          "actual_over_realized": 0.9998415989673896,
+          "directional_quotient": -878.9357912602836,
+          "autograd_directional_derivative": -879.0715722461433,
+          "absolute_directional_derivative_error": 0.13578098585969656
+        },
+        "op": {
+          "ideal_predicted_delta": -8.978506878036824e-05,
+          "realized_predicted_delta": -8.978554217641025e-05,
+          "actual_delta": -9.035408635191255e-05,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_ideal": 1.0063375523266151,
+          "actual_over_realized": 1.006332246392022,
+          "directional_quotient": -0.09252258442435846,
+          "autograd_directional_derivative": -0.09193991043109707,
+          "absolute_directional_derivative_error": 0.0005826739932613817
+        }
+      }
+    },
+    {
+      "t": 3.0517578125e-05,
+      "displacement": {
+        "cosine_realized_displacement_v32": 0.9994818015467116,
+        "error_norm": 2.9792065864414485e-07,
+        "error_to_requested_norm_ratio": 0.03219574809109701,
+        "nonzero_requested_count": 9409,
+        "realized_norm": 9.254743931369865e-06,
+        "realized_to_requested_norm_ratio": 1.000143479871596,
+        "requested_norm": 9.253416252394147e-06,
+        "requested_realized_cosine": 0.9994818015467116,
+        "sign_mismatch_count_over_nonzero_requested": 6095,
+        "sign_mismatch_fraction_over_nonzero_requested_including_zero_realized": 0.6477840365607397,
+        "zero_fraction_realized": 0.649163667160703,
+        "zero_fraction_requested": 0.003917001905568495,
+        "zero_mismatch_fraction": 0.6452466652551344,
+        "sign_mismatch_count_among_nonzero_requested_including_zero_realized": 6095,
+        "sign_mismatch_fraction_among_nonzero_requested_including_zero_realized": 0.6477840365607397,
+        "zero_coordinate_count": 6132,
+        "trainable_coordinate_count": 9446
+      },
+      "tasks": {
+        "chem": {
+          "ideal_predicted_delta": -2.805776094357408e-06,
+          "realized_predicted_delta": -2.2042165665968374e-06,
+          "actual_delta": 0.042989253997802734,
+          "scalar_dtype": "float32",
+          "response_floor_8ulp": 3.814697265625e-06,
+          "actual_over_ideal": null,
+          "actual_over_realized": null,
+          "directional_quotient": 1408.671875,
+          "autograd_directional_derivative": -0.09193967105990354,
+          "absolute_directional_derivative_error": 1408.76381467106
+        },
+        "exc": {
+          "ideal_predicted_delta": -0.02682713538348826,
+          "realized_predicted_delta": -0.026833140320963074,
+          "actual_delta": -0.026747932429539212,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_ideal": 0.9970476551887908,
+          "actual_over_realized": 0.9968245277889709,
+          "directional_quotient": -876.4762498511409,
+          "autograd_directional_derivative": -879.0715722461433,
+          "absolute_directional_derivative_error": 2.5953223950024267
+        },
+        "op": {
+          "ideal_predicted_delta": -2.8057833993865074e-06,
+          "realized_predicted_delta": -2.8055852130978996e-06,
+          "actual_delta": -2.159799331179213e-06,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_ideal": 0.7697669505249263,
+          "actual_over_realized": 0.769821326793487,
+          "directional_quotient": -0.07077230448408045,
+          "autograd_directional_derivative": -0.09193991043109707,
+          "absolute_directional_derivative_error": 0.021167605947016624
+        }
+      }
+    },
+    {
+      "t": 9.5367431640625e-07,
+      "displacement": {
+        "cosine_realized_displacement_v32": 0.9791956591707681,
+        "error_norm": 5.876490866003529e-08,
+        "error_to_requested_norm_ratio": 0.2032197650931991,
+        "nonzero_requested_count": 9409,
+        "realized_norm": 2.86352647718663e-07,
+        "realized_to_requested_norm_ratio": 0.9902596486596386,
+        "requested_norm": 2.891692578873171e-07,
+        "requested_realized_cosine": 0.9791956591707681,
+        "sign_mismatch_count_over_nonzero_requested": 9075,
+        "sign_mismatch_fraction_over_nonzero_requested_including_zero_realized": 0.9645020724837922,
+        "zero_fraction_realized": 0.9646411179335168,
+        "zero_fraction_requested": 0.003917001905568495,
+        "zero_mismatch_fraction": 0.9607241160279484,
+        "sign_mismatch_count_among_nonzero_requested_including_zero_realized": 9075,
+        "sign_mismatch_fraction_among_nonzero_requested_including_zero_realized": 0.9645020724837922,
+        "zero_coordinate_count": 9112,
+        "trainable_coordinate_count": 9446
+      },
+      "tasks": {
+        "chem": {
+          "ideal_predicted_delta": -8.7680502948669e-08,
+          "realized_predicted_delta": 3.0874720807870656e-07,
+          "actual_delta": 0.042989253997802734,
+          "scalar_dtype": "float32",
+          "response_floor_8ulp": 3.814697265625e-06,
+          "actual_over_ideal": null,
+          "actual_over_realized": null,
+          "directional_quotient": 45077.5,
+          "autograd_directional_derivative": -0.09193967105990354,
+          "absolute_directional_derivative_error": 45077.59193967106
+        },
+        "exc": {
+          "ideal_predicted_delta": -0.0008383479807340081,
+          "realized_predicted_delta": -0.0008275966837205917,
+          "actual_delta": -0.00065388860774096,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_ideal": 0.7799727831018972,
+          "actual_over_realized": 0.7901053986844176,
+          "directional_quotient": -685.6519007505849,
+          "autograd_directional_derivative": -879.0715722461433,
+          "absolute_directional_derivative_error": 193.41967149555842
+        },
+        "op": {
+          "ideal_predicted_delta": -8.768073123082836e-08,
+          "realized_predicted_delta": -8.557991368449879e-08,
+          "actual_delta": 2.18658811792366e-06,
+          "scalar_dtype": "float64",
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_ideal": -24.938068914676894,
+          "actual_over_realized": -25.550249162260137,
+          "directional_quotient": 2.29280382233992,
+          "autograd_directional_derivative": -0.09193991043109707,
+          "absolute_directional_derivative_error": 2.384743732771017
+        }
+      }
+    }
+  ],
+  "table_2_float64": [
+    {
+      "t": 1.0,
+      "tasks": {
+        "chem": {
+          "predicted_delta": -0.0919704368956905,
+          "actual_delta": 1.6109934952712175,
+          "directional_quotient": 1.6109934952712175,
+          "autograd_directional_derivative": -0.0919704368956905,
+          "absolute_directional_derivative_error": 1.702963932166908,
+          "relative_derivative_error": 18.51642755702408,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": -17.516427557024084
+        },
+        "exc": {
+          "predicted_delta": -879.8107098793099,
+          "actual_delta": 828.6531601564145,
+          "directional_quotient": 828.6531601564145,
+          "autograd_directional_derivative": -879.8107098793099,
+          "absolute_directional_derivative_error": 1708.4638700357245,
+          "relative_derivative_error": 1.941853913406086,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": -0.9418539134060859
+        },
+        "op": {
+          "predicted_delta": -0.09197043689567813,
+          "actual_delta": 0.012277607520516126,
+          "directional_quotient": 0.012277607520516126,
+          "autograd_directional_derivative": -0.09197043689567813,
+          "absolute_directional_derivative_error": 0.10424804441619426,
+          "relative_derivative_error": 1.133495152735249,
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_predicted": -0.13349515273524892
+        }
+      }
+    },
+    {
+      "t": 0.03125,
+      "tasks": {
+        "chem": {
+          "predicted_delta": -0.002874076152990328,
+          "actual_delta": -0.0016601048543405383,
+          "directional_quotient": -0.05312335533889723,
+          "autograd_directional_derivative": -0.0919704368956905,
+          "absolute_directional_derivative_error": 0.03884708155679327,
+          "relative_derivative_error": 0.4223866153952515,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": 0.5776133846047485
+        },
+        "exc": {
+          "predicted_delta": -27.494084683728435,
+          "actual_delta": 19.096389775725896,
+          "directional_quotient": 611.0844728232287,
+          "autograd_directional_derivative": -879.8107098793099,
+          "absolute_directional_derivative_error": 1490.8951827025385,
+          "relative_derivative_error": 1.6945635759617605,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": -0.6945635759617607
+        },
+        "op": {
+          "predicted_delta": -0.0028740761529899416,
+          "actual_delta": -0.002764481028275069,
+          "directional_quotient": -0.08846339290480221,
+          "autograd_directional_derivative": -0.09197043689567813,
+          "absolute_directional_derivative_error": 0.0035070439908759243,
+          "relative_derivative_error": 0.03813229673850475,
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_predicted": 0.9618677032614953
+        }
+      }
+    },
+    {
+      "t": 0.0009765625,
+      "tasks": {
+        "chem": {
+          "predicted_delta": -8.981487978094775e-05,
+          "actual_delta": -8.865313002992536e-05,
+          "directional_quotient": -0.09078080515064357,
+          "autograd_directional_derivative": -0.0919704368956905,
+          "absolute_directional_derivative_error": 0.0011896317450469235,
+          "relative_derivative_error": 0.012934936325203721,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": 0.9870650636747963
+        },
+        "exc": {
+          "predicted_delta": -0.8591901463665136,
+          "actual_delta": -0.8591972420782512,
+          "directional_quotient": -879.8179758881292,
+          "autograd_directional_derivative": -879.8107098793099,
+          "absolute_directional_derivative_error": 0.0072660088193288175,
+          "relative_derivative_error": 8.25860464954507e-06,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": 1.0000082586046495
+        },
+        "op": {
+          "predicted_delta": -8.981487978093568e-05,
+          "actual_delta": -8.97080267398126e-05,
+          "directional_quotient": -0.0918610193815681,
+          "autograd_directional_derivative": -0.09197043689567813,
+          "absolute_directional_derivative_error": 0.00010941751411003287,
+          "relative_derivative_error": 0.0011897031024669907,
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_predicted": 0.998810296897533
+        }
+      }
+    },
+    {
+      "t": 3.0517578125e-05,
+      "tasks": {
+        "chem": {
+          "predicted_delta": -2.806714993154617e-06,
+          "actual_delta": -2.8055183252106985e-06,
+          "directional_quotient": -0.09193122448050417,
+          "autograd_directional_derivative": -0.0919704368956905,
+          "absolute_directional_derivative_error": 3.9212415186326566e-05,
+          "relative_derivative_error": 0.00042635890955699005,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": 0.999573641090443
+        },
+        "exc": {
+          "predicted_delta": -0.02684969207395355,
+          "actual_delta": -0.026849699052792886,
+          "directional_quotient": -879.8109385619173,
+          "autograd_directional_derivative": -879.8107098793099,
+          "absolute_directional_derivative_error": 0.000228682607371411,
+          "relative_derivative_error": 2.599225092438134e-07,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": 1.0000002599225093
+        },
+        "op": {
+          "predicted_delta": -2.80671499315424e-06,
+          "actual_delta": -2.806610657830888e-06,
+          "directional_quotient": -0.09196701803580254,
+          "autograd_directional_derivative": -0.09197043689567813,
+          "absolute_directional_derivative_error": 3.418859875592428e-06,
+          "relative_derivative_error": 3.717346563733772e-05,
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_predicted": 0.9999628265343626
+        }
+      }
+    },
+    {
+      "t": 9.5367431640625e-07,
+      "tasks": {
+        "chem": {
+          "predicted_delta": -8.770984353608179e-08,
+          "actual_delta": -8.768245329804358e-08,
+          "directional_quotient": -0.09194171614944935,
+          "autograd_directional_derivative": -0.0919704368956905,
+          "absolute_directional_derivative_error": 2.8720746241148176e-05,
+          "relative_derivative_error": 0.00031228237258155246,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": 0.9996877176274185
+        },
+        "exc": {
+          "predicted_delta": -0.0008390528773110484,
+          "actual_delta": -0.0008390528851247581,
+          "directional_quotient": -879.8107180725783,
+          "autograd_directional_derivative": -879.8107098793099,
+          "absolute_directional_derivative_error": 8.193268399736553e-06,
+          "relative_derivative_error": 9.312535421239056e-09,
+          "response_floor_8ulp": 7.105427357601002e-15,
+          "actual_over_predicted": 1.0000000093125354
+        },
+        "op": {
+          "predicted_delta": -8.770984353607e-08,
+          "actual_delta": -8.770974559146882e-08,
+          "directional_quotient": -0.09197033419332001,
+          "autograd_directional_derivative": -0.09197043689567813,
+          "absolute_directional_derivative_error": 1.0270235811793427e-07,
+          "relative_derivative_error": 1.1166888141939495e-06,
+          "response_floor_8ulp": 5.551115123125783e-17,
+          "actual_over_predicted": 0.9999988833111858
+        }
+      }
+    }
+  ],
+  "gradient_comparison": [
+    {
+      "task": "chem",
+      "relative_l2": 0.001170572055569422,
+      "cosine": 0.9999993311348748
+    },
+    {
+      "task": "exc",
+      "relative_l2": 1.5260349056392778e-06,
+      "cosine": 0.9999999999989785
+    },
+    {
+      "task": "op",
+      "relative_l2": 0.000819206840703769,
+      "cosine": 0.9999997132621554
+    }
+  ],
+  "matched_state_controls": {
+    "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+    "cursor": 2,
+    "diagnostic_only": true,
+    "direction_comparison": {
+      "cosine_v32_v64": 0.9999988749781821,
+      "relative_l2_v64_minus_v32_over_v32": 0.001509296640042659,
+      "v32_norm": 0.3032159437584514,
+      "v32_source_dtype": "float32",
+      "v64_norm": 0.3032662805121568,
+      "v64_source_dtype": "float64 recomputed gradients on widened float32-loaded sources",
+      "v64_to_v32_norm_ratio": 1.0001660095873637
+    },
+    "f32_to_f64_to_f32_roundtrip": {
+      "ao_phi_grad_lap_chunks": true,
+      "model_state": true,
+      "reaction_tensor_fields": true,
+      "system_features_weights": true
+    },
+    "f64_arrays_sha256": "319d8a83db372e0a6a70f1aab37e1911b6dc98ba30f0fe79737fc051cfad5344",
+    "f64_five_step_result_sha256": "6f9d0d8194b82d6efded198fcaf500963969485d553b1f725b3a8bef7b18e1eb",
+    "float32_capture_npz_sha256": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+    "float32_capture_sha256": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+    "immutable_input_file_sha256_end": {
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2.json": "6f9d0d8194b82d6efded198fcaf500963969485d553b1f725b3a8bef7b18e1eb",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2_arrays.npz": "319d8a83db372e0a6a70f1aab37e1911b6dc98ba30f0fe79737fc051cfad5344",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.json": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_trials.npz": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+    },
+    "immutable_input_file_sha256_start": {
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2.json": "6f9d0d8194b82d6efded198fcaf500963969485d553b1f725b3a8bef7b18e1eb",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2_arrays.npz": "319d8a83db372e0a6a70f1aab37e1911b6dc98ba30f0fe79737fc051cfad5344",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.json": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_trials.npz": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+    },
+    "matched_controls": [
+      {
+        "candidate_displacement_error_norm": 2.9792065864414485e-07,
+        "candidate_key": "candidate_t_2m15",
+        "candidate_norm_ratio_realized_to_requested": 1.000143479871596,
+        "candidate_realized_displacement_norm": 9.254743931369865e-06,
+        "candidate_requested_displacement_norm": 9.253416252394147e-06,
+        "delta_above_8ulp_floor": {
+          "chem": true,
+          "exc": true,
+          "op": true
+        },
+        "deltas64_vs_float64_base": {
+          "chem": -2.3030457994011044e-06,
+          "exc": -0.026833155468214187,
+          "op": -2.8058038410092023e-06
+        },
+        "losses64": {
+          "chem": 4.189335515742133,
+          "exc": 4.174818466647773,
+          "op": 0.039752156289524596
+        },
+        "precision_label": "exact float32 post-update parameter values widened to float64; same float32-loaded inputs widened using fixed protocol",
+        "response64_delta_over_t": {
+          "chem": -0.07546620475477539,
+          "exc": -879.2688383824425,
+          "op": -0.09194058026218954
+        },
+        "response_floors_8ulp": {
+          "chem": 7.105427357601002e-15,
+          "exc": 7.105427357601002e-15,
+          "op": 5.551115123125783e-17
+        },
+        "t": 3.0517578125e-05
+      },
+      {
+        "candidate_displacement_error_norm": 5.876490866003529e-08,
+        "candidate_key": "candidate_t_2m20",
+        "candidate_norm_ratio_realized_to_requested": 0.9902596486596386,
+        "candidate_realized_displacement_norm": 2.86352647718663e-07,
+        "candidate_requested_displacement_norm": 2.891692578873171e-07,
+        "delta_above_8ulp_floor": {
+          "chem": true,
+          "exc": true,
+          "op": true
+        },
+        "deltas64_vs_float64_base": {
+          "chem": 3.054872834695743e-07,
+          "exc": -0.0008275969260598259,
+          "op": -8.559142800068642e-08
+        },
+        "losses64": {
+          "chem": 4.189338124275216,
+          "exc": 4.200824025189927,
+          "op": 0.039754876501937604
+        },
+        "precision_label": "exact float32 post-update parameter values widened to float64; same float32-loaded inputs widened using fixed protocol",
+        "response64_delta_over_t": {
+          "chem": 0.32032663375139236,
+          "exc": -867.798274340108,
+          "op": -0.08974911720724776
+        },
+        "response_floors_8ulp": {
+          "chem": 7.105427357601002e-15,
+          "exc": 7.105427357601002e-15,
+          "op": 5.551115123125783e-17
+        },
+        "t": 9.5367431640625e-07
+      }
+    ],
+    "materialized_loaded_f32_inputs_sha256": "32f8dc30616f00f84fea675258e577083297dd5e101e1c6aa7efc3b7406f08ad",
+    "materialized_loaded_f32_inputs_sha256_end": "32f8dc30616f00f84fea675258e577083297dd5e101e1c6aa7efc3b7406f08ad",
+    "precision_label": "F64 objective arithmetic for exact F32 candidate parameters on widened same F32-loaded inputs; no full-native-F64 claim",
+    "preserved_source_f64_fields": [
+      "exc_target",
+      "reference_operator",
+      "overlap"
+    ],
+    "raw_gradient_npz_sha256": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+    "rollback": {
+      "cursor": true,
+      "ema": true,
+      "frozen_checkpoint": true,
+      "model32_and_buffers": true,
+      "model64_and_buffers": true,
+      "rng": true
+    },
+    "runtime_flags": {
+      "end": {
+        "autocast_cpu": false,
+        "autocast_cuda": false,
+        "bf16_reduced_precision_reduction": true,
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "default_dtype": "torch.float32",
+        "deterministic_algorithms": false,
+        "float32_matmul_precision": "highest",
+        "fp16_reduced_precision_reduction": true
+      },
+      "start": {
+        "autocast_cpu": false,
+        "autocast_cuda": false,
+        "bf16_reduced_precision_reduction": true,
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "default_dtype": "torch.float32",
+        "deterministic_algorithms": false,
+        "float32_matmul_precision": "highest",
+        "fp16_reduced_precision_reduction": true
+      },
+      "unchanged": true
+    },
+    "sample": {
+      "mrks_system": "BH",
+      "rank": 0,
+      "reaction": {
+        "database": "NCCE31",
+        "reaction_id": 0
+      },
+      "variant_suffix": "level2_mura"
+    },
+    "schema": "lap-precision-audit-matched-state-float64-v1",
+    "status": "complete_matched_controls"
+  },
+  "canonical_float32_runtime_flags": {
+    "end": {
+      "autocast_cpu_enabled": false,
+      "autocast_cuda_enabled": false,
+      "cuda_cudnn_benchmark": false,
+      "cuda_cudnn_deterministic": false,
+      "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "default_dtype": "torch.float32",
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest"
+    },
+    "start": {
+      "autocast_cpu_enabled": false,
+      "autocast_cuda_enabled": false,
+      "cuda_cudnn_benchmark": false,
+      "cuda_cudnn_deterministic": false,
+      "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "default_dtype": "torch.float32",
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest"
+    },
+    "unchanged": true
+  },
+  "materialized_input_identities": {
+    "model_state_sha256": "3662f4df9a2ebde9853d95f0b6819c402830b3a35e9bc27902bb40ec57240b74",
+    "reaction_payload_sha256": "98f90f0ca7cfd5f32017cc55a9a816f2e547da2df5de9c062f2d3e2984e130fa",
+    "system_float32_fields_sha256": "9ec42ed57c90233a9fcc15c1bd2d9401de0d3105420a449dfaa32baa046a97c3",
+    "system_preserved_float64_fields_sha256": "370a7431401eaa1b59c7d35a1931bff2f705e88fd63392a4001e0176f45415ca"
+  },
+  "float32_input_cast_roundtrip": true,
+  "float32_rollback": {
+    "checkpoint_and_npz_hashes": true,
+    "cursor": true,
+    "ema": true,
+    "model_and_buffers": true,
+    "rng": true
+  },
+  "float64_provenance_checks": {
+    "materialized_loaded_source_sha256_start": "32f8dc30616f00f84fea675258e577083297dd5e101e1c6aa7efc3b7406f08ad",
+    "materialized_loaded_source_sha256_end": "32f8dc30616f00f84fea675258e577083297dd5e101e1c6aa7efc3b7406f08ad",
+    "immutable_source_file_sha256_start": {
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\groups\\group_206_key_219_NCCE31_0.pickle": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\BH_ao_factors.h5": "5c24e7b2b636776e23764349fa8cd181340f9fe1c1d84aa550259c04e2545859",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\BH.h5": "50fcdab3e44e65297b94da9b77611bc85b9e36ef11a8370b38491b3110fb0688",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.py": "30bdaeff45178e48ab8a4694fb51db81e03a7d9f09e0be538772b8130654d04e",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_replay_receipt.json": "4ab29379dfafd5c03dffa41cbf415591a3e505e7c63d9ad82a62bdc937562475",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+    },
+    "immutable_source_file_sha256_end": {
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\groups\\group_206_key_219_NCCE31_0.pickle": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\BH_ao_factors.h5": "5c24e7b2b636776e23764349fa8cd181340f9fe1c1d84aa550259c04e2545859",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\BH.h5": "50fcdab3e44e65297b94da9b77611bc85b9e36ef11a8370b38491b3110fb0688",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+      "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.py": "30bdaeff45178e48ab8a4694fb51db81e03a7d9f09e0be538772b8130654d04e",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_raw_task_gradients.npz": "fd5eb469339d68ac3c7fc21728ce0138cec878ea8780c7c05277d87cf353f6c0",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\failure_cursor2\\cursor2_replay_receipt.json": "4ab29379dfafd5c03dffa41cbf415591a3e505e7c63d9ad82a62bdc937562475",
+      "C:\\Dev\\readWFN_share_ms\\lap_step_globalization_runs_20261002\\pcd_armijo_direct\\run_seed41\\latest.pt": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c"
+    },
+    "cast_up_down_exact": {
+      "AO_phi_grad_lap": true,
+      "features_weights": true,
+      "model_state": true,
+      "reaction_f32_tensors": true
+    },
+    "rollback": {
+      "cursor": true,
+      "ema": true,
+      "frozen_source_files_start_end_equal": true,
+      "materialized_inputs_start_end_equal": true,
+      "model32_and_buffers": true,
+      "model64_and_buffers": true,
+      "rng": true
+    },
+    "flags_unchanged": true,
+    "runtime_flags_start": {
+      "autocast_cpu_enabled": false,
+      "autocast_cuda_enabled": false,
+      "cuda_cudnn_benchmark": false,
+      "cuda_cudnn_deterministic": false,
+      "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "default_dtype": "torch.float32",
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest"
+    },
+    "runtime_flags_end": {
+      "autocast_cpu_enabled": false,
+      "autocast_cuda_enabled": false,
+      "cuda_cudnn_benchmark": false,
+      "cuda_cudnn_deterministic": false,
+      "cuda_matmul_allow_bf16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_fp16_reduced_precision_reduction": true,
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true,
+      "default_dtype": "torch.float32",
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest"
+    }
+  },
+  "classification": {
+    "primary": "B",
+    "secondary": "A",
+    "review_acceptance": "passed"
+  },
+  "artifact_identities": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32.json",
+      "sha256": "9218a2ac3c61c7363480bb76bfa1142b533d15ddb409ec770b905ccbfbfeca96"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_trials.npz",
+      "sha256": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32.py",
+      "sha256": "b0a56e02718e855a79170709dd5e8e178b10832f950dcf2d1c51b3aea16a53ec"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_receipt.json",
+      "sha256": "cda0ed4e436038f5c807b9334465b7399cb72ec823c44655d216706726b4c676"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.json",
+      "sha256": "b753b5f7b58d05a0eba1633d510e481375260141ed4c84fa8bcf4a524496f3a1"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_trials.npz",
+      "sha256": "87c11afde91e05336c1610c8aa633ba78c08c2a26ab9746eefc82c38d72cee4b"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2.py",
+      "sha256": "2d2f0de5598d84d8dc973244347fedf78ae68340bb9d4255e5caabf5a391649b"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_capture32_v2_receipt.json",
+      "sha256": "29163561f50b372f7a5704a7b0da6fcf0798dbc15c6580073652c252d016ac51"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2.json",
+      "sha256": "6f9d0d8194b82d6efded198fcaf500963969485d553b1f725b3a8bef7b18e1eb"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2_arrays.npz",
+      "sha256": "319d8a83db372e0a6a70f1aab37e1911b6dc98ba30f0fe79737fc051cfad5344"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2.py",
+      "sha256": "d9461de0dd8fc5d1d85fa5d408393aa4cd68dfbf37bfeaee111af68fa9668dfa"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v2_receipt.json",
+      "sha256": "e98dc2096e697387bad029d7b32635bc1e64de3ffb2d93cc2b5a04c9764087e5"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v3.json",
+      "sha256": "09daccfe0a528c49b0e99d549bbfaa72b63c1473f2d41e4ca667d10263a650a4"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v3_arrays.npz",
+      "sha256": "319d8a83db372e0a6a70f1aab37e1911b6dc98ba30f0fe79737fc051cfad5344"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v3.py",
+      "sha256": "31d3923e9e5b94aad29780bae1d774fce66cf2d6a9987a708a7329b5ef372880"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_audit64_v3_receipt.json",
+      "sha256": "b8e02e396796ee632b918a44bae90c791f24692fc43c7e88a76d235ba7d91070"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64.json",
+      "sha256": "61f6f0775995bcc338bfa150fa87b9d9ad396c7a9728fb877cc198c93efb0d45"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_arrays.npz",
+      "sha256": "2f7eec77c981473a3e055f2b67c01c0a66c8502105d0f76293a75e6204289c7e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64.py",
+      "sha256": "6270cfaf9388f0c4ccfc2299b60d3926b9bb4aff5dccb1bc37d4865b7a3a4905"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_receipt.json",
+      "sha256": "255e2a268686b2cc0e0f67589a4b550b60adaee6732b9541055d4cec144397f3"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.json",
+      "sha256": "2b8c336a001cb91593cf71e77c63f39fc3a53f2ac6175857e33db34e865a8242"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2_arrays.npz",
+      "sha256": "2f7eec77c981473a3e055f2b67c01c0a66c8502105d0f76293a75e6204289c7e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2.py",
+      "sha256": "30bdaeff45178e48ab8a4694fb51db81e03a7d9f09e0be538772b8130654d04e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\precision_matched64_v2_receipt.json",
+      "sha256": "8a33397b9ce061259f8e716bf349deaf407a56c0fde1164b490cf3e72825f35e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_precision_audit_runs_20261003\\build_report.py",
+      "sha256": "c653490ae8aea2ad548ba55022ab2a36d3e3b519acafd0a3d0555c0f3520a13c"
+    }
+  ],
+  "checks": {
+    "head": "79f89dda4c9b1ce7bcfdec609774bb005b3c3080",
+    "windows": {
+      "suite": [
+        "train_models/test_moo_aggregators.py",
+        "train_models/test_lap_moo_armijo.py",
+        "train_models/test_lap_moo_training.py"
+      ],
+      "passed": 58,
+      "skipped": 2,
+      "seconds": 6.61
+    },
+    "wsl": {
+      "suite": [
+        "train_models/test_lap_operator_validation.py",
+        "train_models/test_lap_operator_unit.py"
+      ],
+      "passed": 14,
+      "seconds": 4.29,
+      "warnings": 1
+    },
+    "compileall": "passed",
+    "diff_check": "passed",
+    "production_source_changed": false
+  },
+  "source_loc_added": 0,
+  "test_loc_added": 0,
+  "independent_review": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\.planning\\precision_audit\\independent_review.md",
+    "sha256": "f04ce990ae4da1526243d85ac3c41c720053e83ca1bd9092b41b01c934b1d2b4"
+  },
+  "training_performed": false,
+  "optimization_state_committed": false
+}

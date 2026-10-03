@@ -1,0 +1,174 @@
+{
+  "schema": "lap-precision-dtype-audit-v1",
+  "scope": "read-only dtype and source-provenance audit; no training, objective evaluation, or source regeneration",
+  "frozen_state": {
+    "cursor": 2,
+    "sample": "NCCE31/reaction 0/BH/level2_mura",
+    "checkpoint_path": "C:/Dev/readWFN_share_ms/lap_step_globalization_runs_20261002/pcd_armijo_direct/run_seed41/latest.pt",
+    "checkpoint_sha256": "a53f46807b1ce492c8fe02657e615881ff310294bd79d273eb4bb0c694e3670c",
+    "group_store_manifest_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "selected_group_file": "groups/group_206_key_219_NCCE31_0.pickle",
+    "selected_group_sha256": "c90140e87c652e251f1e788b240f0bb3a073bfb6b2cda6d7efc184ab903d2fe4",
+    "central_BH_hdf5_sha256": "50fcdab3e44e65297b94da9b77611bc85b9e36ef11a8370b38491b3110fb0688",
+    "ao_cache_BH_sha256": "5c24e7b2b636776e23764349fa8cd181340f9fe1c1d84aa550259c04e2545859"
+  },
+  "runtime": {
+    "torch": "2.11.0+cu128",
+    "device": "cuda:0",
+    "model_mode": "train",
+    "replay_model_dtype": "torch.float32",
+    "float32_matmul_precision": "highest",
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": true,
+    "fp16_reduced_precision_reduction": true,
+    "bf16_reduced_precision_reduction": true,
+    "autocast_cpu": false,
+    "autocast_cuda": false,
+    "default_dtype": "torch.float32",
+    "flag_source": "libxc runtime defaults; FS-v2 driver and imported training code set no matmul/TF32/autocast flags"
+  },
+  "model_state": {
+    "floating_state_tensor_count": 35,
+    "floating_state_dtypes": ["torch.float32"],
+    "floating_buffer": {"name": "scaling_array", "dtype": "torch.float32"},
+    "integer_buffer": {"name": "lap_architecture_version", "dtype": "torch.int64"},
+    "native_double_checkpoint": false,
+    "double_conversion": "cast-up of exact cursor-2 float32 checkpoint values"
+  },
+  "original_BH_legacy_source": {
+    "path": "C:/Users/schne/Downloads/data_vxc_train.pickle",
+    "bytes": 496371047,
+    "sha256": "0ccc0cfb09814cadcc9e0537953cc324fe6ce5551654fe3254f310a25cc6ee49",
+    "BH_fields": {
+      "Grid": {"dtype": "torch.float32", "shape": [56883, 13]},
+      "Weights": {"dtype": "torch.float32", "shape": [56883]},
+      "Vrho": {"dtype": "torch.float32", "shape": [56883]},
+      "E_xc": {"dtype": "torch.float32", "shape": []}
+    },
+    "read_only_inspection": true
+  },
+  "objects": [
+    {
+      "object": "cursor-2 model parameters and float buffer",
+      "storage_dtype": "torch.float32",
+      "computation_dtype_replay": "torch.float32 forward/autograd",
+      "original_source_precision": "float32 checkpoint values",
+      "native_float64_reconstructable": false,
+      "double_label": "float64-arithmetic-on-float32-source"
+    },
+    {
+      "object": "Minnesota NCCE31/0/level2_mura floating inputs and references",
+      "storage_dtype": "torch.float32 in frozen group pickle",
+      "computation_dtype_replay": "torch.float32 after reaction_loss tensor_record conversion",
+      "original_source_precision": "float32 in frozen training artifact; upstream 13-GB source pickle not opened",
+      "native_float64_reconstructable": false,
+      "double_label": "float64-arithmetic-on-float32-source",
+      "details": "Energy, Grid, Weights, Densities, Gradients, HF_energies, Coefficients and backsplit_ind are float32. PBE_local_energies is float32 and not used by reaction_loss."
+    },
+    {
+      "object": "Minnesota reaction dispersion constants",
+      "storage_dtype": "zero-dimensional NumPy float64 arrays in dispersion pickle",
+      "computation_dtype_replay": "torch.tensor infers float64 on CPU/CUDA; in-place addition into float32 component-energy accumulator stores sum back as float32",
+      "original_source_precision": "float64 stored constants",
+      "native_float64_reconstructable": true,
+      "double_label": "native-float64 correction; replay accumulation rounds component energy to float32"
+    },
+    {
+      "object": "BH NPZ grid coordinates and dm_ks",
+      "storage_dtype": "float64 in NPZ and central record",
+      "computation_dtype_replay": "features are later cast to model dtype; dm_ks is provenance/reconstruction input",
+      "original_source_precision": "float64 source arrays",
+      "native_float64_reconstructable": true,
+      "double_label": "native-float64"
+    },
+    {
+      "object": "BH central mRKS features",
+      "storage_dtype": "float64 in central HDF5",
+      "computation_dtype_replay": "float32 after CentralAOCache cast",
+      "original_source_precision": "recomputed in double from float64 NPZ coordinates, dm_ks and PySCF AO; audited compatible with legacy float32 descriptors",
+      "native_float64_reconstructable": true,
+      "double_label": "native-float64 source, but use replay-loaded float32 values widened for first controlled comparison"
+    },
+    {
+      "object": "BH mRKS weights, VxcLegacy, Exc target",
+      "storage_dtype": "float64 in central HDF5",
+      "computation_dtype_replay": "weights float32 in the system; Exc target float64; integrated energy/reduction float64",
+      "original_source_precision": "float32 in hashed legacy source pickle; promoted to float64 for HDF5; Exc target retained from legacy, not NPZ exc_wf",
+      "native_float64_reconstructable": false,
+      "double_label": "float64-arithmetic-on-float32-source"
+    },
+    {
+      "object": "BH reference operator RefAO",
+      "storage_dtype": "float64 in central HDF5",
+      "computation_dtype_replay": "float64 operator loss",
+      "original_source_precision": "double AO contraction using float32-origin legacy weights and Vrho",
+      "native_float64_reconstructable": false,
+      "double_label": "float64-arithmetic-on-float32-source"
+    },
+    {
+      "object": "BH overlap",
+      "storage_dtype": "float64 in central HDF5",
+      "computation_dtype_replay": "float64 eigendecomposition/orthogonalization/loss",
+      "original_source_precision": "PySCF double integral",
+      "native_float64_reconstructable": true,
+      "double_label": "native-float64"
+    },
+    {
+      "object": "BH AO factor cache phi/grad_phi/lap_phi",
+      "storage_dtype": "float32 in HDF5 cache",
+      "computation_dtype_replay": "float32 operator assembly; chunk cast to float64 before final loss",
+      "original_source_precision": "PySCF AO factors quantized to float32 on cache write",
+      "native_float64_reconstructable": "not from cached bytes; regenerable from pinned central molecule/coordinates with PySCF, not done",
+      "double_label": "float64-arithmetic-on-float32-source"
+    },
+    {
+      "object": "BH mRKS dispersion constant",
+      "storage_dtype": "Python float from dispersion pickle",
+      "computation_dtype_replay": "float64 because integrated_energy returns float64 and correction uses prediction.dtype",
+      "original_source_precision": "float64 scalar",
+      "native_float64_reconstructable": true,
+      "double_label": "native-float64"
+    },
+    {
+      "object": "intermediate activations and reductions",
+      "storage_dtype": "not persisted as objective tensors",
+      "computation_dtype_replay": "network/input path float32; integrated E reduction float64; operator reference algebra/loss float64",
+      "original_source_precision": "mixed as above",
+      "native_float64_reconstructable": true,
+      "double_label": "mixed provenance; scalar loss dtype does not imply native-double forward inputs"
+    }
+  ],
+  "recommended_primary_double_input_policy": {
+    "policy": "Load exact frozen inputs through existing float32 path; widen those materialized float32 tensors and cursor-2 parameter values to float64. Preserve already-float64 RefAO, Overlap and Exc values unchanged. Keep exact objective helpers/reductions and do not substitute central descriptor doubles or regenerate AO in the first comparison.",
+    "reason": "Isolates arithmetic/autograd precision while fixing actual replay source values; prevents central feature or AO source upgrades from confounding the comparison.",
+    "label": "mixed-provenance float64 arithmetic on float32-loaded model, chemistry, feature and AO values"
+  },
+  "reaction_dispersion_dtype_check": {
+    "torch_version": "2.11.0+cu128",
+    "default_dtype": "torch.float32",
+    "components": [
+      {"name": "NH3-NH3_ncce31", "source_type": "numpy.ndarray", "source_dtype": "float64", "shape": [], "value": -0.00192936, "torch_tensor_dtype_cpu": "torch.float64", "torch_tensor_dtype_cuda": "torch.float64"},
+      {"name": "NH3_ncce31", "source_type": "numpy.ndarray", "source_dtype": "float64", "shape": [], "value": -0.0005886, "torch_tensor_dtype_cpu": "torch.float64", "torch_tensor_dtype_cuda": "torch.float64"}
+    ],
+    "float32_inplace_add_result_dtype": "torch.float32",
+    "float64_inplace_add_result_dtype": "torch.float64",
+    "code": "reaction_energy_calculation.integration:106"
+  },
+  "files_functions_inspected": [
+    "lap_direction_recovery_report.md; lap_direction_recovery_protocol.json; lap_direction_recovery_results.json",
+    "C:/Dev/readWFN_share_ms/lap_direction_recovery_runs_20261003/native_fs_batch_v2.py:161-186",
+    "train_models/lap_checkpoint.py:117-130",
+    "train_models/lap_moo_panel.py:821-930,1019-1112",
+    "train_models/lap_training.py:17-56",
+    "train_models/lap_moo_training.py:571-655",
+    "train_models/train_lap_moo.py:288-438",
+    "train_models/build_lap_operator_data.py:102-163,167-198,228-235",
+    "train_models/lap_operator_data.py:122-160,210-230",
+    "train_models/lap_vxc.py:327-341",
+    "train_models/lap_operator.py:369-390",
+    "train_models/reaction_energy_calculation.py:89-107",
+    "train_models/optuna_joint.py:418-435",
+    "train_models/mrks_source_audit_v2.json; lap_operator_validation_report.md:113"
+  ],
+  "blocker": null
+}
