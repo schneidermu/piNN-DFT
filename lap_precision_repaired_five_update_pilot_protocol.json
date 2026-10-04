@@ -1,0 +1,49 @@
+{
+  "starting_commit": "1173a755dadb220066cb5f5a29c319413e978ef7",
+  "frozen_manifest_sha256": "4e349a8d6a4f0004c196091adfa46fd4db32fb4ec8c9f108750d5bf0fae75141",
+  "frozen_manifest_file_sha256": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+  "predopt_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+  "source_hashes": {
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/test_lap_operator_unit.py": "30cfa3707bed89377fe5fc0ce519f0a0e724a04c4e6f7b5735864670397e7208",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf"
+  },
+  "PCD": {
+    "tau": 0.02,
+    "beta": 0.999,
+    "eps": 1e-08,
+    "qp_tolerance": 1e-09
+  },
+  "Armijo": {
+    "initial_step_size": 6.632573669086685e-07,
+    "c": 0.0001,
+    "rho": 0.5,
+    "max_backtracks": 20
+  },
+  "task_order": [
+    "relchem",
+    "ae17",
+    "exc",
+    "op"
+  ],
+  "primary": "relchem",
+  "estimators": [
+    "R2",
+    "full17",
+    "singleton E",
+    "O1"
+  ],
+  "checkpoints": [
+    0,
+    2,
+    5
+  ],
+  "maximum_accepted_updates": 5,
+  "checkpoint0": "fresh full268 and unique15 production evaluation",
+  "success_gates": "nine exact scalar/count comparisons; no tolerance",
+  "status": "PASS",
+  "review": "PASS"
+}
