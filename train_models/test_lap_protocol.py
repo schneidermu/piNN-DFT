@@ -2,6 +2,9 @@
 
 import json
 import pickle
+import subprocess
+import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import h5py
@@ -36,7 +39,7 @@ from lap_vxc import (
     sigma_total_to_standard,
     stencil_coordinates,
 )
-from optuna_joint import build_model, parse_args, vxc_loss
+from optuna_joint import batch_fchem, build_model, parse_args, vxc_loss
 from prepare_training_corpus import exclusion_pairs, sha256
 from test_lap import raw_grid, small_model
 from train_lap import epoch_steps
@@ -362,6 +365,111 @@ def test_reaction_mrks_same_energy_and_calibration():
     assert diag["nonfinite_fraction"] == 0
     prediction = integrated_energy(energy, d["StencilFeatures"], d["Weights"], 2)
     assert diag["exc_prediction_hartree"] == pytest.approx(float(prediction.detach()))
+
+
+@pytest.mark.parametrize(
+    ("database", "expected_factor"),
+    [("NCCE31", 2.896652477664184), ("AE17", 0.5282130988681748)],
+)
+def test_reaction_loss_scalar_database_matches_list_loss_and_gradient(
+    database, expected_factor, monkeypatch
+):
+    class ScaledConstants(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.scale = torch.nn.Parameter(torch.tensor(1.0, dtype=torch.float64))
+
+        def forward(self, raw):
+            return self.scale.expand(len(raw), 1)
+
+    def fake_reaction_energy(reaction, constants, device, *args, **kwargs):
+        return constants.mean().reshape(1), None
+
+    monkeypatch.setattr(
+        "lap_training.calculate_reaction_energy", fake_reaction_energy
+    )
+    raw = raw_grid()
+    target = torch.zeros(1, dtype=raw.dtype)
+
+    def reaction(database_label):
+        return {
+            "Grid": raw,
+            "Densities": raw[:, :2],
+            "Gradients": sigma_total_to_standard(raw[:, 2:5]),
+            "Database": database_label,
+        }
+
+    scalar_model = ScaledConstants()
+    list_model = ScaledConstants()
+    scalar_loss = reaction_loss(
+        scalar_model,
+        reaction(database),
+        target,
+        torch.device("cpu"),
+        torch.float64,
+    )
+    list_loss = reaction_loss(
+        list_model,
+        reaction([database]),
+        target,
+        torch.device("cpu"),
+        torch.float64,
+    )
+    scalar_gradient = torch.autograd.grad(scalar_loss, scalar_model.scale)[0]
+    list_gradient = torch.autograd.grad(list_loss, list_model.scale)[0]
+
+    torch.testing.assert_close(scalar_loss, list_loss)
+    torch.testing.assert_close(scalar_gradient, list_gradient)
+    assert scalar_loss.item() == pytest.approx(expected_factor)
+    assert torch.isfinite(scalar_gradient).all()
+    assert scalar_gradient.item() == pytest.approx(expected_factor)
+
+
+def test_batch_fchem_rejects_scalar_database_name():
+    with pytest.raises(TypeError, match="string"):
+        batch_fchem(
+            "NCCE31",
+            torch.ones(1, dtype=torch.float64),
+            torch.zeros(1, dtype=torch.float64),
+        )
+
+
+def test_legacy_predopt_batch_fchem_preserves_lists_and_rejects_scalar():
+    script = """
+import sys
+import types
+
+sys.modules["mlflow"] = types.ModuleType("mlflow")
+import torch
+import predopt_train
+
+prediction = torch.tensor([2.0], dtype=torch.float64, requires_grad=True)
+reference = torch.zeros(1, dtype=torch.float64)
+loss = predopt_train.batch_fchem(["NCCE31"], prediction, reference)
+loss.backward()
+factor = (
+    predopt_train.FCHEM_VALIDATION["NCCE31"]
+    * predopt_train.FREQ_WEIGHTS["NCCE31"]
+    / predopt_train.mean_weight
+)
+assert abs(loss.item() - 2 * factor) < 1e-12
+assert abs(prediction.grad.item() - factor) < 1e-12
+
+try:
+    predopt_train.batch_fchem("NCCE31", prediction.detach(), reference)
+except TypeError:
+    pass
+else:
+    raise AssertionError("scalar database label was accepted")
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=Path(__file__).resolve().parent,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
 
 
 def test_predopt_updates_canonical_constants_in_memory():

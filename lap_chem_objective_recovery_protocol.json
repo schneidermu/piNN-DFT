@@ -1,0 +1,282 @@
+{
+  "external_evidence_bindings": [
+    {
+      "artifact": "predeclared_protocol.json",
+      "sha256": "d58258d253100b55d2dd5a936c85c5e80f6dcc9d3476abc5034a6ee3f198562c"
+    },
+    {
+      "artifact": "frozen_scalar_replay.json",
+      "driver": "frozen_scalar_replay.py",
+      "driver_sha256": "35696cf8785c0c9d558028553fcccb7186db79d0159b54823100fee9a8d3cfbb",
+      "receipt": "frozen_scalar_replay_receipt.json",
+      "receipt_sha256": "a976ea890846d1da84063861b525c3a715e1294943940cdffb8d277c350f62d5",
+      "sha256": "50c66a6117722ae5f6f0300f9af02446101bea70c78614a27ce074570810edf0"
+    },
+    {
+      "artifact": "frozen_base_gradient_replay_failed.json",
+      "driver": "frozen_base_gradient_replay.py",
+      "driver_sha256": "6fc0110dcd4ca873d851f3f7a1a7e41d1f0f3ad70751403e69fdbd810e628600",
+      "gradient_npz": "frozen_base_gradient_replay_failed.npz",
+      "gradient_npz_sha256": "113e3c4c182589f0c75ec0741b2812923344adc6390649a8495471e533d4f8ab",
+      "receipt": "frozen_base_gradient_replay_failed_receipt.json",
+      "receipt_sha256": "a30b04e01e3699b7877cbd0a9de76fdcaabc0ca9cecf13f29328984ff4766404",
+      "sha256": "ba8ac3545dc1748c7c969e35abffe92f7b7434e7adb021f342e10d3684661d43"
+    },
+    {
+      "artifact": "clean_predopt_geometry.json",
+      "driver": "clean_predopt_geometry.py",
+      "driver_sha256": "9cb07c81a28d054b8b0d6791144608b3ff5c4cdd2a9aebeaec453145c0bb28a1",
+      "gradient_npz": "clean_predopt_geometry_gradients.npz",
+      "gradient_npz_sha256": "d59bae3f272472cfa821d390dd09bb9fd52ecb863f2d1889da7f2d6df5e41547",
+      "receipt": "clean_predopt_geometry_receipt.json",
+      "receipt_sha256": "0a60c96d6df90d2babf7b62ac901f042fbfafbff57974b6270927dbf58eacf82",
+      "sha256": "eeb930aa9037040f4e56388310ba10d3f4c4a685f74bc7fc2fa6b8a7ef07a72f"
+    },
+    {
+      "artifact": "clean_predopt_direction_geometry.json",
+      "driver": "clean_predopt_direction_geometry.py",
+      "driver_sha256": "6a0bfde0bdff75834dca1323290eb3cb8e6c013479002ac300a0f9c0fd7e3ca4",
+      "input_gradient_npz": "clean_predopt_geometry_gradients.npz",
+      "input_gradient_npz_sha256": "d59bae3f272472cfa821d390dd09bb9fd52ecb863f2d1889da7f2d6df5e41547",
+      "receipt": "clean_predopt_direction_geometry_receipt.json",
+      "receipt_sha256": "d69ba1264daa2023a9471b510699b6f3291f70501ff8e57a3c4f9895b32d3e63",
+      "sha256": "16e416e02561a821bb374e72102e8575cac85050ad10fe9b628ada62330c8c04"
+    },
+    {
+      "artifact": "orchestrator_validation.json",
+      "sha256": "d69997a864fb7ec18fbb12d94800a0ff5ad94e1feaf7454fb269bdd98be6b79c"
+    }
+  ],
+  "final_user_status": "Chemistry objective semantics and precision are corrected; a tiny clean restart from canonical predopt is justified.",
+  "fix_contract": [
+    "Normalize scalar Database in reaction_loss to singleton list.",
+    "Reject direct scalar strings at both batch_fchem boundaries.",
+    "Preserve valid list behavior."
+  ],
+  "gates": {
+    "corrected_scalar_replay": "pass; exact F32/matched-F64 sign split persists",
+    "raw_clean_predopt_repeat": "pass; independent review accepted",
+    "restart_execution": "pass; two accepted actual-displacement Armijo updates; rollback/post-verifier pass",
+    "saved_gradient_geometry": "pass; Stage 2 NCCE31/BH review accepted",
+    "source_and_tests": "pass",
+    "static_restart_driver_review": "root static+synthetic pass; independent post-run review passed"
+  },
+  "next_experiment": "Read-only corrected-double chemistry and existing E/operator gradient/direction audit at the new clean cursor2 before any further update.",
+  "precision_contract": {
+    "aggregation": "Aggregate all tasks in F64.",
+    "chemistry": "Persistent deepcopy(main_model).to(float64) with independent leaves; sync exact stored F32 named parameters widened to F64, buffers, and mode at every base/trial; widen loaded chemistry inputs; evaluate corrected chemistry; retain name-keyed F64 gradients.",
+    "other_objectives": "Keep E_xc/operator forward and gradients in F32; widen task gradients only at aggregator boundary.",
+    "prohibit": [
+      "Do not pass F64 gradients through F32 leaves as an F64-gradient substitute.",
+      "Do not assign F64 gradients to F32 .grad buffers or use the F32 optimizer API; direct rounded parameter copies are tested explicitly."
+    ]
+  },
+  "predeclared_protocol_sha256": "d58258d253100b55d2dd5a936c85c5e80f6dcc9d3476abc5034a6ee3f198562c",
+  "receipts": {
+    "clean_direction_result": "clean_predopt_direction_geometry.json",
+    "clean_raw_result": "clean_predopt_geometry.json",
+    "gradients_result": "frozen_base_gradient_replay_failed.json",
+    "results_manifest": "C:/Dev/readWFN_share_ms/lap_full_vxc/lap_chem_objective_recovery_results.json",
+    "root": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003",
+    "scalar_result": "frozen_scalar_replay.json"
+  },
+  "repo": {
+    "base_commit": "1b740325d8bc120d7da9ef1da117338e6ba98fcc",
+    "branch": "lap_full_vxc",
+    "head": "1b740325d8bc120d7da9ef1da117338e6ba98fcc",
+    "path": "C:/Dev/readWFN_share_ms/lap_full_vxc"
+  },
+  "restart": {
+    "all_three_panel_median_ratios_below_one": false,
+    "armijo": {
+      "alpha0": 6.632573669086685e-07,
+      "c": 0.0001,
+      "max_backtracks": 20,
+      "rho": 0.5
+    },
+    "authorization": "Root static and synthetic checks passed before execution; independent post-run review passed before commit.",
+    "completed_updates": 2,
+    "do_not_extend": true,
+    "execution": "complete_two_accepted_updates; no further updates",
+    "external_evidence_bindings": {
+      "tiny_clean_restart.py": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart.py",
+        "sha256": "82dcbfcb6632fc5de81592b747293cc52aa350356ee5e0cdd2c59793a7ea98d9"
+      },
+      "tiny_clean_restart_checkpoint.pt": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_checkpoint.pt",
+        "sha256": "14c1c5d50cf1e3f17e55d66d0be353d7d8871291718dbc10d3176746b2bbaf69"
+      },
+      "tiny_clean_restart_protocol.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_protocol.json",
+        "sha256": "e8d7f0d0728c49d3df707a1889044ad96721df8e8aa68500c31f96a4e626cb64"
+      },
+      "tiny_clean_restart_receipt.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_receipt.json",
+        "sha256": "2bd52332d811a9b81a8b3bf236250fe13d04674c3461c5aa51fec0bb724950ef"
+      },
+      "tiny_clean_restart_results.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_results.json",
+        "sha256": "c7112b76d4e6168d0d15b081b5c61025c0be154cefe0b5cf0b81de540885fa04"
+      },
+      "tiny_clean_restart_synthetic.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_synthetic.json",
+        "sha256": "f64ab64b30efef4e03e76bcccdc2ebcddb2e0d6c197f4efcdc65331adb8e21d7"
+      },
+      "tiny_clean_restart_verified.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_verified.json",
+        "sha256": "49e5fe58977f4d9e99cb2a67762665ce4c0bcd5ec0f1646f1cb9fa289f22c287"
+      },
+      "tiny_restart_helper_binding_during_run.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_restart_helper_binding_during_run.json",
+        "sha256": "d43533c56c16106712c26abdb0d9b82f215f6b0dfae1f74db8eaad3055914aed"
+      },
+      "tiny_restart_selected_file_bindings_during_run.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_restart_selected_file_bindings_during_run.json",
+        "sha256": "67c0426a087e242875d1acd10352d1b610e940f3c2cf2b27faf9b193d20ff102"
+      },
+      "verify_tiny_restart.py": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\verify_tiny_restart.py",
+        "sha256": "39626c81ee39d0efd9af39c7a74d9e60cc7cc385f1690322303c3a0b4f86d6c4"
+      }
+    },
+    "order": [
+      "pTC13/BeH2",
+      "AE17/H2"
+    ],
+    "panel_summary": {
+      "chem": {
+        "max": 32.19771354921136,
+        "median": 1.0141382009955762,
+        "p90": 2.31735632363198,
+        "rows": 27,
+        "wins": 10
+      },
+      "exc": {
+        "max": 0.6603082900786716,
+        "median": 0.4991769395019602,
+        "p90": 0.6483770433822236,
+        "rows": 27,
+        "wins": 27
+      },
+      "op": {
+        "max": 0.9695346683053732,
+        "median": 0.9576385793937746,
+        "p90": 0.9624225185662857,
+        "rows": 27,
+        "wins": 27
+      }
+    },
+    "pcd_state_final": {
+      "beta": 0.999,
+      "eps": 1e-08,
+      "method": "pcd",
+      "qp_tolerance": 1e-09,
+      "t": 2,
+      "task_order": [
+        "chem",
+        "exc",
+        "op"
+      ],
+      "tau": 0.02,
+      "v": [
+        291104.27591622446,
+        13728.161250011619,
+        0.00015901300282525672
+      ],
+      "version": 1
+    },
+    "per_sample_checks": [
+      "actual-sample PCD strict descent",
+      "realized stored-candidate checks"
+    ],
+    "provenance_timing": "Main source and initial pins captured start/end. Supplemental helpers bind pre-existing reviewed hashes plus during/post-run checks; selected files verified at load against pinned manifests and during/post run. Not fabricated start snapshots.",
+    "runtime": {
+      "elapsed_seconds": 617.8637163999956,
+      "resident_vram_peak_measured": false,
+      "torch_peak_allocated_bytes": 21013132288,
+      "torch_peak_reserved_bytes": 27703377920,
+      "warning": "Torch allocator peak exceeds physical ~16GB VRAM; Windows shared/oversubscribed GPU-memory behavior is likely. V100 fit is unverified."
+    },
+    "state": "completed and independently reviewed",
+    "stop_on": [
+      "identity/rollback mismatch",
+      "nonfinite loss or gradient",
+      "failed strict descent",
+      "failed realized candidate check",
+      "source/checkpoint mismatch"
+    ],
+    "updates": [
+      {
+        "accepted_alpha": 6.632573669086685e-07,
+        "after_losses": {
+          "chem": 7.090445343374421,
+          "exc": 24.6735382637394,
+          "op": 0.033296611536381256
+        },
+        "backtracks": 0,
+        "base_losses": {
+          "chem": 7.09389107508796,
+          "exc": 24.72181286525273,
+          "op": 0.033298858643358166
+        },
+        "cursor": 0,
+        "realized_step_norm": 7.1982018635363e-05,
+        "sample": {
+          "mrks_system": "BeH2",
+          "rank": 0,
+          "reaction": {
+            "database": "pTC13",
+            "reaction_id": 12
+          },
+          "variant_suffix": "level3_mura"
+        }
+      },
+      {
+        "accepted_alpha": 3.3162868345433423e-07,
+        "after_losses": {
+          "chem": 39.62532476531703,
+          "exc": 1.555236373785077,
+          "op": 0.04910824950136113
+        },
+        "backtracks": 1,
+        "base_losses": {
+          "chem": 56.848639695425106,
+          "exc": 5.240688612134594,
+          "op": 0.05065128961999782
+        },
+        "cursor": 1,
+        "realized_step_norm": 0.005658057836577939,
+        "sample": {
+          "mrks_system": "H2",
+          "rank": 0,
+          "reaction": {
+            "database": "AE17",
+            "reaction_id": 16
+          },
+          "variant_suffix": "level2_gauss_chebyshev"
+        }
+      }
+    ]
+  },
+  "schema": "lap-chem-objective-recovery-protocol-v1",
+  "source_test_validation": {
+    "path": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/orchestrator_validation.json",
+    "sha256": "d69997a864fb7ec18fbb12d94800a0ff5ad94e1feaf7454fb269bdd98be6b79c",
+    "source_and_test_sha256": {
+      "train_models/lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+      "train_models/optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+      "train_models/predopt_train.py": "3d707edb25710151600739a3110a9e9a6fc7ce1e9aa9579348a9bc27c0c719aa",
+      "train_models/test_lap_protocol.py": "38e267899b694069aa5b124c54b52b7e56683116a5c5027d7afd0afc3f3e3d22"
+    },
+    "test_summary": {
+      "compileall": "pass",
+      "focused": "45 passed",
+      "git_diff_check": "pass",
+      "ruff": "112 baseline/current; zero introduced/removed",
+      "windows": "218 passed, 3 skipped",
+      "wsl": "139 passed, 2 skipped"
+    }
+  },
+  "status": "validated_two_clean_updates"
+}

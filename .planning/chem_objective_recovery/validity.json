@@ -1,0 +1,227 @@
+{
+  "status": "two_update_diagnostic_passed_independent_review",
+  "audited_head": "1b740325d8bc120d7da9ef1da117338e6ba98fcc",
+  "confirmed": [
+    "Two batch_fchem definitions exist: optuna_joint and predopt_train.",
+    "lap_training.reaction_loss forwards Database without normalizing scalar strings.",
+    "Canonical records and MinnesotaGroupStore variants hold scalar database labels; collated loaders hold label lists.",
+    "Store-backed lap_moo_training objective and S5 collect_objective_calibration provide confirmed scalar reaction_loss routes.",
+    "The existing EA13 fixture starts scalar but is collated before reaction_loss; its finiteness assertion does not exercise a raw scalar route or validate the factor.",
+    "Canonical run_predopt is constants MSE and does not use reaction_loss; predopt_train batch_fchem callers use extend_bases-produced lists.",
+    "Frozen cursor-2 panel evaluation loads scalar store variants through make_three_objective_factories and reaction_loss; its absolute chemistry losses use the fallback factor, while each same-row ratio_to_predopt chemistry value cancels the shared positive factor."
+  ],
+  "historical_source_caveat": "Historical source checks at commits fd65500, 5b913c0, and b20d153, plus the frozen_b20 panel snapshot, confirm reaction_loss forwarded the scalar Database and batch_fchem zipped it unchanged. Other run receipts may omit lap_training.py or optuna_joint.py hashes; verify those source identities before assigning an individual checkpoint.",
+  "historical_panel_arithmetic": {
+    "source": "The frozen_b20 evaluate_lap_moo_checkpoint_panel path calls make_three_objective_factories -> make_reaction_objective -> reaction_loss on a scalar store variant.",
+    "absolute_chemistry_losses": "Affected by the per-database fallback factor.",
+    "same_row_ratios_to_predopt": "Unaffected algebraically: candidate and predopt use the same reaction/database row, so their shared positive factor cancels.",
+    "candidate_checkpoint": "Still reflects defective training gradients; same-row panel ratios do not revalidate the checkpoint under the corrected training objective."
+  },
+  "implementation_review": {
+    "source_patch": "lap_training.reaction_loss wraps scalar Database labels as singleton lists; both batch_fchem helpers reject direct scalar-string input. Existing list reduction and scaling are unchanged.",
+    "tests": {
+      "windows_suite": "218 passed, 3 skipped",
+      "wsl_suite": "139 passed, 2 skipped",
+      "focused_suite": "45 passed",
+      "ruff_head_comparison": "112 findings at HEAD and 112 current; filenames, rules, and messages match with no added or removed finding",
+      "compileall_and_diff_check": "passed"
+    }
+  },
+  "corrected_frozen_scalar_replay": {
+    "result": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/frozen_scalar_replay.json",
+    "receipt": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/frozen_scalar_replay_receipt.json",
+    "status": "complete_frozen_scalar_replay",
+    "sample": "NCCE31, reaction 0, BH, level2_mura, cursor 2, rank 0",
+    "expected_factor": 2.896652477664184,
+    "legacy_first_character_factor": 8.979622680758972,
+    "legacy_to_corrected_factor_ratio": 0.3225806451612903,
+    "corrected_deltas": {
+      "f32": 0.013867497444152832,
+      "f64": -7.429179997853197e-7
+    },
+    "inputs_and_sources_unchanged": true,
+    "model_rng_runtime_cursor_ema_mode_rollback": true
+  },
+  "corrected_frozen_base_gradient_replay": {
+    "result": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/frozen_base_gradient_replay_failed.json",
+    "arrays": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/frozen_base_gradient_replay_failed.npz",
+    "receipt": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/frozen_base_gradient_replay_failed_receipt.json",
+    "driver_status_literal": "failed_predeclared_gradient_scaling_gate",
+    "threshold_provenance": "The frozen predeclared protocol did not set factor-gradient ratio, cosine, or scaled-residual tolerances. The 2e-6 F32 and 2e-12 F64 checks were added in the replay driver; preserve the reported failure without describing those thresholds as predeclared.",
+    "shared_forward_evidence": "At both precisions, legacy and corrected runs have byte-identical prediction, target, and pre-factor RMSE; the checked factor times RMSE equals the returned production loss exactly.",
+    "f32": {
+      "all_finite": true,
+      "parameter_count": 34,
+      "trainable_numel": 9446,
+      "corrected_over_legacy_norm_ratio": 0.3223913162288913,
+      "expected_factor_ratio": 0.3225806451612903,
+      "gradient_cosine": 0.9999991483527346,
+      "scaled_relative_l2_residual": 0.0014314937137876007,
+      "corrected_dot_exact_candidate_displacement": -8.85028084890732e-7,
+      "corrected_delta": 0.013867497444152832,
+      "interpretation": "Finite-precision forward/backward sensitivity. The negative slope and positive realized delta match the previously observed F32/F64 precision split; do not attribute it to physical response or a new curvature finding."
+    },
+    "f64": {
+      "all_finite": true,
+      "parameter_count": 34,
+      "trainable_numel": 9446,
+      "corrected_over_legacy_norm_ratio": 0.32258064516078444,
+      "expected_factor_ratio": 0.3225806451612903,
+      "gradient_cosine": 0.9999999999999999,
+      "scaled_relative_l2_residual": 7.368904802234425e-12,
+      "absolute_scaled_residual_norm": 3.44558566147551e-10,
+      "corrected_dot_exact_candidate_displacement": -7.433283531883852e-7,
+      "corrected_delta": -7.429179997853197e-7,
+      "interpretation": "Same production scalar autograd path and verified positive factor; the tiny driver-threshold miss is consistent with backward reduction roundoff, with no evidence of a different objective or gradient path."
+    },
+    "rollback_and_input_identity": "All recorded model/buffer, RNG, runtime flag, CUDA device, cursor, EMA, mode, frozen-vector, source, and chemistry-input checks passed.",
+    "scientific_gate": "Root accepted proceeding to read-only clean predopt geometry while retaining the driver's literal failed status and threshold comparison as evidence. No parameter update is authorized by this finding."
+  },
+  "gradient_layer_attribution": {
+    "result": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/frozen_gradient_layer_residuals.json",
+    "receipt": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/frozen_gradient_layer_residuals_receipt.json",
+    "status": "complete_postprocessing_only",
+    "input_gradient_arrays_sha256": "113e3c4c182589f0c75ec0741b2812923344adc6390649a8495471e533d4f8ab",
+    "f32": "x_output_layer's 99 parameters account for 96.4% of squared scale-residual norm and 90.7% of corrected-gradient squared norm; group relative residual is 0.001476.",
+    "f64": "Largest group relative residual is 2.45e-11 in x_feature_extractor; group gradient cosine is effectively 1.0.",
+    "limit": "Describes saved vectors only; it is not a new forward/backward evaluation or a gate decision."
+  },
+  "clean_predopt_raw_repeat_diagnostic": {
+    "driver": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/clean_predopt_geometry.py",
+    "result": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/clean_predopt_geometry.json",
+    "arrays": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/clean_predopt_geometry_gradients.npz",
+    "receipt": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/clean_predopt_geometry_receipt.json",
+    "status": "complete_raw_repeat_diagnostic",
+    "geometry_stage_status": "pending_raw_result_review",
+    "driver_sha256": "9cb07c81a28d054b8b0d6791144608b3ff5c4cdd2a9aebeaec453145c0bb28a1",
+    "result_sha256": "eeb930aa9037040f4e56388310ba10d3f4c4a685f74bc7fc2fa6b8a7ef07a72f",
+    "gradient_arrays_sha256": "d59bae3f272472cfa821d390dd09bb9fd52ecb863f2d1889da7f2d6df5e41547",
+    "clean_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "checkpoint_report_sha256": "7ffb34795ec10e2fde8d42c3eb432e6588f5a24f400e8242be14592abd537262",
+    "source_input_and_materialized_tree_hashes": "Receipt-bound hashes match start-to-end and match current files; MOO store verifies the selected NCCE31 group file against its pinned manifest.",
+    "precision_and_parameter_maps": "Chemistry autograd uses persistent F64 leaves; E/op autograd stays F32. All task maps share 34 names and shapes, 9446 values, and CUDA:0; shadow buffers are exact widened copies, with the integer architecture buffer unchanged.",
+    "tasks": {
+      "chem": {"loss": 1.1126000851297508, "gradient_dtype": "torch.float64", "gradient_norm_f64_reduction": 46.83005514461214, "repeat_loss_difference": 0.0, "repeat_gradient_relative_l2_difference": 0.0, "repeat_gradient_cosine": 1.0, "finite_and_complete": true},
+      "exc": {"loss": 31.27274717005688, "gradient_dtype": "torch.float32", "gradient_norm_f64_reduction": 4401.032297613772, "repeat_loss_difference": 0.0, "repeat_gradient_relative_l2_difference": 0.0, "repeat_gradient_cosine": 1.0, "finite_and_complete": true},
+      "op": {"loss": 0.04194787968835473, "gradient_dtype": "torch.float32", "gradient_norm_f64_reduction": 0.4094464789677722, "repeat_loss_difference": 0.0, "repeat_gradient_relative_l2_difference": 0.0, "repeat_gradient_cosine": 1.0, "finite_and_complete": true}
+    },
+    "rollback": "Model and shadow parameters/buffers, materialized input tree, caller RNG, runtime flags, and CUDA device all restored.",
+    "limit": "This artifact evaluates each raw objective and gradient twice only. It does not widen E/op maps, call the F64 aggregator, reset/report PCD geometry, or compute common-descent direction/dots; the direction gate remains pending."
+  },
+  "clean_predopt_saved_gradient_direction_geometry": {
+    "driver": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/clean_predopt_direction_geometry.py",
+    "result": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/clean_predopt_direction_geometry.json",
+    "receipt": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/clean_predopt_direction_geometry_receipt.json",
+    "status": "complete_saved_gradient_geometry_diagnostic",
+    "result_sha256": "16e416e02561a821bb374e72102e8575cac85050ad10fe9b628ada62330c8c04",
+    "receipt_sha256": "d69ba1264daa2023a9471b510699b6f3291f70501ff8e57a3c4f9895b32d3e63",
+    "driver_sha256": "6a0bfde0bdff75834dca1323290eb3cb8e6c013479002ac300a0f9c0fd7e3ca4",
+    "raw_gradient_arrays_sha256": "d59bae3f272472cfa821d390dd09bb9fd52ecb863f2d1889da7f2d6df5e41547",
+    "sample": "predeclared NCCE31 reaction 0, BH, level2_mura, rank 0",
+    "verification": "Independent review confirmed result/receipt and driver hashes, raw-gradient artifact bindings, unchanged start/end input and source hashes, and matches to current files.",
+    "method": "Existing aggregate_task_gradients PCD over saved gradients widened to F64 at the aggregator boundary; fresh state, t=1, tau=0.02. No objective evaluation, trial, update, or training.",
+    "pcd": {
+      "geometry_gate": "pass",
+      "strict_common_descent": true,
+      "task_step_dots": {
+        "chem": -1554.0982778387597,
+        "exc": -5661.826468639194,
+        "op": -1.714847622395638
+      }
+    },
+    "secondary_native_fs": {
+      "geometry_gate": "pass",
+      "weights": {
+        "chem": 0.005430542526720785,
+        "exc": 0.0,
+        "op": 0.9945694574732792
+      },
+      "interpretation": "Independent raw-gradient simplex witness only; PCD remains the chemistry-primary method under review."
+    },
+    "stage2_assessment": "The clean saved-gradient first-order geometry gate passes for this predeclared NCCE31/BH sample. It does not establish finite-step Armijo acceptance or geometry for the tiny restart's actual manifest entries.",
+    "limit": "No finite trial, parameter update, restart, or training was performed or authorized by this diagnostic."
+  },
+  "tiny_restart_gate_recommendation": {
+    "scope": "Exactly two updates were executed from canonical predopt in original manifest order after the independent static driver gate passed: entry 0 pTC13/BeH2, then entry 1 AE17/H2. This is a bounded diagnostic, not authorization for extended training.",
+    "existing_direct_armijo_settings": {
+      "c": 0.0001,
+      "rho": 0.5,
+      "maximum_backtracks": 20,
+      "minimum_backtrack_multiplier": 9.5367431640625e-7,
+      "initial_step_size": 6.632573669086685e-7,
+      "minimum_requested_step_size": 6.325315159880337e-13
+    },
+    "required_per_step_checks": "At each actual ordered sample and current state, recompute task gradients and fresh/reset PCD geometry; require finite strict negative task dots before any trial. Construct each requested candidate from the widened stored base in F64, round once to F32, reread the stored candidate, and set s = stored_trial_F64 - stored_base_F64. Reject a realized no-op, nonfinite displacement, or any nonnegative task dot g_task_F64·s. For all tasks require finite strict decrease and L_trial <= L_base + c*(g_task_F64·s). Record requested/realized norms, cosine, all trial losses/dots/margins, and stop if no candidate passes by t=2^-20.",
+    "implementation_note": "The existing trainer's direct Armijo path uses ideal t-scaled proposal slopes and its accepted delta is derived from the pre-copy candidate tensor. Use the predeclared external realized-displacement contract for this precision-sensitive restart; do not treat the existing path's idealized margin as equivalent.",
+    "source_for_defaults": ".planning/step_globalization/protocol.json and train_models/lap_moo_training.py direct vector-Armijo implementation",
+    "stop_rule": "Never force an update at the lower bound. Stop on failed per-step geometry, no-op, nonnegative realized slope, failed componentwise Armijo, or after two accepted updates.",
+    "execution": {
+      "result": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/tiny_clean_restart_results.json",
+      "receipt": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/tiny_clean_restart_receipt.json",
+      "verification": "C:/Dev/readWFN_share_ms/lap_chem_objective_recovery_runs_20261003/tiny_clean_restart_verified.json",
+      "status": "complete_two_accepted_updates; independent verification pass",
+      "driver_sha256": "82dcbfcb6632fc5de81592b747293cc52aa350356ee5e0cdd2c59793a7ea98d9",
+      "result_sha256": "c7112b76d4e6168d0d15b081b5c61025c0be154cefe0b5cf0b81de540885fa04",
+      "checkpoint_sha256": "14c1c5d50cf1e3f17e55d66d0be353d7d8871291718dbc10d3176746b2bbaf69",
+      "accepted_updates": [
+        {
+          "manifest_entry": 0,
+          "sample": "pTC13 reaction 12 / BeH2 / level3_mura",
+          "accepted_alpha": 6.632573669086685e-7,
+          "backtracks": 0,
+          "realized_step_norm": 7.1982018635363e-5,
+          "realized_task_dots": {
+            "chem": -0.003445624935705091,
+            "exc": -0.04852498605778027,
+            "op": -8.313858051439155e-7
+          },
+          "armijo_margins": {
+            "chem": 0.003445387151045587,
+            "exc": 0.04826974901472525,
+            "op": 2.247023838330975e-6
+          },
+          "ema_t_after": 1
+        },
+        {
+          "manifest_entry": 1,
+          "sample": "AE17 reaction 16 / H2 / level2_gauss_chebyshev",
+          "accepted_alpha": 3.3162868345433423e-7,
+          "backtracks": 1,
+          "rejected_initial_chem_armijo_margin": -79.13087474101062,
+          "realized_step_norm": 0.005658057836577939,
+          "realized_task_dots": {
+            "chem": -96.5345764454642,
+            "exc": -3.687290714036244,
+            "op": -0.0015667409220564946
+          },
+          "armijo_margins": {
+            "chem": 17.213661472463528,
+            "exc": 3.685083509278113,
+            "op": 0.0015428834445444795
+          },
+          "ema_t_after": 2
+        }
+      ],
+      "independent_checks": "All nine task/trial Armijo margins recomputed from actual stored-step slopes; recorded pass flags matched. All three rollback flags true; final fresh PCD EMA state t=2. Result, receipt, driver, checkpoint hashes matched. All 102 source and 11 input files matched start/end/current hashes.",
+      "supplementary_provenance": "Three imported helpers match hashes from the prior reviewed raw-gradient receipt and during/post-run checks. Six manifest-selected data files match manifest, during/post-run hashes and existing load-time checks. These are supplemental preexisting/during/post checks, not driver start snapshots.",
+      "corrected_panel_27_rows": {
+        "chem": {"median_ratio": 1.0141382009955762, "wins": 10, "rows": 27, "p90": 2.31735632363198, "max": 32.19771354921136},
+        "exc": {"median_ratio": 0.4991769395019602, "wins": 27, "rows": 27, "p90": 0.6483770433822236, "max": 0.6603082900786716},
+        "op": {"median_ratio": 0.9576385793937746, "wins": 27, "rows": 27, "p90": 0.9624225185662857, "max": 0.9695346683053732},
+        "verification": "Independent identity match and ratio recomputation passed. Chemistry response is mixed, including one large outlier; this panel is bounded evidence, not broad recovery."
+      }
+    }
+  },
+  "not_verified_by_this_audit": [
+    "No long-horizon training or post-restart trajectory was evaluated; the two-update diagnostic and 27-row panel do not establish broad optimizer recovery.",
+    "The three helper and six restart-data provenance comparisons are explicit preexisting/during/post checks; the restart driver itself did not capture start snapshots for those external files."
+  ],
+  "completion_gates": {
+    "source_and_focused_tests": "reviewed; suites and no-new-Ruff comparison passed",
+    "corrected_frozen_replay": "scalar replay and base-gradient diagnostic complete; driver-added strict factor-scaling comparison failure retained; F64 scalar/autograd identity evidence supports read-only clean geometry",
+    "verified_predopt_and_clean_geometry": "clean checkpoint, repeated raw task gradients, and saved-gradient F64 PCD gate verified for predeclared NCCE31/BH; actual ordered restart-entry geometry verified per step",
+    "armijo_restart": "exactly two accepted updates verified with realized-displacement componentwise Armijo and rollback; no further updates",
+    "independent_closeout": "independent review and result verification complete; bounded diagnostic does not authorize long-horizon training"
+  }
+}
+

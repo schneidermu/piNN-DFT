@@ -288,6 +288,8 @@ def batch_fchem(
     Returns:
         Scalar loss tensor.
     """
+    if isinstance(current_bases, str):
+        raise TypeError("current_bases must be a sequence of labels, not a string.")
     err_dict: dict = {}
     for database, pred, ref in zip(current_bases, reaction_energy, y_batch):
         err_dict.setdefault(database, [[], []])

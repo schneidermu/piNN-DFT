@@ -57,8 +57,11 @@ def reaction_loss(model, reaction, target, device, dtype, dispersions=None):
         dispersions=dispersions,
         return_local_energies=False,
     )
+    databases = reaction["Database"]
+    if isinstance(databases, str):
+        databases = [databases]
     return batch_fchem(
-        reaction["Database"], prediction, target.to(device=device, dtype=dtype)
+        databases, prediction, target.to(device=device, dtype=dtype)
     )
 
 

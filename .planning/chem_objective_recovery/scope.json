@@ -1,0 +1,135 @@
+{
+  "audit": {
+    "repository": "C:/Dev/readWFN_share_ms/lap_full_vxc",
+    "branch": "lap_full_vxc",
+    "head": "1b740325d8bc120d7da9ef1da117338e6ba98fcc",
+    "source_edits_by_auditor": 0,
+    "method": "static source/caller and historical-report audit"
+  },
+  "runtime_contract": {
+    "stored_record": "Database is a scalar string on canonical records and MinnesotaGroupStore.load_variant results.",
+    "collated_record": "dataset.collate_fn/stack_reactions returns a list of full database labels.",
+    "failure": "Passing a scalar label to batch_fchem makes zip consume characters. With one prediction/target, later characters are silently truncated and the first character selects a fallback factor.",
+    "example": {
+      "database": "NCCE31",
+      "observed_key": "N",
+      "fallback_factor": 8.979622680758972,
+      "named_database_factor": 2.896652477664184,
+      "factor_ratio": 3.1
+    }
+  },
+  "definitions_and_callers": [
+    {
+      "definition": "train_models/optuna_joint.py:779 batch_fchem",
+      "expected_input": "list of database labels, one per prediction/target row",
+      "callers": [
+        "train_models/lap_training.py:60 reaction_loss currently forwards reaction[Database] unchanged",
+        "train_models/optuna_joint.py:1457 training route constructs labels from a collated reaction_batch",
+        "train_models/replay_trial_19_gradient_geometry.py:173 explicitly passes list(reaction_batch[Database])",
+        "train_models/replay_trial_19_arml.py:126 explicitly passes list(reaction_batch[Database])",
+        "train_models/test_lap_s5_training.py:59 supplies a label list"
+      ]
+    },
+    {
+      "definition": "train_models/predopt_train.py:273 batch_fchem",
+      "expected_input": "list of database labels, one per prediction/target row",
+      "callers": [
+        "train_models/predopt_train.py:595 uses extend_bases output",
+        "train_models/predopt_train.py:756 uses extend_bases output"
+      ],
+      "note": "extend_bases produces a list for scalar or collated Database inputs; current helper callers are list-based. A scalar rejection guard does not change those valid calls."
+    }
+  ],
+  "reaction_loss_routes": [
+    {
+      "route": "train_models/lap_moo_training.py:579 make_reaction_objective -> train_models/lap_training.py:36 reaction_loss",
+      "runtime_database_type": "scalar string from MinnesotaGroupStore.load_variant",
+      "finding": "affected; route passes scalar unchanged into optuna_joint.batch_fchem"
+    },
+    {
+      "route": "train_models/train_lap_s5.py:361-383 collect_objective_calibration",
+      "runtime_database_type": "scalar string from canonical_predopt_view records",
+      "finding": "affected for chemistry calibration values/gradients only"
+    },
+    {
+      "route": "train_models/train_lap.py:107 via dataset.collate_fn",
+      "runtime_database_type": "list of full labels",
+      "finding": "no scalar iteration defect"
+    },
+    {
+      "route": "train_models/lap_diagnostics.py:112 via collated loader",
+      "runtime_database_type": "list of full labels",
+      "finding": "no scalar iteration defect"
+    },
+    {
+      "route": "train_models/run_lap_real_pilot.py:143 via dataset.collate_fn",
+      "runtime_database_type": "list of full labels",
+      "finding": "no scalar iteration defect"
+    },
+    {
+      "route": "S5 short training through optuna_joint.train_one_epoch",
+      "runtime_database_type": "list of full labels from collated loaders",
+      "finding": "no scalar iteration defect in the training call; calibration route above is affected"
+    },
+    {
+      "route": "train_models/test_lap_protocol.py:351",
+      "runtime_database_type": "list after dataset.collate_fn, despite scalar EA13 fixture",
+      "finding": "exercises a valid list route and finiteness only; it does not cover raw scalar normalization or named-factor correctness"
+    },
+    {
+      "route": "train_models/test_lap_protocol.py:411",
+      "runtime_database_type": "not applicable; reaction_loss is monkeypatched",
+      "finding": "does not exercise the production database-label path"
+    },
+    {
+      "route": "canonical train_models/lap_training.py:predopt_loss/run_predopt",
+      "runtime_database_type": "not applicable; constants-MSE objective",
+      "finding": "unaffected"
+    }
+  ],
+  "historical_impact_matrix": [
+    {
+      "artifact": "lap_chem_precision_trace_report.md and .planning/chem_precision_trace/*",
+      "evidence": "Frozen NCCE31 trace explicitly records scalar Database, key N, and fallback factor.",
+      "impact": "Absolute chemistry loss, delta, and gradient are scaled by the wrong positive factor. The F32-up/F64-down sign comparison is invariant to this common positive factor for the same row; its reported magnitudes and objective-weight interpretation require corrected replay.",
+      "action": "Recompute the frozen F32/matched-F64 trace and gradients under tickets 3-4; retain the historical capture unchanged."
+    },
+    {
+      "artifact": ".planning/precision_audit/*",
+      "evidence": "Static audit confirms gradient and trial evaluation use the same chemistry factory, which reaches the scalar NCCE31 route.",
+      "impact": "The same-objective identity finding remains true for the implementation that was audited, but both chemistry scalars and gradients use the wrong database factor. Precision/response classifications need the corrected frozen replay.",
+      "action": "Revisit numeric classifications after corrected replay; do not infer a gradient-versus-trial code-path mismatch from this defect."
+    },
+    {
+      "artifact": "lap_direction_recovery_report.md and .planning/direction_recovery/*",
+      "evidence": "Frozen chemistry sample is NCCE31 reaction 0 and uses the direct stored-record reaction objective. The old strict common-descent witness is for fixed task gradients.",
+      "impact": "Multiplying chemistry by a positive factor preserves common-descent feasibility and the sign of any fixed direction, but changes chemistry scale and can change norm-sensitive FS/MGDA weights and emitted directions. The old PCD direction is not a corrected-objective direction.",
+      "action": "Recompute frozen gradients, weights, and any newly chosen direction after ticket 3; retain only the fixed-state common-descent existence result as qualitative evidence."
+    },
+    {
+      "artifact": "lap_step_globalization_report.md and .planning/step_globalization/*",
+      "evidence": "The AE17/H2 reaction objective uses the same store-backed MOO factory route.",
+      "impact": "Absolute chemistry loss and gradient are misweighted. For a fixed direction on the same one-reaction sample, chemistry slope sign and ideal Armijo inequality are invariant to the common positive factor. A direction recomputed from corrected multiobjective geometry can differ, so old direction results do not predict its acceptance.",
+      "action": "Keep fixed-direction evidence conditional; evaluate any corrected direction only after the frozen chemistry and clean geometry gates pass."
+    },
+    {
+      "artifact": ".planning/pcd/final_audit.md and PCD run conclusions",
+      "evidence": "PCD training uses the shared store-backed reaction objective. The frozen checkpoint-panel evaluator also calls make_three_objective_factories -> make_reaction_objective -> reaction_loss on store-loaded variants.",
+      "impact": "Training checkpoints and optimizer/PCD behavior reflect incorrect per-database chemistry factors. Panel absolute chemistry loss values are misweighted; same-row checkpoint/predopt ratios cancel the shared positive factor. Checkpoint contamination remains and requires corrected-objective revalidation.",
+      "action": "Use source identities to classify checkpoints; preserve row-ratio conclusions only for the same fixed panel rows and revalidate candidate checkpoints from the clean predopt state after the root gate."
+    },
+    {
+      "artifact": "Frozen cursor-2 27-row panel results in panel_cursor2.json and lap_step_globalization_report.md",
+      "evidence": "The frozen_b20 panel evaluator loads one store variant per row, evaluates the chemistry factory, and compares each checkpoint row with the predopt row at the same stream index and database.",
+      "impact": "Absolute losses.chem values use the scalar fallback factor. Each ratios_to_predopt.chem value is invariant because the same positive per-database factor multiplies both losses for that row. Aggregated absolute chemistry-loss summaries are affected; row-ratio summaries are not. The evaluated MOO checkpoint itself was trained with the defective chemistry scale.",
+      "action": "Do not relabel same-row ratio summaries as miscomputed. Recompute absolute chemistry losses with the corrected source and use a clean corrected-objective trajectory for candidate conclusions."
+    },
+    {
+      "artifact": "S5 and predopt history",
+      "evidence": "S5 collect_objective_calibration receives raw scalar records; its later collated train_one_epoch path uses label lists. Canonical run_predopt optimizes constants MSE and does not call reaction_loss. predopt_train batch_fchem callers receive extend_bases lists.",
+      "impact": "S5 calibration chemistry values/gradients are affected; S5 collated training route and canonical predopt objective are unaffected by scalar iteration.",
+      "action": "Do not assume all S5 or predopt results are affected; classify the calibration outputs separately from training/checkpoint provenance."
+    }
+  ]
+}
+

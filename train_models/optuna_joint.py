@@ -781,6 +781,8 @@ def batch_fchem(
     reaction_energy: torch.Tensor,
     y_batch: torch.Tensor,
 ) -> torch.Tensor:
+    if isinstance(current_bases, str):
+        raise TypeError("current_bases must be a sequence of labels, not a string.")
     err_dict: Dict[str, List[List[torch.Tensor]]] = {}
     for database, pred, ref in zip(current_bases, reaction_energy, y_batch):
         err_dict.setdefault(database, [[], []])
