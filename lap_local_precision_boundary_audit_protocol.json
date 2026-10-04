@@ -1,0 +1,46 @@
+{
+  "starting_commit": "f41acc47bd7eece55cdc2c01183e9e6b2b994342",
+  "baseline": {
+    "base_loss": 0.03679767046580439,
+    "gradient_norm": 0.4202780786176959,
+    "gradient_cosine_gold": 0.9999999999996239,
+    "gradient_relative_L2_gold": 1.2707774254800578e-06,
+    "dot_requested": -3.744097394785997e-07,
+    "dot_realized": -3.7372662521648197e-07,
+    "delta_rounded": -4.2720760458705986e-07,
+    "delta_continuous": null,
+    "response_abs_error": 5.3568211011203114e-08,
+    "response_tolerance": 1.868196967879284e-08,
+    "passes": false,
+    "finite": true
+  },
+  "gold_delta": -3.7363939357585675e-07,
+  "threshold": 1.868196967879284e-08,
+  "source_precision": "F64 arithmetic on exact F32-loaded values; no source upgrade",
+  "conditions": [
+    "combined",
+    "M64",
+    "P64"
+  ],
+  "isolation_contract": "Each branch constructs sigma from original widened gradient values in its own dtype, before raw descriptors/model or PBE arithmetic. Separate sigma leaves retain both direct PBE and learned-parameter density dependencies. Each sigma chain is evaluated in that branch dtype before F64 sum. Nonselected branch arithmetic remains F32.",
+  "base_sha256": "16b63fccd3dd70c11afdaf37f498486b9a6c641f9c8e75e3f7fb7b496e4c0c97",
+  "candidate_sha256": "13c9d8ad8df1d8379a2e1e267f1026f0f0a20b0c3bf57ae1f2a21f362893cc9d",
+  "baseline_artifact_sha256": "90fb5f1053103f9fbd9095daec5bfccebb191df1e42200490efc408ffee411db",
+  "driver_sha256": "433d8069e291dd7ddb1390721d8effffdb57461e4c0743a9a14ead5557d6d585",
+  "no_training": true,
+  "no_pilot": true,
+  "selected_boundary": "F64 learned-model raw descriptors/forward/derivatives; original F32 PBE expressions and sigma chain; F64 weak-form assembly",
+  "stage1": "PASS",
+  "isolation_gate": "M64-only PASS; P64-only FAIL",
+  "production_gate": "PASS",
+  "source_hashes": {
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/test_lap_operator_unit.py": "30cfa3707bed89377fe5fc0ce519f0a0e724a04c4e6f7b5735864670397e7208",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf"
+  },
+  "scope": "Exact theta4 and already-rounded theta5; immutable15; chunks256/4096; no other trajectory or production-quality claim",
+  "review": "PASS"
+}

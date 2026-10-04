@@ -20,9 +20,23 @@ if _TRAIN_MODELS_DIR not in sys.path:
     sys.path.insert(0, _TRAIN_MODELS_DIR)
 
 try:  # Support both ``import train_models.lap_operator`` and script imports.
-    from .lap_vxc import LapEnergy, local_partials, sigma_from_gradients
+    from .lap_vxc import (
+        PBE,
+        LapEnergy,
+        gradient_chain_rule,
+        local_partials,
+        sigma_from_gradients,
+        sigma_standard_to_total,
+    )
 except ImportError:  # pragma: no cover - exercised by direct script imports
-    from lap_vxc import LapEnergy, local_partials, sigma_from_gradients
+    from lap_vxc import (
+        PBE,
+        LapEnergy,
+        gradient_chain_rule,
+        local_partials,
+        sigma_from_gradients,
+        sigma_standard_to_total,
+    )
 
 
 OPERATOR_PROTOCOL = "lap-weakform-ao-v1"
@@ -254,6 +268,38 @@ def _assemble_from_local_partials(
     return 0.5 * (matrix + matrix.T)
 
 
+def _model_double_operator_partials(energy, features, create_graph):
+    """F64 learned branch, F32 PBE branch, with their native sigma chains.
+
+    Consume differentiably widened parameters without mutating the stored model.
+    Source values and physical constants are widened, never regenerated. The
+    frozen theta4/rounded-theta5 audit qualifies this boundary against full F64.
+    """
+    with torch.enable_grad():
+        rho = features[:, :2].detach().requires_grad_(True)
+        grad = features[:, 2:8].reshape(-1, 2, 3)
+        sigma_model = sigma_from_gradients(grad).detach().requires_grad_(True)
+        grad_pbe = grad.float()
+        sigma_pbe = sigma_from_gradients(grad_pbe).detach().requires_grad_(True)
+        lapl = features[:, 8:].detach().requires_grad_(True)
+        raw = torch.cat(
+            [rho, sigma_standard_to_total(sigma_model), torch.zeros_like(rho), lapl], -1
+        )
+        state = {
+            name: value.double() if value.is_floating_point() else value
+            for name, value in (*energy.model.named_parameters(), *energy.model.named_buffers())
+        }
+        constants = torch.func.functional_call(energy.model, state, (raw,), strict=True)
+        rho_pbe = rho.float()
+        e = PBE.F_PBE(rho_pbe, sigma_pbe, constants.float(), rho.device) * rho_pbe.sum(-1)
+        c, sm, sp, b = torch.autograd.grad(
+            e.sum(), (rho, sigma_model, sigma_pbe, lapl),
+            create_graph=create_graph, retain_graph=create_graph,
+        )
+        a = gradient_chain_rule(sm, grad) + gradient_chain_rule(sp, grad_pbe).double()
+    return e.double(), c, a, b
+
+
 def assemble_spin_operators(
     energy,
     features: torch.Tensor,
@@ -275,7 +321,14 @@ def assemble_spin_operators(
     _check_features(features, ngrid)
     if features.device != phi.device or features.dtype != phi.dtype:
         raise ValueError("Density features and AO grid tensors must share device and dtype.")
-    _, c, a, b = local_partials(energy, features, create_graph=create_graph)
+    if isinstance(energy, LapEnergy) and next(energy.model.parameters()).dtype == torch.float32:
+        # Bounded AO chunk promotion; neither cache nor stored parameters change.
+        features, weights, phi, grad_phi, lap_phi = (
+            value.double() for value in (features, weights, phi, grad_phi, lap_phi)
+        )
+        _, c, a, b = _model_double_operator_partials(energy, features, create_graph)
+    else:
+        _, c, a, b = local_partials(energy, features, create_graph=create_graph)
     return tuple(
         _assemble_from_local_partials(
             c[:, spin], a[:, spin], b[:, spin], weights, phi, grad_phi, lap_phi, chunk_size

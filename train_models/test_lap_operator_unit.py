@@ -294,3 +294,39 @@ def test_lap_energy_operator_backpropagates_to_network_parameters():
     assert parameter_grads
     assert all(torch.isfinite(grad).all() for grad in parameter_grads)
     assert sum(grad.abs().sum() for grad in parameter_grads) > 0
+
+
+def test_float32_operator_uses_double_learned_branch_without_mutating_model(monkeypatch):
+    import train_models.lap_operator as implementation
+
+    torch.manual_seed(41)
+    model = pcPBELMLOptimizerV2Lap(num_layers=2, h_dim=8, use_g_x=True, use_g_c=True)
+    state = {name: value.clone() for name, value in model.state_dict().items()}
+    features, weights, phi, grad_phi, lap_phi = (value.float() for value in _random_inputs())
+    observed = []
+    original_forward = model.forward
+    original_pbe = implementation.PBE.F_PBE
+
+    def forward(raw):
+        assert raw.dtype == torch.float64
+        assert all(p.dtype == torch.float64 for p in model.parameters())
+        result = original_forward(raw)
+        assert result.dtype == torch.float64
+        observed.append("learned-double")
+        return result
+
+    def pbe(rho, sigma, constants, *args, **kwargs):
+        assert rho.dtype == sigma.dtype == constants.dtype == torch.float32
+        observed.append("pbe-original")
+        return original_pbe(rho, sigma, constants, *args, **kwargs)
+
+    monkeypatch.setattr(model, "forward", forward)
+    monkeypatch.setattr(implementation.PBE, "F_PBE", pbe)
+    matrix = assemble_rks_operator(LapEnergy(model), features, weights, phi, grad_phi, lap_phi)
+    assert matrix.dtype == torch.float64
+    assert "learned-double" in observed and "pbe-original" in observed
+    matrix.square().sum().backward()
+    assert all(torch.equal(model.state_dict()[name], value) for name, value in state.items())
+    grads = [p.grad for p in model.parameters() if p.grad is not None]
+    assert grads and all(g.dtype == torch.float32 and torch.isfinite(g).all() for g in grads)
+    assert sum(g.abs().sum() for g in grads) > 0

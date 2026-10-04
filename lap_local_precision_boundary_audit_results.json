@@ -1,0 +1,945 @@
+{
+  "starting_commit": "f41acc47bd7eece55cdc2c01183e9e6b2b994342",
+  "baseline_reused": {
+    "base_loss": 0.03679767046580439,
+    "gradient_norm": 0.4202780786176959,
+    "gradient_cosine_gold": 0.9999999999996239,
+    "gradient_relative_L2_gold": 1.2707774254800578e-06,
+    "dot_requested": -3.744097394785997e-07,
+    "dot_realized": -3.7372662521648197e-07,
+    "delta_rounded": -4.2720760458705986e-07,
+    "delta_continuous": null,
+    "response_abs_error": 5.3568211011203114e-08,
+    "response_tolerance": 1.868196967879284e-08,
+    "passes": false,
+    "finite": true
+  },
+  "baseline_sha256": "90fb5f1053103f9fbd9095daec5bfccebb191df1e42200490efc408ffee411db",
+  "trusted_reference": {
+    "base_loss": 0.03679768068429526,
+    "gradient_norm": 0.42027846889041576,
+    "gradient_cosine_gold": 1.0,
+    "gradient_relative_L2_gold": 0.0,
+    "dot_requested": -3.74410167648914e-07,
+    "dot_realized": -3.737270529368057e-07,
+    "delta_rounded": -3.7363939357585675e-07,
+    "delta_continuous": -3.74322351739953e-07,
+    "response_abs_error": 0.0,
+    "response_tolerance": 1.868196967879284e-08,
+    "passes": true,
+    "finite": true
+  },
+  "stage1": "PASS",
+  "isolation": {
+    "combined": {
+      "delta": -3.7363939357585675e-07,
+      "relative_discrepancy": 0.0,
+      "absolute_error": 0.0,
+      "passes": true,
+      "gradient": {
+        "norm": 0.42027846889041576,
+        "aggregate_norm": 0.42027846889041576,
+        "cosine": 1.0,
+        "dot": 0.17663399141287217,
+        "norm_ratio": 1.0,
+        "relative_directional_error": 0.0
+      }
+    },
+    "M64": {
+      "delta": -3.7333738637212087e-07,
+      "relative_discrepancy": 0.0008082852315050802,
+      "absolute_error": 3.0200720373587915e-10,
+      "passes": true,
+      "gradient": {
+        "norm": 0.42027803008730485,
+        "aggregate_norm": 0.42027846889041576,
+        "cosine": 0.9999999999998174,
+        "dot": 0.17663380699334033,
+        "norm_ratio": 0.9999989559229335,
+        "relative_directional_error": 1.206394520244247e-06
+      }
+    },
+    "P64": {
+      "delta": -4.2713958767944444e-07,
+      "relative_discrepancy": 0.14318670628268754,
+      "absolute_error": 5.3500194103587694e-08,
+      "passes": false,
+      "gradient": {
+        "norm": 0.42027849800747896,
+        "aggregate_norm": 0.42027846889041576,
+        "cosine": 0.9999999999998979,
+        "dot": 0.17663400365012888,
+        "norm_ratio": 1.0000000692804065,
+        "relative_directional_error": 4.572536628373563e-07
+      }
+    }
+  },
+  "direct_operator_diagnostics": {
+    "M64": {
+      "max_response_relative_L2": 0.004482152349575734,
+      "min_response_cosine": 0.9999903814760649,
+      "max_response_component_abs": 1.0002900996397557e-07,
+      "response_norm_ratio_range": [
+        0.9988836217034012,
+        1.0010455083148215
+      ],
+      "max_base_operator_relative_L2": 9.75168184294628e-08,
+      "max_candidate_operator_relative_L2": 1.0427367812888986e-07,
+      "local_sample_max_relative_L2": {
+        "e": 1.5749905849182912e-07,
+        "c": 2.471313038177837e-07,
+        "a": 3.617648685506083e-05,
+        "b": 4.415026310460173e-07
+      },
+      "local_sample_max_abs": {
+        "e": 9.853841189327384e-13,
+        "c": 2.354914230284777e-08,
+        "a": 4.473482295968417e-09,
+        "b": 7.579995178300726e-22
+      }
+    },
+    "P64": {
+      "max_response_relative_L2": 0.0662595841524008,
+      "min_response_cosine": 0.9979909021485955,
+      "max_response_component_abs": 1.4658826792413038e-06,
+      "response_norm_ratio_range": [
+        1.0042785523258717,
+        1.042377599060832
+      ],
+      "max_base_operator_relative_L2": 1.803105894482716e-08,
+      "max_candidate_operator_relative_L2": 2.0032585237304314e-07,
+      "local_sample_max_relative_L2": {
+        "e": 7.097440358660638e-08,
+        "c": 7.129149817016211e-08,
+        "a": 1.003221805001324e-07,
+        "b": 1.0
+      },
+      "local_sample_max_abs": {
+        "e": 6.883545264417231e-13,
+        "c": 6.071912181382366e-09,
+        "a": 4.799694218460271e-10,
+        "b": 1.7168630148661243e-15
+      }
+    }
+  },
+  "selected_boundary": "F64 learned-model raw descriptors/forward/derivatives; original F32 PBE expressions and sigma chain; F64 weak-form assembly",
+  "production": {
+    "delta": -3.7333738637212087e-07,
+    "relative_discrepancy": 0.0008082852315050802,
+    "passes": true,
+    "gradient": {
+      "norm": 0.4202780269523904,
+      "aggregate_norm": 0.42027846889041576,
+      "cosine": 0.9999999999998153,
+      "dot": 0.1766338056758029,
+      "norm_ratio": 0.9999989484637971,
+      "relative_directional_error": 1.2147881613916773e-06
+    },
+    "state_restored": true,
+    "rng_restored": true,
+    "no_pilot": true,
+    "source_sha256": "0df815fb212cd19a7bd8a1380fb79873b4b4970abc45b3cf26e57424a0bf4b58",
+    "driver_sha256": "7778ccda0d01e2bedeb2e063fa381fedab244a29965c79668fef8848e990f15d"
+  },
+  "dtype_audit": {
+    "status": "PASS",
+    "combined_floating_operation_outputs": {
+      "torch.float64": 2885
+    },
+    "combined_F64_to_F32_downcasts": [],
+    "both_double_split_chain_identity": {
+      "e": {
+        "relative_L2": 0.0,
+        "cosine": 0.9999999999999998,
+        "max_abs": 0.0,
+        "norm_ratio": 1.0,
+        "norm": 4.940503664587173e-06,
+        "reference_norm": 4.940503664587173e-06,
+        "shape": [
+          256
+        ]
+      },
+      "c": {
+        "relative_L2": 0.0,
+        "cosine": 1.0000000000000004,
+        "max_abs": 0.0,
+        "norm_ratio": 1.0,
+        "norm": 0.5755204060820427,
+        "reference_norm": 0.5755204060820427,
+        "shape": [
+          512
+        ]
+      },
+      "a": {
+        "relative_L2": 1.1994570466551621e-16,
+        "cosine": 1.0000000000000004,
+        "max_abs": 1.0842021724855044e-19,
+        "norm_ratio": 1.0,
+        "norm": 0.0031105619374947194,
+        "reference_norm": 0.0031105619374947194,
+        "shape": [
+          1536
+        ]
+      },
+      "b": {
+        "relative_L2": null,
+        "cosine": null,
+        "max_abs": 0.0,
+        "norm_ratio": null,
+        "norm": 0.0,
+        "reference_norm": 0.0,
+        "shape": [
+          512
+        ]
+      },
+      "M64": {
+        "audit": [
+          "torch.float64",
+          "torch.float64",
+          "torch.float64",
+          "torch.float64",
+          "torch.float64",
+          "torch.float32",
+          "torch.float32",
+          "torch.float32",
+          "torch.float32",
+          "torch.float32",
+          "torch.float64",
+          "torch.float64",
+          "torch.float32",
+          "torch.float64",
+          "torch.float64"
+        ],
+        "finite_derivatives": true
+      },
+      "P64": {
+        "audit": [
+          "torch.float64",
+          "torch.float32",
+          "torch.float32",
+          "torch.float32",
+          "torch.float32",
+          "torch.float64",
+          "torch.float64",
+          "torch.float64",
+          "torch.float64",
+          "torch.float64",
+          "torch.float64",
+          "torch.float32",
+          "torch.float64",
+          "torch.float32",
+          "torch.float64"
+        ],
+        "finite_derivatives": true
+      }
+    },
+    "constants": "NN_OUTPUT_SCALE_PBE is originally F32; same rounded source constants widened before multiplication. No constants regenerated.",
+    "tau": "Raw tau placeholders zero; architecture never reads tau. No vtau channel.",
+    "state_restored": true,
+    "rng_restored": true,
+    "driver_sha256": "7b9118d2c0113beabbc1f109f0a0e8daf64f7a65c98f736b294f491d230764e5"
+  },
+  "post_verification_computation_AST_identical": true,
+  "source_hashes": {
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/test_lap_operator_unit.py": "30cfa3707bed89377fe5fc0ce519f0a0e724a04c4e6f7b5735864670397e7208",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf"
+  },
+  "external_artifacts": {
+    "combined_AlBeH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_AlBeH.json",
+      "sha256": "2fa1174b1673cfed6cba573f6c71c1705f03ec8c53efef1b43116c12abd9e8ce",
+      "bytes": 314
+    },
+    "combined_AlBeH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_AlBeH.pt",
+      "sha256": "f1565c210eb6cca1290ffb6cf246735a59adf9bb7cc0ea2bd477e4caa9a2fd7b",
+      "bytes": 971845
+    },
+    "combined_BeH2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_BeH2.json",
+      "sha256": "68491603d9e4f1324123f4c28657df8e4f15e30c058070a6db707ace7393dd51",
+      "bytes": 310
+    },
+    "combined_BeH2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_BeH2.pt",
+      "sha256": "46985e63e0daf6d77d35b1fe797625c805a6359cf2786d2aacd8d47b611aa20f",
+      "bytes": 507921
+    },
+    "combined_BH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_BH.json",
+      "sha256": "0594f7631135590956489d86d999b6897f43005b75757064bf63bcf596bf8d73",
+      "bytes": 310
+    },
+    "combined_BH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_BH.pt",
+      "sha256": "178b32786dd2e3cd414a2ec148b2d11c99260ae812cf0444e8c05fc3d203a381",
+      "bytes": 383913
+    },
+    "combined_C2H2_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_C2H2_iso2.json",
+      "sha256": "5c4ea85de99dcce90332635d281085b18121dd1b047c23d3d666a4e81de93364",
+      "bytes": 316
+    },
+    "combined_C2H2_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_C2H2_iso2.pt",
+      "sha256": "b4ec2f0f7938e0c824382195ccc133cb021b481436651b957dff9deac174e9ce",
+      "bytes": 1008149
+    },
+    "combined_CH2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_CH2O.json",
+      "sha256": "6f002f839ad9f3e9f699f762a15b5bc83f3367030d1ea7ac95402f5d986f9376",
+      "bytes": 313
+    },
+    "combined_CH2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_CH2O.pt",
+      "sha256": "a99f509353c0513618dbce3312e9983a13c5c0719a27e99d9d9523ae739f932b",
+      "bytes": 1007889
+    },
+    "combined_CH4.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_CH4.json",
+      "sha256": "87b68693ec739c5cbeca96dc79bb25a3112091c9cd54c412b486de2eebde1ba7",
+      "bytes": 308
+    },
+    "combined_CH4.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_CH4.pt",
+      "sha256": "d24600113b9df0ac0be4dbdd017e916e773be1813c8b07c3ea977444fb3b92ba",
+      "bytes": 841949
+    },
+    "combined_ClH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_ClH.json",
+      "sha256": "6daa54dcebfb42acb95f5b1ef3b2a39e8faa0f92a4880aed41c3530bea455f32",
+      "bytes": 310
+    },
+    "combined_ClH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_ClH.pt",
+      "sha256": "9239a1682e583355ab035d86d33b07cf5f519c697701028bc60548241cdab970",
+      "bytes": 485213
+    },
+    "combined_ClHS.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_ClHS.json",
+      "sha256": "fca9c6f3b67d95d0f810a032c10f76f64141167a071da1145585cb5e38b4bdb6",
+      "bytes": 313
+    },
+    "combined_ClHS.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_ClHS.pt",
+      "sha256": "76699c16954d337544d109014fd5c4a98d4323ff6ef9e56afb9abea40b8ec97a",
+      "bytes": 1160209
+    },
+    "combined_CO.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_CO.json",
+      "sha256": "3dfaa287226ee9d973e13c063bc3a90dc2439bd97ca401af641206186d096601",
+      "bytes": 310
+    },
+    "combined_CO.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_CO.pt",
+      "sha256": "29f6d3c3fc52c37f07e4022029568b133372c147aa781426236cc3b50a8d1b50",
+      "bytes": 627625
+    },
+    "combined_execution_driver.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_execution_driver.py",
+      "sha256": "ffd20a1cb0455eb2763f2e0a51f7e5240edd9635835f66459425224637f15e49",
+      "bytes": 7803
+    },
+    "combined_H2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_H2.json",
+      "sha256": "94fc512beb823ca0e666d9dd88dc69168387a985ee0b4a51f4e4339d15afd55e",
+      "bytes": 310
+    },
+    "combined_H2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_H2.pt",
+      "sha256": "6dff56acfb9d133883fb54e94a09a32c91b71b7d180778fa2f179e24e7ba1849",
+      "bytes": 233641
+    },
+    "combined_H2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_H2O.json",
+      "sha256": "edf08ca3ff8ba165619197339e1bd8358c013515feb316c94fe0569f33cdc5ae",
+      "bytes": 311
+    },
+    "combined_H2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_H2O.pt",
+      "sha256": "c0c5911a4dd6cc048d4a7b07abd0730264c97b49198c0b6fb0239ca77fbc8f5e",
+      "bytes": 507869
+    },
+    "combined_H4Si.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_H4Si.json",
+      "sha256": "930b715c75f90c36a103698d1353838c5d33a9cbb9d0663d3135778ac3de6854",
+      "bytes": 312
+    },
+    "combined_H4Si.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_H4Si.pt",
+      "sha256": "21f5b963c5a57eaeb91296a1265dee3c014ababa7d30f478175622e313eb6870",
+      "bytes": 1015185
+    },
+    "combined_HLi.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_HLi.json",
+      "sha256": "c57db91e68a3e7455a312e6fbbd82ae66a0543cb9d0cbbce54a89b600d2cca27",
+      "bytes": 310
+    },
+    "combined_HLi.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_HLi.pt",
+      "sha256": "6a84dffbc77d30a5aee4e4e8eeb2666dca4b555cf832ef6d5caaac9f9a44b5d0",
+      "bytes": 383965
+    },
+    "combined_HPSi_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_HPSi_iso2.json",
+      "sha256": "5fbbc5bb3eca964f6ca612148f78f6d76a8f3c8101d4921a916c013f73b62270",
+      "bytes": 319
+    },
+    "combined_HPSi_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_HPSi_iso2.pt",
+      "sha256": "a4f32b1f048a3dea8b64bfd67a62a26e6086882e1ae551ce95ab993711906fdd",
+      "bytes": 1160469
+    },
+    "combined_N2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_N2.json",
+      "sha256": "16e60267bce3de756492289ecd42ac5d663bdfcbea3fe4f414c9cbe585301b1d",
+      "bytes": 311
+    },
+    "combined_N2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\combined_N2.pt",
+      "sha256": "26be66238ac60a832dbb02dda955b932c4847db4c9c50b33714fa3e241ac13c7",
+      "bytes": 627625
+    },
+    "diagnostic.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\diagnostic.py",
+      "sha256": "433d8069e291dd7ddb1390721d8effffdb57461e4c0743a9a14ead5557d6d585",
+      "bytes": 9099
+    },
+    "dtype_trace.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\dtype_trace.json",
+      "sha256": "e47fe878aa1ecc6dcfc7a6ec6aa645a320fedd227fe581ce18b68534f9383e4c",
+      "bytes": 2528
+    },
+    "dtype_trace.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\dtype_trace.py",
+      "sha256": "7b9118d2c0113beabbc1f109f0a0e8daf64f7a65c98f736b294f491d230764e5",
+      "bytes": 2835
+    },
+    "final_checks.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\final_checks.json",
+      "sha256": "679bb73c2cb281b08a1506722df7a00e23dbd790d073870d3a05075920c70eb8",
+      "bytes": 507
+    },
+    "final_checks.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\final_checks.py",
+      "sha256": "bfc7607a6b1c547161fc310ae1eca2250b41ec669b5c219291412621540be623",
+      "bytes": 2220
+    },
+    "M64_AlBeH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_AlBeH.json",
+      "sha256": "d3d1235cb1da7502b2409d64a916ef38d7bbc6c6bb8df06597b4fc82a4635492",
+      "bytes": 4573
+    },
+    "M64_AlBeH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_AlBeH.pt",
+      "sha256": "d64226ebaa26cbd78d5a9cc1719effd317152d42241edcff53ddb17b7557c934",
+      "bytes": 972289
+    },
+    "M64_BeH2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_BeH2.json",
+      "sha256": "700d48f8da1edc3f7135e862c805b95588e4c2e43615c5fcb646bf00000e7044",
+      "bytes": 4370
+    },
+    "M64_BeH2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_BeH2.pt",
+      "sha256": "6faff293de9c4881d5f36f04db704f6ad6dec5aae0db8521bdea8e44ebfa0f85",
+      "bytes": 508365
+    },
+    "M64_BH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_BH.json",
+      "sha256": "0483ee7d3e89260fe399e8083a1670a004d0d44d543bfe2cc0e57e203a83dafc",
+      "bytes": 4374
+    },
+    "M64_BH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_BH.pt",
+      "sha256": "8ac244de4aed50cd389d24872a83abb64d651008d55bea60ec157f0343a95f77",
+      "bytes": 381669
+    },
+    "M64_C2H2_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_C2H2_iso2.json",
+      "sha256": "768948ea6750ae5d46520a3d12411814a6ab4a35bb2fe78a42cbeea0707a0165",
+      "bytes": 4380
+    },
+    "M64_C2H2_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_C2H2_iso2.pt",
+      "sha256": "ef4a757660a44e7b9b9a0f45326f8bb3f1d209ec9de167ad4e4db8b019a60fb1",
+      "bytes": 1008593
+    },
+    "M64_CH2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_CH2O.json",
+      "sha256": "53228f174b0eb2fc737677d9dce36d5c45a8836a949b99e7fc2f6eb230b69ac1",
+      "bytes": 4362
+    },
+    "M64_CH2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_CH2O.pt",
+      "sha256": "246ceba7d264b930d689a16002a8a6b09f7c656c50bbb27e2672a6e0423c0d08",
+      "bytes": 1008333
+    },
+    "M64_CH4.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_CH4.json",
+      "sha256": "c082d998c08c412b47272adffbddedd33467563052e9b443d593b931e30baafe",
+      "bytes": 4383
+    },
+    "M64_CH4.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_CH4.pt",
+      "sha256": "e4f81f1ae9ef8df9357d8cf3eb101e50dcee9bf41e32305b848f0946b712ff77",
+      "bytes": 841881
+    },
+    "M64_ClH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_ClH.json",
+      "sha256": "cce335c4e804af47308f9ceff426a6aeda8c5e65c44b29104a9428711a3476a7",
+      "bytes": 4374
+    },
+    "M64_ClH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_ClH.pt",
+      "sha256": "7b086949f198238acd7d5963ea04a51154ee20c1e91f9f1fcac2eb5a79c0cd43",
+      "bytes": 485145
+    },
+    "M64_ClHS.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_ClHS.json",
+      "sha256": "762ec99bd3d10cdd71e77945e92d80e38f664e6b2bc85c98f15cdec4bf6172eb",
+      "bytes": 4367
+    },
+    "M64_ClHS.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_ClHS.pt",
+      "sha256": "23ef4236ba382cedf877f93b340ad30a66422fd86d16fa652ab5d7d19a9cdc0e",
+      "bytes": 1160653
+    },
+    "M64_CO.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_CO.json",
+      "sha256": "0c12a6230cbe06fae9cbc56d5f9a9afca6a38cb3c2274125a220c8bbc8ad457e",
+      "bytes": 4367
+    },
+    "M64_CO.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_CO.pt",
+      "sha256": "03c51676ef6a7c51cba7b8a04e96c55e0ecf96740ee99f986f962039717a2d6e",
+      "bytes": 625253
+    },
+    "M64_H2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_H2.json",
+      "sha256": "30a69247fa0cc61b4aefdf48e3704591c5eb4e10bdbd1fbc89a744f82948372d",
+      "bytes": 4367
+    },
+    "M64_H2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_H2.pt",
+      "sha256": "ed8be7f3910c0799f75c1edde0d3ecd3e54670a3bf1cb9d91518c1480cf3ffad",
+      "bytes": 231269
+    },
+    "M64_H2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_H2O.json",
+      "sha256": "3880e0cad3d9cd1d15cc6124329c7e6c1d660b108f6162d9e8e5975f1f18423d",
+      "bytes": 4382
+    },
+    "M64_H2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_H2O.pt",
+      "sha256": "1f21883258e0399344b5227c59f6b23819a92eec6f7b63985ef82a95c667b557",
+      "bytes": 507801
+    },
+    "M64_H4Si.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_H4Si.json",
+      "sha256": "e6a0e99e24538f069b139a4940e1dc7a63a4aaf1702dc7154e7c7bf608b6c8ba",
+      "bytes": 4380
+    },
+    "M64_H4Si.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_H4Si.pt",
+      "sha256": "90737e4a53208f3a6fc5469f223655bc235517571991acfaea9b862cb6dbcf6f",
+      "bytes": 1015629
+    },
+    "M64_HLi.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_HLi.json",
+      "sha256": "cefa1cc0cc8ab012dea57607fa17cdd0305f42c78771a2b16249211125f44468",
+      "bytes": 4369
+    },
+    "M64_HLi.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_HLi.pt",
+      "sha256": "b2820a08fc0f6a337e46765409bce4dc17cb319ad0a09abbeedfdaa10fd38ea3",
+      "bytes": 383897
+    },
+    "M64_HPSi_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_HPSi_iso2.json",
+      "sha256": "039afd157ff32388627121b0cde1abc6b4916a5f12c04ddd110b978ce4c195d5",
+      "bytes": 4380
+    },
+    "M64_HPSi_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_HPSi_iso2.pt",
+      "sha256": "d86b3bc9d12e49bff5060fe6cd2b15beed12ad838a180b7fdc4e2374c4a0f272",
+      "bytes": 1160913
+    },
+    "M64_N2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_N2.json",
+      "sha256": "995e952246fd2527627849e64f6b8db563e43332d558c3ed068e94bbdc47ca8f",
+      "bytes": 4363
+    },
+    "M64_N2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\M64_N2.pt",
+      "sha256": "1e5948ba5caf7e04a4f8c486d71e737d7e1f5e89f58903415c99fbb2431b4ba5",
+      "bytes": 625253
+    },
+    "P64_AlBeH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_AlBeH.json",
+      "sha256": "f972bab5eebf0e33eb6c4ccc5bfdfb851ed45031c74bdef50f5102a3f930bc68",
+      "bytes": 4446
+    },
+    "P64_AlBeH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_AlBeH.pt",
+      "sha256": "1464347bb19d56592b5394a00e9dfc388052866c5b7eee226888eec6bb4cd4dc",
+      "bytes": 972289
+    },
+    "P64_BeH2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_BeH2.json",
+      "sha256": "3e9d81bdbf4a753d45bfa70c06f1b7889ca924a3cb2875e707427e902216263a",
+      "bytes": 4323
+    },
+    "P64_BeH2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_BeH2.pt",
+      "sha256": "e7e13c00d59a0174eea8fd3f5825fa3d2562bf18dfd951a4288c3abb8b1c1e98",
+      "bytes": 508365
+    },
+    "P64_BH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_BH.json",
+      "sha256": "3e8ee0fbebadbff99ece2fc6fa46240964b5cccd3f113d395cbeb35367c79309",
+      "bytes": 4369
+    },
+    "P64_BH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_BH.pt",
+      "sha256": "a4663ff24de8a4710916b1880eda5eaf2c954c0ef9927d547f50f3441d940cb9",
+      "bytes": 381669
+    },
+    "P64_C2H2_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_C2H2_iso2.json",
+      "sha256": "ca400c503bafc4523924449e441febfed66c246347372029a40d128afbe184da",
+      "bytes": 4351
+    },
+    "P64_C2H2_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_C2H2_iso2.pt",
+      "sha256": "87dd64517a74d88bfb70c0d24f09e757ef685a8485ea297b7d9a43dd420ea71a",
+      "bytes": 1008593
+    },
+    "P64_CH2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_CH2O.json",
+      "sha256": "1f5b6401ff46f79cff8d55059dd8bc6bb80d735141d6b0a01fee94ef2f0f485f",
+      "bytes": 4355
+    },
+    "P64_CH2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_CH2O.pt",
+      "sha256": "aa9464568a8a74c657d410080141d88597aac6738d7bec88e12b484a0f8116ea",
+      "bytes": 1008333
+    },
+    "P64_CH4.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_CH4.json",
+      "sha256": "02a0e92bca0f5ed4181015451396986adbcd062e64773ab00d73e7d0bad1b5a9",
+      "bytes": 4336
+    },
+    "P64_CH4.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_CH4.pt",
+      "sha256": "c1ed671ed9663e6d1585e20a83aab907046142f97726eb0b4a81cf33521edfea",
+      "bytes": 841881
+    },
+    "P64_ClH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_ClH.json",
+      "sha256": "8c9ed331502047223c5eb20af2ca2f5db1fce9b8c7be838668846f21aca22fc4",
+      "bytes": 4355
+    },
+    "P64_ClH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_ClH.pt",
+      "sha256": "f136cc40cd67057f810c5b60155903b2d27ea6e1025ef67504fa4d019063a99e",
+      "bytes": 485145
+    },
+    "P64_ClHS.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_ClHS.json",
+      "sha256": "8e12be7f128e14a55019f095e00197b092834d5ce3f4c3e31bd38b3fdaf5d45c",
+      "bytes": 4364
+    },
+    "P64_ClHS.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_ClHS.pt",
+      "sha256": "5056db8f75eadc4932a35d2d02011baf4babbdea82cdc5a4928c0c5a48119288",
+      "bytes": 1160653
+    },
+    "P64_CO.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_CO.json",
+      "sha256": "27e41309ef821e7729c34cb8566db83b0d73bc1f0247b71bb4e762f0c6acda28",
+      "bytes": 4352
+    },
+    "P64_CO.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_CO.pt",
+      "sha256": "3375bf7b26aa924cf85bf253b7cada92addde86495c93690d905e067f3876597",
+      "bytes": 625253
+    },
+    "P64_H2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_H2.json",
+      "sha256": "115d66bdd62f442b3c99ddfe06dc33540e362f1cad56b794b156067e3071c87e",
+      "bytes": 4372
+    },
+    "P64_H2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_H2.pt",
+      "sha256": "cd2b08a3266141fb86d2eec3cc0da655f51f43dab958d52f5e1fa3e8b0e9ae5f",
+      "bytes": 231269
+    },
+    "P64_H2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_H2O.json",
+      "sha256": "e1a65e7474ff8bdd0548ed695262c72adc1ab5794f572eda16ae13a2ee5a98ef",
+      "bytes": 4364
+    },
+    "P64_H2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_H2O.pt",
+      "sha256": "9feff661c73eb3fdb96c7bfaa6ef7a0b890dec4a17cb9da1aa9c2c34b6bbd732",
+      "bytes": 507801
+    },
+    "P64_H4Si.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_H4Si.json",
+      "sha256": "d23fde4a2cbac0e7c7a845f05b8876c611b28dc5eb4c6aa8fe84da1e95040bbe",
+      "bytes": 4361
+    },
+    "P64_H4Si.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_H4Si.pt",
+      "sha256": "e422f5d37eef3720198c2d11fde071ae09f7e8b1ef2b54ee2afb543df6c01970",
+      "bytes": 1015629
+    },
+    "P64_HLi.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_HLi.json",
+      "sha256": "46a457cf0a8deff411336c55b9088fd0bad53a0ffd360b2681dcab3312676041",
+      "bytes": 4361
+    },
+    "P64_HLi.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_HLi.pt",
+      "sha256": "58bbe6b82431280a82775fba592847ecc17c61bba7f1f7295fe7ab8f0cbfcbca",
+      "bytes": 383897
+    },
+    "P64_HPSi_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_HPSi_iso2.json",
+      "sha256": "897b12301a97f5ac864be0e370db6d3f78304cfe2070db27e9ed637d95821143",
+      "bytes": 4359
+    },
+    "P64_HPSi_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_HPSi_iso2.pt",
+      "sha256": "07b508b16b35b301d1800137adb6d6dcc99608b9c68c856caccbe3c8257c3875",
+      "bytes": 1160913
+    },
+    "P64_N2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_N2.json",
+      "sha256": "2fab01cb11171ac6ed047f5397bb9e1dab138fb6630cb176ef4e1516c360952c",
+      "bytes": 4359
+    },
+    "P64_N2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\P64_N2.pt",
+      "sha256": "dd1ffbf9a689095e37c26e77b2eeb08753f1de477ad697657579eeeff687bf58",
+      "bytes": 625253
+    },
+    "production_AlBeH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_AlBeH.json",
+      "sha256": "f22b81204d57549966fe0425c6a2850b50a201ac5e00850931c076ba9006b9ab",
+      "bytes": 1126
+    },
+    "production_AlBeH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_AlBeH.pt",
+      "sha256": "e1d35a942d7b9f6184a68b4c91c79a3364706c243277fa60bec9560519c42465",
+      "bytes": 882993
+    },
+    "production_BeH2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_BeH2.json",
+      "sha256": "d2250a9ed1952ec17462ed53f2f288abc2623cd884e14f07dd54caba6a7e899a",
+      "bytes": 1126
+    },
+    "production_BeH2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_BeH2.pt",
+      "sha256": "f5701bd9439a16c564217404befec0596f64bff2056080a53358a031d9b6fb5e",
+      "bytes": 419079
+    },
+    "production_BH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_BH.json",
+      "sha256": "12da37523589296c7269d860468b3ee50a85293654e546e62e3a9bd9405c022f",
+      "bytes": 1123
+    },
+    "production_BH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_BH.pt",
+      "sha256": "b94c3f0619da5395bc268eebbf994f3781da1f604b6fec49dc61535e19acbe96",
+      "bytes": 295091
+    },
+    "production_C2H2_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_C2H2_iso2.json",
+      "sha256": "5b1a63aad162518093cee73dbffe55b77c81325e4e16989f27299b596a6630b8",
+      "bytes": 1128
+    },
+    "production_C2H2_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_C2H2_iso2.pt",
+      "sha256": "59d981ce63051adfc0755ef5deaada817bb1dfb30468548b178516ff3e0a24dd",
+      "bytes": 919257
+    },
+    "production_CH2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_CH2O.json",
+      "sha256": "04f570931df5570e841c1630fd12fb73ad330aa49515c377e3e5ca0ee5ff2043",
+      "bytes": 1125
+    },
+    "production_CH2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_CH2O.pt",
+      "sha256": "c98063961f1c50e4058f7e4a44e829a0072dbbd1e2e0747dfe6da40e6850a4e9",
+      "bytes": 919047
+    },
+    "production_CH4.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_CH4.json",
+      "sha256": "7b1653bcae40badefa1794c47dde508f78d91fb3a020415d0abf9c19c0b6260c",
+      "bytes": 1127
+    },
+    "production_CH4.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_CH4.pt",
+      "sha256": "2b87ea1351e9e3bd9e26dab8d9b4f5d42654962ad23650842ea271b19e854a5e",
+      "bytes": 753117
+    },
+    "production_check.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_check.py",
+      "sha256": "7778ccda0d01e2bedeb2e063fa381fedab244a29965c79668fef8848e990f15d",
+      "bytes": 4043
+    },
+    "production_ClH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_ClH.json",
+      "sha256": "bf5a86950cad2a938f98d6988257ff0815108dab0cb52e0930b33df6231c7f6a",
+      "bytes": 1124
+    },
+    "production_ClH.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_ClH.pt",
+      "sha256": "9da733bbc5f0ee49b9417cc8e8ab1ec583a9223c49b18c6de8b32d791b4e101e",
+      "bytes": 396381
+    },
+    "production_ClHS.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_ClHS.json",
+      "sha256": "cab30ce2de7a98f44cf578772b9e43cb6bcc9e0aec0f14421377040b33aff069",
+      "bytes": 1121
+    },
+    "production_ClHS.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_ClHS.pt",
+      "sha256": "6925816cacc1258ebac037aba7481c602e8ad410c98587566eebfcef330a76d7",
+      "bytes": 1071367
+    },
+    "production_CO.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_CO.json",
+      "sha256": "9edde9f633e841a75e8a5df7394750de175c31cd884d6b109338a8f0cadac1e0",
+      "bytes": 1122
+    },
+    "production_CO.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_CO.pt",
+      "sha256": "e81478a1401d3d1f1b8d7487b75effef272120c76bf6e8aa4c08e5e6e7231882",
+      "bytes": 538803
+    },
+    "production_contract.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_contract.json",
+      "sha256": "d31931b4a8bde0b22204fef3110252606629e39aaf6bdf24c06709f27e1297dd",
+      "bytes": 286
+    },
+    "production_executed_source.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_executed_source.py",
+      "sha256": "0df815fb212cd19a7bd8a1380fb79873b4b4970abc45b3cf26e57424a0bf4b58",
+      "bytes": 18248
+    },
+    "production_H2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_H2.json",
+      "sha256": "0f1b3a2fff99c3707c317b44563213bd9dfbdd56d54e6c77e077ba9e0523b12d",
+      "bytes": 1119
+    },
+    "production_H2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_H2.pt",
+      "sha256": "2d46e8ce94c1d3e85dd73e7f3343abe08988a9cbdcb051c9c6cece9ee5b7f381",
+      "bytes": 144819
+    },
+    "production_H2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_H2O.json",
+      "sha256": "10a9ba7d2a680a764ee18d96f888c8f915c5c6aa021d7da4310b622d4a6538f9",
+      "bytes": 1125
+    },
+    "production_H2O.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_H2O.pt",
+      "sha256": "e2851728c8f0685e25bab5a37725c9698a9463b3e27c53ba5321c825a4a25d50",
+      "bytes": 419037
+    },
+    "production_H4Si.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_H4Si.json",
+      "sha256": "c923f3924309b9810235aebb75de646bc9084edbcdac6cc2b593f65147fb0489",
+      "bytes": 1127
+    },
+    "production_H4Si.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_H4Si.pt",
+      "sha256": "d6a7ea8cda48bc75ebe2f740727e961d4ae27481d5ff4236bddcaa18d0d7b8f5",
+      "bytes": 926343
+    },
+    "production_HLi.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_HLi.json",
+      "sha256": "5e85fe5e5aec9a4bbd1ce31e3ad19b3987224883b068df7c70f9ae36bb7ca3d2",
+      "bytes": 1121
+    },
+    "production_HLi.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_HLi.pt",
+      "sha256": "180878dc3b676c07ba47c20b95fc8042b9d59f47c77601de6eae21560e0aea84",
+      "bytes": 295133
+    },
+    "production_HPSi_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_HPSi_iso2.json",
+      "sha256": "27e3de4e2a5fd46dbed01a24c2c39cc22ed199272733439f1565e9ef45c99205",
+      "bytes": 1129
+    },
+    "production_HPSi_iso2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_HPSi_iso2.pt",
+      "sha256": "7508a88e9c1a4f8512f5028a860f45639039556257bf59bde729064266347d3c",
+      "bytes": 1071577
+    },
+    "production_N2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_N2.json",
+      "sha256": "ea673d3e279a8f9df2c2352307e76425583f439cc8a4307adc8c2026045fbe44",
+      "bytes": 1119
+    },
+    "production_N2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_N2.pt",
+      "sha256": "40670c3806607c49384691dfd508286bef96dce624d9ae4c5d8088d103cf45e5",
+      "bytes": 538803
+    },
+    "production_result.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\production_result.json",
+      "sha256": "e90c4b22a2dd0a51b04af0b20847967e29e7e9f0e0c1c56c118a88211e348d5f",
+      "bytes": 19922
+    },
+    "protocol.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\protocol.json",
+      "sha256": "969f9de5f4166af53c75f000f8dc315ffc355f606b8da6cdc1272ef0f7849b4f",
+      "bytes": 1597
+    },
+    "publish.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\publish.py",
+      "sha256": "2a90079254a5f303037b18f37e4c5e15da0633c772589caf3c0635967029b549",
+      "bytes": 13924
+    },
+    "results.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\results.json",
+      "sha256": "3908b6b85ce02bf1de60b298665d0b6c7d28caa08a6489c6786435022d7a55c1",
+      "bytes": 166560
+    },
+    "review.md": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\review.md",
+      "sha256": "a9d70cf5c5f71f4810c90120e4ba9aab3a861b8289d0a70bf5a7cb932d5d9aa3",
+      "bytes": 1573
+    },
+    "state_validation.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\state_validation.json",
+      "sha256": "f245bd7fc96b29dc2d54bdf4946ea730a4612f44bcdcb349091568b9d2c812c7",
+      "bytes": 227
+    },
+    "tests.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_local_precision_runs_20261004\\tests.json",
+      "sha256": "996b87128c1f90b9b8745943d43bb7f4031b50f79adbd6bfcd3773edba64bc1e",
+      "bytes": 305
+    }
+  },
+  "tests": {
+    "dtype_trace": "PASS",
+    "windows": "40 passed, 2 deselected; operator unit/pilot and MOO training excluding two_rank",
+    "diff_check": "PASS",
+    "wsl": "15 passed; operator unit and validation incl PySCF",
+    "compileall": "PASS",
+    "no_pilot": true,
+    "ruff": "PASS on both changed files"
+  },
+  "review": "PASS",
+  "no_production_pilot": true,
+  "no_training": true
+}
