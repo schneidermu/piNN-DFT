@@ -10,7 +10,7 @@ Hierarchical Multi-Objective Optimization" (TMLR 2026), and the MIT-licensed
 reference implementation at
 https://github.com/DaraVaram/priority-constrained-descent, commit
 e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0. The reference software copyright
-is © 2026 Dara Varam and Mohamed I. AlHajri and is distributed under the MIT
+is Р’В© 2026 Dara Varam and Mohamed I. AlHajri and is distributed under the MIT
 License, retained in ``train_models/PCD_LICENSE``.
 """
 
@@ -231,7 +231,7 @@ def _imtl_coefficients(
     tasks: tuple[str, ...], cosines: list[list[float]], norms: Mapping[str, float],
 ) -> tuple[dict[str, float], str, int, float]:
     n = len(tasks)
-    # Constraints are d·(u_i-u_ref)=0 with sum(alpha)=1.  Divide each
+    # Constraints are dР’В·(u_i-u_ref)=0 with sum(alpha)=1.  Divide each
     # nonzero constraint row by its norm before the deterministic SVD solve.
     matrix = np.ones((n, n), dtype=np.float64)
     rhs = np.zeros(n, dtype=np.float64)
@@ -495,17 +495,17 @@ def _solve_pcd_qp(
     *,
     tol: float = _PCD_QP_TOL,
 ) -> tuple[np.ndarray, tuple[int, ...], bool, int, float]:
-    """Solve the fixed three-task PCD QP by the source's KKT enumeration.
+    """Solve the ordered K-task PCD QP by the source's KKT enumeration.
 
     Returned weights define ``d_tilde = sum_i weights[i] * g_tilde_i``.
-    Active task indices are 1-based into the task order (chem is index 0).
+    Active task indices are 1-based into the task order (primary is index 0).
     """
     gram = np.asarray(normalized_gram, dtype=np.float64)
-    if gram.shape != (3, 3):
-        raise ValueError(f"PCD requires a 3x3 normalized Gram matrix, got {gram.shape}.")
+    if gram.ndim != 2 or gram.shape[0] < 2 or gram.shape[0] != gram.shape[1]:
+        raise ValueError(f"PCD requires a square KxK Gram matrix, K >= 2, got {gram.shape}.")
     if not np.all(np.isfinite(gram)):
         raise FloatingPointError("PCD normalized Gram matrix contains nonfinite values.")
-    weights = np.zeros(3, dtype=np.float64)
+    weights = np.zeros(len(gram), dtype=np.float64)
     weights[0] = 1.0
     secondary_gram = gram[1:, 1:]
     rhs = tau * np.diag(secondary_gram) - gram[1:, 0]
@@ -513,7 +513,7 @@ def _solve_pcd_qp(
         return weights, (), True, 0, 0.0
 
     atol = tol * max(float(np.max(np.diag(gram))), np.finfo(np.float64).tiny)
-    candidates = [index for index in range(2) if secondary_gram[index, index] > 0.0]
+    candidates = [index for index in range(len(gram) - 1) if secondary_gram[index, index] > 0.0]
     checked = 0
     for size in range(1, len(candidates) + 1):
         for subset in combinations(candidates, size):
@@ -551,6 +551,7 @@ def aggregate_task_gradients(
     method: str,
     hyperparameters: Mapping[str, Any] | None = None,
     state: Mapping[str, Any] | None = None,
+    task_order: tuple[str, ...] | None = None,
 ) -> tuple[dict[str, torch.Tensor | None], dict[str, Any], dict[str, Any]]:
     """Aggregate per-task parameter gradients and return JSON-safe diagnostics/state.
 
@@ -562,6 +563,12 @@ def aggregate_task_gradients(
         raise ValueError(f"Unsupported gradient aggregation method {method!r}.")
     hparams = {} if hyperparameters is None else dict(hyperparameters)
     tasks = _ordered_tasks(task_grads)
+    if task_order is not None:
+        tasks = tuple(task_order)
+        if (len(tasks) < 2 or len(set(tasks)) != len(tasks)
+                or any(not isinstance(task, str) or not task for task in tasks)
+                or set(tasks) != set(task_grads)):
+            raise ValueError("Explicit task order must contain every task exactly once.")
     names, values, _templates = _collect_parameters(task_grads, tasks)
     norms = _task_norms(tasks, names, values)
     raw_gram, scaled_gram, eigenvalues, condition, rank, scale = _geometry(
@@ -651,9 +658,9 @@ def aggregate_task_gradients(
                     raise FloatingPointError(f"Aggregated gradient for parameter {name!r} is nonfinite.")
                 joint[name] = total.to(dtype=template.dtype)
     elif method == "pcd":
-        if tasks != _TASK_PRIORITY:
+        if task_order is None and tasks != _TASK_PRIORITY:
             raise ValueError(
-                "PCD requires exactly three tasks in canonical order: chem, exc, op."
+                "Nonlegacy PCD requires an explicit task_order; canonical order is chem, exc, op."
             )
         try:
             tau = float(hparams.get("tau", 0.02))
@@ -697,11 +704,12 @@ def aggregate_task_gradients(
         if not np.all(np.isfinite(normalized_gram)):
             raise FloatingPointError("PCD normalized Gram matrix contains nonfinite values.")
 
-        primary_norm = norms["chem"]
+        primary_norm = norms[tasks[0]]
         if primary_norm == 0.0:
             # Match the reference deployment branch: update EMA state, then
             # halt with an exact zero direction even when secondaries remain.
-            weights = np.array([1.0, 0.0, 0.0], dtype=np.float64)
+            weights = np.zeros(len(tasks), dtype=np.float64)
+            weights[0] = 1.0
             active_indices: tuple[int, ...] = ()
             feasible = True
             solver_iterations = 0
@@ -734,7 +742,7 @@ def aggregate_task_gradients(
         if not math.isfinite(pre_rescale_norm):
             raise FloatingPointError("PCD pre-rescale direction norm is nonfinite.")
         if primary_norm == 0.0 or pre_rescale_norm == 0.0:
-            raw_coeff_values = np.zeros(3, dtype=np.float64)
+            raw_coeff_values = np.zeros(len(tasks), dtype=np.float64)
             joint = _pcd_combine(
                 tasks, names, values,
                 {task: 0.0 for task in tasks},

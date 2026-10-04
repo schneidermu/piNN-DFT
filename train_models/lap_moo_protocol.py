@@ -17,6 +17,8 @@ from typing import Any
 PROTOCOL_VERSION = "lap-moo-one-stage-v2"
 PCD_PROTOCOL_VERSION = "lap-moo-one-stage-v3"
 PCD_ARMIJO_PROTOCOL_VERSION = "lap-moo-one-stage-v4"
+PCD_FOUR_TASK_PROTOCOL_VERSION = "lap-moo-one-stage-v5"
+FOUR_TASK_NAMES = ("relchem", "ae17", "exc", "op")
 PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE = "pcd_direct_vector_armijo"
 LEGACY_READ_ONLY_PROTOCOL_VERSION = "lap-moo-one-stage-v1"
 # Sampling identity is frozen independently from training/checkpoint metadata.
@@ -250,6 +252,7 @@ def build_sampling_manifest_from_catalog(
     seed: int,
     source_hashes: Mapping[str, str],
     world_size: int = 1,
+    chemistry_task_samples: Sequence[Sequence[Mapping[str, Any]]] | None = None,
 ) -> dict[str, Any]:
     """Build the same persisted stream from a small metadata inventory.
 
@@ -289,7 +292,7 @@ def build_sampling_manifest_from_catalog(
             }
             for suffix in row["variants"]
         ]
-    return build_sampling_manifest(
+    manifest = build_sampling_manifest(
         grouped,
         system_names,
         updates=updates,
@@ -297,14 +300,30 @@ def build_sampling_manifest_from_catalog(
         source_hashes=source_hashes,
         world_size=world_size,
     )
+    if chemistry_task_samples is not None:
+        if len(chemistry_task_samples) != updates:
+            raise ValueError("Four-task samples must cover every update.")
+        manifest["schema"] = "lap-moo-sampling-manifest-v2"
+        manifest["task_order"] = list(FOUR_TASK_NAMES)
+        for entry, samples in zip(manifest["entries"], chemistry_task_samples, strict=True):
+            if len(samples) != world_size:
+                raise ValueError("Four-task samples must cover every rank.")
+            for item, tasks in zip(entry["per_rank"], samples, strict=True):
+                item["task_samples"] = dict(tasks)
+        manifest["manifest_sha256"] = canonical_sha256(_manifest_payload(manifest))
+        validate_sampling_manifest(manifest)
+    return manifest
 
 
 def validate_sampling_manifest(manifest: Mapping[str, Any]) -> str:
-    if manifest.get("schema") != "lap-moo-sampling-manifest-v1":
+    if manifest.get("schema") not in ("lap-moo-sampling-manifest-v1", "lap-moo-sampling-manifest-v2"):
         raise ValueError("Incompatible sampling manifest schema.")
     actual = canonical_sha256(_manifest_payload(manifest))
     if manifest.get("manifest_sha256") != actual:
         raise ValueError("Sampling manifest hash mismatch.")
+    four_task = manifest.get("schema") == "lap-moo-sampling-manifest-v2"
+    if four_task and manifest.get("task_order") != list(FOUR_TASK_NAMES):
+        raise ValueError("Four-task sampling order is invalid.")
     entries = manifest.get("entries")
     if not isinstance(entries, list) or not entries:
         raise ValueError("Sampling manifest has no update entries.")
@@ -330,6 +349,25 @@ def validate_sampling_manifest(manifest: Mapping[str, Any]) -> str:
                 not in catalog.get((identity.get("database"), identity.get("reaction_id")), set())
             ):
                 raise ValueError("Sampling manifest reaction identity/variant is invalid.")
+            if four_task:
+                tasks = item.get("task_samples")
+                if not isinstance(tasks, Mapping) or set(tasks) != {"relchem", "ae17"}:
+                    raise ValueError("Four-task sampling needs independent relchem and ae17 batches.")
+                for task, batch in tasks.items():
+                    if not isinstance(batch, list) or not batch:
+                        raise ValueError("Chemistry task batches cannot be empty.")
+                    total = 0.0
+                    for row in batch:
+                        key = (row.get("database"), row.get("reaction_id"))
+                        weight = row.get("weight")
+                        if (key not in catalog or row.get("variant_suffix") not in catalog[key]
+                                or (key[0] == "AE17") != (task == "ae17")
+                                or isinstance(weight, bool) or not isinstance(weight, (int, float))
+                                or not math.isfinite(weight) or weight <= 0.0):
+                            raise ValueError("Chemistry task sample identity/weight is invalid.")
+                        total += weight
+                    if not math.isclose(total, 1.0, rel_tol=1e-12, abs_tol=1e-12):
+                        raise ValueError("Chemistry task sample weights must sum to one.")
             if item.get("mrks_system") not in manifest.get("mrks_systems", ()):
                 raise ValueError("Sampling manifest contains an unknown mRKS system.")
     return actual
@@ -383,6 +421,17 @@ def validate_cursor(manifest: Mapping[str, Any], cursor: Mapping[str, Any]) -> i
     return next_update
 
 
+def _pcd_algorithm_metadata(task_order: tuple[str, ...]) -> dict[str, Any]:
+    metadata = dict(PCD_ALGORITHM_METADATA)
+    if task_order != TASK_NAMES:
+        metadata.update(
+            primary_task=task_order[0], secondary_tasks=list(task_order[1:]),
+            qp="minimize 0.5*||d-g_tilde_primary||^2 subject to g_tilde_j dot d >= tau*||g_tilde_j||^2",
+            infeasible_policy="drop all secondary constraints and use the primary direction",
+        )
+    return metadata
+
+
 def make_protocol_metadata(
     *,
     architecture: str,
@@ -407,8 +456,14 @@ def make_protocol_metadata(
     source_code_sha256: Mapping[str, str] | None = None,
     step_rule: str | None = None,
     vector_armijo: Mapping[str, Any] | None = None,
+    task_order: tuple[str, ...] = TASK_NAMES,
 ) -> dict[str, Any]:
     """Build the explicit, h-free metadata contract for a new MOO run."""
+    if task_order not in (TASK_NAMES, FOUR_TASK_NAMES):
+        raise ValueError("Lap protocol requires a supported canonical task order.")
+    four_task = task_order == FOUR_TASK_NAMES
+    if four_task and (method != "pcd" or step_rule != PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE):
+        raise ValueError("Four-task protocol requires direct vector-Armijo PCD.")
     required_hashes = (
         predopt_checkpoint_sha256,
         sampling_manifest_sha256,
@@ -449,7 +504,7 @@ def make_protocol_metadata(
             "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
             "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO",
         },
-        "task_order": list(TASK_NAMES),
+        "task_order": list(task_order),
         "method": method,
         "method_hyperparameters": dict(method_hyperparameters),
         "fixed_scalarization": None if fixed_scalarization is None else dict(fixed_scalarization),
@@ -478,7 +533,7 @@ def make_protocol_metadata(
         metadata.update(
             {
                 "pcd_provenance": dict(PCD_PROVENANCE),
-                "pcd_algorithm": dict(PCD_ALGORITHM_METADATA),
+                "pcd_algorithm": _pcd_algorithm_metadata(task_order),
                 "world_size": world_size,
                 "sampling_manifest_file_sha256": sampling_manifest_file_sha256.lower(),
                 "source_code_sha256": dict(sorted(source_code_sha256.items())),
@@ -490,6 +545,13 @@ def make_protocol_metadata(
                 "step_rule": step_rule,
                 "vector_armijo": dict(vector_armijo or {}),
             }
+        )
+    if four_task:
+        metadata["protocol_version"] = PCD_FOUR_TASK_PROTOCOL_VERSION
+        metadata["objective_definitions"].pop("chem")
+        metadata["objective_definitions"].update(
+            relchem="mean corrected singleton fchem over251 non-AE17 identities; matched-F64 chemistry",
+            ae17="mean corrected singleton fchem over17 AE17 identities; matched-F64 chemistry",
         )
     return metadata
 
@@ -559,9 +621,10 @@ def validate_protocol_metadata(
     version = metadata.get("protocol_version")
     legacy_read_only = allow_v1_read_only and version == LEGACY_READ_ONLY_PROTOCOL_VERSION
     method = metadata.get("method")
-    pcd_protocol = version in (PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION)
-    direct_vector_armijo = version == PCD_ARMIJO_PROTOCOL_VERSION
-    if version not in (PROTOCOL_VERSION, PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION) and not legacy_read_only:
+    pcd_protocol = version in (PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION)
+    tasks = FOUR_TASK_NAMES if version == PCD_FOUR_TASK_PROTOCOL_VERSION else TASK_NAMES
+    direct_vector_armijo = version in (PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION)
+    if version not in (PROTOCOL_VERSION, PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION) and not legacy_read_only:
         raise ValueError("Incompatible one-stage Lap MOO protocol version.")
     if pcd_protocol and method != "pcd":
         raise ValueError("The v3/v4 one-stage Lap MOO protocols are reserved for PCD.")
@@ -573,15 +636,15 @@ def validate_protocol_metadata(
         raise ValueError("Historical v1 MOO metadata cannot be retrofitted with an AO-cache chunk size.")
     if metadata.get("operator_protocol") != "lap-weakform-ao-v1":
         raise ValueError("Incompatible operator protocol in Lap MOO metadata.")
-    if metadata.get("task_order") != list(TASK_NAMES):
-        raise ValueError("Lap MOO task order must be chem, exc, op.")
+    if metadata.get("task_order") != list(tasks):
+        raise ValueError("Lap MOO task order differs from its immutable protocol version.")
     if metadata.get("one_stage_main_training") is not True:
         raise ValueError("Checkpoint is not marked as one-stage main training.")
     _validate_no_legacy_controls(metadata)
     if method not in METHOD_IDS or not metadata.get("architecture"):
         raise ValueError("Lap MOO metadata needs method and architecture identities.")
     objectives = metadata.get("objective_definitions")
-    if not isinstance(objectives, Mapping) or set(objectives) != set(TASK_NAMES):
+    if not isinstance(objectives, Mapping) or set(objectives) != set(tasks):
         raise TypeError("Lap MOO objective definitions must be a mapping.")
     if not isinstance(metadata.get("method_hyperparameters"), Mapping):
         raise TypeError("Lap MOO method hyperparameters must be a mapping.")
@@ -603,7 +666,7 @@ def validate_protocol_metadata(
             raise ValueError(f"PCD QP tolerance is pinned to {PCD_QP_TOLERANCE:g}.")
         if metadata.get("pcd_provenance") != PCD_PROVENANCE:
             raise ValueError("PCD paper/upstream provenance differs from the pinned source contract.")
-        if metadata.get("pcd_algorithm") != PCD_ALGORITHM_METADATA:
+        if metadata.get("pcd_algorithm") != _pcd_algorithm_metadata(tasks):
             raise ValueError("PCD algorithm metadata differs from the pinned source contract.")
         world_size = metadata.get("world_size")
         if type(world_size) is not int or world_size <= 0:

@@ -1,0 +1,212 @@
+{
+  "schema": "lap-four-task-pcd-qualification-v1",
+  "branch": "lap_full_vxc",
+  "starting_head": "10fc2a3026e67abef53a15d1b039e82254032206",
+  "skills": [
+    "caveman",
+    "ponytail",
+    "to-spec",
+    "to-tickets"
+  ],
+  "upstream_commit": "e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0",
+  "upstream_license": "MIT",
+  "task_order": [
+    "relchem",
+    "ae17",
+    "exc",
+    "op"
+  ],
+  "primary_task": "relchem",
+  "secondary_tasks": [
+    "ae17",
+    "exc",
+    "op"
+  ],
+  "PCD": {
+    "tau": 0.02,
+    "beta": 0.999,
+    "eps": 1e-08,
+    "qp_tolerance": 1e-09
+  },
+  "normalization": "bias-corrected per-task EMA squared raw norm; 1/sqrt(vhat+eps)",
+  "QP": "min_d .5||d-gtilde_primary||^2 subject to every secondary dot>=tau||gtilde_secondary||^2; deterministic independent active subsets",
+  "magnitude_rescale": "raw relchem norm; coefficient primary1 before final rescale",
+  "infeasible_policy": "canonical primary fallback in aggregator; direct qualification refuses infeasible/non-common direction",
+  "precision": "matched-F64 chemistry arithmetic/gradient on exact F32-loaded sources and stored main values widened; no native source precision upgrade; existing F32 E/op derivatives widened only after autograd",
+  "chemistry_estimator_formulas": {
+    "R1": "uniform identity1/251: existing singleton ell",
+    "R2": "one uniform within each8DB, sum n_d/251*ell; existing database factors remain inside ell",
+    "A1": "uniform identity1/17",
+    "A2": "full17 mean each iteration; per-reaction streamed gradients"
+  },
+  "chosen_estimators": {
+    "relchem": "R2",
+    "ae17": "A2"
+  },
+  "qualification_rule": {
+    "pre_results": true,
+    "R2_selection": "Prefer R2 when median/p10 full-gradient cosine and positive-dot fraction improve directionally over R1; otherwise retain R1 if representative. Qualification requires a positive median full-gradient cosine and majority positive dots; each actual sample must independently pass strict PCD geometry. This is a diagnostic screening rule, not a stochastic convergence guarantee.",
+    "AE_selection": "Full17 if executable with bounded per-reaction graphs; no invented atom minibatch.",
+    "first_frozen_rel_draw": 0,
+    "first_mrks": "first entry of immutable sampling protocol, not selected by geometry",
+    "pcd": {
+      "tau": 0.02,
+      "beta": 0.999,
+      "eps": 1e-08,
+      "qp_tolerance": 1e-09
+    },
+    "armijo": {
+      "initial_step_size": 6.632573669086685e-07,
+      "c": 0.0001,
+      "rho": 0.5,
+      "max_backtracks": 20
+    }
+  },
+  "armijo": {
+    "initial_step_size": 6.632573669086685e-07,
+    "c": 0.0001,
+    "rho": 0.5,
+    "max_backtracks": 20
+  },
+  "acceptance": "all4 finite, requested and realized raw gradient dots with delta<0, all4 componentwise Armijo, all4 strict actual decrease",
+  "sampling": {
+    "maximum_updates": 5,
+    "manifest_identity": "4e349a8d6a4f0004c196091adfa46fd4db32fb4ec8c9f108750d5bf0fae75141",
+    "file_sha256": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+    "world_size": 1,
+    "seed": 41,
+    "variants": "same frozen cycle0",
+    "systems": "first5 existing stream: BeH2,H2,BH,CH4,HPSi_iso2; cache15 only",
+    "cursor_rule": "advance exactly once after acceptance; stop at first failed sample"
+  },
+  "checkpoint_monitoring": {
+    "checkpoints": [
+      0,
+      2,
+      5
+    ],
+    "full268_manifest_identity": "f20225fc6d15e26d0729eb5ad33300841ffc15355608df6ee4dcae58add44691",
+    "operator_monitor": "same unique15 cached systems, each system once",
+    "predopt": "reused hash-bound full268 metrics and unique15 old predopt panel values; duplicate equality verified; BeH2 exact current frozen equality",
+    "S5": "reused established constants; not reevaluated or used for training"
+  },
+  "pilot_success_conditions": "Jrel and nonAE DBRMSE strictly lower; AE MAE/RMSE no worse; E/op mean no worse and median ratio<=1; all accepted realized common descent and all-task Armijo",
+  "future_SCF_spending_gate": {
+    "relative": "Jrel/S5<=1 AND eightDB_RMSE/S5<=1",
+    "AE17": "MAE and RMSE<=canonical predopt; report measurable progress beyond reproducibility if available",
+    "Exc_operator": "each immutable15 mean<=predopt and median ratio<=1",
+    "repeatability": "two consecutive checkpoints predeclared in a future run",
+    "scope": "compute-spending permission only, not model/test/publication acceptance; not achieved here"
+  },
+  "implementation_metadata": {
+    "protocol_version": "lap-moo-one-stage-v5",
+    "architecture": "pcPBELMLOptimizerV2Lap",
+    "operator_protocol": "lap-weakform-ao-v1",
+    "objective_definitions": {
+      "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+      "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO",
+      "relchem": "mean corrected singleton fchem over251 non-AE17 identities; matched-F64 chemistry",
+      "ae17": "mean corrected singleton fchem over17 AE17 identities; matched-F64 chemistry"
+    },
+    "task_order": [
+      "relchem",
+      "ae17",
+      "exc",
+      "op"
+    ],
+    "method": "pcd",
+    "method_hyperparameters": {
+      "tau": 0.02,
+      "beta": 0.999,
+      "eps": 1e-08,
+      "qp_tolerance": 1e-09
+    },
+    "fixed_scalarization": null,
+    "optimizer": {
+      "name": "none"
+    },
+    "lr_schedule": {
+      "name": "none"
+    },
+    "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "sampling_manifest_sha256": "4e349a8d6a4f0004c196091adfa46fd4db32fb4ec8c9f108750d5bf0fae75141",
+    "minnesota_data_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "reaction_dispersions_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "mrks_dispersions_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "random_seed": 41,
+    "dtype": "float32",
+    "grid_chunk_size": 256,
+    "ao_cache_chunk_size": 4096,
+    "one_stage_main_training": true,
+    "pcd_provenance": {
+      "paper_citation": "Dara Varam and Mohamed I. AlHajri, Not All Objectives Are Born Equal: Priority-Constrained Descent for Hierarchical Multi-Objective Optimization, Transactions on Machine Learning Research, September 2026.",
+      "paper_record": "https://openreview.net/forum?id=HT01yGHLEt",
+      "paper_arxiv": "2606.29521v2",
+      "paper_pdf_sha256": "8e6c03dd8edc2836057f748761c98b352600819cce3e0bf2c0fb6ccef7878c65",
+      "upstream_repository": "https://github.com/DaraVaram/priority-constrained-descent",
+      "upstream_commit": "e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0",
+      "upstream_license": "MIT",
+      "upstream_license_attribution": "Copyright 2026 Dara Varam and Mohamed I. AlHajri"
+    },
+    "pcd_algorithm": {
+      "primary_task": "relchem",
+      "secondary_tasks": [
+        "ae17",
+        "exc",
+        "op"
+      ],
+      "ema_quantity": "squared global raw-gradient norm, one scalar per task",
+      "normalization": "1/sqrt(bias_corrected_ema + eps)",
+      "qp": "minimize 0.5*||d-g_tilde_primary||^2 subject to g_tilde_j dot d >= tau*||g_tilde_j||^2",
+      "qp_tolerance": 1e-09,
+      "zero_secondary_policy": "omit the exact-zero secondary constraint",
+      "zero_primary_policy": "return exact zero direction after EMA update",
+      "zero_qp_direction_policy": "return exact zero direction",
+      "infeasible_policy": "drop all secondary constraints and use the primary direction",
+      "final_rescale": "raw_primary_gradient_l2_norm",
+      "epsilon_scope": "inside_sqrt; scale invariance is asymptotic for finite eps"
+    },
+    "world_size": 1,
+    "sampling_manifest_file_sha256": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+    "source_code_sha256": {
+      "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+      "train_models/lap_moo_protocol.py": "2e71941ac17514b4ead96c2104717392b0ab59dca406aaf30381f58c533652fd",
+      "train_models/lap_moo_training.py": "1aed40401e8b4a0581bf3126c5eef5b9ed3fa13f78f543ffaf2eb0774821317a",
+      "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+      "train_models/train_lap_moo.py": "521f6bfa9fdd28c07649c449e0f3b6ea582170df9b02dfef64c08283b13b9643"
+    },
+    "step_rule": "pcd_direct_vector_armijo",
+    "vector_armijo": {
+      "initial_step_size": 6.632573669086685e-07,
+      "c": 0.0001,
+      "rho": 0.5,
+      "max_backtracks": 20
+    }
+  },
+  "size": {
+    "source_files_added": [],
+    "source_files_modified": [
+      "train_models/moo_aggregators.py",
+      "train_models/lap_moo_protocol.py",
+      "train_models/lap_moo_training.py"
+    ],
+    "source_LOC_added": 275,
+    "source_LOC_removed": 77,
+    "test_files_added": [
+      "train_models/test_lap_four_task_pcd.py"
+    ],
+    "test_LOC_added": 325,
+    "justification": "Extend existing three-task stack; one bounded-memory chemistry batch callable is needed for F64 shadow scalar and derivatives without retaining8/17 reaction graphs. No second trainer, optimizer, QP dependency or objective implementation."
+  },
+  "no_Diet_Slurm_SCF_full90_AO_generation": true,
+  "independent_review": {
+    "status": "passed_with_scope_limit",
+    "reviewer": "GPT-6 Luna MAX independent final reviewer",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\review.md",
+    "sha256": "f8a7485853f1af2f1e845bf46cb78c6021049e1872a5f2d100908d0caa5108d7",
+    "scope": "shared helper API and frozen external pilot; normal CLI remains three-task; global operator guard failed"
+  },
+  "qualification_scope": "shared four-task helper API and frozen external diagnostic driver only; normal CLI remains three-task"
+}

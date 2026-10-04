@@ -106,31 +106,45 @@ def _scalar_loss(value: Any, task: str) -> torch.Tensor:
 def compute_isolated_task_gradients(
     model: nn.Module,
     objective_factories: Mapping[str, Callable[[], torch.Tensor]],
+    *, task_order: tuple[str, ...] = TASK_NAMES,
 ) -> tuple[dict[str, float], dict[str, dict[str, torch.Tensor | None]]]:
     """Evaluate chem/E/V separately and return their unmodified parameter grads."""
-    if tuple(objective_factories.keys()) != TASK_NAMES:
-        raise ValueError(f"Objectives must be ordered exactly as {TASK_NAMES}.")
+    if tuple(objective_factories.keys()) != task_order:
+        raise ValueError(f"Objectives must be ordered exactly as {task_order}.")
     parameters = named_trainable_parameters(model)
     if not parameters:
         raise ValueError("The model has no trainable parameters.")
     ordered_parameters = tuple(parameters.values())
     losses: dict[str, float] = {}
     task_grads: dict[str, dict[str, torch.Tensor | None]] = {}
-    for task in TASK_NAMES:
-        loss = _scalar_loss(objective_factories[task](), task)
-        grads = torch.autograd.grad(
-            loss,
-            ordered_parameters,
-            allow_unused=True,
-            retain_graph=False,
-            create_graph=False,
-        )
-        losses[task] = float(loss.detach().double().cpu())
-        task_grads[task] = {
-            name: None if grad is None else grad.detach()
-            for name, grad in zip(parameters, grads)
+    for task in task_order:
+        factory = objective_factories[task]
+        if isinstance(factory, ChemistryBatchObjective):
+            value, gradients = factory.value_and_grad()
+            if set(gradients) != set(parameters):
+                raise ValueError("Chemistry shadow gradients have different parameter names.")
+            losses[task], task_grads[task] = value, gradients
+        else:
+            loss = _scalar_loss(objective_factories[task](), task)
+            grads = torch.autograd.grad(
+                loss,
+                ordered_parameters,
+                allow_unused=True,
+                retain_graph=False,
+                create_graph=False,
+            )
+            losses[task] = float(loss.detach().double().cpu())
+            task_grads[task] = {
+                name: None if grad is None else grad.detach()
+                for name, grad in zip(parameters, grads)
+            }
+            del loss, grads
+    if any(isinstance(factory, ChemistryBatchObjective) for factory in objective_factories.values()):
+        # Preserve shadow derivatives; widen only existing lower-precision grads.
+        task_grads = {
+            task: {name: None if grad is None else grad.to(torch.float64) for name, grad in values.items()}
+            for task, values in task_grads.items()
         }
-        del loss, grads
     return losses, task_grads
 
 
@@ -138,12 +152,13 @@ def average_raw_task_gradients(
     task_grads: Mapping[str, Mapping[str, torch.Tensor | None]],
     *,
     world_size: int | None = None,
+    task_order: tuple[str, ...] = TASK_NAMES,
 ) -> dict[str, dict[str, torch.Tensor]]:
     """All-reduce every task/parameter tensor before nonlinear aggregation."""
-    if tuple(task_grads.keys()) != TASK_NAMES:
-        raise ValueError(f"Task gradients must be ordered exactly as {TASK_NAMES}.")
+    if tuple(task_grads.keys()) != task_order:
+        raise ValueError(f"Task gradients must be ordered exactly as {task_order}.")
     names = tuple(next(iter(task_grads.values())).keys())
-    if any(tuple(task_grads[task].keys()) != names for task in TASK_NAMES):
+    if any(tuple(task_grads[task].keys()) != names for task in task_order):
         raise ValueError("Every task must provide the same ordered parameter names.")
     distributed = dist.is_available() and dist.is_initialized()
     actual_world_size = dist.get_world_size() if distributed else 1
@@ -155,7 +170,7 @@ def average_raw_task_gradients(
         raise RuntimeError("Distributed task gradients require an initialized process group.")
 
     averaged: dict[str, dict[str, torch.Tensor]] = {}
-    for task in TASK_NAMES:
+    for task in task_order:
         averaged[task] = {}
         for name in names:
             grad = task_grads[task][name]
@@ -177,20 +192,25 @@ def average_raw_task_gradients(
 def materialize_task_zeros(
     model: nn.Module,
     task_grads: Mapping[str, Mapping[str, torch.Tensor | None]],
+    *, task_order: tuple[str, ...] = TASK_NAMES,
 ) -> dict[str, dict[str, torch.Tensor]]:
     """Replace unused entries with exact zeros using model parameter shapes."""
     parameters = named_trainable_parameters(model)
-    if tuple(task_grads.keys()) != TASK_NAMES:
-        raise ValueError(f"Task gradients must be ordered exactly as {TASK_NAMES}.")
+    if tuple(task_grads.keys()) != task_order:
+        raise ValueError(f"Task gradients must be ordered exactly as {task_order}.")
     output: dict[str, dict[str, torch.Tensor]] = {}
-    for task in TASK_NAMES:
+    for task in task_order:
         if set(task_grads[task]) != set(parameters):
             raise ValueError(f"Task {task!r} has a different parameter-name set.")
         output[task] = {}
         for name, parameter in parameters.items():
             grad = task_grads[task][name]
             if grad is None:
-                output[task][name] = torch.zeros_like(parameter)
+                dtype = next(
+                    (task_grads[other][name].dtype for other in task_order if task_grads[other][name] is not None),
+                    parameter.dtype,
+                )
+                output[task][name] = torch.zeros_like(parameter, dtype=dtype)
             elif grad.shape != parameter.shape or grad.device != parameter.device:
                 raise ValueError(f"Gradient shape/device mismatch at {task}/{name}.")
             else:
@@ -213,10 +233,11 @@ def _gradient_diagnostics(
     raw: Mapping[str, Mapping[str, torch.Tensor]],
     joint: Mapping[str, torch.Tensor],
 ) -> dict[str, Any]:
-    norms = {task: _norm(raw[task]) for task in TASK_NAMES}
+    tasks = tuple(raw)
+    norms = {task: _norm(raw[task]) for task in tasks}
     cosines = {}
-    for left_index, left in enumerate(TASK_NAMES):
-        for right in TASK_NAMES[left_index + 1 :]:
+    for left_index, left in enumerate(tasks):
+        for right in tasks[left_index + 1 :]:
             denominator = norms[left] * norms[right]
             cosines[f"{left}:{right}"] = (
                 _dot(raw[left], raw[right]) / denominator if denominator else 0.0
@@ -225,20 +246,21 @@ def _gradient_diagnostics(
         "raw_gradient_norms": norms,
         "raw_gradient_cosines": cosines,
         "joint_gradient_norm": _norm(joint),
-        "task_directional_dots": {task: _dot(raw[task], joint) for task in TASK_NAMES},
+        "task_directional_dots": {task: _dot(raw[task], joint) for task in tasks},
     }
 
 
 def _average_task_losses(losses: Mapping[str, float], model: nn.Module) -> dict[str, float]:
+    tasks = tuple(losses)
     values = torch.tensor(
-        [float(losses[task]) for task in TASK_NAMES],
+        [float(losses[task]) for task in tasks],
         dtype=torch.float64,
         device=next(iter(named_trainable_parameters(model).values())).device,
     )
     if dist.is_available() and dist.is_initialized():
         dist.all_reduce(values, op=dist.ReduceOp.SUM)
         values.div_(dist.get_world_size())
-    return {task: float(value.cpu()) for task, value in zip(TASK_NAMES, values)}
+    return {task: float(value.cpu()) for task, value in zip(tasks, values)}
 
 
 def _all_ranks_true(value: bool, model: nn.Module) -> bool:
@@ -253,10 +275,11 @@ def _all_ranks_true(value: bool, model: nn.Module) -> bool:
 def _evaluate_trial_losses(
     model: nn.Module,
     objective_factories: Mapping[str, Callable[[], torch.Tensor]],
+    *, task_order: tuple[str, ...] = TASK_NAMES,
 ) -> tuple[dict[str, float] | None, str | None]:
-    """Evaluate three local scalars, then take the existing unweighted rank mean."""
+    """Evaluate ordered local scalars, then take the existing unweighted rank mean."""
     local_losses: dict[str, float] = {}
-    for task in TASK_NAMES:
+    for task in objective_factories:
         error = None
         try:
             value = objective_factories[task]()
@@ -353,8 +376,12 @@ def train_moo_update(
     record_update_geometry: bool = True,
     step_rule: str = "optimizer",
     vector_armijo: Mapping[str, Any] | None = None,
+    task_order: tuple[str, ...] = TASK_NAMES,
 ) -> UpdateResult:
     """One canonical update: raw local tasks -> all-reduce -> MOO -> optimizer."""
+    if (len(task_order) < 2 or len(set(task_order)) != len(task_order)
+            or any(not isinstance(task, str) or not task for task in task_order)):
+        raise ValueError("Explicit task order must contain at least two unique names.")
     direct_armijo = step_rule == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
     if step_rule not in ("optimizer", PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE):
         raise ValueError(f"Unsupported MOO step rule {step_rule!r}.")
@@ -374,10 +401,10 @@ def train_moo_update(
         rng_before = None
         armijo = None
     try:
-        losses, sparse_grads = compute_isolated_task_gradients(model, objective_factories)
+        losses, sparse_grads = compute_isolated_task_gradients(model, objective_factories, task_order=task_order)
         losses = _average_task_losses(losses, model)
-        dense_local = materialize_task_zeros(model, sparse_grads)
-        raw = average_raw_task_gradients(dense_local, world_size=world_size)
+        dense_local = materialize_task_zeros(model, sparse_grads, task_order=task_order)
+        raw = average_raw_task_gradients(dense_local, world_size=world_size, task_order=task_order)
     except Exception:
         if direct_armijo:
             assert model_before is not None and rng_before is not None
@@ -397,6 +424,7 @@ def train_moo_update(
             method=method,
             hyperparameters=hyperparameters,
             state=copy.deepcopy(aggregator_state) if direct_armijo else aggregator_state,
+            **({"task_order": task_order} if task_order != TASK_NAMES else {}),
         )
     except Exception:
         if direct_armijo:
@@ -417,7 +445,7 @@ def train_moo_update(
         rng_after_gradients = capture_rng_state()
         alpha0 = armijo["initial_step_size"]
         proposal = {name: -alpha0 * gradient for name, gradient in dense_joint.items()}
-        slopes = {task: _dot(raw[task], proposal) for task in TASK_NAMES}
+        slopes = {task: _dot(raw[task], proposal) for task in task_order}
         diagnostics["vector_armijo"] = {
             **armijo,
             "step_rule": PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
@@ -428,7 +456,7 @@ def train_moo_update(
         accepted_delta: dict[str, torch.Tensor] | None = None
         accepted_parameters: dict[str, torch.Tensor] | None = None
         try:
-            if not all(torch.isfinite(value).all() for value in proposal.values()) or not all(
+            if method_diagnostics.get("feasible") is False or not all(torch.isfinite(value).all() for value in proposal.values()) or not all(
                 math.isfinite(value) and value < 0.0 for value in slopes.values()
             ):
                 stop_reason = "no_finite_common_descent_direction"
@@ -449,29 +477,62 @@ def train_moo_update(
                         if not no_op:
                             for name, parameter in parameters.items():
                                 parameter.copy_(trial_parameters[name])
+                                trial_parameters[name] = parameter.detach().clone()
                     if no_op:
                         diagnostics["vector_armijo"]["trials"].append(
-                            {"t": t, "finite": True, "no_op": True}
+                            {
+                                "t": t, "finite": True, "no_op": True,
+                                "requested_delta_norm": _norm({name: t * value for name, value in proposal.items()}),
+                                "realized_delta_norm": 0.0, "requested_realized_cosine": 0.0,
+                                "zero_coordinate_fraction": 1.0,
+                                "requested_task_dots": {task: t * slopes[task] for task in task_order},
+                                "realized_task_dots": {task: 0.0 for task in task_order},
+                                "realized_common_descent": False,
+                                "losses": dict(losses),
+                                "actual_reductions": {task: 0.0 for task in task_order},
+                                "strict_all_task_decrease": False,
+                            }
                         )
                         stop_reason = "candidate_unchanged_at_float_precision"
                         break
-                    trial_record: dict[str, Any] = {"t": t, "finite": False, "no_op": False}
+                    requested_delta = {name: t * proposal[name] for name in proposal}
+                    realized_delta = {
+                        name: trial_parameters[name].double() - model_at_base[name].double()
+                        for name in parameters
+                    }
+                    requested_norm, realized_norm = _norm(requested_delta), _norm(realized_delta)
+                    realized_dots = {task: _dot(raw[task], realized_delta) for task in task_order}
+                    realized_descent = all(math.isfinite(value) and value < 0.0 for value in realized_dots.values())
+                    trial_record: dict[str, Any] = {
+                        "t": t, "finite": False, "no_op": False,
+                        "requested_delta_norm": requested_norm,
+                        "realized_delta_norm": realized_norm,
+                        "requested_realized_cosine": (
+                            _dot(requested_delta, realized_delta) / (requested_norm * realized_norm)
+                            if requested_norm and realized_norm else 0.0
+                        ),
+                        "zero_coordinate_fraction": sum(int((value == 0).sum()) for value in realized_delta.values())
+                            / sum(value.numel() for value in realized_delta.values()),
+                        "requested_task_dots": {task: t * slopes[task] for task in task_order},
+                        "realized_task_dots": realized_dots,
+                        "realized_common_descent": realized_descent,
+                    }
                     try:
                         restore_rng_state(rng_after_gradients)
                         trial_losses, trial_error = _evaluate_trial_losses(model, objective_factories)
                         if trial_losses is not None:
-                            predicted = {task: -t * slopes[task] for task in TASK_NAMES}
-                            actual = {task: losses[task] - trial_losses[task] for task in TASK_NAMES}
+                            predicted = {task: -t * slopes[task] for task in task_order}
+                            actual = {task: losses[task] - trial_losses[task] for task in task_order}
                             margins = {
                                 task: losses[task] + armijo["c"] * t * slopes[task] - trial_losses[task]
-                                for task in TASK_NAMES
+                                for task in task_order
                             }
                             ratios = {
                                 task: actual[task] / predicted[task]
-                                for task in TASK_NAMES
+                                for task in task_order
                             }
-                            armijo_pass = all(margins[task] >= 0.0 for task in TASK_NAMES)
-                            strict_decrease = all(actual[task] > 0.0 for task in TASK_NAMES)
+                            armijo_pass = all(margins[task] >= 0.0 for task in task_order)
+                            strict_decrease = all(actual[task] > 0.0 for task in task_order)
                             trial_record.update(
                                 {
                                     "finite": True,
@@ -484,11 +545,11 @@ def train_moo_update(
                                     "strict_all_task_decrease": strict_decrease,
                                 }
                             )
-                            if armijo_pass and strict_decrease:
+                            if armijo_pass and strict_decrease and realized_descent:
                                 accepted_t = t
                                 accepted_parameters = trial_parameters
                                 accepted_delta = {
-                                    name: accepted_parameters[name] - model_at_base[name]
+                                    name: realized_delta[name]
                                     for name in accepted_parameters
                                 }
                                 stop_reason = None
@@ -540,7 +601,7 @@ def train_moo_update(
             else 0.0
         )
         diagnostics["task_update_dots"] = {
-            task: _dot(raw[task], accepted_delta) for task in TASK_NAMES
+            task: _dot(raw[task], accepted_delta) for task in task_order
         }
         diagnostics["vector_armijo"]["accepted"] = True
         diagnostics["vector_armijo"]["stop_reason"] = None
@@ -556,7 +617,7 @@ def train_moo_update(
             else 0.0
         )
         diagnostics["task_update_dots"] = {
-            task: _dot(raw[task], update) for task in TASK_NAMES
+            task: _dot(raw[task], update) for task in task_order
         }
     else:
         assert optimizer is not None
@@ -652,6 +713,65 @@ def make_mrks_objective_factories(
         return operator_loss(predicted, system.reference_operator, system.overlap)
 
     return energy_objective, operator_objective
+
+
+@dataclass
+class ChemistryBatchObjective:
+    """Bounded-memory weighted chemistry mean with exact F64 shadow derivatives.
+
+    The shadow is synchronized from the main stored state for every evaluation.
+    Local source values are widened, not regenerated at higher precision.
+    Parameter names map the derivative of the F64 scalar to the main coordinates;
+    gradients remain F64 and never pass through F32 leaf-gradient storage.
+    """
+
+    model: nn.Module
+    shadow: nn.Module
+    reactions: tuple[Mapping[str, Any], ...]
+    weights: tuple[float, ...]
+    dispersions: Mapping[str, Any] | None
+
+    def __post_init__(self) -> None:
+        if (not self.reactions or len(self.reactions) != len(self.weights)
+                or any(not math.isfinite(w) or w <= 0.0 for w in self.weights)
+                or not math.isclose(sum(self.weights), 1.0, rel_tol=1e-12, abs_tol=1e-12)):
+            raise ValueError("Chemistry batch needs positive unit-sum weights aligned with reactions.")
+        if tuple(named_trainable_parameters(self.model)) != tuple(named_trainable_parameters(self.shadow)):
+            raise ValueError("Chemistry shadow parameter names differ from the main model.")
+        if any(p.dtype != torch.float64 for p in self.shadow.parameters()):
+            raise ValueError("Chemistry shadow parameters must be F64.")
+
+    def _evaluate(self, *, gradient: bool) -> tuple[float, dict[str, torch.Tensor]]:
+        self.shadow.load_state_dict(self.model.state_dict(), strict=True)
+        self.shadow.train(self.model.training)
+        parameters = named_trainable_parameters(self.shadow)
+        device = next(iter(parameters.values())).device
+        total = 0.0
+        accumulated = {name: torch.zeros_like(p) for name, p in parameters.items()} if gradient else {}
+        for reaction, weight in zip(self.reactions, self.weights, strict=True):
+            factory = make_reaction_objective(
+                self.shadow, reaction, device=device, dtype=torch.float64, dispersions=self.dispersions
+            )
+            with torch.set_grad_enabled(gradient):
+                loss = _scalar_loss(factory(), "chemistry")
+            total += weight * float(loss.detach().double().cpu())
+            if gradient:
+                grads = torch.autograd.grad(loss, tuple(parameters.values()), allow_unused=True)
+                for name, value in zip(parameters, grads, strict=True):
+                    if value is not None:
+                        accumulated[name].add_(value.detach(), alpha=weight)
+                del grads
+            del loss
+        if not math.isfinite(total) or any(not torch.isfinite(g).all() for g in accumulated.values()):
+            raise FloatingPointError("Chemistry batch scalar or gradients are nonfinite.")
+        return total, accumulated
+
+    def value_and_grad(self) -> tuple[float, dict[str, torch.Tensor]]:
+        return self._evaluate(gradient=True)
+
+    def __call__(self) -> torch.Tensor:
+        value, _ = self._evaluate(gradient=False)
+        return next(self.shadow.parameters()).new_tensor(value)
 
 
 def make_three_objective_factories(
@@ -813,7 +933,7 @@ def _validated_pcd_aggregator_state(
     expected = {
         "version": 1,
         "method": "pcd",
-        "task_order": list(TASK_NAMES),
+        "task_order": list(protocol_metadata["task_order"]),
         "tau": hyperparameters.get("tau"),
         "beta": hyperparameters.get("beta"),
         "eps": hyperparameters.get("eps"),
@@ -822,7 +942,7 @@ def _validated_pcd_aggregator_state(
     if aggregator_state is None or (isinstance(aggregator_state, Mapping) and not aggregator_state):
         if cursor != 0:
             raise ValueError("PCD checkpoint is missing EMA state at a nonzero cursor.")
-        return {**expected, "v": [0.0, 0.0, 0.0], "t": 0}
+        return {**expected, "v": [0.0] * len(protocol_metadata["task_order"]), "t": 0}
     if not isinstance(aggregator_state, Mapping):
         raise TypeError("PCD checkpoint EMA state must be a mapping.")
     required = {*expected, "v", "t"}
@@ -849,8 +969,8 @@ def _validated_pcd_aggregator_state(
         if found != value:
             raise ValueError(f"PCD checkpoint EMA state {name!r} differs from its protocol.")
     raw_v = aggregator_state.get("v")
-    if not isinstance(raw_v, (list, tuple)) or len(raw_v) != len(TASK_NAMES):
-        raise ValueError("PCD checkpoint EMA values must align with all three tasks.")
+    if not isinstance(raw_v, (list, tuple)) or len(raw_v) != len(protocol_metadata["task_order"]):
+        raise ValueError("PCD checkpoint EMA values must align with protocol task order.")
     if any(
         isinstance(value, bool)
         or not isinstance(value, (int, float))
@@ -885,6 +1005,9 @@ def save_moo_checkpoint(
     elif optimizer is None:
         raise ValueError("Optimizer-based MOO checkpoints require optimizer state.")
     manifest_hash = validate_sampling_manifest(sampling_manifest)
+    if (protocol_metadata.get("task_order") != list(TASK_NAMES)
+            and sampling_manifest.get("task_order") != protocol_metadata.get("task_order")):
+        raise ValueError("Checkpoint task order differs from sampling manifest.")
     cursor = {
         "sampling_manifest_sha256": manifest_hash,
         "next_update": int(next_update),
@@ -950,6 +1073,9 @@ def load_moo_checkpoint(
     elif optimizer is None:
         raise ValueError("Optimizer-based MOO resume requires an optimizer.")
     manifest_hash = validate_sampling_manifest(sampling_manifest)
+    if (expected_protocol_metadata.get("task_order") != list(TASK_NAMES)
+            and sampling_manifest.get("task_order") != expected_protocol_metadata.get("task_order")):
+        raise ValueError("Checkpoint task order differs from sampling manifest.")
     if expected_protocol_metadata.get("sampling_manifest_sha256") != manifest_hash:
         raise ValueError("Requested protocol and sampling manifest identities differ.")
     # Keep RNG byte tensors on CPU even when the model is restored to CUDA.
@@ -1024,6 +1150,7 @@ def load_moo_checkpoint(
 
 __all__ = [
     "AOFactorChunk",
+    "ChemistryBatchObjective",
     "MRKSOperatorSystem",
     "UpdateResult",
     "apply_joint_gradient",
