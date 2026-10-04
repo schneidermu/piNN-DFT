@@ -1,0 +1,778 @@
+{
+  "schema": "lap-operator-estimator-audit-v1",
+  "starting_head": "0dcba084c347a65c32c8872e910fccd49cecb2a6",
+  "branch": "lap_full_vxc",
+  "scope": "read-only existing15 panel; no new training, no CLI changes",
+  "skills": [
+    "caveman",
+    "ponytail",
+    "to-spec",
+    "to-tickets"
+  ],
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_protocol.json": "589dd2a3db8af5cfcf321dc38e715f2a6ac3f37ec3ff4b0b8ed7dc24e541a714",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_training_protocol.json": "e4f856a89a683141e026cf9f17085c05d205204005dcffedb5a7bea8df0405de",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_sampling_manifest.json": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_results.json": "05d2d83339e4e11cb68bad81ec1ae08abe826caf71db24258fa2afe3fb36ca1d",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_latest.pt": "c11aa31188b21e44711d82d364e2e8214eef4fce5b0e5ef1790ff312d35fb2bb",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "1aed40401e8b4a0581bf3126c5eef5b9ed3fa13f78f543ffaf2eb0774821317a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "2e71941ac17514b4ead96c2104717392b0ab59dca406aaf30381f58c533652fd",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_operator.py": "0aa94d464aacf4e4ba481bc6518a206f793ffaf2490749b20797899f5cc0802b",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_results.json": "c7112b76d4e6168d0d15b081b5c61025c0be154cefe0b5cf0b81de540885fa04",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_results.json": "5fe2809a84d3ee59b0fa3625a5d24c015b736831923b8b27b6985d51db04bdcc",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_report.md": "bbbdc5ef24b820a83e1aace241d7b477a69a799d4bc2f0e7db82aa915821268c",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_protocol.json": "0a3ad5cdfe295cb8f02faca28e81a13789e558253caf839597ba79e90842c979"
+  },
+  "source_hashes": {
+    "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "train_models/lap_moo_protocol.py": "2e71941ac17514b4ead96c2104717392b0ab59dca406aaf30381f58c533652fd",
+    "train_models/lap_moo_training.py": "1aed40401e8b4a0581bf3126c5eef5b9ed3fa13f78f543ffaf2eb0774821317a",
+    "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "train_models/train_lap_moo.py": "521f6bfa9fdd28c07649c449e0f3b6ea582170df9b02dfef64c08283b13b9643"
+  },
+  "system_order": [
+    "H2",
+    "HLi",
+    "BH",
+    "BeH2",
+    "H2O",
+    "CH4",
+    "N2",
+    "CO",
+    "CH2O",
+    "C2H2_iso2",
+    "H4Si",
+    "AlBeH",
+    "ClH",
+    "ClHS",
+    "HPSi_iso2"
+  ],
+  "point_chunk": 256,
+  "AO_cache_chunk": 4096,
+  "precision": "unchanged F32 model/local inputs and F64 operator/reference algebra; diagnostic gradients/dots/norms accumulated in F64",
+  "device": "local CUDA RTX5070Ti",
+  "pcd": {
+    "tau": 0.02,
+    "beta": 0.999,
+    "eps": 1e-08,
+    "qp_tolerance": 1e-09
+  },
+  "armijo": {
+    "initial_step_size": 6.632573669086685e-07,
+    "c": 0.0001,
+    "rho": 0.5,
+    "max_backtracks": 20
+  },
+  "repeatability": {
+    "fresh_processes": 3,
+    "per_process_complete_panel_repeats": [
+      5,
+      1,
+      1
+    ],
+    "states": [
+      0,
+      5
+    ],
+    "same_process_repeats": 5,
+    "seed": 41,
+    "scale": "maximum within/across-process pairwise range of each state for metric; no numerical floor",
+    "unresolved_if": "absolute drift <=3*scale; zero scale with nonzero drift yields infinite drift/noise",
+    "median": "report median individual loss and historical median per-system loss ratios separately"
+  },
+  "draws": {
+    "O3": [
+      [
+        "H2",
+        "H2O",
+        "ClH"
+      ],
+      [
+        "AlBeH",
+        "CH2O",
+        "BH"
+      ],
+      [
+        "CH2O",
+        "ClH",
+        "CH4"
+      ],
+      [
+        "H2O",
+        "BeH2",
+        "AlBeH"
+      ],
+      [
+        "N2",
+        "H2O",
+        "CH2O"
+      ],
+      [
+        "HLi",
+        "HPSi_iso2",
+        "C2H2_iso2"
+      ],
+      [
+        "H4Si",
+        "H2",
+        "CH4"
+      ],
+      [
+        "ClHS",
+        "N2",
+        "C2H2_iso2"
+      ],
+      [
+        "CO",
+        "BeH2",
+        "HLi"
+      ],
+      [
+        "BeH2",
+        "ClHS",
+        "HLi"
+      ],
+      [
+        "H2",
+        "H4Si",
+        "ClHS"
+      ],
+      [
+        "HLi",
+        "CH4",
+        "C2H2_iso2"
+      ],
+      [
+        "H4Si",
+        "H2",
+        "C2H2_iso2"
+      ],
+      [
+        "HLi",
+        "CO",
+        "H2"
+      ],
+      [
+        "BeH2",
+        "N2",
+        "H2O"
+      ],
+      [
+        "AlBeH",
+        "ClH",
+        "C2H2_iso2"
+      ],
+      [
+        "ClHS",
+        "H2O",
+        "N2"
+      ],
+      [
+        "ClHS",
+        "HLi",
+        "CH4"
+      ],
+      [
+        "BH",
+        "CO",
+        "N2"
+      ],
+      [
+        "BH",
+        "C2H2_iso2",
+        "N2"
+      ],
+      [
+        "CO",
+        "CH4",
+        "H2O"
+      ],
+      [
+        "HLi",
+        "N2",
+        "H4Si"
+      ],
+      [
+        "H2O",
+        "HLi",
+        "ClHS"
+      ],
+      [
+        "AlBeH",
+        "ClHS",
+        "H2"
+      ],
+      [
+        "H2",
+        "H2O",
+        "C2H2_iso2"
+      ],
+      [
+        "CH4",
+        "H4Si",
+        "CH2O"
+      ],
+      [
+        "AlBeH",
+        "C2H2_iso2",
+        "H4Si"
+      ],
+      [
+        "BeH2",
+        "ClHS",
+        "CO"
+      ],
+      [
+        "ClH",
+        "H2",
+        "CO"
+      ],
+      [
+        "H2O",
+        "CH2O",
+        "CH4"
+      ],
+      [
+        "CO",
+        "HPSi_iso2",
+        "N2"
+      ],
+      [
+        "ClH",
+        "H2O",
+        "CH4"
+      ]
+    ],
+    "O5": [
+      [
+        "HPSi_iso2",
+        "CO",
+        "ClHS",
+        "HLi",
+        "BeH2"
+      ],
+      [
+        "BeH2",
+        "N2",
+        "HPSi_iso2",
+        "ClH",
+        "BH"
+      ],
+      [
+        "CH4",
+        "H4Si",
+        "BH",
+        "AlBeH",
+        "BeH2"
+      ],
+      [
+        "C2H2_iso2",
+        "ClH",
+        "HPSi_iso2",
+        "H2O",
+        "N2"
+      ],
+      [
+        "ClHS",
+        "HLi",
+        "H2",
+        "ClH",
+        "AlBeH"
+      ],
+      [
+        "HLi",
+        "H4Si",
+        "HPSi_iso2",
+        "ClHS",
+        "CH4"
+      ],
+      [
+        "HLi",
+        "H2",
+        "CO",
+        "BeH2",
+        "CH2O"
+      ],
+      [
+        "H4Si",
+        "ClHS",
+        "HLi",
+        "H2",
+        "AlBeH"
+      ],
+      [
+        "ClH",
+        "H2O",
+        "AlBeH",
+        "CH4",
+        "H4Si"
+      ],
+      [
+        "HLi",
+        "BeH2",
+        "BH",
+        "H2",
+        "ClH"
+      ],
+      [
+        "CH2O",
+        "HPSi_iso2",
+        "CH4",
+        "AlBeH",
+        "C2H2_iso2"
+      ],
+      [
+        "AlBeH",
+        "C2H2_iso2",
+        "ClHS",
+        "N2",
+        "HPSi_iso2"
+      ],
+      [
+        "CH2O",
+        "H2",
+        "N2",
+        "CH4",
+        "CO"
+      ],
+      [
+        "HPSi_iso2",
+        "H4Si",
+        "CO",
+        "BeH2",
+        "HLi"
+      ],
+      [
+        "H4Si",
+        "CO",
+        "ClHS",
+        "CH4",
+        "HPSi_iso2"
+      ],
+      [
+        "CH4",
+        "ClH",
+        "BH",
+        "H2",
+        "HPSi_iso2"
+      ],
+      [
+        "HLi",
+        "H4Si",
+        "BeH2",
+        "H2",
+        "H2O"
+      ],
+      [
+        "H4Si",
+        "N2",
+        "HLi",
+        "C2H2_iso2",
+        "AlBeH"
+      ],
+      [
+        "BH",
+        "H2O",
+        "AlBeH",
+        "C2H2_iso2",
+        "N2"
+      ],
+      [
+        "AlBeH",
+        "BH",
+        "H2O",
+        "H4Si",
+        "H2"
+      ],
+      [
+        "CO",
+        "CH4",
+        "ClHS",
+        "CH2O",
+        "BeH2"
+      ],
+      [
+        "H4Si",
+        "BH",
+        "HLi",
+        "CO",
+        "ClH"
+      ],
+      [
+        "BeH2",
+        "HPSi_iso2",
+        "H4Si",
+        "H2",
+        "H2O"
+      ],
+      [
+        "CO",
+        "C2H2_iso2",
+        "ClHS",
+        "BH",
+        "N2"
+      ],
+      [
+        "H2O",
+        "HPSi_iso2",
+        "HLi",
+        "CH4",
+        "H2"
+      ],
+      [
+        "C2H2_iso2",
+        "HPSi_iso2",
+        "H2O",
+        "CO",
+        "H2"
+      ],
+      [
+        "ClHS",
+        "AlBeH",
+        "CH2O",
+        "C2H2_iso2",
+        "H2"
+      ],
+      [
+        "CO",
+        "C2H2_iso2",
+        "CH2O",
+        "H4Si",
+        "H2"
+      ],
+      [
+        "BeH2",
+        "N2",
+        "H2",
+        "ClH",
+        "CO"
+      ],
+      [
+        "ClHS",
+        "HLi",
+        "ClH",
+        "BH",
+        "H4Si"
+      ],
+      [
+        "H2",
+        "N2",
+        "ClHS",
+        "HLi",
+        "BH"
+      ],
+      [
+        "AlBeH",
+        "HPSi_iso2",
+        "BH",
+        "ClH",
+        "H4Si"
+      ]
+    ]
+  },
+  "draw_policy": "Python random.Random seeded by first8 SHA256 bytes bigendian of UTF8 41:<literal-label>; O1 all15 singleton identities; O3/O5 32 draws without replacement per draw",
+  "O1_label": "operator-estimator-O1-v1; enumeration instead of resampling",
+  "cost_batches": {
+    "O1": [
+      "H2"
+    ],
+    "O3": [
+      "H2",
+      "H2O",
+      "ClH"
+    ],
+    "O5": [
+      "HPSi_iso2",
+      "CO",
+      "ClHS",
+      "HLi",
+      "BeH2"
+    ],
+    "O15": [
+      "H2",
+      "HLi",
+      "BH",
+      "BeH2",
+      "H2O",
+      "CH4",
+      "N2",
+      "CO",
+      "CH2O",
+      "C2H2_iso2",
+      "H4Si",
+      "AlBeH",
+      "ClH",
+      "ClHS",
+      "HPSi_iso2"
+    ]
+  },
+  "selection": {
+    "median_cosine_gt": 0,
+    "p10_cosine_gt": 0,
+    "positive_dot_fraction_ge": 0.9,
+    "gross_norm_tail": "Reject if p90 or maximum norm ratio exceeds10 times corresponding next larger candidate; operational definition declared before results",
+    "choose": "cheapest qualifying estimator by measured representative streamed wall time",
+    "theta5": "same predeclared draws for selected candidate; same criteria"
+  },
+  "numerical_thresholds": {
+    "nonzero_norm": 1e-30,
+    "meaningful_relative_denominator": 1e-30,
+    "sign": "strict >0/<0; zero reported as neutral",
+    "reconstruction": "exact stored parameter equality and exact sampled losses; realized norm rtol1e-12/atol1e-15; final EMA exact"
+  },
+  "historical_reconstruction": "compute pinned historical directions and apply ONLY recorded accepted displacement into disposable scratch states; no optimizer/Armijo/resampling; final parameter and EMA exact identity required",
+  "driver_sha256": "2b5db15d3ad261cf6fe5d9684e93b677c143a0d92339cf3f9cff19acf4af454a",
+  "state_readonly": "frozen files never changed; scratch model/RNG restored after each mode",
+  "estimator_unbiasedness": "For uniform m-subset without replacement, P(s in batch)=m/15, so E[(1/m)sum_s_in_batch L_s]=(1/15)sum_s L_s; same for gradients",
+  "non_goals": [
+    "training",
+    "tau/optimizer/objective changes",
+    "Diet",
+    "SCF",
+    "Slurm",
+    "full90 AO",
+    "CLI wiring"
+  ],
+  "status": "complete; independently reviewed; historical operator guard remains failed",
+  "classification_contract": "Repeatability is not directional-response precision. Distinguish gradient transfer from net first-order/actual sign reversal. Do not claim genuine curvature.",
+  "next_experiment": "One read-only aggregate-operator globalization audit at historical theta4 along the recorded step4 direction: prospectively compare actual full15 responses with aggregate autograd predictions, checking arithmetic/realized-step consistency before attributing any mismatch to genuine curvature. No new training or estimator change.",
+  "production_source_changes": 0,
+  "CLI_changes": 0,
+  "training_updates": 0,
+  "historical_pilot_status": "0dcba08 remains FAILED global operator guard",
+  "independent_review": {
+    "status": "passed",
+    "reviewer": "GPT-6 Luna MAX; sole independent reviewer",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\review.md",
+    "sha256": "27e832387596d8b88fb36493d350f68faf1c733b3254944ad2df5fa52d6729ff",
+    "verdict": "PASS; no blocker",
+    "limitations": [
+      "Finite-step response mismatch observed; arithmetic versus curvature unseparated",
+      "Step2 aggregate dot3.58e-9 is precision-sensitive; strict-sign count is not robust derivative-precision proof",
+      "One cost measurement per representative batch; no V100 performance claim"
+    ],
+    "experiments_rerun": false
+  },
+  "external_execution_artifacts": {
+    "aggregate.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\aggregate.py",
+      "sha256": "d65cf35209a78159272dc67cecdcb4658939aa91e2d137a1489d5ecb01ad7412",
+      "bytes": 9722
+    },
+    "aggregate_precenter.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\aggregate_precenter.py",
+      "sha256": "f1684186798400d12bcb485c88317e663ac36cad2c9b0c802a0914a1c109110b",
+      "bytes": 9521
+    },
+    "audit.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\audit.py",
+      "sha256": "2b5db15d3ad261cf6fe5d9684e93b677c143a0d92339cf3f9cff19acf4af454a",
+      "bytes": 13865
+    },
+    "causal_summary.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\causal_summary.json",
+      "sha256": "bb4b72991dd51ccc9d5533e85d8d05d8f6a0e344888c089b8773ad9bf3d80c5b",
+      "bytes": 6583
+    },
+    "cost.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\cost.json",
+      "sha256": "a7a3a96e6eb5ad0245aa9a6b2d1d9eb8ba16307c63cc5147081ee6dd937b31b7",
+      "bytes": 1988
+    },
+    "estimator_comparison.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\estimator_comparison.json",
+      "sha256": "fb84220cebd6f3eb7049207970da233a395017789fb1c3d6b86718e5ab04f05e",
+      "bytes": 45724
+    },
+    "finalize.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\finalize.py",
+      "sha256": "708ef73ca4a49ae47619d1f441a68983d27c71d304f17095c6631fea934ad936",
+      "bytes": 15813
+    },
+    "gradients_0.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_0.json",
+      "sha256": "30d6a9f79e3e959756b7e1f954302fad0091376090e967c23253346c4a65bd34",
+      "bytes": 13971
+    },
+    "gradients_0.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_0.pt",
+      "sha256": "fef68fd927c6e91313df5327b111edb0c655f887f3970164840eb795c3e403d7",
+      "bytes": 2732271
+    },
+    "gradients_1.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_1.json",
+      "sha256": "d167279dd4b456c9a29a3b60884f928893e442410fe8d9597162a0fa099e74a0",
+      "bytes": 13981
+    },
+    "gradients_1.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_1.pt",
+      "sha256": "831443e9b253914ca08a066405ebc3c4b53f0b38c9ad9a0bc7d99719d4929bb7",
+      "bytes": 2732271
+    },
+    "gradients_2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_2.json",
+      "sha256": "bd9fcd26fa34d7ca591cf177edd9e7092fe82d4f1b73c26d0c446a8d4aec64f2",
+      "bytes": 14010
+    },
+    "gradients_2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_2.pt",
+      "sha256": "5fa7d2acf009c7eb74e4c6a36e7d274c75e167526771977cc7707942164a635e",
+      "bytes": 2732271
+    },
+    "gradients_3.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_3.json",
+      "sha256": "4629c96a7b83025f9a7427cb65bb05d4cb35a5258529ce4ff5b01906afc8c346",
+      "bytes": 14010
+    },
+    "gradients_3.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_3.pt",
+      "sha256": "39d8071701255e20ceb8d3c290a0fc0f8b7520d42a4dbc1e2b4a17d633607d36",
+      "bytes": 2732271
+    },
+    "gradients_4.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_4.json",
+      "sha256": "b2d5642cb226d16bf76f5640d6b31e170cf036dea8aaacd5ce5c769c6ace787e",
+      "bytes": 13989
+    },
+    "gradients_4.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_4.pt",
+      "sha256": "bbcd7389d8a894e9b7e5df2338fe0f7908f8e5c4c67eb5c54839bdf08bdf595f",
+      "bytes": 2732271
+    },
+    "gradients_5.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_5.json",
+      "sha256": "60ba34caf168b30c65dfb95b0af30cbb421f448ad91367ec5295a3b6c97d49a8",
+      "bytes": 13974
+    },
+    "gradients_5.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\gradients_5.pt",
+      "sha256": "886cad9f4999600d37bb6ba7ce7e9cee1aa161c2326f632a5a89b35b3cae7ccc",
+      "bytes": 2732271
+    },
+    "protocol.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\protocol.json",
+      "sha256": "c70bc4b6969f2cfba735f6986f6a2d9bf8cb0b376548aa2645eb69946353cacd",
+      "bytes": 13126
+    },
+    "reconstruction.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\reconstruction.json",
+      "sha256": "27a753a626a8dfc6c67fadfe8a398063fa20bd57faaceeec13899c264153e1c2",
+      "bytes": 2452
+    },
+    "repeat_0.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\repeat_0.json",
+      "sha256": "bbc18f6d795d2affdd5741a4d05775d7de0a76368fe2796ddfff9b7c1ebcac84",
+      "bytes": 28603
+    },
+    "repeat_1.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\repeat_1.json",
+      "sha256": "492152c86a35938008286ef4a57f8d9ed7872bbdb0f41e21f876d00f88dce396",
+      "bytes": 6124
+    },
+    "repeat_2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\repeat_2.json",
+      "sha256": "5613f81774d88613925941e82f3de4a3dcf313e4a13d82246515c3771d4a4055",
+      "bytes": 6122
+    },
+    "repeatability.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\repeatability.json",
+      "sha256": "2b5cf4443ad8f1df391130ecd9df51745416b0ec0b3f7d5f48d1c3849fbe207f",
+      "bytes": 39168
+    },
+    "repeatability_precenter.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\repeatability_precenter.json",
+      "sha256": "a2743f1efc98ebc833e1ec26ab7c2775da1dd69117c52a7278711abfb9a06cd2",
+      "bytes": 39925
+    },
+    "step_0.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\step_0.pt",
+      "sha256": "245a062f513b636f027e12a77c01e7ff341a99b213ca1f06fb6324ab3b9b651c",
+      "bytes": 250631
+    },
+    "step_1.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\step_1.pt",
+      "sha256": "a160d35482d969afeb27a3405f45ac4c87fe956de21c2614f1db81e317b426c2",
+      "bytes": 250631
+    },
+    "step_2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\step_2.pt",
+      "sha256": "5aa2dd55260b58cd16fba1a1d3d831986a2ea4d51729143b8e94332286393496",
+      "bytes": 250631
+    },
+    "step_3.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\step_3.pt",
+      "sha256": "76977b8efc687385f0aeaf0a97e3ca5cc65d9db4081322b7011cbf5498a9edd8",
+      "bytes": 250631
+    },
+    "step_4.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\step_4.pt",
+      "sha256": "1264b2c580d10aa39e1e47abcd0dc9af688af28d2a6feb3aeae63db7375ca645",
+      "bytes": 250631
+    },
+    "theta_0.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\theta_0.pt",
+      "sha256": "09ff838b87f2e48ff725028a2be3d99df4d2b9cdeb84520342ed4461a632fc4e",
+      "bytes": 48759
+    },
+    "theta_1.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\theta_1.pt",
+      "sha256": "d45d76a6865242489dab2456d3c24c3289b6f7332d7ccad855e0700ad9bad3dd",
+      "bytes": 48759
+    },
+    "theta_2.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\theta_2.pt",
+      "sha256": "9dce6902c3d667ac1635b854920189e8acb0d1c3ee6e082b0186787ac686fb79",
+      "bytes": 48759
+    },
+    "theta_3.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\theta_3.pt",
+      "sha256": "27d12f871a7bf728d3f5abc426fd428f851845762d1ec125e7b8d07db4ab9643",
+      "bytes": 48759
+    },
+    "theta_4.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\theta_4.pt",
+      "sha256": "16b63fccd3dd70c11afdaf37f498486b9a6c641f9c8e75e3f7fb7b496e4c0c97",
+      "bytes": 48759
+    },
+    "theta_5.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\theta_5.pt",
+      "sha256": "13c9d8ad8df1d8379a2e1e267f1026f0f0a20b0c3bf57ae1f2a21f362893cc9d",
+      "bytes": 48759
+    },
+    "review.md": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\review.md",
+      "sha256": "27e832387596d8b88fb36493d350f68faf1c733b3254944ad2df5fa52d6729ff",
+      "bytes": 3242
+    },
+    "validation.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_estimator_runs_20261004\\validation.json",
+      "sha256": "f5720c15a362a192ef983b9ca085a1f4f446efc557038a855cfe1e1fc26ea93c",
+      "bytes": 843
+    }
+  },
+  "validation": {
+    "status": "passed",
+    "production_source_changes": 0,
+    "py_compile": "passed external diagnostic tooling",
+    "Ruff": "not applicable; no committed Python",
+    "production_suites": "not rerun; no production changes",
+    "artifact_consistency": "passed pins/source bytes, prospective draws, exact displacement and endpoint identity, repeatability/scalars, net signs and selection",
+    "review": "passed",
+    "git_diff_check": "passed unstaged and staged",
+    "driver_sha256": {
+      "audit.py": "2b5db15d3ad261cf6fe5d9684e93b677c143a0d92339cf3f9cff19acf4af454a",
+      "aggregate.py": "d65cf35209a78159272dc67cecdcb4658939aa91e2d137a1489d5ecb01ad7412",
+      "finalize.py": "708ef73ca4a49ae47619d1f441a68983d27c71d304f17095c6631fea934ad936"
+    },
+    "review_sha256": "27e832387596d8b88fb36493d350f68faf1c733b3254944ad2df5fa52d6729ff"
+  }
+}
