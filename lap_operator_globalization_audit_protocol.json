@@ -1,0 +1,344 @@
+{
+  "schema": "operator-globalization-audit-v1",
+  "head": "839e03129c226006a37f6ec99dd39653a709f8d9",
+  "grid": [
+    0,
+    1,
+    0.5,
+    0.25,
+    0.125,
+    0.0625,
+    0.03125,
+    0.015625,
+    0.0078125,
+    0.00390625,
+    0.001953125,
+    0.0009765625,
+    0.00048828125,
+    0.000244140625,
+    0.0001220703125,
+    6.103515625e-05,
+    3.0517578125e-05
+  ],
+  "point_chunk": 256,
+  "ao_chunk": 4096,
+  "armijo_c": 0.0001,
+  "noise_floor": "64*eps64*max(1,abs(L0))",
+  "derivative_relative_tolerance": 0.001,
+  "zero_norm_threshold": 1e-30,
+  "source_precision": "exact F32-loaded source values widened; no native-double regeneration",
+  "quadratic_subset": [
+    0.03125,
+    0.015625,
+    0.0078125,
+    0.00390625
+  ],
+  "no_training": true,
+  "review_status": "PASS",
+  "branch": "lap_full_vxc",
+  "status": "complete; independently reviewed",
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_protocol.json": "589dd2a3db8af5cfcf321dc38e715f2a6ac3f37ec3ff4b0b8ed7dc24e541a714",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_training_protocol.json": "e4f856a89a683141e026cf9f17085c05d205204005dcffedb5a7bea8df0405de",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_sampling_manifest.json": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_results.json": "05d2d83339e4e11cb68bad81ec1ae08abe826caf71db24258fa2afe3fb36ca1d",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_latest.pt": "c11aa31188b21e44711d82d364e2e8214eef4fce5b0e5ef1790ff312d35fb2bb",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "1aed40401e8b4a0581bf3126c5eef5b9ed3fa13f78f543ffaf2eb0774821317a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "2e71941ac17514b4ead96c2104717392b0ab59dca406aaf30381f58c533652fd",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_operator.py": "0aa94d464aacf4e4ba481bc6518a206f793ffaf2490749b20797899f5cc0802b",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_results.json": "c7112b76d4e6168d0d15b081b5c61025c0be154cefe0b5cf0b81de540885fa04",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_results.json": "5fe2809a84d3ee59b0fa3625a5d24c015b736831923b8b27b6985d51db04bdcc",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_report.md": "bbbdc5ef24b820a83e1aace241d7b477a69a799d4bc2f0e7db82aa915821268c",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_protocol.json": "0a3ad5cdfe295cb8f02faca28e81a13789e558253caf839597ba79e90842c979"
+  },
+  "source_hashes": {
+    "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "train_models/lap_moo_protocol.py": "2e71941ac17514b4ead96c2104717392b0ab59dca406aaf30381f58c533652fd",
+    "train_models/lap_moo_training.py": "1aed40401e8b4a0581bf3126c5eef5b9ed3fa13f78f543ffaf2eb0774821317a",
+    "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "train_models/train_lap_moo.py": "521f6bfa9fdd28c07649c449e0f3b6ea582170df9b02dfef64c08283b13b9643",
+    "train_models/lap_operator.py": "0aa94d464aacf4e4ba481bc6518a206f793ffaf2490749b20797899f5cc0802b",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf"
+  },
+  "system_order": [
+    "H2",
+    "HLi",
+    "BH",
+    "BeH2",
+    "H2O",
+    "CH4",
+    "N2",
+    "CO",
+    "CH2O",
+    "C2H2_iso2",
+    "H4Si",
+    "AlBeH",
+    "ClH",
+    "ClHS",
+    "HPSi_iso2"
+  ],
+  "execution_environment": {
+    "torch": "2.11.0+cu128",
+    "CUDA": "12.8",
+    "device": "NVIDIA GeForce RTX 5070 Ti",
+    "device_total_memory": 17094475776,
+    "matmul_allow_tf32": false,
+    "cudnn_allow_tf32": true,
+    "deterministic_algorithms": false,
+    "MKL_THREADING_LAYER": "SEQUENTIAL",
+    "OMP_NUM_THREADS": "1"
+  },
+  "external_artifacts": {
+    "AlBeH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\AlBeH.json",
+      "sha256": "48763afd6fda34d2ad7c2b36d6eea6a56f2dbac7f2b562bc045b653490a3e6bb",
+      "bytes": 6060
+    },
+    "AlBeH_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\AlBeH_gradients.pt",
+      "sha256": "5f6923714ec09d6107a4d4a2b93474b098cddb910f8ff30a4acb72d912a9dc63",
+      "bytes": 172775
+    },
+    "analysis.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\analysis.json",
+      "sha256": "17a18d96bf514b7c994f11382f1d9ddd1648a34041f26b553e95da9d917fec89",
+      "bytes": 32416
+    },
+    "analyze.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\analyze.py",
+      "sha256": "629e6a5281f06dc5ad8f0e958cd4cfeb195eaec408a825ed16ac5e4221d402ce",
+      "bytes": 5747
+    },
+    "BeH2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\BeH2.json",
+      "sha256": "0326385a6d1cfa31b5a4f982a53c5c6eb8dd09a0538ca5ec54e257a6d8e87f70",
+      "bytes": 6038
+    },
+    "BeH2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\BeH2_gradients.pt",
+      "sha256": "2d5fd95187011f57500919c75b8f154e5ede99a04759249a7413db9c4f1d7d7e",
+      "bytes": 172701
+    },
+    "BH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\BH.json",
+      "sha256": "733e6fd11a0c1ab88394b9201c5d41f66685d8b3d2e385c128126a2fadba0b6a",
+      "bytes": 6046
+    },
+    "BH_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\BH_gradients.pt",
+      "sha256": "48753ac5c78aca75eecbe2a6a2aa65b606b9610bab956cec476df614fbdf3e28",
+      "bytes": 172553
+    },
+    "C2H2_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\C2H2_iso2.json",
+      "sha256": "cf618f1350bf218b6beeafb969e094150b0f7366968ddc5ab6eb64a91e7657e5",
+      "bytes": 6037
+    },
+    "C2H2_iso2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\C2H2_iso2_gradients.pt",
+      "sha256": "ce8132fbb9b1507825153909be7b42a6a5d79267433180fd679a5639a8dc3d89",
+      "bytes": 173071
+    },
+    "CH2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\CH2O.json",
+      "sha256": "7d59bfd06e98a228727de42d6dda632d33a7df0949b5bcab9213fa27a3e3d482",
+      "bytes": 6045
+    },
+    "CH2O_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\CH2O_gradients.pt",
+      "sha256": "3d2bda7a7e2146cb4c7201dc42f75983e0d31decf392458aafbb4d2dbdfada33",
+      "bytes": 172701
+    },
+    "CH4.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\CH4.json",
+      "sha256": "acb2dc2b0901016426a9efb911d709a0190cafeb5a74cc476ddeb093a905e521",
+      "bytes": 6023
+    },
+    "CH4_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\CH4_gradients.pt",
+      "sha256": "49425736b62813b02dae6138fe79033da3d723068ca37169110e433a61508a69",
+      "bytes": 172627
+    },
+    "ClH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\ClH.json",
+      "sha256": "44d7b08d2a3ba11e4138afa52be21e950402c8b164b485d912ab37596bdc2937",
+      "bytes": 6051
+    },
+    "ClH_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\ClH_gradients.pt",
+      "sha256": "e606880e2d7c2b23c3745dc40a36db58a1122a565e984f620bb2aa837aed818a",
+      "bytes": 172627
+    },
+    "ClHS.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\ClHS.json",
+      "sha256": "ec38856e5bd24e16067eebd02e730b0ea7ed511f822b107bff5467aa2e729f10",
+      "bytes": 6058
+    },
+    "ClHS_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\ClHS_gradients.pt",
+      "sha256": "cc5539653511804ddbefb8534cdceef347a3bae4ca833326598bc16336427f2c",
+      "bytes": 172701
+    },
+    "CO.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\CO.json",
+      "sha256": "779464b5df043afd5ea68bce7322a5a4529386ae2c4ebf0264aa91e022921825",
+      "bytes": 6045
+    },
+    "CO_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\CO_gradients.pt",
+      "sha256": "dee8e6c6011f7e6956cdbd4e71f2c361ba5b402ff68a9edb61b7d39732dee425",
+      "bytes": 172553
+    },
+    "geometry.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\geometry.json",
+      "sha256": "5d5991d2947e562e010cf7b4610d9392ebb7ca04d880edee57b9324f55539200",
+      "bytes": 5911
+    },
+    "H2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\H2.json",
+      "sha256": "6434d7c2c6132d1107fd4ce4e65a4407d25e74447a8a7ae6c964fa8af7f611aa",
+      "bytes": 6029
+    },
+    "H2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\H2_gradients.pt",
+      "sha256": "0bd919292c6486edbbc2840ec4a12cac7b042abfe2c47a5c093fbfebbdcefaed",
+      "bytes": 172553
+    },
+    "H2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\H2O.json",
+      "sha256": "9c46ec6f79ab832cd4d4e777b999a07907b1ffc87c6388758fd8459c45337e45",
+      "bytes": 6034
+    },
+    "H2O_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\H2O_gradients.pt",
+      "sha256": "56cc390eb88a8c5352f97609dd47b4bdfe038797b78997c51ff8e2041bcee503",
+      "bytes": 172627
+    },
+    "H4Si.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\H4Si.json",
+      "sha256": "ac492e43ec44b563ba7bdf37c1732ec83909df0cba56a06f2486edee000130b3",
+      "bytes": 6058
+    },
+    "H4Si_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\H4Si_gradients.pt",
+      "sha256": "cd3c16e6cf7324e7576f0fc7a918f2567084645a97421fdedf3408431e955ecb",
+      "bytes": 172701
+    },
+    "HLi.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\HLi.json",
+      "sha256": "5852fb11d8f856e65562360935b15530e6660cf7da8ebed4d39991b7c9b42f32",
+      "bytes": 6047
+    },
+    "HLi_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\HLi_gradients.pt",
+      "sha256": "69276384891d236e6206cfd596fd0adbc04c07c2d4267802ac82153c932eed9c",
+      "bytes": 172627
+    },
+    "HPSi_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\HPSi_iso2.json",
+      "sha256": "83ccfde4964de93da5538d173cc530c465db35c6ee9d8fb43eb8a88268c4ed0a",
+      "bytes": 6062
+    },
+    "HPSi_iso2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\HPSi_iso2_gradients.pt",
+      "sha256": "de6c730c27af6128529a9f725093181808dfa9693a4919b0ac859bf706d8f935",
+      "bytes": 173071
+    },
+    "N2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\N2.json",
+      "sha256": "4997ed9fc8f428dd9de07f9faf77586ce1efb01ff74f67ddba13d704ac1766b3",
+      "bytes": 6028
+    },
+    "N2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\N2_gradients.pt",
+      "sha256": "20a436b3bfda911307e8e5515252b39532d61139409327c89d21179d4708922b",
+      "bytes": 172553
+    },
+    "protocol.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\protocol.json",
+      "sha256": "0ecc2f814bdddce8c6e17699a8494417a5311bb9e2caa742514cc420cd37892b",
+      "bytes": 627
+    },
+    "recovery.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\recovery.json",
+      "sha256": "c062539254e9b0a9aea15d43f57f05e0d5eca507a25d76f49d3754b9d8d02e80",
+      "bytes": 828
+    },
+    "report.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\report.py",
+      "sha256": "756b8fad281c90bccf7cfc3c8c736d14575e21cd3ef90ca6785b02a2ca626671",
+      "bytes": 12535
+    },
+    "requested_delta.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\requested_delta.pt",
+      "sha256": "62248f1646fec93b3aad39446a48505c1d10f2e0cb124e62f6d664535d3f56a0",
+      "bytes": 86653
+    },
+    "review.md": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\review.md",
+      "sha256": "e9f78e393c5b8eb19e71dfbbc2d4da3120ed7b0d935c68ed9aae16598ea4bd14",
+      "bytes": 2058
+    },
+    "scan.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\scan.json",
+      "sha256": "b41483909128b10110693e40b7dee687014a49a1ecd0c3200f3c69a233d522e2",
+      "bytes": 108356
+    },
+    "scan.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\scan.py",
+      "sha256": "47d016789ca65840589be344d175e97bef397696999db180c5d1a5dcca57c799",
+      "bytes": 8676
+    },
+    "validate.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\validate.py",
+      "sha256": "e8beecc3b78c55adc8e8d15f8dcceedc66c5102168cf832d64dc62e4c509d1dd",
+      "bytes": 2951
+    },
+    "validation.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\validation.json",
+      "sha256": "6909eb0bd5a19ae46f072e02d3ca0f4208de0130ac233b80ab7a078bc6e7a459",
+      "bytes": 631
+    }
+  },
+  "historical_requested_recovery": {
+    "base_file_sha256": "16b63fccd3dd70c11afdaf37f498486b9a6c641f9c8e75e3f7fb7b496e4c0c97",
+    "final_file_sha256": "13c9d8ad8df1d8379a2e1e267f1026f0f0a20b0c3bf57ae1f2a21f362893cc9d",
+    "step_file_sha256": "1264b2c580d10aa39e1e47abcd0dc9af688af28d2a6feb3aeae63db7375ca645",
+    "requested_delta_sha256": "62248f1646fec93b3aad39446a48505c1d10f2e0cb124e62f6d664535d3f56a0",
+    "theta5_bitwise_reproduced": true,
+    "realized_delta_bitwise_reproduced": true,
+    "solver_called": false,
+    "chemistry_loss_exact": 1.5679730877122435,
+    "requested_norm": 5.197024397339165e-06,
+    "realized_norm": 5.196488136616163e-06,
+    "recorded_coefficients_replayed": {
+      "relchem": 0.05990171223166267,
+      "ae17": 0.0,
+      "exc": 6.97107412965736e-06,
+      "op": 0.25342905524679143
+    },
+    "recorded_rescale": 38.08181677300692
+  },
+  "production_dtype_contract": "F32 descriptors/local derivatives and within-AO-chunk matrices; F64 sum of converted chunk matrices, reference, overlap and final loss. F32 autograd leaves, then widened diagnostic gradients.",
+  "F64_dtype_contract": "actual F64 model parameter leaves and identical operator factory; every F32-loaded source feature, weight and AO factor widened exactly. Existing F64 references unchanged. No native-double source reconstruction.",
+  "review": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_globalization_runs_20261004\\review.md",
+    "sha256": "e9f78e393c5b8eb19e71dfbbc2d4da3120ed7b0d935c68ed9aae16598ea4bd14",
+    "status": "PASS"
+  },
+  "final_decision": "no training; isolate operator precision boundary",
+  "historical_artifacts_unchanged": true
+}
