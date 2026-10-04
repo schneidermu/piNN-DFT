@@ -1,6 +1,6 @@
 # Chemistry database-label recovery
 
-**Status:** implementation contract; static audit only  
+**Status:** implementation contract; static audit only
 **Audited checkout:** lap_full_vxc, commit 1b740325d8bc120d7da9ef1da117338e6ba98fcc
 
 ## Problem
@@ -36,4 +36,3 @@ Canonical records and MinnesotaGroupStore.load_variant retain scalar strings. da
 ## Out of scope
 
 Changing precision strategy, energy assembly, PCD or line-search policy, broad retraining, and rewriting historical checkpoints or reports. The gated diagnostics above assess the corrected objective; they do not prescribe a new training method.
-
