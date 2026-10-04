@@ -1,4 +1,4 @@
-"""Run the clean one-stage, three-task variational Lap training path.
+"""Run the one-stage variational Lap CLI, with explicit four-task PCD mode.
 
 The CLI consumes an external hash-bound Minnesota group store and AO-factor
 cache. PySCF is not imported; it is only needed to create the cache upstream.
@@ -7,6 +7,7 @@ cache. PySCF is not imported; it is only needed to create the cache upstream.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -31,11 +32,14 @@ from lap_checkpoint import load_lap_checkpoint
 from lap_moo_optimizers import build_optimizer
 from lap_moo_panel import MinnesotaGroupStore
 from lap_moo_protocol import (
+    FOUR_TASK_NAMES,
     METHOD_IDS,
+    OPERATOR_PRECISION_SOURCE_PATHS,
     OPTIMIZER_FAMILIES,
     PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
     PCD_QP_TOLERANCE,
     PCD_SOURCE_FILE_PATHS,
+    TASK_NAMES,
     SamplingStream,
     build_sampling_manifest_from_catalog,
     file_sha256,
@@ -46,10 +50,12 @@ from lap_moo_protocol import (
 )
 from lap_moo_training import (
     AOFactorChunk,
+    ChemistryBatchObjective,
     MRKSOperatorSystem,
     compute_isolated_task_gradients,
     load_moo_checkpoint,
     make_cosine_scheduler,
+    make_mrks_objective_factories,
     make_three_objective_factories,
     materialize_task_zeros,
     named_trainable_parameters,
@@ -106,6 +112,7 @@ def _run_scheduled_update(
     world_size: int,
     step_rule: str = "optimizer",
     vector_armijo: dict[str, Any] | None = None,
+    task_order: tuple[str, ...] = TASK_NAMES,
 ):
     """Apply one CLI update through the declared optimizer or PCD step rule."""
     return train_moo_update(
@@ -120,6 +127,7 @@ def _run_scheduled_update(
         record_update_geometry=True,
         step_rule=step_rule,
         vector_armijo=vector_armijo,
+        task_order=task_order,
     )
 
 
@@ -512,7 +520,27 @@ def _load_sampling_manifest(
     seed: int,
     world_size: int,
     rank: int,
+    four_task: bool = False,
 ) -> dict[str, Any]:
+    if four_task:
+        # A v2 manifest is the immutable batch plan; never resample its tasks.
+        found = read_sampling_manifest(path)
+        if (found["schema"] != "lap-moo-sampling-manifest-v2"
+                or found.get("task_order") != list(FOUR_TASK_NAMES)
+                or len(found["entries"]) != updates
+                or found.get("seed") != seed or found.get("world_size") != world_size
+                or found.get("mrks_systems") != sorted(system_names)
+                or found.get("source_hashes") != source_hashes):
+            raise ValueError("Four-task manifest differs from requested catalog/source/seed/world/update settings.")
+        source_catalog = {(r["database"], r["reaction_id"]): set(r["variants"])
+                          for r in catalog}
+        locked_catalog = {(r["database"], r["reaction_id"]): set(r["variants"])
+                          for r in found["reaction_catalog"]}
+        if (len(locked_catalog) != len(found["reaction_catalog"])
+                or locked_catalog.keys() != source_catalog.keys()
+                or any(not v or not v <= source_catalog[k] for k, v in locked_catalog.items())):
+            raise ValueError("Four-task locked reaction variants differ from the source catalog.")
+        return found
     expected = build_sampling_manifest_from_catalog(
         catalog,
         system_names,
@@ -524,6 +552,8 @@ def _load_sampling_manifest(
     if rank == 0:
         if path.exists():
             found = read_sampling_manifest(path)
+            if found["schema"] != "lap-moo-sampling-manifest-v1":
+                raise ValueError("Three-task mode requires a v1 sampling manifest.")
             if found["manifest_sha256"] != expected["manifest_sha256"]:
                 raise ValueError("Existing sampling manifest does not match requested data/seed/update settings.")
         else:
@@ -594,6 +624,25 @@ def _catalog_and_systems_for_panel(
     return catalog, selected_systems, file_sha256(panel_path)
 
 
+def _four_task_objectives(model, shadow, sample, store, system,
+                          reaction_dispersions, mrks_dispersions, point_chunk_size):
+    """Consume listed variants/weights; use existing bounded chemistry and AO paths."""
+    objectives = {}
+    for task in FOUR_TASK_NAMES[:2]:
+        batch = sample["task_samples"][task]
+        reactions = tuple(store.load_variant(
+            (row["database"], row["reaction_id"]), row["variant_suffix"],
+        ) for row in batch)
+        objectives[task] = ChemistryBatchObjective(
+            model, shadow, reactions, tuple(row["weight"] for row in batch), reaction_dispersions,
+        )
+    energy, operator = make_mrks_objective_factories(
+        model, system, point_chunk_size=point_chunk_size, dispersions=mrks_dispersions,
+    )
+    objectives.update(exc=energy, op=operator)
+    return objectives
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--predopt-checkpoint", type=Path, required=True)
@@ -636,6 +685,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--ao-cache-chunk-size", type=int, default=4096)
     parser.add_argument("--checkpoint-every", type=int, default=10)
     parser.add_argument("--stop-after", type=int)
+    parser.add_argument("--four-task-pcd", action="store_true", help="Consume immutable v2 relchem/ae17 batches with direct PCD Armijo.")
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--method-hyperparameters", type=Path)
     parser.add_argument("--fixed-calibration-report", type=Path)
@@ -649,6 +699,10 @@ def main() -> None:
     if min(args.updates, args.point_chunk_size, args.ao_cache_chunk_size, args.checkpoint_every) <= 0:
         raise ValueError("Update count, chunk sizes, and checkpoint interval must be positive.")
     direct_armijo = args.step_rule == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
+    if args.four_task_pcd and (args.method != "pcd" or not direct_armijo
+            or args.dtype != "float32" or args.fixed_calibration_report is not None
+            or args.optimizer_family != "radamw"):
+        raise ValueError("Four-task mode requires F32 direct PCD Armijo with no optimizer/scalarization override.")
     if args.weight_decay is None:
         args.weight_decay = 0.0 if direct_armijo else 1.0e-2
     if args.learning_rate <= 0 or args.weight_decay < 0:
@@ -728,6 +782,9 @@ def main() -> None:
     catalog, sampling_system_names, panel_sha = _catalog_and_systems_for_panel(
         rank_args.get("panel_definition"), group_store, systems
     )
+    if args.four_task_pcd:
+        # Four-task chemistry covers all268; panel provenance still scopes cached systems.
+        catalog, _, _ = _catalog_and_systems_for_panel(None, group_store, systems)
     source_hashes = {
         "minnesota_group_store_manifest": group_store.manifest_sha256,
         "central_operator_manifest": systems.central_manifest_sha256,
@@ -747,6 +804,7 @@ def main() -> None:
         seed=args.seed,
         world_size=world_size,
         rank=rank,
+        four_task=args.four_task_pcd,
     )
     if args.method == "fixed" and args.fixed_calibration_report is None:
         raise ValueError("Fixed scalarization requires --fixed-calibration-report.")
@@ -790,6 +848,10 @@ def main() -> None:
             "sampling_manifest_file_sha256": file_sha256(rank_args["sampling_manifest"]),
             "source_code_sha256": pcd_source_hashes,
         }
+    if args.four_task_pcd:
+        pcd_protocol_kwargs.update(task_order=FOUR_TASK_NAMES, operator_precision_source_sha256={
+            p: file_sha256(REPO_ROOT / p) for p in OPERATOR_PRECISION_SOURCE_PATHS
+        })
     protocol = make_protocol_metadata(
         architecture=model.architecture,
         method=args.method,
@@ -824,7 +886,8 @@ def main() -> None:
                 "sampling_manifest_sha256": manifest["manifest_sha256"],
             },
         )
-    elif rank == 0:
+    elif args.resume is not None and (rank == 0 or args.four_task_pcd):
+        # All four-task ranks fail together before the resume barrier.
         if not run_protocol_path.exists() or _read_json(run_protocol_path) != protocol:
             raise ValueError("Existing output protocol does not match the resume request.")
     if world_size > 1:
@@ -847,6 +910,7 @@ def main() -> None:
     if next_update > stop_after:
         raise ValueError("Resume cursor exceeds --stop-after.")
 
+    chemistry_shadow = copy.deepcopy(model).double() if args.four_task_pcd else None
     reaction_dispersions = load_reaction_dispersions(str(rank_args["reaction_dispersions"]))
     mrks_dispersions = load_mrks_dispersions(str(rank_args["mrks_dispersions"]))
     stream = SamplingStream(manifest)
@@ -858,22 +922,30 @@ def main() -> None:
     try:
         for update_index in range(next_update, stop_after):
             sample = stream.entry(update_index, rank)
-            reaction_identity = sample["reaction"]
-            reaction = group_store.load_variant(
-                (reaction_identity["database"], reaction_identity["reaction_id"]),
-                sample["variant_suffix"],
-            )
-            system = systems.load(sample["mrks_system"])
-            objective_factories = make_three_objective_factories(
-                model,
-                reaction,
-                system,
-                device=device,
-                dtype=dtype,
-                reaction_dispersions=reaction_dispersions,
-                mrks_dispersions=mrks_dispersions,
-                point_chunk_size=args.point_chunk_size,
-            )
+            reaction = None
+            if args.four_task_pcd:
+                system = systems.load(sample["mrks_system"])
+                objective_factories = _four_task_objectives(
+                    model, chemistry_shadow, sample, group_store, system,
+                    reaction_dispersions, mrks_dispersions, args.point_chunk_size,
+                )
+            else:
+                reaction_identity = sample["reaction"]
+                reaction = group_store.load_variant(
+                    (reaction_identity["database"], reaction_identity["reaction_id"]),
+                    sample["variant_suffix"],
+                )
+                system = systems.load(sample["mrks_system"])
+                objective_factories = make_three_objective_factories(
+                    model,
+                    reaction,
+                    system,
+                    device=device,
+                    dtype=dtype,
+                    reaction_dispersions=reaction_dispersions,
+                    mrks_dispersions=mrks_dispersions,
+                    point_chunk_size=args.point_chunk_size,
+                )
             if device.type == "cuda":
                 torch.cuda.synchronize(device)
                 torch.cuda.reset_peak_memory_stats(device)
@@ -890,6 +962,7 @@ def main() -> None:
                     world_size=world_size,
                     step_rule=args.step_rule,
                     vector_armijo=vector_armijo,
+                    task_order=FOUR_TASK_NAMES if args.four_task_pcd else TASK_NAMES,
                 )
             except Exception as exc:
                 if args.method == "nash_mtl" and "Nash-MTL" in str(exc):

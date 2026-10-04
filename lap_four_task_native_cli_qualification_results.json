@@ -1,0 +1,1015 @@
+{
+  "starting_commit": "abd2623e7fdeebc054a2299a09da0874ae9e0537",
+  "status": "PASS",
+  "native_protocol": {
+    "ao_cache_chunk_size": 4096,
+    "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "architecture": "pcPBELMLOptimizerV2Lap-v1",
+    "dtype": "float32",
+    "fixed_scalarization": null,
+    "grid_chunk_size": 256,
+    "lr_schedule": {
+      "name": "none"
+    },
+    "method": "pcd",
+    "method_hyperparameters": {
+      "beta": 0.999,
+      "eps": 1e-08,
+      "qp_tolerance": 1e-09,
+      "tau": 0.02
+    },
+    "minnesota_data_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "mrks_dispersions_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "objective_definitions": {
+      "ae17": "mean corrected singleton fchem over17 AE17 identities; matched-F64 chemistry",
+      "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+      "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO",
+      "relchem": "mean corrected singleton fchem over251 non-AE17 identities; matched-F64 chemistry"
+    },
+    "one_stage_main_training": true,
+    "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "operator_precision_source_sha256": {
+      "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+      "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+      "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+      "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+      "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287"
+    },
+    "operator_protocol": "lap-weakform-ao-v1",
+    "optimizer": {
+      "name": "none"
+    },
+    "pcd_algorithm": {
+      "ema_quantity": "squared global raw-gradient norm, one scalar per task",
+      "epsilon_scope": "inside_sqrt; scale invariance is asymptotic for finite eps",
+      "final_rescale": "raw_primary_gradient_l2_norm",
+      "infeasible_policy": "drop all secondary constraints and use the primary direction",
+      "normalization": "1/sqrt(bias_corrected_ema + eps)",
+      "primary_task": "relchem",
+      "qp": "minimize 0.5*||d-g_tilde_primary||^2 subject to g_tilde_j dot d >= tau*||g_tilde_j||^2",
+      "qp_tolerance": 1e-09,
+      "secondary_tasks": [
+        "ae17",
+        "exc",
+        "op"
+      ],
+      "zero_primary_policy": "return exact zero direction after EMA update",
+      "zero_qp_direction_policy": "return exact zero direction",
+      "zero_secondary_policy": "omit the exact-zero secondary constraint"
+    },
+    "pcd_provenance": {
+      "paper_arxiv": "2606.29521v2",
+      "paper_citation": "Dara Varam and Mohamed I. AlHajri, Not All Objectives Are Born Equal: Priority-Constrained Descent for Hierarchical Multi-Objective Optimization, Transactions on Machine Learning Research, September 2026.",
+      "paper_pdf_sha256": "8e6c03dd8edc2836057f748761c98b352600819cce3e0bf2c0fb6ccef7878c65",
+      "paper_record": "https://openreview.net/forum?id=HT01yGHLEt",
+      "upstream_commit": "e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0",
+      "upstream_license": "MIT",
+      "upstream_license_attribution": "Copyright 2026 Dara Varam and Mohamed I. AlHajri",
+      "upstream_repository": "https://github.com/DaraVaram/priority-constrained-descent"
+    },
+    "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "protocol_version": "lap-moo-one-stage-v6",
+    "random_seed": 41,
+    "reaction_dispersions_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "sampling_manifest_file_sha256": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+    "sampling_manifest_sha256": "4e349a8d6a4f0004c196091adfa46fd4db32fb4ec8c9f108750d5bf0fae75141",
+    "source_code_sha256": {
+      "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+      "train_models/lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+      "train_models/lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+      "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+      "train_models/train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab"
+    },
+    "step_rule": "pcd_direct_vector_armijo",
+    "task_order": [
+      "relchem",
+      "ae17",
+      "exc",
+      "op"
+    ],
+    "vector_armijo": {
+      "c": 0.0001,
+      "initial_step_size": 6.632573669086685e-07,
+      "max_backtracks": 20,
+      "rho": 0.5
+    },
+    "world_size": 1
+  },
+  "one_update_parity": {
+    "status": "PASS",
+    "criterion": "exact equality; no floating tolerance",
+    "sample_losses_all_diagnostics_model_EMA_cursor_exact": true,
+    "main_float32": true,
+    "reference_results_sha256": "8e38f2a4079807c04be8fb186978bc6546fdbb1b288dbc5215d377bbb53f736c",
+    "native_checkpoint_sha256": "5026dcb4c1aa58075f9fa0a75397860992bff4958f9ef820fd3722e3d96c950e",
+    "native_log_sha256": "f81a45b0dee97eb3adafaf0e643cf3af7d3fbe92c97fac943796ceb63d0cfde7"
+  },
+  "five_update_parity": {
+    "status": "PASS",
+    "criterion": "exact equality; no floating tolerance",
+    "updates": [
+      {
+        "update": 0,
+        "system": "BeH2",
+        "sample_losses_all_diagnostics_state_EMA_cursor_exact": true,
+        "t": 1.0,
+        "backtracks": 0,
+        "active": [
+          "op"
+        ],
+        "checkpoint_sha256": "5026dcb4c1aa58075f9fa0a75397860992bff4958f9ef820fd3722e3d96c950e"
+      },
+      {
+        "update": 1,
+        "system": "H2",
+        "sample_losses_all_diagnostics_state_EMA_cursor_exact": true,
+        "t": 1.0,
+        "backtracks": 0,
+        "active": [
+          "ae17"
+        ],
+        "checkpoint_sha256": "6e13f93c9f3a30b32d7ec94a18058f2914c3036175683b594798c7833da434c9"
+      },
+      {
+        "update": 2,
+        "system": "BH",
+        "sample_losses_all_diagnostics_state_EMA_cursor_exact": true,
+        "t": 1.0,
+        "backtracks": 0,
+        "active": [
+          "exc",
+          "op"
+        ],
+        "checkpoint_sha256": "be3fd317600d4d0df9e2d1bc523c6a126f69d934ddc4c61626456e46331f1a03"
+      },
+      {
+        "update": 3,
+        "system": "CH4",
+        "sample_losses_all_diagnostics_state_EMA_cursor_exact": true,
+        "t": 1.0,
+        "backtracks": 0,
+        "active": [
+          "exc",
+          "op"
+        ],
+        "checkpoint_sha256": "044c6c309e8bc79a87505ea906c11195f112592b161c6f141683543f34c3da22"
+      },
+      {
+        "update": 4,
+        "system": "HPSi_iso2",
+        "sample_losses_all_diagnostics_state_EMA_cursor_exact": true,
+        "t": 1.0,
+        "backtracks": 0,
+        "active": [
+          "exc",
+          "op"
+        ],
+        "checkpoint_sha256": "f545d7f4a8d4382e50045d099d1e4b76e00bb91caf86133f8a9c85c6b88d2029"
+      }
+    ],
+    "reference_results_sha256": "8e38f2a4079807c04be8fb186978bc6546fdbb1b288dbc5215d377bbb53f736c",
+    "native_updates_sha256": "440116e1bf14474a6347a08d8153fef55fed31ad27bc0eba25d42ab27e1f435a"
+  },
+  "resume_parity": {
+    "status": "PASS",
+    "criterion": "bitwise tensors and exact recursive checkpoint/RNG/scientific update diagnostics equality",
+    "checks": {
+      "checkpoint_kind": true,
+      "protocol_metadata": true,
+      "protocol_metadata_sha256": true,
+      "operator_metadata": true,
+      "operator_protocol": true,
+      "model_kwargs": true,
+      "model_state_dict": true,
+      "optimizer_state_dict": true,
+      "scheduler_state_dict": true,
+      "sampling_cursor": true,
+      "aggregator_state": true,
+      "rng_states_by_rank": true
+    },
+    "update1_exact": true,
+    "non_state_instrumentation_differences": [
+      "cuda_memory",
+      "step_seconds",
+      "system_cache_load_seconds"
+    ],
+    "resumed_checkpoint_sha256": "6e13f93c9f3a30b32d7ec94a18058f2914c3036175683b594798c7833da434c9"
+  },
+  "monitoring": {
+    "0": {
+      "chemistry": {
+        "J_all": 2.746571009745216,
+        "J_rel": 1.2391049041903315,
+        "J_AE": 25.0038646858791,
+        "weighted_nonAE_RMSE": 46.32029458968161,
+        "AE_MAE": 47.336699410627965,
+        "AE_RMSE": 56.791649976318745,
+        "per_database": {
+          "ABDE4": {
+            "MAE": 2.7195551967202647,
+            "RMSE": 3.387937958605582
+          },
+          "AE17": {
+            "MAE": 47.336699410627965,
+            "RMSE": 56.791649976318745
+          },
+          "DBH76": {
+            "MAE": 8.626764125200646,
+            "RMSE": 10.002888847249116
+          },
+          "EA13": {
+            "MAE": 2.4721282828063633,
+            "RMSE": 3.105538423531583
+          },
+          "IP13": {
+            "MAE": 3.43613768168918,
+            "RMSE": 4.6209060528546635
+          },
+          "MGAE109": {
+            "MAE": 15.848242877876386,
+            "RMSE": 19.82396787514349
+          },
+          "NCCE31": {
+            "MAE": 0.8816928086380484,
+            "RMSE": 1.2482549497189777
+          },
+          "PA8": {
+            "MAE": 1.4738301699415928,
+            "RMSE": 1.7214968720908466
+          },
+          "pTC13": {
+            "MAE": 5.810755070868059,
+            "RMSE": 6.811355817247947
+          }
+        },
+        "improved_relative": 0,
+        "improved_AE": 0,
+        "rows_sha256": "6c54bc0c091ccc9840306dd2d0b8223e4d588b6d5c53a2bd3cfc1017fed0d196"
+      },
+      "mRKS_rows": [
+        {
+          "system": "H2",
+          "losses": {
+            "exc": 5.24620990086403,
+            "op": 0.05065144760149834
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "HLi",
+          "losses": {
+            "exc": 15.666093377135129,
+            "op": 0.021227941618739317
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "BH",
+          "losses": {
+            "exc": 31.27274717005688,
+            "op": 0.04194661745040866
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "BeH2",
+          "losses": {
+            "exc": 24.72181286525273,
+            "op": 0.0332980676660685
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "H2O",
+          "losses": {
+            "exc": 35.45869173705803,
+            "op": 0.05311817567856048
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "CH4",
+          "losses": {
+            "exc": 30.79099076996318,
+            "op": 0.03757516422082794
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "N2",
+          "losses": {
+            "exc": 54.38671878029375,
+            "op": 0.0548397430769853
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "CO",
+          "losses": {
+            "exc": 55.32675492219039,
+            "op": 0.04991018709685011
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "CH2O",
+          "losses": {
+            "exc": 53.869783395827675,
+            "op": 0.03949757996330448
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "C2H2_iso2",
+          "losses": {
+            "exc": 50.511993123891145,
+            "op": 0.03369685883390478
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "H4Si",
+          "losses": {
+            "exc": 95.25223345793275,
+            "op": 0.02745743766580724
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "AlBeH",
+          "losses": {
+            "exc": 98.49579951017851,
+            "op": 0.01765758811192092
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "ClH",
+          "losses": {
+            "exc": 116.22157156281108,
+            "op": 0.04077189079823243
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "ClHS",
+          "losses": {
+            "exc": 213.70763169350192,
+            "op": 0.030487420761307275
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        },
+        {
+          "system": "HPSi_iso2",
+          "losses": {
+            "exc": 174.89457283507616,
+            "op": 0.019836207260573523
+          },
+          "ratios": {
+            "exc": 1.0,
+            "op": 1.0
+          }
+        }
+      ],
+      "mRKS": {
+        "exc": {
+          "mean": 70.38824034013555,
+          "mean_ratio": 1.0,
+          "arithmetic_mean_individual_ratio": 1.0,
+          "median_loss": 53.869783395827675,
+          "absolute_mean_difference": 0.0,
+          "median_ratio": 1.0,
+          "p90_ratio": 1.0,
+          "max_ratio": 1.0,
+          "count_improved": 0
+        },
+        "op": {
+          "mean": 0.03679815518699928,
+          "mean_ratio": 1.0,
+          "arithmetic_mean_individual_ratio": 1.0,
+          "median_loss": 0.03757516422082794,
+          "absolute_mean_difference": 0.0,
+          "median_ratio": 1.0,
+          "p90_ratio": 1.0,
+          "max_ratio": 1.0,
+          "count_improved": 0
+        }
+      }
+    },
+    "2": {
+      "chemistry": {
+        "J_all": 2.7457747013311717,
+        "J_rel": 1.2390285343167058,
+        "J_AE": 24.992438696662408,
+        "weighted_nonAE_RMSE": 46.31728458837722,
+        "AE_MAE": 47.31506800988994,
+        "AE_RMSE": 56.76428112387434,
+        "per_database": {
+          "ABDE4": {
+            "MAE": 2.7204627873885734,
+            "RMSE": 3.389377523495926
+          },
+          "AE17": {
+            "MAE": 47.31506800988994,
+            "RMSE": 56.76428112387434
+          },
+          "DBH76": {
+            "MAE": 8.626005467442399,
+            "RMSE": 10.002120395196478
+          },
+          "EA13": {
+            "MAE": 2.4720855722613937,
+            "RMSE": 3.105219386266283
+          },
+          "IP13": {
+            "MAE": 3.4361340068856805,
+            "RMSE": 4.620697539284154
+          },
+          "MGAE109": {
+            "MAE": 15.843700354347906,
+            "RMSE": 19.81849318223397
+          },
+          "NCCE31": {
+            "MAE": 0.8815126791482394,
+            "RMSE": 1.2480173056189665
+          },
+          "PA8": {
+            "MAE": 1.4737672544506353,
+            "RMSE": 1.721669928742681
+          },
+          "pTC13": {
+            "MAE": 5.8110567931224,
+            "RMSE": 6.811562114117731
+          }
+        },
+        "improved_relative": 199,
+        "improved_AE": 17,
+        "rows_sha256": "cad4a30e9a3c6b1d50258931a453443b61a0f5b70905cbf76d53ed82473bc8fc"
+      },
+      "mRKS_rows": [
+        {
+          "system": "H2",
+          "losses": {
+            "exc": 5.245255331591473,
+            "op": 0.050650045037814805
+          },
+          "ratios": {
+            "exc": 0.9998180459244682,
+            "op": 0.9999723095044672
+          }
+        },
+        {
+          "system": "HLi",
+          "losses": {
+            "exc": 15.662264082492017,
+            "op": 0.02122807182821393
+          },
+          "ratios": {
+            "exc": 0.9997555679931859,
+            "op": 1.000006133871901
+          }
+        },
+        {
+          "system": "BH",
+          "losses": {
+            "exc": 31.266025333741258,
+            "op": 0.041946989412728904
+          },
+          "ratios": {
+            "exc": 0.9997850576964322,
+            "op": 1.0000088675164496
+          }
+        },
+        {
+          "system": "BeH2",
+          "losses": {
+            "exc": 24.715708665091608,
+            "op": 0.0332980622200238
+          },
+          "ratios": {
+            "exc": 0.9997530844443168,
+            "op": 0.9999998364456234
+          }
+        },
+        {
+          "system": "H2O",
+          "losses": {
+            "exc": 35.44444110015469,
+            "op": 0.05312027689888625
+          },
+          "ratios": {
+            "exc": 0.9995981059592097,
+            "op": 1.0000395574640681
+          }
+        },
+        {
+          "system": "CH4",
+          "losses": {
+            "exc": 30.782579625627392,
+            "op": 0.037575233423041705
+          },
+          "ratios": {
+            "exc": 0.9997268309942142,
+            "op": 1.0000018417009
+          }
+        },
+        {
+          "system": "N2",
+          "losses": {
+            "exc": 54.367102153011714,
+            "op": 0.05484211730379707
+          },
+          "ratios": {
+            "exc": 0.9996393121754361,
+            "op": 1.0000432939083692
+          }
+        },
+        {
+          "system": "CO",
+          "losses": {
+            "exc": 55.30602696059308,
+            "op": 0.04991316244247751
+          },
+          "ratios": {
+            "exc": 0.9996253537438359,
+            "op": 1.0000596139946665
+          }
+        },
+        {
+          "system": "CH2O",
+          "losses": {
+            "exc": 53.84912059345341,
+            "op": 0.039499570226845464
+          },
+          "ratios": {
+            "exc": 0.9996164305651196,
+            "op": 1.0000503895059603
+          }
+        },
+        {
+          "system": "C2H2_iso2",
+          "losses": {
+            "exc": 50.49688899751782,
+            "op": 0.033697985353384946
+          },
+          "ratios": {
+            "exc": 0.9997009794023317,
+            "op": 1.000033430993842
+          }
+        },
+        {
+          "system": "H4Si",
+          "losses": {
+            "exc": 95.21310506027388,
+            "op": 0.027456021862200034
+          },
+          "ratios": {
+            "exc": 0.9995892128064782,
+            "op": 0.9999484364264271
+          }
+        },
+        {
+          "system": "AlBeH",
+          "losses": {
+            "exc": 98.45782482436799,
+            "op": 0.017657103340703174
+          },
+          "ratios": {
+            "exc": 0.9996144537533643,
+            "op": 0.9999725460116823
+          }
+        },
+        {
+          "system": "ClH",
+          "losses": {
+            "exc": 116.1674091387677,
+            "op": 0.04076819243621711
+          },
+          "ratios": {
+            "exc": 0.9995339727099275,
+            "op": 0.9999092913783759
+          }
+        },
+        {
+          "system": "ClHS",
+          "losses": {
+            "exc": 213.60624153931053,
+            "op": 0.030484083809694563
+          },
+          "ratios": {
+            "exc": 0.9995255660577588,
+            "op": 0.9998905466080966
+          }
+        },
+        {
+          "system": "HPSi_iso2",
+          "losses": {
+            "exc": 174.8141385323934,
+            "op": 0.019834243235232783
+          },
+          "ratios": {
+            "exc": 0.9995400983496577,
+            "op": 0.9999009878594763
+          }
+        }
+      ],
+      "mRKS": {
+        "exc": {
+          "mean": 70.35960879589253,
+          "mean_ratio": 0.999593233981917,
+          "arithmetic_mean_individual_ratio": 0.9996548048383825,
+          "median_loss": 53.84912059345341,
+          "absolute_mean_difference": -0.028631544243026497,
+          "median_ratio": 0.9996253537438359,
+          "p90_ratio": 0.9997732618151337,
+          "max_ratio": 0.9998180459244682,
+          "count_improved": 15
+        },
+        "op": {
+          "mean": 0.03679807725541747,
+          "mean_ratio": 0.9999978821878048,
+          "arithmetic_mean_individual_ratio": 0.9999891388793536,
+          "median_loss": 0.037575233423041705,
+          "absolute_mean_difference": -7.793158181279569e-08,
+          "median_ratio": 1.0000018417009,
+          "p90_ratio": 1.0000475512669238,
+          "max_ratio": 1.0000596139946665,
+          "count_improved": 7
+        }
+      }
+    },
+    "5": {
+      "chemistry": {
+        "J_all": 2.743564115366972,
+        "J_rel": 1.238999385335012,
+        "J_AE": 24.958019835250614,
+        "weighted_nonAE_RMSE": 46.317004556621946,
+        "AE_MAE": 47.249907071084095,
+        "AE_RMSE": 56.68036689935841,
+        "per_database": {
+          "ABDE4": {
+            "MAE": 2.719415542708848,
+            "RMSE": 3.388097656734941
+          },
+          "AE17": {
+            "MAE": 47.249907071084095,
+            "RMSE": 56.68036689935841
+          },
+          "DBH76": {
+            "MAE": 8.62590565181683,
+            "RMSE": 10.002135126504804
+          },
+          "EA13": {
+            "MAE": 2.4714623959053994,
+            "RMSE": 3.1053459686087947
+          },
+          "IP13": {
+            "MAE": 3.4373614704808166,
+            "RMSE": 4.621654709286308
+          },
+          "MGAE109": {
+            "MAE": 15.847027146659881,
+            "RMSE": 19.822813658777854
+          },
+          "NCCE31": {
+            "MAE": 0.8815277648915734,
+            "RMSE": 1.248014421690876
+          },
+          "PA8": {
+            "MAE": 1.473374958328213,
+            "RMSE": 1.7212848941787315
+          },
+          "pTC13": {
+            "MAE": 5.810266556750308,
+            "RMSE": 6.810964680510495
+          }
+        },
+        "improved_relative": 162,
+        "improved_AE": 17,
+        "rows_sha256": "ddd0521886af236d29ff9c95f95756c845074fa67c4e9c67784525940ecf0911"
+      },
+      "mRKS_rows": [
+        {
+          "system": "H2",
+          "losses": {
+            "exc": 5.24369763134895,
+            "op": 0.05064911597421242
+          },
+          "ratios": {
+            "exc": 0.9995211267634057,
+            "op": 0.9999539672132519
+          }
+        },
+        {
+          "system": "HLi",
+          "losses": {
+            "exc": 15.653416657597097,
+            "op": 0.0212280920030225
+          },
+          "ratios": {
+            "exc": 0.9991908180787091,
+            "op": 1.0000070842612008
+          }
+        },
+        {
+          "system": "BH",
+          "losses": {
+            "exc": 31.250946133955114,
+            "op": 0.04194603869637718
+          },
+          "ratios": {
+            "exc": 0.9993028742891306,
+            "op": 0.9999862026054387
+          }
+        },
+        {
+          "system": "BeH2",
+          "losses": {
+            "exc": 24.703026875672386,
+            "op": 0.033297943719713674
+          },
+          "ratios": {
+            "exc": 0.9992401046928582,
+            "op": 0.999996277671243
+          }
+        },
+        {
+          "system": "H2O",
+          "losses": {
+            "exc": 35.39948301684919,
+            "op": 0.05312008488146404
+          },
+          "ratios": {
+            "exc": 0.9983302057321262,
+            "op": 1.00003594255411
+          }
+        },
+        {
+          "system": "CH4",
+          "losses": {
+            "exc": 30.757055986687458,
+            "op": 0.03757465364230958
+          },
+          "ratios": {
+            "exc": 0.9988978989494283,
+            "op": 0.9999864118087319
+          }
+        },
+        {
+          "system": "N2",
+          "losses": {
+            "exc": 54.30675473044461,
+            "op": 0.05484178174804309
+          },
+          "ratios": {
+            "exc": 0.9985297136572594,
+            "op": 1.0000371750658081
+          }
+        },
+        {
+          "system": "CO",
+          "losses": {
+            "exc": 55.24188948589711,
+            "op": 0.04991351074755897
+          },
+          "ratios": {
+            "exc": 0.9984661049358013,
+            "op": 1.0000665926317287
+          }
+        },
+        {
+          "system": "CH2O",
+          "losses": {
+            "exc": 53.782875135786824,
+            "op": 0.03950008645228915
+          },
+          "ratios": {
+            "exc": 0.9983866974292014,
+            "op": 1.0000634593052788
+          }
+        },
+        {
+          "system": "C2H2_iso2",
+          "losses": {
+            "exc": 50.45030477423972,
+            "op": 0.033697793601877635
+          },
+          "ratios": {
+            "exc": 0.9987787385562054,
+            "op": 1.000027740507727
+          }
+        },
+        {
+          "system": "H4Si",
+          "losses": {
+            "exc": 95.08534226037308,
+            "op": 0.027454738582166564
+          },
+          "ratios": {
+            "exc": 0.9982479025267856,
+            "op": 0.9999016993619897
+          }
+        },
+        {
+          "system": "AlBeH",
+          "losses": {
+            "exc": 98.33694403223926,
+            "op": 0.01765690539548098
+          },
+          "ratios": {
+            "exc": 0.9983871852532875,
+            "op": 0.9999613358044365
+          }
+        },
+        {
+          "system": "ClH",
+          "losses": {
+            "exc": 115.99401160435372,
+            "op": 0.040764378613256345
+          },
+          "ratios": {
+            "exc": 0.9980420161644916,
+            "op": 0.9998157508805942
+          }
+        },
+        {
+          "system": "ClHS",
+          "losses": {
+            "exc": 213.2767416814398,
+            "op": 0.030481407507561085
+          },
+          "ratios": {
+            "exc": 0.9979837406430103,
+            "op": 0.9998027627921277
+          }
+        },
+        {
+          "system": "HPSi_iso2",
+          "losses": {
+            "exc": 174.54815159335234,
+            "op": 0.019832871191644882
+          },
+          "ratios": {
+            "exc": 0.9980192567664722,
+            "op": 0.999831819213985
+          }
+        }
+      ],
+      "mRKS": {
+        "exc": {
+          "mean": 70.26870944001578,
+          "mean_ratio": 0.9983018342333583,
+          "arithmetic_mean_individual_ratio": 0.9986216256292114,
+          "median_loss": 53.782875135786824,
+          "absolute_mean_difference": -0.11953090011976997,
+          "median_ratio": 0.9984661049358013,
+          "p90_ratio": 0.9992777664506216,
+          "max_ratio": 0.9995211267634057,
+          "count_improved": 15
+        },
+        "op": {
+          "mean": 0.03679729351713188,
+          "mean_ratio": 0.9999765838840827,
+          "arithmetic_mean_individual_ratio": 0.9999649481118434,
+          "median_loss": 0.03757465364230958,
+          "absolute_mean_difference": -8.61669867402437e-07,
+          "median_ratio": 0.9999864118087319,
+          "p90_ratio": 1.0000529456094907,
+          "max_ratio": 1.0000665926317287,
+          "count_improved": 9
+        }
+      }
+    }
+  },
+  "monitoring_reference_parity": {
+    "0": {
+      "chemistry_exact": true,
+      "mRKS_rows_exact": true
+    },
+    "2": {
+      "chemistry_exact": true,
+      "mRKS_rows_exact": true
+    },
+    "5": {
+      "chemistry_exact": true,
+      "mRKS_rows_exact": true
+    }
+  },
+  "nine_exact_gates": {
+    "five_accepted": true,
+    "J_rel_lower": true,
+    "nonAE_RMSE_lower": true,
+    "AE_MAE_no_worse": true,
+    "AE_RMSE_no_worse": true,
+    "exc_mean_no_worse": true,
+    "exc_median_ratio": true,
+    "op_mean_no_worse": true,
+    "op_median_ratio": true
+  },
+  "tests": {
+    "windows": "130 passed, 5 deselected",
+    "WSL_PySCF_Gloo": "132 passed, 2 skipped",
+    "Ruff": "PASS",
+    "compileall": "PASS",
+    "diff_check": "PASS"
+  },
+  "DDP": "native main two-rank CPU/Gloo fixture; synchronized gradients/PCD/model and exact resume; real data scientific parity separately on GPU",
+  "artifact_sha256": {
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\base_command.json": "9e2415a2f48f9310590571cd9bca5a793df14cb0157d837119d58bc7fda7a81e",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_run_receipt.json": "5ebd5e26cedd7c81bb37fb7d86aa21ee096cc87dbf7aed3e13f771af79b3b991",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update_parity.json": "0f214573dc145fdd70b30ca4e7f0f6bd8f8813128a649e34e522441e3f0a7f92",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitor.py": "8ba47e45ab4d3eb82355770131da3ff48516854cafa6c72e0de3a16b81420924",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\native_cli_review.md": "3f4b1fc5fa677bde4bb667265a42b584ba10755c4e00d1f621c3a612a778cc00",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_parity.json": "f02a7438c211b41793d42f9b09e019c4ac2fb756c4402aa0e6e3614dccee8a66",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_parity_final.json": "baeef26c147d8d487149443615ffcf7abd6db8cbe3b413c8f26f6599a7edb8f6",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\resume_parity.json": "5e493eb374d6f51155f749c7ee53623d89312fa170dc7f1c74e4851f27066f2e",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\run_five.py": "fc85cf332a65948289cdd7354b590164f0be9636960796dd2d2f30bba40ef6d0",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\run_native.py": "e1aefa88164011b03ae41ddbadb92cea6944f163b5ec5931963fb5ae42944ffb",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\windows_tests_final.log": "a4b95e9bd877536ff8b48073e93b569da0b7a7337ea69d2ac329d34b17007f22",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\wsl_tests_final.log": "d95429517152392ac5cd22c514669fb6165b777e1e2e2f8ecaaec4904775ad3f",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\checkpoint_1.pt": "5026dcb4c1aa58075f9fa0a75397860992bff4958f9ef820fd3722e3d96c950e",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\checkpoint_2.pt": "6e13f93c9f3a30b32d7ec94a18058f2914c3036175683b594798c7833da434c9",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\checkpoint_3.pt": "be3fd317600d4d0df9e2d1bc523c6a126f69d934ddc4c61626456e46331f1a03",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\checkpoint_4.pt": "044c6c309e8bc79a87505ea906c11195f112592b161c6f141683543f34c3da22",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\checkpoint_5.pt": "f545d7f4a8d4382e50045d099d1e4b76e00bb91caf86133f8a9c85c6b88d2029",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\latest.pt": "f545d7f4a8d4382e50045d099d1e4b76e00bb91caf86133f8a9c85c6b88d2029",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\protocol.json": "910567a26ca78a6947661c5541edc155c0a51970f982f3aa7098816b195cbdfd",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\run_summary.json": "b2c8e72cecfe3f89328cb1f406e2dc003d54641138b81f7613587281734aca6c",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\sampling_manifest_identity.json": "a29c56683d0461f9f1b5ad99a49a6f51bf3c0363b08bf9d31faa1857a4bc9fc5",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\five_update\\updates.jsonl": "440116e1bf14474a6347a08d8153fef55fed31ad27bc0eba25d42ab27e1f435a",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\pilot_chemistry_0.jsonl": "6c54bc0c091ccc9840306dd2d0b8223e4d588b6d5c53a2bd3cfc1017fed0d196",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\pilot_chemistry_2.jsonl": "cad4a30e9a3c6b1d50258931a453443b61a0f5b70905cbf76d53ed82473bc8fc",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\pilot_chemistry_5.jsonl": "ddd0521886af236d29ff9c95f95756c845074fa67c4e9c67784525940ecf0911",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\pilot_monitoring_0.json": "ed751402725051b1a755222f99f22521855cffce454a192ab5677c10b65e405f",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\pilot_monitoring_2.json": "b361a7f6d499f0433dc74495ce95aad36b7cc179111cb6c0d6486996db8af081",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\pilot_monitoring_5.json": "2c5cee9a2c88a2b4a0dbc8def1aa2586a778fd5682a1326fa1e293dde400806c",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\theta_0.pt": "09ff838b87f2e48ff725028a2be3d99df4d2b9cdeb84520342ed4461a632fc4e",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\theta_2.pt": "e7670be3607941f4b1d4601dc621e33d59a3611b49e2074719000d9c272f316a",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\monitoring\\theta_5.pt": "9a9fd49d3fc48148f57bde762ee36a640e58bbf537ad0a6cd8840ddabf9794f0",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_final\\latest.pt": "b2ee3a1a765f36f0be57f38ec2fe577c743f43c26eeb5d7df1cc8fd1b5f94c6f",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_final\\protocol.json": "5c49beb62145c24bd76a73618792c8b7538201568a72cdf2ce91c279abff299d",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_final\\run_summary.json": "7b32a5c49a50879de200a5526d1852093f5693a58fc74f28b0d7f7dd56afbefe",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_final\\sampling_manifest_identity.json": "a29c56683d0461f9f1b5ad99a49a6f51bf3c0363b08bf9d31faa1857a4bc9fc5",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_final\\updates.jsonl": "17734c41493fa48d3ac80e6eacd6089d740080417dab56653b9ded11a3deaf90",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_locked\\latest.pt": "3cab80a49820d272a03f78c3240a3d5ab98e72312dfa8f0be0d915e1f5f7f376",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_locked\\protocol.json": "ae0cc8fe04b002a3b3f459d40fbf9e2cf413e3153ebd0990e12523b8c92833d6",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_locked\\run_summary.json": "d9fd528ed67d9d6d330ca13e37d21a29ac71f17828703bb87ec256f1a182a217",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_locked\\sampling_manifest_identity.json": "a29c56683d0461f9f1b5ad99a49a6f51bf3c0363b08bf9d31faa1857a4bc9fc5",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_locked\\updates.jsonl": "49583e18f4c964bc739f157b00e36e63faba8d2e4f4a848b8fa4aee08e1797c1",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_qualified\\latest.pt": "6e13f93c9f3a30b32d7ec94a18058f2914c3036175683b594798c7833da434c9",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_qualified\\protocol.json": "910567a26ca78a6947661c5541edc155c0a51970f982f3aa7098816b195cbdfd",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_qualified\\run_summary.json": "104e5b0c495894e0fa4103dc6952335863d7b04e996edb2fe3f4a3c1134e980c",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_qualified\\sampling_manifest_identity.json": "a29c56683d0461f9f1b5ad99a49a6f51bf3c0363b08bf9d31faa1857a4bc9fc5",
+    "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\one_update_qualified\\updates.jsonl": "c8fd0c79af9a93d74a853fa0caa5f5082189583d6b435ba8a28bd254ca54f593"
+  },
+  "no_second_trainer": true,
+  "no_over_five_full90_SCF_Diet_Slurm": true,
+  "independent_review": {
+    "status": "PASS",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_native_cli_runs_20261004\\native_cli_review.md",
+    "sha256": "3f4b1fc5fa677bde4bb667265a42b584ba10755c4e00d1f621c3a612a778cc00",
+    "findings": []
+  }
+}

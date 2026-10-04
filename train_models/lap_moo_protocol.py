@@ -18,6 +18,12 @@ PROTOCOL_VERSION = "lap-moo-one-stage-v2"
 PCD_PROTOCOL_VERSION = "lap-moo-one-stage-v3"
 PCD_ARMIJO_PROTOCOL_VERSION = "lap-moo-one-stage-v4"
 PCD_FOUR_TASK_PROTOCOL_VERSION = "lap-moo-one-stage-v5"
+PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION = "lap-moo-one-stage-v6"
+OPERATOR_PRECISION_SOURCE_PATHS = (
+    "train_models/lap_operator.py", "train_models/lap_vxc.py",
+    "train_models/NN_models_lap.py", "dft_functionals/PBE.py",
+    "dft_functionals/constants.py",
+)
 FOUR_TASK_NAMES = ("relchem", "ae17", "exc", "op")
 PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE = "pcd_direct_vector_armijo"
 LEGACY_READ_ONLY_PROTOCOL_VERSION = "lap-moo-one-stage-v1"
@@ -457,6 +463,7 @@ def make_protocol_metadata(
     step_rule: str | None = None,
     vector_armijo: Mapping[str, Any] | None = None,
     task_order: tuple[str, ...] = TASK_NAMES,
+    operator_precision_source_sha256: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """Build the explicit, h-free metadata contract for a new MOO run."""
     if task_order not in (TASK_NAMES, FOUR_TASK_NAMES):
@@ -553,6 +560,12 @@ def make_protocol_metadata(
             relchem="mean corrected singleton fchem over251 non-AE17 identities; matched-F64 chemistry",
             ae17="mean corrected singleton fchem over17 AE17 identities; matched-F64 chemistry",
         )
+    if operator_precision_source_sha256 is not None:
+        if not four_task:
+            raise ValueError("Precision-bound v6 requires canonical four-task mode.")
+        metadata["protocol_version"] = PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION
+        metadata["operator_precision_source_sha256"] = dict(sorted(operator_precision_source_sha256.items()))
+        validate_protocol_metadata(metadata)
     return metadata
 
 
@@ -621,11 +634,20 @@ def validate_protocol_metadata(
     version = metadata.get("protocol_version")
     legacy_read_only = allow_v1_read_only and version == LEGACY_READ_ONLY_PROTOCOL_VERSION
     method = metadata.get("method")
-    pcd_protocol = version in (PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION)
-    tasks = FOUR_TASK_NAMES if version == PCD_FOUR_TASK_PROTOCOL_VERSION else TASK_NAMES
-    direct_vector_armijo = version in (PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION)
-    if version not in (PROTOCOL_VERSION, PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION) and not legacy_read_only:
+    pcd_protocol = version in (PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION, PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION)
+    tasks = FOUR_TASK_NAMES if version in (PCD_FOUR_TASK_PROTOCOL_VERSION, PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION) else TASK_NAMES
+    direct_vector_armijo = version in (PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION, PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION)
+    if version not in (PROTOCOL_VERSION, PCD_PROTOCOL_VERSION, PCD_ARMIJO_PROTOCOL_VERSION, PCD_FOUR_TASK_PROTOCOL_VERSION, PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION) and not legacy_read_only:
         raise ValueError("Incompatible one-stage Lap MOO protocol version.")
+    if version == PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION:
+        precision = metadata.get("operator_precision_source_sha256")
+        if not isinstance(precision, Mapping) or set(precision) != set(OPERATOR_PRECISION_SOURCE_PATHS):
+            raise ValueError("v6 requires exact operator precision source identities.")
+        for digest in precision.values():
+            if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+                raise ValueError("Invalid operator precision source hash.")
+    elif "operator_precision_source_sha256" in metadata:
+        raise ValueError("Historical metadata cannot be retrofitted with v6 precision provenance.")
     if pcd_protocol and method != "pcd":
         raise ValueError("The v3/v4 one-stage Lap MOO protocols are reserved for PCD.")
     if version == PROTOCOL_VERSION and method == "pcd":

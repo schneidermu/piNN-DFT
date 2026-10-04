@@ -18,8 +18,10 @@ from torch import nn
 try:
     from .lap_moo_protocol import (
         PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+        PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION,
         TASK_NAMES,
         canonical_sha256,
+        file_sha256,
         validate_cursor,
         validate_protocol_metadata,
         validate_sampling_manifest,
@@ -36,8 +38,10 @@ try:
 except ImportError:  # pragma: no cover - direct script imports
     from lap_moo_protocol import (
         PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE,
+        PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION,
         TASK_NAMES,
         canonical_sha256,
+        file_sha256,
         validate_cursor,
         validate_protocol_metadata,
         validate_sampling_manifest,
@@ -1066,6 +1070,11 @@ def load_moo_checkpoint(
 ) -> tuple[int, dict[str, Any]]:
     """Fail closed if protocol/data identity differs; return the next cursor."""
     validate_protocol_metadata(expected_protocol_metadata)
+    if expected_protocol_metadata.get("protocol_version") == PCD_FOUR_TASK_PRECISION_PROTOCOL_VERSION:
+        root = Path(__file__).resolve().parent.parent
+        for relative, digest in expected_protocol_metadata["operator_precision_source_sha256"].items():
+            if file_sha256(root / relative) != digest:
+                raise ValueError(f"Operator precision source differs: {relative}.")
     direct_armijo = expected_protocol_metadata.get("step_rule") == PCD_DIRECT_VECTOR_ARMIJO_STEP_RULE
     if direct_armijo:
         if optimizer is not None or scheduler is not None:
