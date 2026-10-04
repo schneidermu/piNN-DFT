@@ -1,0 +1,855 @@
+{
+  "full_cycle": {
+    "predopt": {
+      "singleton_mean": 2.746571009745216,
+      "derived_weighted_smoothed_mae": 2.746571009745216,
+      "weighted_database_rmse": 103.11194456600036,
+      "unweighted_mae": 12.132738491515887,
+      "unweighted_rmse": 19.680752582874792,
+      "absolute_error_median_p90_max": [
+        7.271139266127683,
+        27.207017527924137,
+        108.21315186552238
+      ],
+      "per_database": {
+        "ABDE4": {
+          "count": 4,
+          "mae": 2.7195551967202647,
+          "rmse": 3.387937958605582,
+          "smoothed_mae": 2.7195551967202647
+        },
+        "AE17": {
+          "count": 17,
+          "mae": 47.336699410627965,
+          "rmse": 56.791649976318745,
+          "smoothed_mae": 47.336699410627965
+        },
+        "DBH76": {
+          "count": 70,
+          "mae": 8.626764125200646,
+          "rmse": 10.002888847249116,
+          "smoothed_mae": 8.626764125200646
+        },
+        "EA13": {
+          "count": 11,
+          "mae": 2.4721282828063633,
+          "rmse": 3.105538423531583,
+          "smoothed_mae": 2.4721282828063633
+        },
+        "IP13": {
+          "count": 13,
+          "mae": 3.43613768168918,
+          "rmse": 4.6209060528546635,
+          "smoothed_mae": 3.43613768168918
+        },
+        "MGAE109": {
+          "count": 104,
+          "mae": 15.848242877876386,
+          "rmse": 19.82396787514349,
+          "smoothed_mae": 15.848242877876386
+        },
+        "NCCE31": {
+          "count": 28,
+          "mae": 0.8816928086380484,
+          "rmse": 1.2482549497189777,
+          "smoothed_mae": 0.8816928086380484
+        },
+        "PA8": {
+          "count": 8,
+          "mae": 1.4738301699415928,
+          "rmse": 1.7214968720908466,
+          "smoothed_mae": 1.4738301699415928
+        },
+        "pTC13": {
+          "count": 13,
+          "mae": 5.810755070868059,
+          "rmse": 6.811355817247947,
+          "smoothed_mae": 5.810755070868059
+        }
+      }
+    },
+    "cursor2": {
+      "singleton_mean": 2.232905527299576,
+      "derived_weighted_smoothed_mae": 2.2329055272995766,
+      "weighted_database_rmse": 88.08077228650771,
+      "unweighted_mae": 12.42483166260454,
+      "unweighted_rmse": 18.685818397084596,
+      "absolute_error_median_p90_max": [
+        7.49153665730347,
+        31.307767794590283,
+        75.01768670679303
+      ],
+      "per_database": {
+        "ABDE4": {
+          "count": 4,
+          "mae": 2.1544317048873793,
+          "rmse": 2.685393734447352,
+          "smoothed_mae": 2.1544317048873793
+        },
+        "AE17": {
+          "count": 17,
+          "mae": 29.25993056782793,
+          "rmse": 38.74999983084881,
+          "smoothed_mae": 29.25993056782793
+        },
+        "DBH76": {
+          "count": 70,
+          "mae": 8.619456847530829,
+          "rmse": 10.038126118060106,
+          "smoothed_mae": 8.619456847530829
+        },
+        "EA13": {
+          "count": 11,
+          "mae": 2.7731908959678866,
+          "rmse": 3.6703480868031164,
+          "smoothed_mae": 2.7731908959678866
+        },
+        "IP13": {
+          "count": 13,
+          "mae": 5.05581245979128,
+          "rmse": 5.925129923000664,
+          "smoothed_mae": 5.05581245979128
+        },
+        "MGAE109": {
+          "count": 104,
+          "mae": 19.311298091590775,
+          "rmse": 23.948656795739666,
+          "smoothed_mae": 19.311298091590775
+        },
+        "NCCE31": {
+          "count": 28,
+          "mae": 0.9509268428892066,
+          "rmse": 1.3234945548096828,
+          "smoothed_mae": 0.9509268428892066
+        },
+        "PA8": {
+          "count": 8,
+          "mae": 1.407897539434046,
+          "rmse": 1.693785491161281,
+          "smoothed_mae": 1.407897539434046
+        },
+        "pTC13": {
+          "count": 13,
+          "mae": 5.997043423345368,
+          "rmse": 7.024121866617422,
+          "smoothed_mae": 5.997043423345368
+        }
+      }
+    },
+    "paired": {
+      "improved": 79,
+      "worsened": 189,
+      "unchanged": 0,
+      "fraction_improved": 0.2947761194029851,
+      "ratio_median_p90_max": [
+        1.0602159139751635,
+        1.5137788328549935,
+        120.82306022679016
+      ],
+      "ratio_excluded_positions": [],
+      "counts": {
+        "PA8": 8,
+        "pTC13": 13,
+        "DBH76": 70,
+        "MGAE109": 104,
+        "EA13": 11,
+        "ABDE4": 4,
+        "NCCE31": 28,
+        "AE17": 17,
+        "IP13": 13
+      },
+      "ratio_included_count": 268,
+      "ratio_excluded_count": 0
+    }
+  },
+  "panel27": {
+    "predopt": {
+      "singleton_mean": 5.188321464396835,
+      "derived_weighted_smoothed_mae": 5.188321464396835,
+      "weighted_database_rmse": 109.40690301725061,
+      "unweighted_mae": 10.731268528158875,
+      "unweighted_rmse": 24.28912850829368,
+      "absolute_error_median_p90_max": [
+        2.496970981958416,
+        30.713338969167193,
+        108.21315186552238
+      ],
+      "per_database": {
+        "ABDE4": {
+          "count": 3,
+          "mae": 2.4182523545774615,
+          "rmse": 3.305702401027039,
+          "smoothed_mae": 2.4182523545774615
+        },
+        "AE17": {
+          "count": 3,
+          "mae": 48.429636167635294,
+          "rmse": 66.03193088219683,
+          "smoothed_mae": 48.429636167635294
+        },
+        "DBH76": {
+          "count": 3,
+          "mae": 4.971544605173013,
+          "rmse": 5.521254115068671,
+          "smoothed_mae": 4.971544605173013
+        },
+        "EA13": {
+          "count": 3,
+          "mae": 3.5505573561963053,
+          "rmse": 4.383494423052673,
+          "smoothed_mae": 3.5505573561963053
+        },
+        "IP13": {
+          "count": 3,
+          "mae": 5.695543727884655,
+          "rmse": 6.91168789387743,
+          "smoothed_mae": 5.695543727884655
+        },
+        "MGAE109": {
+          "count": 3,
+          "mae": 22.573764559422568,
+          "rmse": 27.981737352907952,
+          "smoothed_mae": 22.573764559422568
+        },
+        "NCCE31": {
+          "count": 3,
+          "mae": 0.7402183500378229,
+          "rmse": 0.8457765014433564,
+          "smoothed_mae": 0.7402183500378229
+        },
+        "PA8": {
+          "count": 3,
+          "mae": 1.1779735883619178,
+          "rmse": 1.4517672930293175,
+          "smoothed_mae": 1.1779735883619178
+        },
+        "pTC13": {
+          "count": 3,
+          "mae": 7.023926044140818,
+          "rmse": 7.4324301196291245,
+          "smoothed_mae": 7.023926044140818
+        }
+      }
+    },
+    "cursor2": {
+      "singleton_mean": 4.468734288796538,
+      "derived_weighted_smoothed_mae": 4.468734288796537,
+      "weighted_database_rmse": 93.33300226391732,
+      "unweighted_mae": 9.954100758565843,
+      "unweighted_rmse": 19.581740993984635,
+      "absolute_error_median_p90_max": [
+        4.365735887188542,
+        28.889553826081926,
+        75.01768670679303
+      ],
+      "per_database": {
+        "ABDE4": {
+          "count": 3,
+          "mae": 1.9109824146526837,
+          "rmse": 2.6155563357398557,
+          "smoothed_mae": 1.9109824146526837
+        },
+        "AE17": {
+          "count": 3,
+          "mae": 34.807216867244016,
+          "rmse": 46.16951670135691,
+          "smoothed_mae": 34.807216867244016
+        },
+        "DBH76": {
+          "count": 3,
+          "mae": 4.889385208474021,
+          "rmse": 5.5359492223215385,
+          "smoothed_mae": 4.889385208474021
+        },
+        "EA13": {
+          "count": 3,
+          "mae": 4.440578635270171,
+          "rmse": 5.604427552033012,
+          "smoothed_mae": 4.440578635270171
+        },
+        "IP13": {
+          "count": 3,
+          "mae": 7.827865984127499,
+          "rmse": 8.906828777758191,
+          "smoothed_mae": 7.827865984127499
+        },
+        "MGAE109": {
+          "count": 3,
+          "mae": 26.803790439525926,
+          "rmse": 33.296327966080604,
+          "smoothed_mae": 26.803790439525926
+        },
+        "NCCE31": {
+          "count": 3,
+          "mae": 0.6579615624292671,
+          "rmse": 0.8462774963842704,
+          "smoothed_mae": 0.6579615624292671
+        },
+        "PA8": {
+          "count": 3,
+          "mae": 0.9744075566791442,
+          "rmse": 1.2428840355752813,
+          "smoothed_mae": 0.9744075566791442
+        },
+        "pTC13": {
+          "count": 3,
+          "mae": 7.274718158689869,
+          "rmse": 7.761538031292182,
+          "smoothed_mae": 7.274718158689869
+        }
+      }
+    },
+    "paired": {
+      "improved": 10,
+      "worsened": 17,
+      "unchanged": 0,
+      "fraction_improved": 0.37037037037037035,
+      "ratio_median_p90_max": [
+        1.0141382009955762,
+        2.31735632363198,
+        32.19771354921135
+      ],
+      "ratio_excluded_positions": [],
+      "counts": {
+        "pTC13": 3,
+        "AE17": 3,
+        "NCCE31": 3,
+        "MGAE109": 3,
+        "ABDE4": 3,
+        "IP13": 3,
+        "EA13": 3,
+        "DBH76": 3,
+        "PA8": 3
+      },
+      "ratio_included_count": 27,
+      "ratio_excluded_count": 0
+    }
+  },
+  "counts": {
+    "PA8": 8,
+    "pTC13": 13,
+    "DBH76": 70,
+    "MGAE109": 104,
+    "EA13": 11,
+    "ABDE4": 4,
+    "NCCE31": 28,
+    "AE17": 17,
+    "IP13": 13
+  },
+  "constants": {
+    "FCHEM_DB_WEIGHTS": {
+      "ABDE4": 1,
+      "AE17": 1,
+      "DBH76": 1,
+      "EA13": 1,
+      "IP13": 1,
+      "MGAE109": 0.21124031007751937,
+      "NCCE31": 10,
+      "PA8": 1,
+      "pTC13": 1
+    },
+    "FREQ_WEIGHTS": {
+      "ABDE4": 0.25,
+      "AE17": 0.058823529411764705,
+      "DBH76": 0.013157894736842105,
+      "EA13": 0.07692307692307693,
+      "IP13": 0.07692307692307693,
+      "MGAE109": 0.009174311926605505,
+      "NCCE31": 0.03225806451612903,
+      "PA8": 0.125,
+      "pTC13": 0.07692307692307693
+    },
+    "MEAN_WEIGHT": 0.11136325384169465
+  },
+  "runtime": {
+    "seconds": 158.34511940000812,
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "torch_peak_allocated_bytes": 1780240896,
+    "torch_peak_reserved_bytes": 4253024256
+  },
+  "checks": {
+    "unique_reactions": 268,
+    "canonical_manifest_identity_matches": true,
+    "all_27_shared_variants_identical": true,
+    "position_equality_required": false,
+    "all_group_hashes_verified_on_load": true,
+    "same_parameters_start_end": true,
+    "no_gradients": true,
+    "rng_restored": true,
+    "inputs_unchanged": true,
+    "singleton_analytic_matches": true,
+    "all_finite": true,
+    "expected_database_counts": true,
+    "weighted_rmse_direct_matches": true,
+    "panel_historical_median_and_wins_reproduced": true,
+    "independent_row_aggregation": true
+  },
+  "model_tensor_hashes": {
+    "predopt": "7aca902290a52be00915500141344c7e8ef4ec073a5a60508be11a50f8131705",
+    "cursor2": "95df8c4835586f6ee459e842f1ad6e71483a35ff79601337015d5e116096b742"
+  },
+  "rows_sha256": "fb35e08a1188ec724455e2dd821318217eccffdb930a31bec75754911617e597",
+  "protocol_sha256": "3c7b85e0e0bfbff7fcb45c6e3fb2cebafc1a4079ca318591bd60be0a18fd1ee2",
+  "overlap_sha256": "c2da793d7d3d556b9f2eee65edd33fc7d73e32ee6292c6d50753a00aeca5bfe4",
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_checkpoint.pt": "14c1c5d50cf1e3f17e55d66d0be353d7d8871291718dbc10d3176746b2bbaf69",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927"
+  },
+  "schema": "lap-chem-full268-frozen-evaluation-v1",
+  "database_comparison": {
+    "ABDE4": {
+      "n": 4,
+      "w_d": 1,
+      "historical_N": 4,
+      "MAE0": 2.7195551967202647,
+      "MAE2": 2.1544317048873793,
+      "mae_ratio": 0.792200028697923,
+      "RMSE0": 3.387937958605582,
+      "RMSE2": 2.685393734447352,
+      "rmse_ratio": 0.792633680798752,
+      "wins": 3,
+      "worsened": 1,
+      "unchanged": 0,
+      "contains_trained_reaction": false
+    },
+    "AE17": {
+      "n": 17,
+      "w_d": 1,
+      "historical_N": 17,
+      "MAE0": 47.336699410627965,
+      "MAE2": 29.25993056782793,
+      "mae_ratio": 0.6181235897756432,
+      "RMSE0": 56.791649976318745,
+      "RMSE2": 38.74999983084881,
+      "rmse_ratio": 0.6823186128067589,
+      "wins": 16,
+      "worsened": 1,
+      "unchanged": 0,
+      "contains_trained_reaction": true
+    },
+    "DBH76": {
+      "n": 70,
+      "w_d": 1,
+      "historical_N": 76,
+      "MAE0": 8.626764125200646,
+      "MAE2": 8.619456847530829,
+      "mae_ratio": 0.9991529526524934,
+      "RMSE0": 10.002888847249116,
+      "RMSE2": 10.038126118060106,
+      "rmse_ratio": 1.0035227094241561,
+      "wins": 36,
+      "worsened": 34,
+      "unchanged": 0,
+      "contains_trained_reaction": false
+    },
+    "EA13": {
+      "n": 11,
+      "w_d": 1,
+      "historical_N": 13,
+      "MAE0": 2.4721282828063633,
+      "MAE2": 2.7731908959678866,
+      "mae_ratio": 1.1217827631581305,
+      "RMSE0": 3.105538423531583,
+      "RMSE2": 3.6703480868031164,
+      "rmse_ratio": 1.181871735668058,
+      "wins": 5,
+      "worsened": 6,
+      "unchanged": 0,
+      "contains_trained_reaction": false
+    },
+    "IP13": {
+      "n": 13,
+      "w_d": 1,
+      "historical_N": 13,
+      "MAE0": 3.43613768168918,
+      "MAE2": 5.05581245979128,
+      "mae_ratio": 1.471364924267493,
+      "RMSE0": 4.6209060528546635,
+      "RMSE2": 5.925129923000664,
+      "rmse_ratio": 1.2822441865790128,
+      "wins": 2,
+      "worsened": 11,
+      "unchanged": 0,
+      "contains_trained_reaction": false
+    },
+    "MGAE109": {
+      "n": 104,
+      "w_d": 0.21124031007751937,
+      "historical_N": 109,
+      "MAE0": 15.848242877876386,
+      "MAE2": 19.311298091590775,
+      "mae_ratio": 1.2185135122170987,
+      "RMSE0": 19.82396787514349,
+      "RMSE2": 23.948656795739666,
+      "rmse_ratio": 1.20806575891237,
+      "wins": 10,
+      "worsened": 94,
+      "unchanged": 0,
+      "contains_trained_reaction": false
+    },
+    "NCCE31": {
+      "n": 28,
+      "w_d": 10,
+      "historical_N": 31,
+      "MAE0": 0.8816928086380484,
+      "MAE2": 0.9509268428892066,
+      "mae_ratio": 1.0785239865550271,
+      "RMSE0": 1.2482549497189777,
+      "RMSE2": 1.3234945548096828,
+      "rmse_ratio": 1.0602758315580034,
+      "wins": 1,
+      "worsened": 27,
+      "unchanged": 0,
+      "contains_trained_reaction": false
+    },
+    "PA8": {
+      "n": 8,
+      "w_d": 1,
+      "historical_N": 8,
+      "MAE0": 1.4738301699415928,
+      "MAE2": 1.407897539434046,
+      "mae_ratio": 0.9552644315116988,
+      "RMSE0": 1.7214968720908466,
+      "RMSE2": 1.693785491161281,
+      "rmse_ratio": 0.9839027410512174,
+      "wins": 4,
+      "worsened": 4,
+      "unchanged": 0,
+      "contains_trained_reaction": false
+    },
+    "pTC13": {
+      "n": 13,
+      "w_d": 1,
+      "historical_N": 13,
+      "MAE0": 5.810755070868059,
+      "MAE2": 5.997043423345368,
+      "mae_ratio": 1.032059233301926,
+      "RMSE0": 6.811355817247947,
+      "RMSE2": 7.024121866617422,
+      "rmse_ratio": 1.0312369600235392,
+      "wins": 2,
+      "worsened": 11,
+      "unchanged": 0,
+      "contains_trained_reaction": true
+    }
+  },
+  "global_ratios": {
+    "singleton_mean": 0.812979354757957,
+    "weighted_database_rmse": 0.8542247230157566,
+    "unweighted_mae": 1.0240747932787726,
+    "unweighted_rmse": 0.9494463343512616
+  },
+  "classification": "Case 1",
+  "next_experiment": "short clean continuation with predefined full-268 chemistry checkpoints; not executed here",
+  "final_status": "Both global chemistry aggregates improve; the 27-row panel was not a valid two-update failure gate, and the next experiment is a short clean continuation with predefined full-268 chemistry checkpoints.",
+  "overlap_mapping": [
+    {
+      "database": "pTC13",
+      "reaction_id": 12,
+      "restart_position": 0,
+      "evaluation_position": 189,
+      "restart_variant": "level3_mura",
+      "evaluation_variant": "level3_mura"
+    },
+    {
+      "database": "AE17",
+      "reaction_id": 16,
+      "restart_position": 1,
+      "evaluation_position": 125,
+      "restart_variant": "level2_gauss_chebyshev",
+      "evaluation_variant": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 0,
+      "restart_position": 2,
+      "evaluation_position": 37,
+      "restart_variant": "level2_mura",
+      "evaluation_variant": "level2_mura"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 29,
+      "restart_position": 3,
+      "evaluation_position": 102,
+      "restart_variant": "level3_gauss_chebyshev",
+      "evaluation_variant": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "AE17",
+      "reaction_id": 0,
+      "restart_position": 4,
+      "evaluation_position": 254,
+      "restart_variant": "level3_gauss_chebyshev",
+      "evaluation_variant": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 0,
+      "restart_position": 5,
+      "evaluation_position": 26,
+      "restart_variant": "level2_mura",
+      "evaluation_variant": "level2_mura"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 0,
+      "restart_position": 6,
+      "evaluation_position": 216,
+      "restart_variant": "level3",
+      "evaluation_variant": "level3"
+    },
+    {
+      "database": "ABDE4",
+      "reaction_id": 0,
+      "restart_position": 7,
+      "evaluation_position": 154,
+      "restart_variant": "level3_delley",
+      "evaluation_variant": "level3_delley"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 12,
+      "restart_position": 8,
+      "evaluation_position": 117,
+      "restart_variant": "level3",
+      "evaluation_variant": "level3"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 6,
+      "restart_position": 9,
+      "evaluation_position": 171,
+      "restart_variant": "level3_gauss_chebyshev",
+      "evaluation_variant": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 6,
+      "restart_position": 10,
+      "evaluation_position": 132,
+      "restart_variant": "level2_gauss_chebyshev",
+      "evaluation_variant": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 37,
+      "restart_position": 11,
+      "evaluation_position": 248,
+      "restart_variant": "level3_gauss_chebyshev",
+      "evaluation_variant": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 108,
+      "restart_position": 12,
+      "evaluation_position": 157,
+      "restart_variant": "level3_mura",
+      "evaluation_variant": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 56,
+      "restart_position": 13,
+      "evaluation_position": 42,
+      "restart_variant": "level3_delley",
+      "evaluation_variant": "level3_delley"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 0,
+      "restart_position": 14,
+      "evaluation_position": 228,
+      "restart_variant": "level3",
+      "evaluation_variant": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 75,
+      "restart_position": 15,
+      "evaluation_position": 30,
+      "restart_variant": "level3_gauss_chebyshev",
+      "evaluation_variant": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 12,
+      "restart_position": 16,
+      "evaluation_position": 203,
+      "restart_variant": "level3_gauss_chebyshev",
+      "evaluation_variant": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 0,
+      "restart_position": 17,
+      "evaluation_position": 34,
+      "restart_variant": "level2_delley",
+      "evaluation_variant": "level2_delley"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 4,
+      "restart_position": 18,
+      "evaluation_position": 97,
+      "restart_variant": "level3_delley",
+      "evaluation_variant": "level3_delley"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 0,
+      "restart_position": 19,
+      "evaluation_position": 61,
+      "restart_variant": "level3",
+      "evaluation_variant": "level3"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 15,
+      "restart_position": 20,
+      "evaluation_position": 186,
+      "restart_variant": "level2",
+      "evaluation_variant": "level2"
+    },
+    {
+      "database": "ABDE4",
+      "reaction_id": 2,
+      "restart_position": 21,
+      "evaluation_position": 16,
+      "restart_variant": "level2",
+      "evaluation_variant": "level2"
+    },
+    {
+      "database": "AE17",
+      "reaction_id": 8,
+      "restart_position": 22,
+      "evaluation_position": 232,
+      "restart_variant": "level2_mura",
+      "evaluation_variant": "level2_mura"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 0,
+      "restart_position": 23,
+      "evaluation_position": 135,
+      "restart_variant": "level3_delley",
+      "evaluation_variant": "level3_delley"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 6,
+      "restart_position": 24,
+      "evaluation_position": 78,
+      "restart_variant": "level2_mura",
+      "evaluation_variant": "level2_mura"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 7,
+      "restart_position": 25,
+      "evaluation_position": 101,
+      "restart_variant": "level2_delley",
+      "evaluation_variant": "level2_delley"
+    },
+    {
+      "database": "ABDE4",
+      "reaction_id": 3,
+      "restart_position": 26,
+      "evaluation_position": 103,
+      "restart_variant": "level2",
+      "evaluation_variant": "level2"
+    }
+  ],
+  "augmentation_scope": "one frozen cycle-0 variant realization per cleaned identity; not full augmentation expectation",
+  "trained_catalog_count": 27,
+  "independent_review": {
+    "status": "passed",
+    "reviewer": "GPT-6 Luna MAX",
+    "calls": 1,
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\review.md",
+    "sha256": "a2794f070ce12c845416b824d41a3f60ac4de3ce56ae9674ea3b8ac71ade9882",
+    "verdict": "PASS: provenance, derivation, aggregates, Case 1 and bounded next experiment; no blockers",
+    "scope_limit": "one fixed variant realization and two diagnostic updates, not augmentation expectation/generalization",
+    "continuation_prerequisite": "predeclare update budget, checkpoint schedule and decision gate before execution"
+  },
+  "external_artifacts": {
+    "evaluate.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\evaluate.py",
+      "sha256": "702220438ca2afcacb7ceaf2e822f7da82cc3bf0979f5bde0479f3ecd5b0fe65"
+    },
+    "protocol.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\protocol.json",
+      "sha256": "3c7b85e0e0bfbff7fcb45c6e3fb2cebafc1a4079ca318591bd60be0a18fd1ee2"
+    },
+    "rows.jsonl": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\rows.jsonl",
+      "sha256": "fb35e08a1188ec724455e2dd821318217eccffdb930a31bec75754911617e597"
+    },
+    "results.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\results.json",
+      "sha256": "0fb51b506ae8995f5d91fcce6d5fb2866f034b62658c59c61c06d37a8c65e3a6"
+    },
+    "overlap.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\overlap.json",
+      "sha256": "c2da793d7d3d556b9f2eee65edd33fc7d73e32ee6292c6d50753a00aeca5bfe4"
+    },
+    "sampling_manifest_268.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\sampling_manifest_268.json",
+      "sha256": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070"
+    },
+    "aggregation_driver": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\aggregate_report.py",
+      "sha256": "817260ebeb09f20a98b61e8b049d9e63d0a1bd8c85f3a4d55c45e6574b867c1d"
+    }
+  },
+  "database_aggregate_change_contributions": {
+    "ABDE4": {
+      "singleton_cycle_delta": -0.018935058674224944,
+      "weighted_RMSE_delta": -0.7025442241582298
+    },
+    "AE17": {
+      "singleton_cycle_delta": -0.6056812070732998,
+      "weighted_RMSE_delta": -18.041650145469937
+    },
+    "DBH76": {
+      "singleton_cycle_delta": -0.00022550872647753237,
+      "weighted_RMSE_delta": 0.03523727081099004
+    },
+    "EA13": {
+      "singleton_cycle_delta": 0.008535509576409752,
+      "weighted_RMSE_delta": 0.5648096632715336
+    },
+    "IP13": {
+      "singleton_cycle_delta": 0.0542689118391749,
+      "weighted_RMSE_delta": 1.304223870146001
+    },
+    "MGAE109": {
+      "singleton_cycle_delta": 0.02338656015522818,
+      "weighted_RMSE_delta": 0.8713005665600445
+    },
+    "NCCE31": {
+      "singleton_cycle_delta": 0.020952665044270593,
+      "weighted_RMSE_delta": 0.7523960509070515
+    },
+    "PA8": {
+      "singleton_cycle_delta": -0.002209142329506222,
+      "weighted_RMSE_delta": -0.027711380929565488
+    },
+    "pTC13": {
+      "singleton_cycle_delta": 0.006241787742785317,
+      "weighted_RMSE_delta": 0.21276604936947496
+    }
+  },
+  "panel_representativeness": {
+    "same_row_variants": true,
+    "historical_median_reproduced_exactly": true,
+    "historical_wins_reproduced": true,
+    "row_level_deterioration_directionally_representative": true,
+    "interpretation": "Both subset and full cycle show median row deterioration and a minority of wins; neither median is a proxy for weighted global aggregate changes. AE17 aggregate improvement outweighs worsening elsewhere.",
+    "full_count_better": 79,
+    "full_count_worse": 189
+  }
+}

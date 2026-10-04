@@ -1,0 +1,100 @@
+{
+  "schema": "lap-chem-full268-frozen-evaluation-v1",
+  "scope": "two frozen states, chemistry only, no gradients or updates",
+  "precision": "float64 arithmetic on exact float32-loaded Minnesota source and checkpoint values widened to double; dispersion source preserved",
+  "seed": 41,
+  "world_size": 1,
+  "ratio_baseline_floor_kcal_mol": 1e-06,
+  "unchanged_absolute_tolerance_kcal_mol": 1e-10,
+  "aggregate_tolerance": {
+    "rtol": 1e-12,
+    "atol": 1e-12
+  },
+  "numerical_classification_relative_floor": 1e-08,
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_checkpoint.pt": "14c1c5d50cf1e3f17e55d66d0be353d7d8871291718dbc10d3176746b2bbaf69",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927"
+  },
+  "sampling_manifest_identity": "f20225fc6d15e26d0729eb5ad33300841ffc15355608df6ee4dcae58add44691",
+  "sampling_manifest_file_sha256": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070",
+  "source_hashes": {
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "f023efc31a4ae8c6d86da27f2d7a82c25d0b184b9ea6e4e479666229329be6d3",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "3c3234fe5011933a1cfa35722d223c152d72d8ad40bf69f83189b8befcee1b6e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_panel.py": "663f93c147be6870d89de898694f9099da200f0388ea82a3ff033bccd7aba587",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_checkpoint.py": "5ce857c565d94f7538a56104f68894ee59147e0caa3f9f4f098f7ec3abdc418d",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0"
+  },
+  "driver_sha256": "702220438ca2afcacb7ceaf2e822f7da82cc3bf0979f5bde0479f3ecd5b0fe65",
+  "panel": "27 shared identities mapped by database/reaction_id with identical cycle-0 variants",
+  "manifest_role": "frozen full-268 evaluation-only chemistry manifest",
+  "starting_head": "e4d9b00f2b474c044f99b05f7e0ce37252467201",
+  "skills": [
+    "caveman",
+    "ponytail",
+    "to-spec",
+    "to-tickets"
+  ],
+  "tickets": [
+    {
+      "id": "T1",
+      "goal": "pin sources and identity-wise variant gate",
+      "dependency": null,
+      "status": "passed"
+    },
+    {
+      "id": "T2",
+      "goal": "forward two frozen models on all 268 selected variants",
+      "dependency": "T1",
+      "status": "passed"
+    },
+    {
+      "id": "T3",
+      "goal": "exact reducers and shared-panel aggregates",
+      "dependency": "T2",
+      "status": "passed"
+    },
+    {
+      "id": "T4",
+      "goal": "independent review and final artifacts",
+      "dependency": "T3",
+      "status": "passed"
+    }
+  ],
+  "non_goals": [
+    "training",
+    "gradient geometry",
+    "model selection",
+    "E/operator evaluation"
+  ],
+  "status": "completed and independently reviewed",
+  "independent_review": {
+    "status": "passed",
+    "reviewer": "GPT-6 Luna MAX",
+    "calls": 1,
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\review.md",
+    "sha256": "a2794f070ce12c845416b824d41a3f60ac4de3ce56ae9674ea3b8ac71ade9882",
+    "verdict": "PASS: provenance, derivation, aggregates, Case 1 and bounded next experiment; no blockers",
+    "scope_limit": "one fixed variant realization and two diagnostic updates, not augmentation expectation/generalization",
+    "continuation_prerequisite": "predeclare update budget, checkpoint schedule and decision gate before execution"
+  },
+  "positional_prefix_equality_required": false,
+  "mrks_system_compatibility_required": false,
+  "overlap_variant_gate": "all 27 shared reaction identities, rank0 cycle0, equal selected suffix; compare by identity",
+  "training_context": "theta2: bounded two-update diagnostic checkpoint trained on 27-catalog; not full-Minnesota training",
+  "production_source_changes": 0,
+  "external_driver_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\evaluate.py",
+  "validation": {
+    "external_py_compile": "passed",
+    "full_production_suites": "not rerun: source unchanged",
+    "Ruff": "not applicable: no Python source/tooling committed",
+    "diagnostic_self_checks": "passed",
+    "artifact_consistency": "passed",
+    "staged_diff_check": "passed"
+  }
+}
