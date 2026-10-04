@@ -1,0 +1,163 @@
+{
+  "schema": "lap-s5-ae17-strategy-v1",
+  "starting_head": "7811f6755a2ca36903828b622560c26fc75911db",
+  "skills": [
+    "caveman",
+    "ponytail",
+    "to-spec",
+    "to-tickets"
+  ],
+  "spec": {
+    "invariants": [
+      "same268selectedvariants/targets/corrections",
+      "preserve S5 tau columns",
+      "strict historical S5 load",
+      "no model updates",
+      "matched-F64 arithmetic, no source upgrade"
+    ],
+    "interfaces": [
+      "existing group store, model builder, reaction factory, autograd.grad, named gradient utilities"
+    ],
+    "acceptance": [
+      "all finite",
+      "scalar split rtol1e-12 atol1e-12",
+      "gradient relative residual<=1e-10",
+      "checkpoint/input/model hashes unchanged"
+    ],
+    "non_goals": [
+      "training",
+      "four-task implementation",
+      "Diet",
+      "SCF",
+      "Slurm",
+      "new objective"
+    ]
+  },
+  "tickets": [
+    {
+      "id": "T1",
+      "goal": "S5 provenance and exact manifest pins",
+      "dependency": null,
+      "status": "passed"
+    },
+    {
+      "id": "T2",
+      "goal": "S5 frozen268 forward and reuse Lap rows",
+      "dependency": "T1",
+      "status": "passed"
+    },
+    {
+      "id": "T3",
+      "goal": "predopt bounded-memory full chemistry gradient split",
+      "dependency": "T2",
+      "status": "passed"
+    },
+    {
+      "id": "T4",
+      "goal": "aggregate strategy and future monitoring gate",
+      "dependency": "T3",
+      "status": "passed"
+    },
+    {
+      "id": "T5",
+      "goal": "one independent review and final reports",
+      "dependency": "T4",
+      "status": "passed"
+    }
+  ],
+  "precision": "matched-F64 arithmetic on stored F32 parameter/source values widened to double; original corrections preserved",
+  "gradient_state": "canonical clean Lap predopt only",
+  "gradient_relative_tolerance": 1e-10,
+  "scalar_tolerance": {
+    "rtol": 1e-12,
+    "atol": 1e-12
+  },
+  "ratio_baseline_floor_kcal_mol": 1e-06,
+  "row_unchanged_tolerance_kcal_mol": 1e-10,
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_checkpoint.pt": "14c1c5d50cf1e3f17e55d66d0be353d7d8871291718dbc10d3176746b2bbaf69",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927"
+  },
+  "evaluation_manifest_identity": "f20225fc6d15e26d0729eb5ad33300841ffc15355608df6ee4dcae58add44691",
+  "evaluation_manifest_file_sha256": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070",
+  "previous_rows_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\rows.jsonl",
+  "previous_rows_sha256": "fb35e08a1188ec724455e2dd821318217eccffdb930a31bec75754911617e597",
+  "s5": {
+    "path": "C:\\Dev\\readWFN_share_ms\\replay_trial_19_simple4_s5_two_step_40_10_500_snapshots_from280_gc_svelu_mirror\\checkpoints\\trial_19_selected.pt",
+    "sha256": "946d93f12656415288d4cb98b92183a203ad78fa13b57c8acaeef7ac5d1776de",
+    "epoch": 500,
+    "run_directory": "C:\\Dev\\readWFN_share_ms\\replay_trial_19_simple4_s5_two_step_40_10_500_snapshots_from280_gc_svelu_mirror",
+    "architecture": "pcPBELMLOptimizerV2GcSveluMirror",
+    "model_name": "PBE-LGxGc_6_32",
+    "model_type": "gc_svelu_mirror",
+    "schedule": "simple4_two_step_40_10",
+    "model_kwargs": {
+      "num_layers": 6,
+      "h_dim": 32,
+      "dropout": 0.0,
+      "DFT": "PBE",
+      "use_g_x": true,
+      "use_g_c": true
+    },
+    "seed": "runner documented41; seed not embedded in selected checkpoint",
+    "training_data_identity": "not embedded in selected checkpoint; no equivalence to current268 corpus asserted",
+    "source_commit": "not embedded; unavailable",
+    "dispersion": "same pinned Minnesota D3 dictionary as Lap evaluation; historical runner also enables mRKS dispersion",
+    "strict_state_loading": true,
+    "schedule_and_final_state_match": true,
+    "identical_copy_path": "C:/Dev/readWFN_share_ms/replay_trial_19_simple4_s5_two_step_40_10_500_gc_svelu_mirror/checkpoints/trial_19_selected.pt"
+  },
+  "source_hashes": {
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "f023efc31a4ae8c6d86da27f2d7a82c25d0b184b9ea6e4e479666229329be6d3",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "3c3234fe5011933a1cfa35722d223c152d72d8ad40bf69f83189b8befcee1b6e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\replay_trial_19_bridge.py": "825a3da531ced5cd617d47a4b1417e824c90da42c839244c68ed6de1bcd8b6aa"
+  },
+  "s5_metadata_hashes": {
+    "C:\\Dev\\readWFN_share_ms\\replay_trial_19_simple4_s5_two_step_40_10_500_snapshots_from280_gc_svelu_mirror\\preoptimized_checkpoint.pt.meta.json": "73dff28b757af5135d70e21a57cbd225323bb6b06454c4ca6c65d188d7673593",
+    "C:\\Dev\\readWFN_share_ms\\replay_trial_19_simple4_s5_two_step_40_10_500_snapshots_from280_gc_svelu_mirror\\checkpoints\\trial_19_training_state.pt": "001c2715292e6539e67b4bbe9e63681152090cbb5ca44a87bd7080521db194ae",
+    "C:\\Dev\\readWFN_share_ms\\replay_trial_19_simple4_s5_two_step_40_10_500_snapshots_from280_gc_svelu_mirror\\trials\\trial_19.json": "9748a3be901a47e02e6fa586fbeb22dee760c624a2653dd148a7e8b4af090b3e"
+  },
+  "driver_sha256": "7de9da1d2d2787e0809fdccac8965cecb8daa0c7578ef82e51eb16d6f5317694",
+  "optional_E_operator_geometry": "not run: no AO-cache work required for primary split decision",
+  "no_training": true,
+  "status": "completed and independently reviewed",
+  "production_source_changes": 0,
+  "future_formulation": {
+    "task_order": [
+      "relchem",
+      "ae17",
+      "exc",
+      "op"
+    ],
+    "primary": "relchem",
+    "secondary": [
+      "ae17",
+      "exc",
+      "op"
+    ],
+    "implementation": "design only; existing PCD requires3x3 Gram, left unchanged",
+    "next_validation": "eight active-set possibilities (empty plus seven nonempty); published parity, KKT, infeasibility, EMA, magnitude rescale, state/order, DDP and Armijo",
+    "source_LOC_added": 0
+  },
+  "independent_review": {
+    "status": "passed",
+    "reviewer": "GPT-6 Luna MAX independent reviewer",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\independent_review.md",
+    "sha256": "873d97c532ffa9edb20e483effbf1ccdb286f0435d5106adfdd3c4086553ab7f",
+    "blockers": 0,
+    "note": "Predeclare a measurable AE17 progress threshold before applying the future spending gate."
+  },
+  "validation": {
+    "py_compile": "passed",
+    "production_suites": "not rerun: source unchanged",
+    "Ruff": "not applicable: no Python tooling committed"
+  }
+}

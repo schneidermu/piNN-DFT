@@ -1,0 +1,613 @@
+{
+  "schema": "lap-s5-ae17-strategy-v1",
+  "models": {
+    "predopt": {
+      "J_all": 2.746571009745216,
+      "J_rel": 1.2391049041903315,
+      "J_AE": 25.0038646858791,
+      "weighted_all_RMSE": 103.11194456600036,
+      "weighted_nonAE_RMSE": 46.32029458968161,
+      "nonAE_MAE": 9.748406477074035,
+      "nonAE_RMSE": 13.968522715132623,
+      "AE_MAE": 47.336699410627965,
+      "AE_RMSE": 56.791649976318745,
+      "decomposition_absolute_residual": 0.0,
+      "per_database": {
+        "ABDE4": {
+          "n": 4,
+          "MAE": 2.7195551967202647,
+          "RMSE": 3.387937958605582
+        },
+        "AE17": {
+          "n": 17,
+          "MAE": 47.336699410627965,
+          "RMSE": 56.791649976318745
+        },
+        "DBH76": {
+          "n": 70,
+          "MAE": 8.626764125200646,
+          "RMSE": 10.002888847249116
+        },
+        "EA13": {
+          "n": 11,
+          "MAE": 2.4721282828063633,
+          "RMSE": 3.105538423531583
+        },
+        "IP13": {
+          "n": 13,
+          "MAE": 3.43613768168918,
+          "RMSE": 4.6209060528546635
+        },
+        "MGAE109": {
+          "n": 104,
+          "MAE": 15.848242877876386,
+          "RMSE": 19.82396787514349
+        },
+        "NCCE31": {
+          "n": 28,
+          "MAE": 0.8816928086380484,
+          "RMSE": 1.2482549497189777
+        },
+        "PA8": {
+          "n": 8,
+          "MAE": 1.4738301699415928,
+          "RMSE": 1.7214968720908466
+        },
+        "pTC13": {
+          "n": 13,
+          "MAE": 5.810755070868059,
+          "RMSE": 6.811355817247947
+        }
+      },
+      "row_comparisons": {
+        "predopt": {
+          "ABDE4": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "AE17": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "DBH76": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "EA13": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "IP13": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "MGAE109": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "NCCE31": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "PA8": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "pTC13": {
+            "wins": 0,
+            "worsened": 0
+          }
+        },
+        "s5": {
+          "ABDE4": {
+            "wins": 0,
+            "worsened": 4
+          },
+          "AE17": {
+            "wins": 1,
+            "worsened": 16
+          },
+          "DBH76": {
+            "wins": 4,
+            "worsened": 66
+          },
+          "EA13": {
+            "wins": 6,
+            "worsened": 5
+          },
+          "IP13": {
+            "wins": 8,
+            "worsened": 5
+          },
+          "MGAE109": {
+            "wins": 23,
+            "worsened": 81
+          },
+          "NCCE31": {
+            "wins": 6,
+            "worsened": 22
+          },
+          "PA8": {
+            "wins": 5,
+            "worsened": 3
+          },
+          "pTC13": {
+            "wins": 9,
+            "worsened": 4
+          }
+        }
+      },
+      "nonAE_row_ratio_vs_S5": {
+        "median": 1.7567143778003849,
+        "p90": 4.34372398007224,
+        "max": 301.4179440120489,
+        "included": 251,
+        "excluded": 0
+      }
+    },
+    "cursor2": {
+      "J_all": 2.232905527299576,
+      "J_rel": 1.3373527695298248,
+      "J_AE": 15.455478597900026,
+      "weighted_all_RMSE": 88.08077228650771,
+      "weighted_nonAE_RMSE": 49.3307724556589,
+      "nonAE_MAE": 11.28460584033841,
+      "nonAE_RMSE": 16.465376758314225,
+      "AE_MAE": 29.25993056782793,
+      "AE_RMSE": 38.74999983084881,
+      "decomposition_absolute_residual": -2.220446049250313e-16,
+      "per_database": {
+        "ABDE4": {
+          "n": 4,
+          "MAE": 2.1544317048873793,
+          "RMSE": 2.685393734447352
+        },
+        "AE17": {
+          "n": 17,
+          "MAE": 29.25993056782793,
+          "RMSE": 38.74999983084881
+        },
+        "DBH76": {
+          "n": 70,
+          "MAE": 8.619456847530829,
+          "RMSE": 10.038126118060106
+        },
+        "EA13": {
+          "n": 11,
+          "MAE": 2.7731908959678866,
+          "RMSE": 3.6703480868031164
+        },
+        "IP13": {
+          "n": 13,
+          "MAE": 5.05581245979128,
+          "RMSE": 5.925129923000664
+        },
+        "MGAE109": {
+          "n": 104,
+          "MAE": 19.311298091590775,
+          "RMSE": 23.948656795739666
+        },
+        "NCCE31": {
+          "n": 28,
+          "MAE": 0.9509268428892066,
+          "RMSE": 1.3234945548096828
+        },
+        "PA8": {
+          "n": 8,
+          "MAE": 1.407897539434046,
+          "RMSE": 1.693785491161281
+        },
+        "pTC13": {
+          "n": 13,
+          "MAE": 5.997043423345368,
+          "RMSE": 7.024121866617422
+        }
+      },
+      "row_comparisons": {
+        "predopt": {
+          "ABDE4": {
+            "wins": 3,
+            "worsened": 1
+          },
+          "AE17": {
+            "wins": 16,
+            "worsened": 1
+          },
+          "DBH76": {
+            "wins": 36,
+            "worsened": 34
+          },
+          "EA13": {
+            "wins": 5,
+            "worsened": 6
+          },
+          "IP13": {
+            "wins": 2,
+            "worsened": 11
+          },
+          "MGAE109": {
+            "wins": 10,
+            "worsened": 94
+          },
+          "NCCE31": {
+            "wins": 1,
+            "worsened": 27
+          },
+          "PA8": {
+            "wins": 4,
+            "worsened": 4
+          },
+          "pTC13": {
+            "wins": 2,
+            "worsened": 11
+          }
+        },
+        "s5": {
+          "ABDE4": {
+            "wins": 0,
+            "worsened": 4
+          },
+          "AE17": {
+            "wins": 5,
+            "worsened": 12
+          },
+          "DBH76": {
+            "wins": 5,
+            "worsened": 65
+          },
+          "EA13": {
+            "wins": 7,
+            "worsened": 4
+          },
+          "IP13": {
+            "wins": 3,
+            "worsened": 10
+          },
+          "MGAE109": {
+            "wins": 19,
+            "worsened": 85
+          },
+          "NCCE31": {
+            "wins": 6,
+            "worsened": 22
+          },
+          "PA8": {
+            "wins": 4,
+            "worsened": 4
+          },
+          "pTC13": {
+            "wins": 7,
+            "worsened": 6
+          }
+        }
+      },
+      "nonAE_row_ratio_vs_S5": {
+        "median": 2.0050567844940166,
+        "p90": 4.163515701332793,
+        "max": 322.48497524243345,
+        "included": 251,
+        "excluded": 0
+      }
+    },
+    "s5": {
+      "J_all": 1.3576558592127443,
+      "J_rel": 0.8975751135469208,
+      "J_AE": 8.150612751102258,
+      "weighted_all_RMSE": 52.083119779092584,
+      "weighted_nonAE_RMSE": 33.2557235729598,
+      "nonAE_MAE": 6.11593556215944,
+      "nonAE_RMSE": 8.888824169087314,
+      "AE_MAE": 15.430538865028018,
+      "AE_RMSE": 18.827396206132782,
+      "decomposition_absolute_residual": -1.1102230246251565e-16,
+      "per_database": {
+        "ABDE4": {
+          "n": 4,
+          "MAE": 0.7285675749810849,
+          "RMSE": 0.9617368367164706
+        },
+        "AE17": {
+          "n": 17,
+          "MAE": 15.430538865028018,
+          "RMSE": 18.827396206132782
+        },
+        "DBH76": {
+          "n": 70,
+          "MAE": 3.9810846489528013,
+          "RMSE": 5.166852543286958
+        },
+        "EA13": {
+          "n": 11,
+          "MAE": 3.041155752260573,
+          "RMSE": 3.731321058885853
+        },
+        "IP13": {
+          "n": 13,
+          "MAE": 3.4803258111165203,
+          "RMSE": 4.06162464351972
+        },
+        "MGAE109": {
+          "n": 104,
+          "MAE": 10.25511609975703,
+          "RMSE": 12.744457114555184
+        },
+        "NCCE31": {
+          "n": 28,
+          "MAE": 0.5293149828861116,
+          "RMSE": 0.7428711983254965
+        },
+        "PA8": {
+          "n": 8,
+          "MAE": 1.5682266342269475,
+          "RMSE": 2.1570980744698693
+        },
+        "pTC13": {
+          "n": 13,
+          "MAE": 6.224151891281537,
+          "RMSE": 7.056235360177682
+        }
+      },
+      "row_comparisons": {
+        "predopt": {
+          "ABDE4": {
+            "wins": 4,
+            "worsened": 0
+          },
+          "AE17": {
+            "wins": 16,
+            "worsened": 1
+          },
+          "DBH76": {
+            "wins": 66,
+            "worsened": 4
+          },
+          "EA13": {
+            "wins": 5,
+            "worsened": 6
+          },
+          "IP13": {
+            "wins": 5,
+            "worsened": 8
+          },
+          "MGAE109": {
+            "wins": 81,
+            "worsened": 23
+          },
+          "NCCE31": {
+            "wins": 22,
+            "worsened": 6
+          },
+          "PA8": {
+            "wins": 3,
+            "worsened": 5
+          },
+          "pTC13": {
+            "wins": 4,
+            "worsened": 9
+          }
+        },
+        "s5": {
+          "ABDE4": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "AE17": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "DBH76": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "EA13": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "IP13": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "MGAE109": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "NCCE31": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "PA8": {
+            "wins": 0,
+            "worsened": 0
+          },
+          "pTC13": {
+            "wins": 0,
+            "worsened": 0
+          }
+        }
+      },
+      "nonAE_row_ratio_vs_S5": {
+        "median": 1.0,
+        "p90": 1.0,
+        "max": 1.0,
+        "included": 251,
+        "excluded": 0
+      }
+    }
+  },
+  "Lap_to_S5_ratios": {
+    "predopt": {
+      "J_rel": 1.3805027406495236,
+      "weighted_nonAE_RMSE": 1.3928518045340201,
+      "AE_MAE": 3.0677282125196874,
+      "AE_RMSE": 3.0164367581439433
+    },
+    "cursor2": {
+      "J_rel": 1.489961953429221,
+      "weighted_nonAE_RMSE": 1.4833769094643818,
+      "AE_MAE": 1.8962351751786863,
+      "AE_RMSE": 2.058170944436092
+    }
+  },
+  "theta2_to_predopt_split_ratios": {
+    "J_rel": 1.0792893846253409,
+    "weighted_nonAE_RMSE": 1.0649926321204337,
+    "AE_MAE": 0.6181235897756432,
+    "AE_RMSE": 0.6823186128067589
+  },
+  "geometry": {
+    "norms": {
+      "all": 434.3502304157692,
+      "rel": 11.04383389637542,
+      "ae": 6992.429520062401
+    },
+    "weighted_rel_norm": 10.343292193993397,
+    "weighted_ae_norm": 443.54963373530154,
+    "weighted_AE_rel_norm_ratio": 42.88282931742774,
+    "cos_rel_ae": -0.8918439978044004,
+    "cos_all_rel": -0.8869197237731898,
+    "cos_all_ae": 0.9999419828989297,
+    "cos_weighted_rel_ae": -0.8918439978044005,
+    "decomposition_relative_residual": 4.442537573883996e-16,
+    "decomposition_absolute_residual": 1.929617218847226e-13,
+    "objective_means": {
+      "all": 2.7465710097452156,
+      "rel": 1.2391049041903308,
+      "ae": 25.003864685879098
+    },
+    "per_database_mean_gradient_norms": {
+      "PA8": 31.482204557395416,
+      "pTC13": 62.65407634768171,
+      "DBH76": 6.178861947929138,
+      "MGAE109": 11.572052044930388,
+      "EA13": 46.627173460562624,
+      "ABDE4": 288.2719134871804,
+      "NCCE31": 48.65811931357867,
+      "AE17": 6992.429520062401,
+      "IP13": 143.56938172783197
+    },
+    "per_database_contribution_to_g_rel_norms": {
+      "PA8": 1.00341687832336,
+      "pTC13": 3.2450318427086144,
+      "DBH76": 1.7231885910559348,
+      "MGAE109": 4.7947944727998415,
+      "EA13": 2.0434219444868083,
+      "ABDE4": 4.593974716927178,
+      "NCCE31": 5.427997373626306,
+      "IP13": 7.43586439227815
+    },
+    "construction": "one autograd derivative per reaction; three independent float64 running sums with exact average coefficients; no retained combined graph or individual-row gradient archive",
+    "AE_signed_projection_share_of_g_all": 1.0211204443170687,
+    "rel_signed_projection_share_of_g_all": -0.021120444317068242,
+    "AE_weighted_norm_over_mixed_norm": 1.021179690202366,
+    "AE_share_of_sum_of_contribution_norms": 0.977212043627213,
+    "warning": "vector norms are not additive; signed projection shares can be negative or exceed1, not literal norm percentages",
+    "rel_dot_negative_mixed_gradient": 4254.457948065472
+  },
+  "decision": "four tasks",
+  "decision_reason": "Mixed chemistry gains hide worsened relative-chemistry aggregates; exact full-cycle gradient contributions and physical distinctions justify separate priority/monitoring semantics. No arbitrary AE17 downweighting.",
+  "future_SCF_spending_gate": {
+    "relative_chemistry": [
+      "J_rel/Lap over S5 <=1",
+      "weighted_nonAE_RMSE/Lap over S5 <=1"
+    ],
+    "AE17": [
+      "MAE <= canonical predopt MAE",
+      "RMSE <= canonical predopt RMSE"
+    ],
+    "AE17_S5_ratio_ceilings": {
+      "MAE": 3.0677282125196874,
+      "RMSE": 3.0164367581439433
+    },
+    "E_and_operator": "On the same immutable15-system diagnostic panel, each loss mean and median ratio to canonical predopt <=1; finite throughout. No S5 operator score.",
+    "repeatability": "Meet all criteria at two consecutive predefined checkpoint evaluations; checkpoint budget/schedule declared before training, no selection on Diet.",
+    "interpretation": "permission to spend compute on first external SCF validation, not scientific validation or production acceptance",
+    "threshold_design": "unit ratios express reached S5 or no worse than predopt; no ad hoc objective weight or AE17 clipping",
+    "absolute_relative_ceilings": {
+      "J_rel": 0.8975751135469208,
+      "weighted_nonAE_RMSE": 33.2557235729598
+    },
+    "AE_absolute_ceilings": {
+      "MAE": 47.336699410627965,
+      "RMSE": 56.791649976318745
+    }
+  },
+  "next_experiment": "Generalize canonical PCD to four tasks (relchem primary; ae17, exc, op secondary), validate published KKT/parity/EMA/DDP/resume and exact realized-step Armijo semantics, then a tiny clean full-268 restart from canonical predopt; not implemented or run here.",
+  "final_status": "S5 is established as the frozen chemistry baseline; AE17 should be a separate objective, so the next experiment is a validated four-task PCD implementation with relchem primary.",
+  "runtime": {
+    "s5_seconds": 98.71657809999306,
+    "gradient_seconds": 820.4521576999978,
+    "total_seconds": 919.2152636999963,
+    "device": "NVIDIA GeForce RTX 5070 Ti",
+    "peak_allocated": 21472044032,
+    "peak_reserved": 31935430656,
+    "resident_VRAM_peak_measured": false,
+    "memory_caution": "Torch allocated21.47GB/reserved31.94GB exceeds physicalRTX~16GB; Windows shared/oversubscribed behavior likely. No V100 memory-fit claim; bounded graph is one reaction, not a small peak."
+  },
+  "checks": {
+    "strict_s5_load": true,
+    "same_model_states": true,
+    "no_attached_gradients": true,
+    "rng_restored": true,
+    "same_pinned_sources": true,
+    "gradient_decomposition": true,
+    "gradient_forward_matches_reused_predopt_rows": true,
+    "all_finite": true,
+    "268_identical_rows_and_variants": true,
+    "same_targets": true,
+    "scalar_decomposition_all_models": true,
+    "gradient_objective_matches_reused_rows": true,
+    "signed_projection_share_identity": true
+  },
+  "external_artifacts": {
+    "run.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\run.py",
+      "sha256": "7de9da1d2d2787e0809fdccac8965cecb8daa0c7578ef82e51eb16d6f5317694"
+    },
+    "protocol.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\protocol.json",
+      "sha256": "03bde4847909a7df596639b37154e937e53b0808bbae35629c1724e6b3955624"
+    },
+    "results.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\results.json",
+      "sha256": "b790aa8cae5ab53de76cb44549f3075fca56909df1be55c198456c504897555b"
+    },
+    "s5_rows.jsonl": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\s5_rows.jsonl",
+      "sha256": "751bed08a06f54eb6c218bb94f15c06aaaa95a62aa41478bf282d34b0074f71c"
+    },
+    "aggregate_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\aggregate_gradients.pt",
+      "sha256": "5db4210e2f2786fbe4bb7d05d29e9869ddd022e3d01de360a3a63b15d37de585"
+    },
+    "s5_candidates.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\s5_candidates.json",
+      "sha256": "e0e36de4763c600130fea6c14e391f4ab6554572721278fc7ac0abc0ff53a3df"
+    },
+    "aggregate.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\aggregate.py",
+      "sha256": "919cc1546b1b430bb829fe05ef52b8e440ff271b545e3b1929d9e8febc4b1a9d"
+    },
+    "check_ae_structure.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\check_ae_structure.py",
+      "sha256": "c399d7e5ddbe785018badb8af9990deaabf96d3be222aa93411d441685f5a157"
+    }
+  },
+  "reused_Lap_rows": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\rows.jsonl",
+    "sha256": "fb35e08a1188ec724455e2dd821318217eccffdb930a31bec75754911617e597"
+  },
+  "independent_review": {
+    "status": "passed",
+    "reviewer": "GPT-6 Luna MAX independent reviewer",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\independent_review.md",
+    "sha256": "873d97c532ffa9edb20e483effbf1ccdb286f0435d5106adfdd3c4086553ab7f",
+    "blockers": 0,
+    "note": "Predeclare a measurable AE17 progress threshold before applying the future spending gate."
+  },
+  "scope": "one frozen variant realization; no augmentation expectation/generalization; theta2 only bounded27-catalog diagnostic",
+  "AE17_structure": {
+    "all_17_single_atomic_components_coefficient_positive_one": true,
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_s5_ae17_runs_20261004\\ae17_structure.json",
+    "sha256": "89852f342f7ee8b763ba6fd26dd7e7ab3ead8cf8309a5790a2cd4445c5bd8e94"
+  }
+}
