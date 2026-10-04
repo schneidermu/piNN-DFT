@@ -1,0 +1,164 @@
+{
+  "status": "STOP: mandatory first-two sampling-provenance gate failed",
+  "classification": "inconclusive: no checkpoint chemistry evaluation was permitted",
+  "old_catalog_count": 27,
+  "old_cycle_length": 27,
+  "full_catalog_count": 268,
+  "cleaned_database_counts": {
+    "PA8": 8,
+    "pTC13": 13,
+    "DBH76": 70,
+    "MGAE109": 104,
+    "EA13": 11,
+    "ABDE4": 4,
+    "NCCE31": 28,
+    "AE17": 17,
+    "IP13": 13
+  },
+  "database_constants": {
+    "ABDE4": {
+      "weight": 1,
+      "frequency_weight": 0.25,
+      "historical_frequency_denominator": 4,
+      "cleaned_count": 4,
+      "cleaned_to_historical_count_ratio": 1.0
+    },
+    "AE17": {
+      "weight": 1,
+      "frequency_weight": 0.058823529411764705,
+      "historical_frequency_denominator": 17,
+      "cleaned_count": 17,
+      "cleaned_to_historical_count_ratio": 1.0
+    },
+    "DBH76": {
+      "weight": 1,
+      "frequency_weight": 0.013157894736842105,
+      "historical_frequency_denominator": 76,
+      "cleaned_count": 70,
+      "cleaned_to_historical_count_ratio": 0.9210526315789473
+    },
+    "EA13": {
+      "weight": 1,
+      "frequency_weight": 0.07692307692307693,
+      "historical_frequency_denominator": 13,
+      "cleaned_count": 11,
+      "cleaned_to_historical_count_ratio": 0.8461538461538463
+    },
+    "IP13": {
+      "weight": 1,
+      "frequency_weight": 0.07692307692307693,
+      "historical_frequency_denominator": 13,
+      "cleaned_count": 13,
+      "cleaned_to_historical_count_ratio": 1.0
+    },
+    "MGAE109": {
+      "weight": 0.21124031007751937,
+      "frequency_weight": 0.009174311926605505,
+      "historical_frequency_denominator": 109,
+      "cleaned_count": 104,
+      "cleaned_to_historical_count_ratio": 0.9541284403669725
+    },
+    "NCCE31": {
+      "weight": 10,
+      "frequency_weight": 0.03225806451612903,
+      "historical_frequency_denominator": 31,
+      "cleaned_count": 28,
+      "cleaned_to_historical_count_ratio": 0.9032258064516129
+    },
+    "PA8": {
+      "weight": 1,
+      "frequency_weight": 0.125,
+      "historical_frequency_denominator": 8,
+      "cleaned_count": 8,
+      "cleaned_to_historical_count_ratio": 1.0
+    },
+    "pTC13": {
+      "weight": 1,
+      "frequency_weight": 0.07692307692307693,
+      "historical_frequency_denominator": 13,
+      "cleaned_count": 13,
+      "cleaned_to_historical_count_ratio": 1.0
+    }
+  },
+  "MEAN_WEIGHT": 0.11136325384169465,
+  "old_first_two": [
+    {
+      "mrks_system": "BeH2",
+      "rank": 0,
+      "reaction": {
+        "database": "pTC13",
+        "reaction_id": 12
+      },
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "mrks_system": "H2",
+      "rank": 0,
+      "reaction": {
+        "database": "AE17",
+        "reaction_id": 16
+      },
+      "variant_suffix": "level2_gauss_chebyshev"
+    }
+  ],
+  "full_first_two": [
+    {
+      "rank": 0,
+      "reaction": {
+        "database": "PA8",
+        "reaction_id": 3
+      },
+      "variant_suffix": "level2_mura",
+      "mrks_system": "BeH2"
+    },
+    {
+      "rank": 0,
+      "reaction": {
+        "database": "pTC13",
+        "reaction_id": 2
+      },
+      "variant_suffix": "level2_delley",
+      "mrks_system": "H2"
+    }
+  ],
+  "panel_database_counts": {
+    "ABDE4": 3,
+    "AE17": 3,
+    "DBH76": 3,
+    "EA13": 3,
+    "IP13": 3,
+    "MGAE109": 3,
+    "NCCE31": 3,
+    "PA8": 3,
+    "pTC13": 3
+  },
+  "metrics": null,
+  "checks": {
+    "pinned_file_hashes": true,
+    "268_unique_once_each": true,
+    "nine_expected_databases": true,
+    "catalog_input_order_invariance": true,
+    "first_two_reproduce_restart": false,
+    "synthetic_singleton_factor_identity": true,
+    "synthetic_mean_analytic_identity": true,
+    "synthetic_weighted_rmse_identity": true,
+    "checkpoints_not_loaded": true,
+    "no_gradients_updates_or_forward_evaluation": true
+  },
+  "synthetic_only": {
+    "explicit_mean": 0.7013602271297565,
+    "derived_mean": 0.7013602271297567,
+    "weighted_rmse": 26.029659407162082
+  },
+  "rejected_manifest_identity": "f20225fc6d15e26d0729eb5ad33300841ffc15355608df6ee4dcae58add44691",
+  "rejected_manifest_file_sha256": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070",
+  "driver_path": "C:\\Dev\\readWFN_share_ms\\lap_chem_global_audit_runs_20261004\\finalize_gate.py",
+  "driver_sha256": "b3a6bbb08d4a4ad07bbc903e98b3f368a0146956328ea31cfd1f55b4248b2961",
+  "next_experiment": "Specify one full-268 diagnostic manifest rule compatible with the frozen 27-catalog restart, then rerun the chemistry-only audit; no optimization.",
+  "independent_review": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_global_audit_runs_20261004\\review.md",
+    "sha256": "805ae11ee6e6cff361347faaecb913fbeb021aa48b848da223e6250ffbb91ae0",
+    "verdict": "accepted: derivation and mandatory STOP correct; no checkpoint numerical outcome supported",
+    "reviewer": "GPT-6 Luna MAX; one independent review; no diagnostics rerun"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schema": "lap-chem-global-objective-audit-v1",
+  "status": "stopped before chemistry forward evaluation",
+  "branch": "lap_full_vxc",
+  "starting_head": "3dd2a244fa4135328d07071a0b82ad0ed153556f",
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_checkpoint.pt": "14c1c5d50cf1e3f17e55d66d0be353d7d8871291718dbc10d3176746b2bbaf69",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\raw_gradient_survey_20261001T\\sampling_manifest.json": "666492800bd307efef1a3ea5f9012d3f32218c9fbcfe7ed7ab768635d28112df",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a"
+  },
+  "seed": 41,
+  "world_size": 1,
+  "source_hashes": {
+    "ao_factor_cache_manifest": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "central_operator_manifest": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "minnesota_group_store_manifest": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "mrks_dispersions": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "panel_definition": "f98c112344dc52df401fb5eff50fd8ce609cc9c8f69085223cc9c0dee9c66131",
+    "predopt_checkpoint": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "reaction_dispersions": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927"
+  },
+  "old_manifest_identity": "550f22488df27b9e1326905bd3569fa7a84671e90b428ae3be190f1e409bf928",
+  "full_manifest_identity": "f20225fc6d15e26d0729eb5ad33300841ffc15355608df6ee4dcae58add44691",
+  "precision_if_gate_passed": "matched-F64 arithmetic on F32-loaded source/checkpoint values widened to double",
+  "ratio_baseline_floor_kcal_mol": 1e-06,
+  "unchanged_absolute_tolerance_kcal_mol": 1e-10,
+  "aggregate_tolerance": {
+    "rtol": 1e-12,
+    "atol": 1e-12
+  },
+  "production_source_changes": 0,
+  "no_training": true,
+  "review_status": "passed",
+  "skills_used": [
+    "caveman",
+    "ponytail",
+    "to-spec",
+    "to-tickets"
+  ],
+  "plan": [
+    {
+      "ticket": "T1",
+      "goal": "derive exact reducers and pin frozen sources",
+      "status": "passed"
+    },
+    {
+      "ticket": "T2",
+      "dependency": "T1",
+      "goal": "268-cycle provenance gate",
+      "status": "failed; STOP"
+    },
+    {
+      "ticket": "T3",
+      "dependency": "T2",
+      "goal": "evaluate frozen chemistry and aggregate",
+      "status": "not run"
+    },
+    {
+      "ticket": "T4",
+      "dependency": "T3 or explicit STOP",
+      "goal": "one independent review and report",
+      "status": "passed; report records explicit STOP"
+    }
+  ],
+  "source_files": {
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "3c3234fe5011933a1cfa35722d223c152d72d8ad40bf69f83189b8befcee1b6e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_panel.py": "663f93c147be6870d89de898694f9099da200f0388ea82a3ff033bccd7aba587"
+  },
+  "independent_review": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_global_audit_runs_20261004\\review.md",
+    "sha256": "805ae11ee6e6cff361347faaecb913fbeb021aa48b848da223e6250ffbb91ae0",
+    "verdict": "accepted: derivation and mandatory STOP correct; no checkpoint numerical outcome supported",
+    "reviewer": "GPT-6 Luna MAX; one independent review; no diagnostics rerun"
+  },
+  "validation": {
+    "external_drivers_py_compile": "passed",
+    "artifact_consistency": "passed",
+    "staged_diff_check": "passed",
+    "Ruff": "not applicable: no committed Python tooling or source change",
+    "full_suites": "not rerun: production source unchanged"
+  }
+}
