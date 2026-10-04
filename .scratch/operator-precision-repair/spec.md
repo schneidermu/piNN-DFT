@@ -1,0 +1,6 @@
+# Operator precision-boundary qualification
+Use exact theta4/theta5, historical requested/realized displacement and immutable15 sources from df0b95a. Five variants only: legacy P32_A32, accumulation-only P32_A32_GEMM_A64ACC, P32_A64, P64_A32, gold P64_A64. Reuse operator expressions/factory and hash-bound existing gold/legacy results. Source changes are forbidden until qualification.
+
+Phase1 acceptance is fixed: same rounded-response sign as gold; response error <=max(1e-10,0.05*abs(gold delta)); directional sign agrees; gradient cosine>=0.999999; finite. All15 at predopt/theta4: every cosine>=0.99999, aggregate response gate passes, every meaningful per-system response sign agrees. Meaningful threshold64 eps64 max(1,abs(base loss)). Cache stays F32; promotion bounded per chunk, no persistent double cache. Compare scalar and gradient, metadata/resume fail-closed, unchanged initialization semantics.
+
+Only a qualified boundary permits minimal production repair, tests/performance and identical bounded five-update pilot from predopt. No changed PCD/O1/tau/sampling/loss/Armijo/CLI, no aggregate15 Armijo, no long training/SCF/Diet/Slurm/full90. One independent Luna review near end. If phase1 candidates fail, stop without repair or pilot and report the smallest missing precision boundary.

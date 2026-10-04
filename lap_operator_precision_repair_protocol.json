@@ -1,0 +1,320 @@
+{
+  "schema": "operator-precision-repair-v1",
+  "starting_head": "df0b95a5aaed7ebce3bd84c7f46443240263c6f3",
+  "phase1_variants": [
+    "P32_A32",
+    "P32_A32_GEMM_A64ACC",
+    "P32_A64",
+    "P64_A32",
+    "P64_A64"
+  ],
+  "phase1_response_absolute_floor": 1e-10,
+  "phase1_response_relative_tolerance": 0.05,
+  "phase1_gradient_cosine_min": 0.999999,
+  "all15_gradient_cosine_min": 0.99999,
+  "meaningful_response_floor": "64*eps64*max(1,abs(base loss))",
+  "point_chunk": 256,
+  "ao_chunk": 4096,
+  "no_source_upgrade": true,
+  "production_change_gate": "phase1 and all15 and gradient and bounded-memory qualification",
+  "pilot_gate": "qualified repair and tests; max5 identical clean updates",
+  "review_status": "PASS",
+  "status": "complete; independent review PASS; STOP at phase1",
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_protocol.json": "589dd2a3db8af5cfcf321dc38e715f2a6ac3f37ec3ff4b0b8ed7dc24e541a714",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_training_protocol.json": "e4f856a89a683141e026cf9f17085c05d205204005dcffedb5a7bea8df0405de",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_sampling_manifest.json": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_results.json": "05d2d83339e4e11cb68bad81ec1ae08abe826caf71db24258fa2afe3fb36ca1d",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot_latest.pt": "c11aa31188b21e44711d82d364e2e8214eef4fce5b0e5ef1790ff312d35fb2bb",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\predopt_fgpu_20261001T192623\\lap_pbe_predopt.pt": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "1aed40401e8b4a0581bf3126c5eef5b9ed3fa13f78f543ffaf2eb0774821317a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "2e71941ac17514b4ead96c2104717392b0ab59dca406aaf30381f58c533652fd",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_operator.py": "0aa94d464aacf4e4ba481bc6518a206f793ffaf2490749b20797899f5cc0802b",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_objective_recovery_runs_20261003\\tiny_clean_restart_results.json": "c7112b76d4e6168d0d15b081b5c61025c0be154cefe0b5cf0b81de540885fa04",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_results.json": "5fe2809a84d3ee59b0fa3625a5d24c015b736831923b8b27b6985d51db04bdcc",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_report.md": "bbbdc5ef24b820a83e1aace241d7b477a69a799d4bc2f0e7db82aa915821268c",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_four_task_pcd_protocol.json": "0a3ad5cdfe295cb8f02faca28e81a13789e558253caf839597ba79e90842c979"
+  },
+  "source_hashes": {
+    "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "train_models/lap_moo_protocol.py": "2e71941ac17514b4ead96c2104717392b0ab59dca406aaf30381f58c533652fd",
+    "train_models/lap_moo_training.py": "1aed40401e8b4a0581bf3126c5eef5b9ed3fa13f78f543ffaf2eb0774821317a",
+    "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "train_models/train_lap_moo.py": "521f6bfa9fdd28c07649c449e0f3b6ea582170df9b02dfef64c08283b13b9643",
+    "train_models/lap_operator.py": "0aa94d464aacf4e4ba481bc6518a206f793ffaf2490749b20797899f5cc0802b",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf"
+  },
+  "historical_provenance": {
+    "globalization_results_sha256": "0a09767be38a5bf2e38eb9d8ab607be5dcfc515548c1f47e5238a6bcf7c6fb9b",
+    "theta4_sha256": "16b63fccd3dd70c11afdaf37f498486b9a6c641f9c8e75e3f7fb7b496e4c0c97",
+    "theta5_sha256": "13c9d8ad8df1d8379a2e1e267f1026f0f0a20b0c3bf57ae1f2a21f362893cc9d",
+    "requested_delta_sha256": "62248f1646fec93b3aad39446a48505c1d10f2e0cb124e62f6d664535d3f56a0",
+    "historical_step_sha256": "1264b2c580d10aa39e1e47abcd0dc9af688af28d2a6feb3aeae63db7375ca645"
+  },
+  "system_order": [
+    "H2",
+    "HLi",
+    "BH",
+    "BeH2",
+    "H2O",
+    "CH4",
+    "N2",
+    "CO",
+    "CH2O",
+    "C2H2_iso2",
+    "H4Si",
+    "AlBeH",
+    "ClH",
+    "ClHS",
+    "HPSi_iso2"
+  ],
+  "variant_semantics": {
+    "P32_A32": "Pinned unchanged production F32 local partials and contractions; F64 converted-chunk accumulation/reference/loss. Reused hash-bound df0b95a scalar/gradients.",
+    "P32_A32_GEMM_A64ACC": "Existing expression tree; each individual F32 GEMM output widened immediately before accumulation; F64 block/chunk/final matrix. F32 pointwise products preserved.",
+    "P32_A64": "Existing F32 local c,a,b widened differentiably with exact F32 AO/source values before all weak-form products/contractions/accumulations/symmetrization. Gradients reach original F32 leaves.",
+    "P64_A32": "Actual F64 parameter leaves and local partials; c,a,b and exact widened AO/source values narrowed to F32 before existing assembly. Diagnostic control only.",
+    "P64_A64": "Existing pinned genuine matched-F64 local/model and assembly gold; exact F32-loaded values widened, no source upgrade. Reference, not production proposal."
+  },
+  "external_artifacts": {
+    "accumulation_control.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\accumulation_control.py",
+      "sha256": "c3184e5c04db2e6bc2e5c6a946b6d24bb236ad88899a2ac7b0478c685cfcc158",
+      "bytes": 1803
+    },
+    "aggregate_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\aggregate_gradients.pt",
+      "sha256": "ffdeb617238fa1606549bd5ce080a5cf1e0ffb12bdb43acafa24287dcc7ab18a",
+      "bytes": 431851
+    },
+    "factor_AlBeH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_AlBeH.json",
+      "sha256": "b118c7951f4011266b89909a1c1497c325fdfac6aba7f1e903e784bb3580e69f",
+      "bytes": 1010
+    },
+    "factor_AlBeH_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_AlBeH_gradients.pt",
+      "sha256": "49aa4a68cfd2ddc0feb01050b852f0b7ecac42b447f83104f646117180e1ad51",
+      "bytes": 432443
+    },
+    "factor_BeH2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_BeH2.json",
+      "sha256": "bf653b08459c0d61218a1d42fb62ebb61bbf161e917b99d4e3d0beedb844581f",
+      "bytes": 1002
+    },
+    "factor_BeH2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_BeH2_gradients.pt",
+      "sha256": "554cb4c498d20a078cda33cf6e4d73c2c75653c2f73d8287327b6b459b28436d",
+      "bytes": 432203
+    },
+    "factor_BH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_BH.json",
+      "sha256": "deb3a29bba31fa6ce7e1cac256ed3d09d9bc46a3560c9fc7d54af45ee2ef2493",
+      "bytes": 1000
+    },
+    "factor_BH_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_BH_gradients.pt",
+      "sha256": "741a7696f91adaf3e695b7999610e29189d1c141054ea1eb0f89268b50abfe1a",
+      "bytes": 431851
+    },
+    "factor_C2H2_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_C2H2_iso2.json",
+      "sha256": "19dd3a102c129b42d00165e893883157208e8a0cfd03b409579632499e3fd14b",
+      "bytes": 1008
+    },
+    "factor_C2H2_iso2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_C2H2_iso2_gradients.pt",
+      "sha256": "ebee7cec9b467444db785e2eae7a67b169637e4064dcf4e78e7d2e9dde930bb8",
+      "bytes": 433147
+    },
+    "factor_CH2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_CH2O.json",
+      "sha256": "6ad7a91d970f6db247f84de5a5f590c0cf56b85c67744a9aad0771ba8575853b",
+      "bytes": 1004
+    },
+    "factor_CH2O_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_CH2O_gradients.pt",
+      "sha256": "aeb8f2c9837189af900a50380a9151f886be9843723479834f05ff2d9817703f",
+      "bytes": 432203
+    },
+    "factor_CH4.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_CH4.json",
+      "sha256": "9b525616a7e8cbf4c2a111d627d1ddb6c67f0f2a3a00eb136166ec8bb20c073c",
+      "bytes": 1000
+    },
+    "factor_CH4_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_CH4_gradients.pt",
+      "sha256": "ac415b5343329270046989b610e720773bd2ea97385fa51025a8638e96211761",
+      "bytes": 432027
+    },
+    "factor_ClH.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_ClH.json",
+      "sha256": "393acca18d2eb057e1f1e7fb3056a60a062cef1b92acd3ad7b859b98a7f56775",
+      "bytes": 1005
+    },
+    "factor_ClH_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_ClH_gradients.pt",
+      "sha256": "25d783dccf7c5140c28ee73f4c0f564e32594132fec1f5b4621b6ede6a64ef7a",
+      "bytes": 432027
+    },
+    "factor_ClHS.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_ClHS.json",
+      "sha256": "e272daec3910401a0db6c94c3ffac7dea9446388c60a584c9480dd1815594e89",
+      "bytes": 1007
+    },
+    "factor_ClHS_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_ClHS_gradients.pt",
+      "sha256": "020671703511f123ce39e987354c55807fcee087cc4bfd626b8f0c08030f58b7",
+      "bytes": 432203
+    },
+    "factor_CO.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_CO.json",
+      "sha256": "78af5d46ec8377fa7d9f48a188b6ede7877108c53bf9105f320894a239179325",
+      "bytes": 1003
+    },
+    "factor_CO_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_CO_gradients.pt",
+      "sha256": "d7595fa3b32b569126def0b42d0970d47f8f9276b00c9e852b814015412122bd",
+      "bytes": 431851
+    },
+    "factor_H2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_H2.json",
+      "sha256": "506e2ed8bfac01745bbf53400dc4d2179c1d1203ce6a380ef3c13391ff5d72ee",
+      "bytes": 1002
+    },
+    "factor_H2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_H2_gradients.pt",
+      "sha256": "9dc2a47a77163168f52eb5d46dc7703a283f0d5ba260172d8a33a6873f593baf",
+      "bytes": 431851
+    },
+    "factor_H2O.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_H2O.json",
+      "sha256": "6394e7dad0e252c954b5e73c5ffb201d4d62703d78d5b96d8f407b45a3a0f85b",
+      "bytes": 1000
+    },
+    "factor_H2O_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_H2O_gradients.pt",
+      "sha256": "526b356189f8fea550ddae3f76186a1cd235d5590c0f3538e4db59b5c9a62355",
+      "bytes": 432027
+    },
+    "factor_H4Si.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_H4Si.json",
+      "sha256": "99192f6594a84751b29ae3381cff57338cc71cab8b2e6a510cf9bfea7ce34a53",
+      "bytes": 1010
+    },
+    "factor_H4Si_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_H4Si_gradients.pt",
+      "sha256": "113beb3cd3bd4ff5316c6f1f0f2b2372c13bcb6edbf561ae1d0cffe0bd5cc306",
+      "bytes": 432203
+    },
+    "factor_HLi.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_HLi.json",
+      "sha256": "7df2da89c2305241b74bc12d648495ae62fac99f006a9c70647ea8c7b1477051",
+      "bytes": 1004
+    },
+    "factor_HLi_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_HLi_gradients.pt",
+      "sha256": "90746db146bb362a71addcb35d6ec772ed434de9e7663659cbb0a0218e378322",
+      "bytes": 432027
+    },
+    "factor_HPSi_iso2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_HPSi_iso2.json",
+      "sha256": "e390cae503cca9f197092f17a84686f1a5b33a3ef0e8bbe6058959f6bcd4cce8",
+      "bytes": 1014
+    },
+    "factor_HPSi_iso2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_HPSi_iso2_gradients.pt",
+      "sha256": "d6fd7c54bd0082e865990c847eda6d2f382513d843cd1f15433d15697f563c55",
+      "bytes": 433147
+    },
+    "factor_N2.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_N2.json",
+      "sha256": "3283c31705868ac37d15ab88b544679efe16ba6de98e25a6aa800ef23be03279",
+      "bytes": 1002
+    },
+    "factor_N2_gradients.pt": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factor_N2_gradients.pt",
+      "sha256": "4eea2e63844a67bae7377f1f90b8934691088c2e49325d852c2ac44ce1738fff",
+      "bytes": 431851
+    },
+    "factorial.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factorial.json",
+      "sha256": "90fb5f1053103f9fbd9095daec5bfccebb191df1e42200490efc408ffee411db",
+      "bytes": 20635
+    },
+    "factorial.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\factorial.py",
+      "sha256": "0240857610d686e3f3cb8ed7e25b78ef65f4b5feda9d6b43ff9b705b26a9db71",
+      "bytes": 7861
+    },
+    "focused_tests.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\focused_tests.json",
+      "sha256": "f0e53567ed817952b42a433627758b2ec4016432a3c0ff5bbd527c81fcf204e0",
+      "bytes": 222
+    },
+    "protocol.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\protocol.json",
+      "sha256": "8cd7f514df4f038148ed458418f40ad8227fe3953d3cc5516e2ffa84a4955edf",
+      "bytes": 753
+    },
+    "report.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\report.py",
+      "sha256": "956ba04d79ccc6d6eab40d4c031f7ed2694d60014e83ca8256f6dfcf8c5a2a02",
+      "bytes": 15877
+    },
+    "review.md": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\review.md",
+      "sha256": "1ac32e394cbbe8d01fa70abf5cab4b8aa1346fa8e2a78a82f1445a2089605223",
+      "bytes": 2577
+    },
+    "validate.py": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\validate.py",
+      "sha256": "c8d7680ca5ef63769e964ad9b835cd5be2bd726731941bdb109b397fd36118ab",
+      "bytes": 3090
+    },
+    "validation.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\validation.json",
+      "sha256": "07fa3e4f6c21e19abdc3f667df4d0408592f498afabecaa11c73a5442654416c",
+      "bytes": 617
+    }
+  },
+  "execution_environment": {
+    "torch": "2.11.0+cu128",
+    "CUDA": "12.8",
+    "device": "NVIDIA GeForce RTX 5070 Ti",
+    "device_total_memory": 17094475776,
+    "matmul_allow_tf32": false,
+    "cudnn_allow_tf32": true,
+    "deterministic_algorithms": false,
+    "MKL_THREADING_LAYER": "SEQUENTIAL",
+    "OMP_NUM_THREADS": "1"
+  },
+  "selected_boundary": null,
+  "pilot_ran": false,
+  "production_source_changes": 0,
+  "conditional_stages": {
+    "phase1_sufficient_nongold_boundary": false,
+    "all15_predopt_qualification": "skipped: no phase1 survivor",
+    "performance_benchmark": "skipped: no qualified candidate",
+    "production_implementation": "not authorized by numerical gate; no source changes",
+    "historical_repaired_dyadic_scan": "skipped: no qualified production repair",
+    "conditional_five_update_pilot": "not run: phase1 gate failed",
+    "full_production_test_suites": "not rerun: source unchanged; external controls validated"
+  },
+  "review": {
+    "status": "PASS",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_operator_precision_repair_runs_20261004\\review.md",
+    "sha256": "1ac32e394cbbe8d01fa70abf5cab4b8aa1346fa8e2a78a82f1445a2089605223"
+  }
+}
