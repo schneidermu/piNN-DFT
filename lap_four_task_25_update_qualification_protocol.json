@@ -1,0 +1,139 @@
+{
+  "starting_commit": "983ba9822927424492aee506be2f1440a9055fef",
+  "seed": 41,
+  "world_size": 1,
+  "maximum_updates": 25,
+  "monitoring_cursors": [
+    0,
+    5,
+    10,
+    25
+  ],
+  "old_manifest_canonical_sha256": "4e349a8d6a4f0004c196091adfa46fd4db32fb4ec8c9f108750d5bf0fae75141",
+  "old_manifest_file_sha256": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+  "manifest_canonical_sha256": "2e87f7e79a66b425628bdf59a821f785e05059f193a492d4a4f3130d7411e9f3",
+  "manifest_file_sha256": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc",
+  "prefix_exact": true,
+  "draws32_exact": true,
+  "generator": "reuse estimator.py SHA-derived random.Random draws and pilot.py batch assembly; existing build_sampling_manifest_from_catalog system cycle",
+  "generator_sources": {
+    "C:\\Dev\\readWFN_share_ms\\lap_25_runs_20261005\\freeze.py": "f0e6ef2b955d057e13d18bc907d9602f5a02bac63de3b5f4c626c40539139408",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\estimator.py": "b85a8816a56e0520575a9dcf0098dfd01dd92b060a0c928eee8deaeae94f4b14",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\pilot.py": "cecd4ea4661d7ad1696494ebd67fbe932c500eeb0e9afa0652eb69e915df7488",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\sampling_manifest_268.json": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070"
+  },
+  "prior_native_protocol": {
+    "ao_cache_chunk_size": 4096,
+    "ao_cache_manifest_sha256": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "architecture": "pcPBELMLOptimizerV2Lap-v1",
+    "dtype": "float32",
+    "fixed_scalarization": null,
+    "grid_chunk_size": 256,
+    "lr_schedule": {
+      "name": "none"
+    },
+    "method": "pcd",
+    "method_hyperparameters": {
+      "beta": 0.999,
+      "eps": 1e-08,
+      "qp_tolerance": 1e-09,
+      "tau": 0.02
+    },
+    "minnesota_data_sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "mrks_dispersions_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "objective_definitions": {
+      "ae17": "mean corrected singleton fchem over17 AE17 identities; matched-F64 chemistry",
+      "exc": "existing legacy mRKS integrated Exc target and historical one-addition dispersion treatment; kcal/mol RMSE",
+      "op": "h-free variational AO XC operator loss: symmetric-orthogonalized squared Hilbert-Schmidt error divided by nAO",
+      "relchem": "mean corrected singleton fchem over251 non-AE17 identities; matched-F64 chemistry"
+    },
+    "one_stage_main_training": true,
+    "operator_corpus_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "operator_precision_source_sha256": {
+      "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+      "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+      "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+      "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+      "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287"
+    },
+    "operator_protocol": "lap-weakform-ao-v1",
+    "optimizer": {
+      "name": "none"
+    },
+    "pcd_algorithm": {
+      "ema_quantity": "squared global raw-gradient norm, one scalar per task",
+      "epsilon_scope": "inside_sqrt; scale invariance is asymptotic for finite eps",
+      "final_rescale": "raw_primary_gradient_l2_norm",
+      "infeasible_policy": "drop all secondary constraints and use the primary direction",
+      "normalization": "1/sqrt(bias_corrected_ema + eps)",
+      "primary_task": "relchem",
+      "qp": "minimize 0.5*||d-g_tilde_primary||^2 subject to g_tilde_j dot d >= tau*||g_tilde_j||^2",
+      "qp_tolerance": 1e-09,
+      "secondary_tasks": [
+        "ae17",
+        "exc",
+        "op"
+      ],
+      "zero_primary_policy": "return exact zero direction after EMA update",
+      "zero_qp_direction_policy": "return exact zero direction",
+      "zero_secondary_policy": "omit the exact-zero secondary constraint"
+    },
+    "pcd_provenance": {
+      "paper_arxiv": "2606.29521v2",
+      "paper_citation": "Dara Varam and Mohamed I. AlHajri, Not All Objectives Are Born Equal: Priority-Constrained Descent for Hierarchical Multi-Objective Optimization, Transactions on Machine Learning Research, September 2026.",
+      "paper_pdf_sha256": "8e6c03dd8edc2836057f748761c98b352600819cce3e0bf2c0fb6ccef7878c65",
+      "paper_record": "https://openreview.net/forum?id=HT01yGHLEt",
+      "upstream_commit": "e9afdbc9f4cb09343934eadb31dc72ea5ebac9b0",
+      "upstream_license": "MIT",
+      "upstream_license_attribution": "Copyright 2026 Dara Varam and Mohamed I. AlHajri",
+      "upstream_repository": "https://github.com/DaraVaram/priority-constrained-descent"
+    },
+    "predopt_checkpoint_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+    "protocol_version": "lap-moo-one-stage-v6",
+    "random_seed": 41,
+    "reaction_dispersions_sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "sampling_manifest_file_sha256": "36a250e904d00240b6e736ad3bc00f72b2b564f0dfecc2e22ee3336d955297fe",
+    "sampling_manifest_sha256": "4e349a8d6a4f0004c196091adfa46fd4db32fb4ec8c9f108750d5bf0fae75141",
+    "source_code_sha256": {
+      "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+      "train_models/lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+      "train_models/lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+      "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+      "train_models/train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab"
+    },
+    "step_rule": "pcd_direct_vector_armijo",
+    "task_order": [
+      "relchem",
+      "ae17",
+      "exc",
+      "op"
+    ],
+    "vector_armijo": {
+      "c": 0.0001,
+      "initial_step_size": 6.632573669086685e-07,
+      "max_backtracks": 20,
+      "rho": 0.5
+    },
+    "world_size": 1
+  },
+  "gate10": "all accepted/finite; exactprefix; Jrel/nonAE lower; AE MAE/RMSE and E/op means no worse; E/op median ratios<=1; no tolerance",
+  "gate25": "all25 accepted/finite; same metric guards",
+  "monitoring_baseline": "fresh this-run cursor0 only",
+  "source_sha256": {
+    "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "train_models/lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+    "train_models/lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+    "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "train_models/train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab"
+  },
+  "operator_precision_source_sha256": {
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287"
+  },
+  "predopt_sha256": "ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8",
+  "no_production_source_changes": true,
+  "frozen_before_training": true
+}
