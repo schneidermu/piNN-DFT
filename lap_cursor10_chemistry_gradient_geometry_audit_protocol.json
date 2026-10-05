@@ -1,0 +1,352 @@
+{
+  "starting_commit": "8408b0ffebda952fefd247a0ad1d3b2419975ae9",
+  "checkpoint": "C:\\Dev\\readWFN_share_ms\\lap_25_runs_20261005\\run\\checkpoint_10.pt",
+  "checkpoint_sha256": "0dd853b5967a6e254da8218d3f5b89b63dcd10902364dc5ed3788eb7e27107a4",
+  "draws": [
+    {
+      "ABDE4": 154,
+      "DBH76": 266,
+      "EA13": 17,
+      "IP13": 51,
+      "MGAE109": 239,
+      "NCCE31": 37,
+      "PA8": 95,
+      "pTC13": 78
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 177,
+      "EA13": 220,
+      "IP13": 105,
+      "MGAE109": 210,
+      "NCCE31": 172,
+      "PA8": 95,
+      "pTC13": 1
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 242,
+      "EA13": 171,
+      "IP13": 165,
+      "MGAE109": 15,
+      "NCCE31": 196,
+      "PA8": 101,
+      "pTC13": 112
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 263,
+      "EA13": 171,
+      "IP13": 165,
+      "MGAE109": 56,
+      "NCCE31": 137,
+      "PA8": 95,
+      "pTC13": 84
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 2,
+      "EA13": 203,
+      "IP13": 108,
+      "MGAE109": 79,
+      "NCCE31": 237,
+      "PA8": 97,
+      "pTC13": 189
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 188,
+      "EA13": 228,
+      "IP13": 105,
+      "MGAE109": 158,
+      "NCCE31": 151,
+      "PA8": 0,
+      "pTC13": 84
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 34,
+      "EA13": 83,
+      "IP13": 75,
+      "MGAE109": 127,
+      "NCCE31": 257,
+      "PA8": 44,
+      "pTC13": 112
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 12,
+      "EA13": 228,
+      "IP13": 132,
+      "MGAE109": 6,
+      "NCCE31": 161,
+      "PA8": 97,
+      "pTC13": 128
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 177,
+      "EA13": 208,
+      "IP13": 61,
+      "MGAE109": 212,
+      "NCCE31": 258,
+      "PA8": 95,
+      "pTC13": 1
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 10,
+      "EA13": 238,
+      "IP13": 262,
+      "MGAE109": 157,
+      "NCCE31": 257,
+      "PA8": 209,
+      "pTC13": 164
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 47,
+      "EA13": 228,
+      "IP13": 218,
+      "MGAE109": 115,
+      "NCCE31": 226,
+      "PA8": 0,
+      "pTC13": 1
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 136,
+      "EA13": 203,
+      "IP13": 51,
+      "MGAE109": 92,
+      "NCCE31": 237,
+      "PA8": 209,
+      "pTC13": 128
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 266,
+      "EA13": 39,
+      "IP13": 218,
+      "MGAE109": 63,
+      "NCCE31": 102,
+      "PA8": 209,
+      "pTC13": 189
+    },
+    {
+      "ABDE4": 103,
+      "DBH76": 49,
+      "EA13": 39,
+      "IP13": 139,
+      "MGAE109": 250,
+      "NCCE31": 162,
+      "PA8": 101,
+      "pTC13": 189
+    },
+    {
+      "ABDE4": 103,
+      "DBH76": 211,
+      "EA13": 4,
+      "IP13": 75,
+      "MGAE109": 250,
+      "NCCE31": 255,
+      "PA8": 44,
+      "pTC13": 112
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 247,
+      "EA13": 171,
+      "IP13": 141,
+      "MGAE109": 68,
+      "NCCE31": 172,
+      "PA8": 95,
+      "pTC13": 41
+    },
+    {
+      "ABDE4": 103,
+      "DBH76": 100,
+      "EA13": 23,
+      "IP13": 132,
+      "MGAE109": 142,
+      "NCCE31": 198,
+      "PA8": 101,
+      "pTC13": 145
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 205,
+      "EA13": 238,
+      "IP13": 132,
+      "MGAE109": 14,
+      "NCCE31": 37,
+      "PA8": 0,
+      "pTC13": 112
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 2,
+      "EA13": 208,
+      "IP13": 139,
+      "MGAE109": 63,
+      "NCCE31": 98,
+      "PA8": 209,
+      "pTC13": 18
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 46,
+      "EA13": 39,
+      "IP13": 108,
+      "MGAE109": 70,
+      "NCCE31": 255,
+      "PA8": 44,
+      "pTC13": 259
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 94,
+      "EA13": 23,
+      "IP13": 105,
+      "MGAE109": 27,
+      "NCCE31": 20,
+      "PA8": 135,
+      "pTC13": 41
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 170,
+      "EA13": 83,
+      "IP13": 51,
+      "MGAE109": 111,
+      "NCCE31": 226,
+      "PA8": 0,
+      "pTC13": 189
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 188,
+      "EA13": 203,
+      "IP13": 139,
+      "MGAE109": 124,
+      "NCCE31": 258,
+      "PA8": 224,
+      "pTC13": 112
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 253,
+      "EA13": 39,
+      "IP13": 139,
+      "MGAE109": 194,
+      "NCCE31": 186,
+      "PA8": 0,
+      "pTC13": 112
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 119,
+      "EA13": 228,
+      "IP13": 262,
+      "MGAE109": 14,
+      "NCCE31": 252,
+      "PA8": 0,
+      "pTC13": 89
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 136,
+      "EA13": 203,
+      "IP13": 165,
+      "MGAE109": 60,
+      "NCCE31": 93,
+      "PA8": 0,
+      "pTC13": 259
+    },
+    {
+      "ABDE4": 103,
+      "DBH76": 48,
+      "EA13": 238,
+      "IP13": 182,
+      "MGAE109": 250,
+      "NCCE31": 226,
+      "PA8": 44,
+      "pTC13": 216
+    },
+    {
+      "ABDE4": 103,
+      "DBH76": 266,
+      "EA13": 203,
+      "IP13": 105,
+      "MGAE109": 204,
+      "NCCE31": 37,
+      "PA8": 97,
+      "pTC13": 89
+    },
+    {
+      "ABDE4": 154,
+      "DBH76": 32,
+      "EA13": 39,
+      "IP13": 139,
+      "MGAE109": 190,
+      "NCCE31": 257,
+      "PA8": 44,
+      "pTC13": 78
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 211,
+      "EA13": 17,
+      "IP13": 61,
+      "MGAE109": 178,
+      "NCCE31": 130,
+      "PA8": 97,
+      "pTC13": 128
+    },
+    {
+      "ABDE4": 16,
+      "DBH76": 266,
+      "EA13": 203,
+      "IP13": 139,
+      "MGAE109": 22,
+      "NCCE31": 137,
+      "PA8": 97,
+      "pTC13": 189
+    },
+    {
+      "ABDE4": 192,
+      "DBH76": 267,
+      "EA13": 228,
+      "IP13": 61,
+      "MGAE109": 127,
+      "NCCE31": 102,
+      "PA8": 44,
+      "pTC13": 145
+    }
+  ],
+  "draws_protocol_sha256": "50c396a0a428086b1d52f98105535dde3908685acdf9ef58d799a2d111cda4e2",
+  "full268_manifest_sha256": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070",
+  "driver_sha256": "1a9bfa85b17a65054276ac8f8fd3cb1bebf03feabde15b2d747f2a37c2b029fd",
+  "no_updates": true,
+  "definition": "J_rel=sum of existing weighted singleton losses /251; per-database mean of those losses; R2 n_db/251 weighted sample. Matched F64 arithmetic on F32 loaded sources.",
+  "frozen_protocol_file_sha256": "8bd4a039ad9403e2c532a731503afd03df5ff6f7be3460012201aed97f23fa67",
+  "manifest_canonical_sha256": "2e87f7e79a66b425628bdf59a821f785e05059f193a492d4a4f3130d7411e9f3",
+  "manifest_file_sha256": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc",
+  "diagnostic_solver_tolerances": "normalized constraints absolute1e-9, dual>=-1e-10; simplex KKT1e-9*max(1,maxabsGram); all faces enumerated",
+  "direction_sign": "d is positive gradient-combination; proposed descent step -d; positive g dot d means decrease. S consensus vectors also positive gradient-space anchors. No finite steps applied.",
+  "finite_parameter_steps": false,
+  "source_sha256": {
+    "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "train_models/lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+    "train_models/lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+    "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "train_models/train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab"
+  },
+  "operator_precision_source_sha256": {
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287"
+  }
+}
