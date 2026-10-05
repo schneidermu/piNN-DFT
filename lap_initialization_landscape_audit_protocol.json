@@ -1,0 +1,140 @@
+{
+  "starting_commit": "d8682bddf6284ed5f3491ceec7c00e53673ff7ff",
+  "seeds": [
+    11,
+    23,
+    41,
+    73,
+    101
+  ],
+  "strengths": [
+    0,
+    67,
+    134,
+    268,
+    536
+  ],
+  "additional_regime": "PBE_HEAD",
+  "states": 30,
+  "predopt": {
+    "reference_entrypoint": "train_models/run_lap_pbe_predopt_reference.py",
+    "optimizer": "Adam",
+    "lr": 0.01,
+    "epochs": 2,
+    "steps": 536,
+    "batch_size": 1,
+    "point_chunk": 4096,
+    "ordering": "canonical_predopt_view over contiguous canonical source groups; shuffle=False; same order repeated",
+    "precision": "F32",
+    "lineage": "same raw initialization -> one canonical 536-step replay, capture exact prefixes; independently replay all536 steps for each seed and compare every saved prefix state/optimizer; validates continuation equivalence",
+    "seed41_P536_gate": "exact state tensor equality against ed4ba8231d93c376ce5aa8fc81e0670f6a5a44c95c2a552651b12d6a1d4b63f8; STOP if mismatch"
+  },
+  "evaluation": {
+    "chemistry": "existing corrected singleton loss mean over251 non-AE and17 AE; full251 reference; frozen cycle0 variants from full268 manifest; same for every seed",
+    "R2": "all32 historical frozen draws, secondary diagnostic only",
+    "systems": [
+      "H2",
+      "HLi",
+      "BH",
+      "BeH2",
+      "H2O",
+      "CH4",
+      "N2",
+      "CO",
+      "CH2O",
+      "C2H2_iso2",
+      "H4Si",
+      "AlBeH",
+      "ClH",
+      "ClHS",
+      "HPSi_iso2"
+    ],
+    "exc_and_op_aggregation": "equal system mean, values and gradients independently for each of15 systems",
+    "main_dtype": "F32",
+    "chemistry_dtype": "matched F64 on F32-loaded sources",
+    "operator": "unchanged repaired production mixed-precision path",
+    "point_chunk": 256,
+    "ao_cache_chunk": 4096,
+    "predopt_deviation": "existing evaluate_predopt_metrics over all268 canonical descriptor grids; grid-weighted adaptive-output MSE/MAE; normalized-factor deviations and energy-space residual diagnostics"
+  },
+  "runtime_probe": {
+    "positions": [
+      0,
+      100,
+      200
+    ],
+    "state": "seed41 raw P0 only",
+    "CPU_shadow_threads": 1,
+    "selection": "CPU chemistry if all gradient relL2<=1e-8, cos>=1-1e-12, scalar relerror<=1e-9 and summed execution seconds at least1.2x faster; otherwise CUDA chemistry",
+    "CUDA_used_for": "canonical predopt, F32 functional metrics, all production Exc/operator evaluations"
+  },
+  "head_definition": "diagnostic-only zero exchange/correlation output weights and biases, kappa bias=logit(min(PBE_kappa/scale_kappa,1-1e-6))/4-.5; exact PBE kappa requires sigmoid=1 and no finite exact bias exists; all hidden weights unchanged; constraints maintained; near-PBE within F32 rounding; hidden parameter tangent gradients initially zero",
+  "physical_sanity": {
+    "anchors": "same UEG/high-density/large-gradient descriptor anchors as test_lap.test_every_exact_anchor; F32 tolerance4eps and F64 tolerance1e-14; tau absence/spin exchange symmetry",
+    "deterministic_forward": "exact repeated forward equality",
+    "seed_replay": "exact all-state/optimizer equality on independent536-step replay; PBE_HEAD exact repeated construction",
+    "finite": "parameters, all losses and all four gradients finite; all states retained even if numerically inadmissible and reported"
+  },
+  "geometry": {
+    "normalization": "per-state raw nonzero gradients normalized to unitL2; no PCD EMA",
+    "MGDA": "enumerate all15 nonempty faces of4-simplex quadratic; float64 KKT checks",
+    "max_min": "gamma*=norm(minimum-norm convex combination of unit gradients); ifnonzero d=m/norm(m); ifzero gamma0,d0; unit ball includes0 so negative optimum impossible",
+    "zero_gradient": "exact zero or norm<=1e-30 flagged; unit normalization undefined, no positive-margin claim",
+    "solver_tolerance": "simplex primal1e-10; KKT1e-9 on unit Gram; report raw residual/gamma",
+    "sign": "d gradient-space combination; applying -d predicts decrease; no finite step is applied"
+  },
+  "analysis": {
+    "statistics": "per-strength median,min,max,IQR,CV for positive-valued metrics; signed cosine IQR/range; paired matched-seed changes; no pooled unpaired inference",
+    "hypotheses": [
+      "H1 conflict increases with predopt",
+      "H2 geometry improves with predopt",
+      "H3 intermediate compromise",
+      "H4 seed/regime changes require multi-seed optimizer comparisons"
+    ],
+    "decision_order": [
+      "finite/physical",
+      "seed variance",
+      "common-descent/gamma",
+      "objective quality",
+      "E/operator noncatastrophic",
+      "PBE function-space deviation",
+      "reproducibility"
+    ],
+    "recommendation_limit": 3,
+    "no_arbitrary_composite_score": true
+  },
+  "optional_perturbation": "omitted prospectively:30 full-state evaluations already require30 full268 chemistry gradients plus450 per-system gradients; no finite perturbation needed for primary seed/depth question",
+  "source_sha256": {
+    "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "train_models/lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+    "train_models/lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+    "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "train_models/train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "train_models/train_lap_s5.py": "4d0763629c1d7f4db266ef7f9e156b20d1a6c3f5f2c7975ee4719e51bb3c6279",
+    "train_models/run_lap_pbe_predopt_reference.py": "a0b8842d8c6b3733cf6dd3897267d8570f4870922e51beee6a0e4d288294977a",
+    "train_models/predopt.py": "48dfd7f393110d5c3b61bdb37acbc30aed250b2cb99b184ca31f856d2e5eb3cb",
+    "train_models/predopt_targets.py": "5cda0a835a445352edf8b5fbdb386e453ddaedc21a33eb7b154bc156700516d2",
+    "train_models/dataset.py": "c0f141bcd7dc824510ad85d1a0a4d040f3aac4b56e753d4422bea92b8275b768",
+    "train_models/optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f"
+  },
+  "input_sha256": {
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc_pilotdata\\mn_canonical_268.pickle": "70d23f32286e62c05bf2794e20426f6a03cf516bb1e0dc44e9d3a7d73266bce3",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc_pilotdata\\mn_canonical_268_manifest.json": "d33b1ddaac5add399381067f385630f01e9ccd6a64e8a10ba15dbb610d89e6cf",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\sampling_manifest_268.json": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070",
+    "C:\\Dev\\readWFN_share_ms\\lap_four_task_runs_20261004\\estimator_protocol.json": "50c396a0a428086b1d52f98105535dde3908685acdf9ef58d799a2d111cda4e2",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440"
+  },
+  "no_main_MOO_training": true,
+  "no_full90_SCF_Diet_Slurm_100_update": true
+}
