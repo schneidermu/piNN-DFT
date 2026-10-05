@@ -1,0 +1,206 @@
+{
+  "initial_frozen_tangent_plan": {
+    "starting_commit": "7a10dd6d3ce645d602946875a551503d4f266948",
+    "stage1_protocol_sha256": "95dc7b0b57edd74fc0f6298de2774f93a80201b388e197f2ac986f6f879df33c",
+    "trigger": {
+      "endpoint_ratios": [
+        0.11032208023453337,
+        0.027561359140131348,
+        0.016357519114764466,
+        0.010135245000934169,
+        0.030067834484695938
+      ],
+      "zero_head_blockage": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "PASS": true
+    },
+    "allowed_trigger": "q normalized RMS P536/P0 <0.2 in >=4/5 seeds, OR zero-head gradient blockage with nonzero head gradients in all5 PBE_HEAD states",
+    "epsilon_candidates": [
+      0.0001,
+      0.0003,
+      0.001,
+      0.003,
+      0.01
+    ],
+    "construction": "existing nearPBE head biases; epsilon times raw-state original head weights; all hidden tensors unchanged; no training",
+    "calibration": "same frozen subset adaptive9 MSE; shared epsilon minimizing median across seeds11/23/41 absolute log(MSEcandidate/MSEP536); smaller epsilon tie; no objective geometry used",
+    "cheap_gate": "all physical anchors pass; candidate/P536 subset MSE ratio in[0.25,4] in both seeds11/23; local epsilon deviation RMS <=2*P536 in both; q normalized RMS >=P536 in both and >1e-12; nonzero hidden gradient in both",
+    "expensive_gate": "only if cheap gates pass; at most2 new states seeds11/23; never resume old matrix",
+    "seeds": [
+      11,
+      23,
+      41
+    ],
+    "full_canonical_validation": "After subset-calibrated selection, evaluate selected epsilon and P536 on full canonical268 adaptive9 outputs with identical F64 diagnostic arithmetic; no chemistry energies/objective gradients. Full-corpus match required within[0.25,4] before any expensive stage.",
+    "epsilon_selection_inputs": "Only adaptive output MSE on fixed canonical-derived subset, no q magnitude, objective loss or geometry used to choose epsilon; q nonzero checked after selection.",
+    "bias_source": "same frozen PBE_HEAD near-PBE biases; not new architectural offsets; EPS ratio1-1e-6.",
+    "head_weight_source": "exact original raw random head weights per seed, scaled by epsilon; no new RNG draws.",
+    "diagnostic_only": true
+  },
+  "initial_plan_sha256": "5381505b289e843f4f49e1bd5546e60491a9c9e4f02cfcf07ae87af6a7ef89e4",
+  "full_canonical_calibration_frozen_protocol": {
+    "stage1_sha256": "95dc7b0b57edd74fc0f6298de2774f93a80201b388e197f2ac986f6f879df33c",
+    "tangent_protocol_sha256": "5381505b289e843f4f49e1bd5546e60491a9c9e4f02cfcf07ae87af6a7ef89e4",
+    "purpose": "User requires canonical268 adaptive-output MSE calibration. Subset-selected epsilon is provisional; final shared epsilon minimizes median absolute log full-corpus MSE ratio to P536, same candidates, smaller tie.",
+    "epsilon_candidates": [
+      0.0001,
+      0.0003,
+      0.001,
+      0.003,
+      0.01
+    ],
+    "seeds": [
+      11,
+      23,
+      41
+    ],
+    "evaluator_sha256": "0306709189a9a32e9df2c35483b123312848c7cf18b07ba97511287d019f7948",
+    "dependency_sha256": {
+      "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\audit.py": "4362e8430facd02bc3fb7c3bef177f37f5bc01f1dcddd83e5e14af9916fd2d36",
+      "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\tangent.py": "aa73539ecee6e3e76d1959751b9ef066098cce20163366d9382a91b1c2436125"
+    },
+    "chunk": 65536,
+    "restart": "Initial4096-chunk forward-only pass interrupted for throughput before any completed seed calibration; initial protocol/log preserved. No epsilon/grid/function/precision change.",
+    "no_geometry_selection": true,
+    "hidden_reuse": "Exchange hidden tensors and pre-output correlation features do not depend on head weights. Cache only within a chunk. Production forward_descriptors and activation equations reused unchanged; actual F32-constructed epsilon-scaled heads widened to F64.",
+    "parity_gate": "On first canonical chunk, each cached candidate must be bitwise identical to its ordinary model.forward.",
+    "full_corpus": "canonical268, all rows, point-weighted adaptive9 MSE; F64 arithmetic on storedF32 values. No reaction/Exc/operator scalar or gradient evaluated."
+  },
+  "full_calibration_protocol_sha256": "e23b112a1e335183e356ad479ea327bc1ffd16e0093f04151d6178743e40c4c1",
+  "final_selected_epsilon": 0.003,
+  "states": [
+    {
+      "seed": 11,
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\tangent_states\\seed11_PBE_TANGENT.pt",
+      "file_sha256": "34ca7a1a106c3473eeb25e8db0c90bcb8d64b1fedf974771ddfd52ce149682df",
+      "state_sha256": "9e5562d6f9c7b26a202ff6aafe23bad63a477acbea39beda58c0041935b9ef38",
+      "epsilon": 0.003,
+      "physical": {
+        "torch.float32": {
+          "anchor_errors": {
+            "UEG": 0.0,
+            "UEG_gx": 0.0,
+            "high_density": 0.0,
+            "rapid_gradient": 0.0
+          },
+          "tolerance": 4.76837158203125e-07,
+          "forward_replay_exact": true,
+          "tau_independence_exact": true,
+          "input_derivatives_finite": true
+        },
+        "torch.float64": {
+          "anchor_errors": {
+            "UEG": 0.0,
+            "UEG_gx": 0.0,
+            "high_density": 0.0,
+            "rapid_gradient": 0.0
+          },
+          "tolerance": 1e-14,
+          "forward_replay_exact": true,
+          "tau_independence_exact": true,
+          "input_derivatives_finite": true
+        }
+      }
+    },
+    {
+      "seed": 23,
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\tangent_states\\seed23_PBE_TANGENT.pt",
+      "file_sha256": "bf7498d074d3e858d1be89b4032f035626f3e151ffd3bf45dc5a8af95ef6f6fc",
+      "state_sha256": "abf6b1751ea9ce820a1894ad671687d6792ee7e16fce8411e81330ade8d6d570",
+      "epsilon": 0.003,
+      "physical": {
+        "torch.float32": {
+          "anchor_errors": {
+            "UEG": 0.0,
+            "UEG_gx": 0.0,
+            "high_density": 0.0,
+            "rapid_gradient": 0.0
+          },
+          "tolerance": 4.76837158203125e-07,
+          "forward_replay_exact": true,
+          "tau_independence_exact": true,
+          "input_derivatives_finite": true
+        },
+        "torch.float64": {
+          "anchor_errors": {
+            "UEG": 0.0,
+            "UEG_gx": 0.0,
+            "high_density": 0.0,
+            "rapid_gradient": 0.0
+          },
+          "tolerance": 1e-14,
+          "forward_replay_exact": true,
+          "tau_independence_exact": true,
+          "input_derivatives_finite": true
+        }
+      }
+    },
+    {
+      "seed": 41,
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\tangent_states\\seed41_PBE_TANGENT.pt",
+      "file_sha256": "b7c3f4e12b9492ff6d7fe1fcf1c4bdda85a99fc04cb4ff074b565462ddf2ac9d",
+      "state_sha256": "181ad8bb4fc1234036184c853302ddc70bae1bc23818ff104921c5e0c792bc59",
+      "epsilon": 0.003,
+      "physical": {
+        "torch.float32": {
+          "anchor_errors": {
+            "UEG": 0.0,
+            "UEG_gx": 0.0,
+            "high_density": 0.0,
+            "rapid_gradient": 0.0
+          },
+          "tolerance": 4.76837158203125e-07,
+          "forward_replay_exact": true,
+          "tau_independence_exact": true,
+          "input_derivatives_finite": true
+        },
+        "torch.float64": {
+          "anchor_errors": {
+            "UEG": 0.0,
+            "UEG_gx": 0.0,
+            "high_density": 0.0,
+            "rapid_gradient": 0.0
+          },
+          "tolerance": 1e-14,
+          "forward_replay_exact": true,
+          "tau_independence_exact": true,
+          "input_derivatives_finite": true
+        }
+      }
+    }
+  ],
+  "cheap_gate": {
+    "checks": {
+      "11": {
+        "near_PBE_ratio": 0.45978024564446673,
+        "near_PBE_PASS": true,
+        "local_energy_PASS": true,
+        "q_non_degenerate_PASS": false,
+        "hidden_gradient_PASS": true,
+        "physical_PASS": true
+      },
+      "23": {
+        "near_PBE_ratio": 1.1353292685836567,
+        "near_PBE_PASS": true,
+        "local_energy_PASS": true,
+        "q_non_degenerate_PASS": false,
+        "hidden_gradient_PASS": true,
+        "physical_PASS": true
+      }
+    },
+    "PASS": false,
+    "expensive_evaluation_authorized": false,
+    "explanation": "Full canonical validation also required if cheap gate passes; no objective matrix executed."
+  },
+  "full_canonical_MSE_ratios": {
+    "11": 0.35298085792140727,
+    "23": 0.8910657183016389,
+    "41": 1.7663264072552598
+  },
+  "new_expensive_objective_states": 0
+}
