@@ -2146,7 +2146,10 @@
   "independent_review": {
     "status": "PASS",
     "path": "C:\\Dev\\readWFN_share_ms\\lap_25_runs_20261005\\review.md",
-    "sha256": "e75c069f3ec38cb0f96028585d876ce4b9c26d88ce44b8fe216085dfda7067f5"
+    "sha256": "e75c069f3ec38cb0f96028585d876ce4b9c26d88ce44b8fe216085dfda7067f5",
+    "scope": "frozen-plan fidelity, receipt consistency, report claims, and checkout byte identity",
+    "qualification_status": "not qualified to 25; rejected at fixed update 10",
+    "checkout_byte_identity": "PASS: .gitattributes -text preserves frozen manifest SHA256 with core.autocrlf=true"
   },
   "manifest_checkout_byte_identity": {
     "status": "PASS",
