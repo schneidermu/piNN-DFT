@@ -34,3 +34,8 @@ lap_q_objective_coupling_seed23_diagnostic.py -text
 test_lap_q_seed23_replication.py -text
 lap_q_objective_coupling_seed23_replication_protocol.json -text
 lap_q_objective_coupling_seed23_replication_metrics.json -text
+
+lap_symmetric_moo_offline_arena.py -text
+test_lap_symmetric_moo_offline_arena.py -text
+lap_symmetric_moo_offline_arena_protocol.json -text
+lap_symmetric_moo_offline_arena_metrics.json -text
