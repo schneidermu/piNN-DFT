@@ -21,3 +21,11 @@ test_lap_q_exact_parameter_jacobian_diagnostic.py -text
 lap_q_exact_parameter_jacobian_qualification_protocol.json -text
 
 lap_q_exact_parameter_jacobian_qualification_metrics.json -text
+
+lap_q_objective_coupling_diagnostic.py -text
+
+test_lap_q_objective_coupling_diagnostic.py -text
+
+lap_q_objective_coupling_audit_protocol.json -text
+
+lap_q_objective_coupling_audit_metrics.json -text
