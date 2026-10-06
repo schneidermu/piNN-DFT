@@ -1,0 +1,230 @@
+{
+  "starting_commit": "8946334d5f3d3d6c77839f13469fe7aeebeb30b7",
+  "h2": [
+    0.023218985940978362,
+    0.042529125693106434
+  ],
+  "h3": [
+    0.011609492970489181,
+    0.021264562846553217
+  ],
+  "states": [
+    {
+      "seed": 11,
+      "regime": "P67",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P67.pt",
+      "file_sha256": "264a8d189d53d49007d7de11d8cfb5382e8b8262e4b48068142c8771e293c834",
+      "state_sha256": "ee815caf918e8ded13e99896070a95a32293100499746fd0623444e2c0023523"
+    },
+    {
+      "seed": 11,
+      "regime": "P536",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P536.pt",
+      "file_sha256": "0ca0f77367214c171e6edf0576bdb043d64479245ad1a0e539fa11fb0cee542d",
+      "state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6"
+    },
+    {
+      "seed": 11,
+      "regime": "PBE_TANGENT",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\tangent_states\\seed11_PBE_TANGENT.pt",
+      "file_sha256": "34ca7a1a106c3473eeb25e8db0c90bcb8d64b1fedf974771ddfd52ce149682df",
+      "state_sha256": "9e5562d6f9c7b26a202ff6aafe23bad63a477acbea39beda58c0041935b9ef38"
+    },
+    {
+      "seed": 11,
+      "regime": "PBE_HEAD",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_PBE_HEAD.pt",
+      "file_sha256": "b1ba812251a448d982580d2b976ca7a999f2a30be361ef7eb8303590d7e9961e",
+      "state_sha256": "89d57bd700b07c8605efdffbdfa147dc4ff2a9d720344040a04ed7f845282e18"
+    },
+    {
+      "seed": 23,
+      "regime": "P67",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P67.pt",
+      "file_sha256": "1cac6eb351372adab090c60f7daaf0013935857ed56648ccf0cd68b541b62666",
+      "state_sha256": "69f6e7c90a5f4cf6f51e885b8f3c1b9679508c71a57a8363149de6783820e4d8"
+    },
+    {
+      "seed": 23,
+      "regime": "P536",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P536.pt",
+      "file_sha256": "ca1d4df5cb84b66e17f9964d645de5d4f00fa9f5f3afede56fa632b5ff7057a7",
+      "state_sha256": "0b0c2aefc703c90be250c2fdb79e60be1df35273c7bc7d680ede50a8e7145074"
+    },
+    {
+      "seed": 23,
+      "regime": "PBE_TANGENT",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\tangent_states\\seed23_PBE_TANGENT.pt",
+      "file_sha256": "bf7498d074d3e858d1be89b4032f035626f3e151ffd3bf45dc5a8af95ef6f6fc",
+      "state_sha256": "abf6b1751ea9ce820a1894ad671687d6792ee7e16fce8411e81330ade8d6d570"
+    },
+    {
+      "seed": 23,
+      "regime": "PBE_HEAD",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_PBE_HEAD.pt",
+      "file_sha256": "102e5073ca5a9b47d4f04e7885c802a45ed279bdda755da8b2e55b359a12e135",
+      "state_sha256": "71becc6e45036e0a61a99e969826946eb0f33d4d102f607db7e32793abf28319"
+    },
+    {
+      "seed": 41,
+      "regime": "P67",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed41_P67.pt",
+      "file_sha256": "cbaca8e88d9d6c287902dc0bf7ce143a6eaf54d6293cd3594ead122fc63604cf",
+      "state_sha256": "86d0cbb12d03fef4edda79c43857eda9e5918743eb138dd375c5be050b449463"
+    },
+    {
+      "seed": 41,
+      "regime": "P536",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed41_P536.pt",
+      "file_sha256": "0774c206498655838fe5ea881136cea6c47d7c3852882279f77a444af2860dbf",
+      "state_sha256": "31fac217403f950958284dd6cb5ea8052abf0117cac976c7c640e39e42fab200"
+    },
+    {
+      "seed": 41,
+      "regime": "PBE_TANGENT",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\tangent_states\\seed41_PBE_TANGENT.pt",
+      "file_sha256": "b7c3f4e12b9492ff6d7fe1fcf1c4bdda85a99fc04cb4ff074b565462ddf2ac9d",
+      "state_sha256": "181ad8bb4fc1234036184c853302ddc70bae1bc23818ff104921c5e0c792bc59"
+    },
+    {
+      "seed": 41,
+      "regime": "PBE_HEAD",
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed41_PBE_HEAD.pt",
+      "file_sha256": "f91026293e3a718bbab66fd43fc6ce07d14377d434a4592b66603e1b608d19df",
+      "state_sha256": "2531120bc95bbc939826752972e8052a9b7b4c3d6be662ab4c4d287ba9f04588"
+    }
+  ],
+  "probe_path": "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\q_probe.pt",
+  "probe_sha256": "bcc3d01872d0181b197800e2a0295178224fe1d81e9ebfb2b8b8e2f64437b81a",
+  "original_protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\protocol.json",
+  "original_protocol_sha256": "004405540c9e4d9605aefddd0e2e52d601c173cfbde8230c6b619f6f58688ee9",
+  "row_views": {
+    "FULL": 1536,
+    "NON_HEAD": 1152,
+    "PBE_HEAD_ONLY": 384
+  },
+  "parameter_coordinates": "9446 sorted unique trainable coordinates; f(delta)=concat_state S(theta_state+delta); shared additive displacement across aligned states, not independently parameterized block-diagonal models or averaged parameters.",
+  "interpretation": "Ensemble rank is not an individual-state rank. NON_HEAD mixes P67/P536/TANGENT. State image energies and state current-response VJPs are reported; no universal P536 capacity claim from ensemble spectrum.",
+  "parameter_manifest_sha256": "ff825c2ef487b7fc81666f5f45df0c21ee34ea0952946a415169680a5ba091b0",
+  "parameter_group_map_sha256": "1806286042bff5f2aae8b06bb550b8467e310746a8bd06920339565c895c0120",
+  "row_partition_sha256": "dc8103ad14def3f17a5a23f05ffcd0ffc65ca916583776f5eba85a3e57c80d61",
+  "script_sha256": "bfb4c21bbf2a727defe4169e60ae23b3f1ab17a8bcb9f4b4b1d45e60e06022a3",
+  "sketch_width": 40,
+  "seeds": [
+    42,
+    314159
+  ],
+  "repeat_width_reduction": "Only if timing projection exceeds7.5h: repeat width24; freeze before repeat.",
+  "parameter_fd": {
+    "relative_norm": 1e-05,
+    "reference_norm": "max RMS audited parameter norm over NON_HEAD states,1; one common displacement for ensemble.",
+    "gate": 0.05,
+    "no_epsilon_search": true,
+    "joint_norm_explanation": "Common v is replicated over9 NON_HEAD states: joint step norm=sqrt9*epsilon; joint base norm=sqrt(sum9||theta_state||^2). RMS reference therefore realizes requested1e-5 relative joint step when base norm>1; no epsilon tuning."
+  },
+  "h3_check": {
+    "nonhead_directions": 8,
+    "head_directions": 2,
+    "median_gate": 0.05,
+    "max_gate": 0.1
+  },
+  "rank": {
+    "relative_numerical_threshold": 0.001,
+    "energy_rank": 0.99,
+    "entropy_effective_case_threshold": 8
+  },
+  "orthogonality_gate": 1e-08,
+  "head_exact_row_norms": "384 individual scalar VJPs, sequential vectors only, noMxPmatrix; head groups only nonzero expected.",
+  "repeat_gate": "Descriptive; substantial instability defined prospectively as >10% relative difference among top12 resolved singular values OR any top4 principal angle>15degrees. Near-null modes do not drive stop.",
+  "case_precedence": "D if finite-difference/h3/repeat/resolution gate fails; otherwise A/B/C as specified. No optimizer causality proven by local capacity.",
+  "numerical_resolution": "No division by exactzero. VJP/JVP adjoint dot check abs error and relative only if nonzero. Deterministic repeated response VJP; exactzero noise reported plus observed scales, no inventedabsolutegainthreshold.",
+  "optional_rho_sigma": "SKIP: no validated rho/sigma finite windows exist for sameprobe.",
+  "preflight_vector": "Same as original: seed42 CPU Rademacher128 vector dividedsqrt128 for each seed11/23/41.",
+  "hash_checks": 34,
+  "no_training": true,
+  "no_dense_jacobian": true,
+  "pre_import_cleanup_protocol_sha256": "c09608e98c1b11115785bff08cf08f7e44334130c07e80983ec03119110ebdb9",
+  "non_numerical_edit": "Removed two unused imports; corrected test import spacing. No evaluator, equations, parameters, widths, directions or gates changed; completed before scientific sketch execution.",
+  "binding_guard_amendment": "Independentreviewrequired runtime verification of exactrow/parameter/group artifacts and sourceprotocol,H2. Non-numerical failclosedguard only; no actual sketch computedbefore amendment.",
+  "prior_contract_sha256": "2685d0fa165f71a29f42ee5fcf309471c1f272042454c226adbe4317d1ee4850",
+  "post_execution_binding_receipt": {
+    "frozen_protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\protocol.json",
+    "frozen_protocol_sha256": "bedce7d3169c80769d213b3b1aeaac5abee4cb060908b0341947aff6a17e0bb6",
+    "note": "This receipt only exposes existing execution/artifact bindings after evaluation; the pre-execution external protocol and all numerical choices remain unchanged."
+  },
+  "source_files": {
+    "train_models/lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "train_models/lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+    "train_models/lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+    "train_models/moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "train_models/train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "train_models/train_lap_s5.py": "4d0763629c1d7f4db266ef7f9e156b20d1a6c3f5f2c7975ee4719e51bb3c6279",
+    "train_models/run_lap_pbe_predopt_reference.py": "a0b8842d8c6b3733cf6dd3897267d8570f4870922e51beee6a0e4d288294977a",
+    "train_models/predopt.py": "48dfd7f393110d5c3b61bdb37acbc30aed250b2cb99b184ca31f856d2e5eb3cb",
+    "train_models/predopt_targets.py": "5cda0a835a445352edf8b5fbdb386e453ddaedc21a33eb7b154bc156700516d2",
+    "train_models/dataset.py": "c0f141bcd7dc824510ad85d1a0a4d040f3aac4b56e753d4422bea92b8275b768",
+    "train_models/optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\probe.py": "068e3cc8a6d8a7171512627b03eac061ffc1965dc19c9c994ce4ed78f6a0f9c8",
+    "C:\\Dev\\readWFN_share_ms\\lap_laplacian_sensitivity_runs_20261005\\audit.py": "0764a4d9f44d00eb271e6599718fedcf11d0ff3acdd387b7de1027a88f0a1020",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_parameter_sketch_diagnostic.py": "bfb4c21bbf2a727defe4169e60ae23b3f1ab17a8bcb9f4b4b1d45e60e06022a3",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\test_lap_q_parameter_sketch_diagnostic.py": "35f8023c29779a4975d6aa57b41d657769ded0e3c0d5b6577f684157dead4a45"
+  },
+  "external_artifacts_sha256": {
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\active_probe_rows.json": "dc8103ad14def3f17a5a23f05ffcd0ffc65ca916583776f5eba85a3e57c80d61",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\aggregate.py": "ff70d06fb6ab697e0c4ef659d8be29f6f91f10617b50d5a6c97b6c920fe581eb",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\all_metrics.json": "54420af0ad34abb52450a3e45a382376917e3bca8ae060106a7e17f423166515",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\deadline_timing_amendment.json": "f4b50633fbcb75935637131872b0539a054a83ff7fb4e59028b7ad37baf6dad9",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\final_independent_review.json": "962f22ad71ea5fd3c0bbf0a9449fdbac1965f274a2adc13a781ab13fba9ff203",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\full_metrics_seed314159.json": "405f146f65a23c03240cdff697aef08522304cd9d3ca4a605977c57f3118e515",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\full_metrics_seed42.json": "b36fa33d7f04feeba3b3054d1cbbfd55dc1e2d037c5a450f889a3d171992e6a0",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\full_sketch_seed314159.npz": "7548419c5036947191037620f69f123f0dc4171fbe5707ba9e01be9cff5ac742",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\full_sketch_seed42.npz": "5a8b7928f864cb4e337a2109c4c48a2d58ba3513a392979bcf2f30b35ce26c64",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\group_participation_head.csv": "b1f3e2021d56df440846b9e7a0d876c94107d473bd4acbf0df3b263e9bc4a873",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\group_participation_nonhead.csv": "dacaaa943910afdc4f75540e27b0c04a1805bd08c81c5cce16049c278a574023",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\h2_h3_jacobian_consistency.json": "655f10416e95f22d6800c13a3bc93fd274e08982e83c7c1e6889399c9e303113",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\hash_audit.json": "d487deec6f2491c774a15476b8de4203a5a0969e1a124d08312bf3d73bc474d2",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\head_exact_row_norms.json": "06bdeff600d7333ab0940fed42d6f8ad9d9206bb7f1ae87a81a2585a2c374077",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\head_metrics_seed314159.json": "5d1f94fb2f523bc161bc6d080ac58728d002272995979089f3c3736e8b296b7c",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\head_metrics_seed42.json": "d27571ecf1fe3bbeb561d63872a8bfc569a2b85fc6bfc67859f4a4b78df280a8",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\head_sketch_seed314159.npz": "9d63486f3c92ef627c4b2ae2b812eee41343c7ffb95349f6ea32ccd83df10024",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\head_sketch_seed42.npz": "23362d496e118806b5c05156b5ec4e4a9f016e7ff1d9d3427905814fbc7fbf06",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\initial_independent_review.json": "6f98abc776140d5f6ffba3029d9d4c9e26684618c1e76a0abad22d13307b1eda",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\leading_direction_group_participation.csv": "dacaaa943910afdc4f75540e27b0c04a1805bd08c81c5cce16049c278a574023",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\nonhead_current_response_control.json": "e33ce1e12fc20ebbf83070ca97f1b96f2efcede7fe2fed38dc25072a180035e9",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\nonhead_metrics_seed314159.json": "a5c5bc61db70fee6359f76ac2da59863b319772bd1d57d866fb39cd51e14faf8",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\nonhead_metrics_seed42.json": "0b4ea9bda30d01323ac2312eb8fd877e42ae4bd02fdbfd8b5e90eaa8c4d488c2",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\nonhead_response_norm_gradient.json": "de5555f68101cd54d7fd1ab2dd699dddaa33c57299fa8192c63198174f55ad48",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\nonhead_sketch_seed314159.npz": "63ba7b9bb980d836746c3f2ffa55be01c4f08564402c98130aca48a2653cb8a6",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\nonhead_sketch_seed42.npz": "6fbf15a98e38e6e08931d3ebde71b7e8c01425f87edb013fde6bf505a8c34226",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\observable_parity.json": "05d12012d1896ec7857fda20d8bcf48ee3ac69e4b9903105a1ca091d5761bdcb",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\parameter_group_map.json": "1806286042bff5f2aae8b06bb550b8467e310746a8bd06920339565c895c0120",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\parameter_linearity_validation.json": "0add58f6938c35555cf1a3f125d7208f5720d097c8ad7745f7b0b423d2d0c8e0",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\parameter_manifest.json": "ff825c2ef487b7fc81666f5f45df0c21ee34ea0952946a415169680a5ba091b0",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\pbe_head_preflight_reproduction.json": "06171f945bc6a368fb53efd48e8ddfc15132a507531021ecea27f8100b528ea4",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\protocol.json": "bedce7d3169c80769d213b3b1aeaac5abee4cb060908b0341947aff6a17e0bb6",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\protocol_before_binding_guard.json": "2685d0fa165f71a29f42ee5fcf309471c1f272042454c226adbe4317d1ee4850",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\protocol_pre_import_cleanup.json": "c09608e98c1b11115785bff08cf08f7e44334130c07e80983ec03119110ebdb9",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\response_norm_gradient.json": "de5555f68101cd54d7fd1ab2dd699dddaa33c57299fa8192c63198174f55ad48",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\row_partition.json": "dc8103ad14def3f17a5a23f05ffcd0ffc65ca916583776f5eba85a3e57c80d61",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_full_seed314159.csv": "97a77811b35eb06cbccccb3173129bcad4fe9fd3882708cae6afd8cd99f0d2c5",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_full_seed42.csv": "697085503b01ad905201a4bb7727bcb5dc26e3fc4d72775c523bcbe7c50f1db6",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_head_seed314159.csv": "832aff3567a9ab453dbf5dcfea550af26a5548d5703b7ce656315386d9ea9de8",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_head_seed42.csv": "746eea00af730a4f342a35b8d242b5be580f11f44135599d262c067ae1a579a4",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_nonhead_seed314159.csv": "f99365605259192041536050011ea1665fe027311dbdc6add6471159af50fd73",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_nonhead_seed42.csv": "bd3ac98bb819dacff7531582222b28b364fcd615c1b1e45b9e5a497fbc2528da",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_seed314159.csv": "f99365605259192041536050011ea1665fe027311dbdc6add6471159af50fd73",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\singular_spectrum_seed42.csv": "bd3ac98bb819dacff7531582222b28b364fcd615c1b1e45b9e5a497fbc2528da",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\sketch_repeatability.json": "5fa55808f33f76ac0f67f82f0061847f07894f4e9b8a1204bdb6885fbc265f31",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\sketch_seed314159.npz": "63ba7b9bb980d836746c3f2ffa55be01c4f08564402c98130aca48a2653cb8a6",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\sketch_seed42.npz": "6fbf15a98e38e6e08931d3ebde71b7e8c01425f87edb013fde6bf505a8c34226",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\state_current_response_control.json": "09fe54f36f99a2196cf4279ea8a21ef53a5dd575530ee5d34ad329d59a408284",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_parameter_sketch_h2_runs_20261005\\timing_budget.json": "1b30d1b4b32d7038748de5ca14a5b6fb7228dd93a2e6f51f60fbb43fd16a19c2"
+  }
+}

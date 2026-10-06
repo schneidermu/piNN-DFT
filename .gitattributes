@@ -5,3 +5,11 @@ lap_pbe_tangent_initialization_protocol.json -text
 lap_q_parameter_controllability_audit_protocol.json -text
 lap_q_parameter_controllability_audit_results.json -text
 lap_q_window_localization_metrics.json -text
+
+lap_q_parameter_controllability_metrics.json -text
+
+lap_q_parameter_controllability_h2_protocol.json -text
+
+lap_q_parameter_sketch_diagnostic.py -text
+
+test_lap_q_parameter_sketch_diagnostic.py -text
