@@ -1,0 +1,699 @@
+{
+  "starting_commit": "d40bbcb5e7797728cdaedf5bcc6ef4950a4c85f4",
+  "bindings": [
+    {
+      "key": "11_P67_u0",
+      "start": "11_P67",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_0.pt",
+      "state_sha256": "ee815caf918e8ded13e99896070a95a32293100499746fd0623444e2c0023523",
+      "state_file_sha256": "221adc2267c21f4775cca5df8e4e8fb9001816de5dd1efdfc1158ee46b8200c1",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "3d5fec762923b050ef7a8261097441c6f2b1815ed1085c3d665476b35ed028e3",
+      "p_sample_reference": 0.3307809488700342,
+      "eta_acc": 7.256894944827483e-06,
+      "gamma_original": 0.3307809488700345,
+      "original_after_sha256": "659baac98f9bf8739ccffbd2265066ab4c5016bc1d54b88f099e58177ba4ec72",
+      "original_loss_sample": 1.4651522498555365
+    },
+    {
+      "key": "11_P67_u5",
+      "start": "11_P67",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_5.pt",
+      "state_sha256": "f43f0166d4483f0c08021ecf5e16984c774b569ce58920a7510806167ea494cf",
+      "state_file_sha256": "fdfe7161bd3b167b346eb17b1751b65474cbf9fecfc227b305086cd7a45caed9",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "9e9e2af012d1d2e380d882e7e23aab79865fd07831117854a01650c0f49adf61",
+      "p_sample_reference": 0.22301287676899398,
+      "eta_acc": 7.256894944827483e-06,
+      "gamma_original": 0.2230128767689958,
+      "original_after_sha256": "815e1a48b73010effe8946364230512f44befdb15d4d7eb7a4ad9608ee5cebbe",
+      "original_loss_sample": 1.3425942322049145
+    },
+    {
+      "key": "11_P67_u9",
+      "start": "11_P67",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_9.pt",
+      "state_sha256": "8bccb4bffd887ee676bf54365231370165d0218698be19340333baff4af430d4",
+      "state_file_sha256": "e16508243078f97674753fa63da67a612b98fce7f64c7ed69c066adb912a7a82",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "18469d12c01a3f6e6b626b2ca5499c9bcffcc3103a48619cd8bae8dbfb2b53e5",
+      "p_sample_reference": 0.13592622297539414,
+      "eta_acc": 7.256894944827483e-06,
+      "gamma_original": 0.1359262229753956,
+      "original_after_sha256": "b613b3a443e498031d4ab69c363fd2737f5bcd4f5eeac807d7c37eeccf555fe9",
+      "original_loss_sample": 1.3129411054240345
+    },
+    {
+      "key": "11_P536_u0",
+      "start": "11_P536",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_0.pt",
+      "state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6",
+      "state_file_sha256": "89a2b31f2f2487819f8339fbcd29cceda0c8d3a5ab1bf7d946231198289f89cc",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "073abc35cf382db8c7694eb254b9f3070dd7bc692aa23ec91ad30870c6d79f82",
+      "p_sample_reference": 0.31255714866612366,
+      "eta_acc": 6.383541909850447e-06,
+      "gamma_original": 0.31255714866612416,
+      "original_after_sha256": "c54a50a7010d007a58d4da7a58187c9257fa84488f3f8c0363b7c9a11d61051e",
+      "original_loss_sample": 1.3309242125679874
+    },
+    {
+      "key": "11_P536_u5",
+      "start": "11_P536",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_5.pt",
+      "state_sha256": "3fdd1714976299a06a8717aae1e14d6dd69770998e7cf626f105f9d80a1b7f6c",
+      "state_file_sha256": "dda39bb0ebf4435ecbd65910d8a285fb5ee387a817d488b989caf8a8832b6adb",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "6faac59f153943f33d6865ac540f816fe961a35a7a9a236637da0a9ef101c863",
+      "p_sample_reference": 0.22528397857062674,
+      "eta_acc": 6.383541909850447e-06,
+      "gamma_original": 0.22528397857062854,
+      "original_after_sha256": "2b08142b6099289d8657ecfdbd804f5c39cdd4d97745e597556a60dc1a713375",
+      "original_loss_sample": 1.3789158624927897
+    },
+    {
+      "key": "11_P536_u9",
+      "start": "11_P536",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_9.pt",
+      "state_sha256": "adda51706fe4c164fb7693d227cf1607c608cf822bcb958aeabe402145ebb61b",
+      "state_file_sha256": "7ba6093d0f4fa907c27f51c1bc2ce5773881559e266d00d035cf3aa7a3fe9b6e",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "2509a81e44ea8acaf410d0f0657736d1dfab9cb86f0ae590d8dc8e4c0528b460",
+      "p_sample_reference": 0.119922516355724,
+      "eta_acc": 6.383541909850447e-06,
+      "gamma_original": 0.1199225163557246,
+      "original_after_sha256": "1b550578d5170c471856c1032635008bb530e8d7607639b6ab824ba250ff1e94",
+      "original_loss_sample": 1.3767689041504123
+    },
+    {
+      "key": "23_P67_u0",
+      "start": "23_P67",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_0.pt",
+      "state_sha256": "69f6e7c90a5f4cf6f51e885b8f3c1b9679508c71a57a8363149de6783820e4d8",
+      "state_file_sha256": "fbe6f92dc055dec9a60cd68fa6689f0846f57a0c0d74ef0d584d7ff75287a896",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "600897c37676d16217722f843e3a1e5eb580257df9bbfad5684d556bd21e4ee1",
+      "p_sample_reference": 0.7815416169917502,
+      "eta_acc": 8.539282669870804e-06,
+      "gamma_original": 0.7815416169917504,
+      "original_after_sha256": "8aa6a0b2dd3b27782a5b31c4308c7fd5529fff090c071c74e767f9861cdd1ace",
+      "original_loss_sample": 1.3062416408572872
+    },
+    {
+      "key": "23_P67_u5",
+      "start": "23_P67",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_5.pt",
+      "state_sha256": "22e05f98bc8f34f61e8e9b7f60480d5e3da656ca51b2ae5c4f0dc7c0a173121e",
+      "state_file_sha256": "340638cb1105a0aafd21e5aced99827c977607b4b39ca274f312a93caabb617d",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "c6e431eeaf855caa04fbcdeff50f7040944a5de38868b6d5d276eb1cab10b676",
+      "p_sample_reference": 0.09550901935769657,
+      "eta_acc": 8.539282669870804e-06,
+      "gamma_original": 0.09550901935769163,
+      "original_after_sha256": "faa3e077c8ebed89b2f49e8a19b7a62a29671934ef8aa47ddcf4c4afd021e84f",
+      "original_loss_sample": 1.3811516430787236
+    },
+    {
+      "key": "23_P67_u9",
+      "start": "23_P67",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_9.pt",
+      "state_sha256": "bcfe3066bd1ab2342cb78c1829f28a2f9dc060e9217eb0e41c5ab65a1a149830",
+      "state_file_sha256": "6a4f41149044a530b43c395885fac9e82106e727302123de30d5df3109e4183c",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "d3253627de41de9a573cf7df7bf32441c6d1377f502a508539b7f7f48e7df573",
+      "p_sample_reference": 0.07453456353458304,
+      "eta_acc": 8.539282669870804e-06,
+      "gamma_original": 0.0745345635345819,
+      "original_after_sha256": "c1d62377e7539fa70fd1d25da5f053b66084ac8374b2398a12e815fbb1e47994",
+      "original_loss_sample": 1.3831950041649907
+    },
+    {
+      "key": "23_P536_u0",
+      "start": "23_P536",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_0.pt",
+      "state_sha256": "0b0c2aefc703c90be250c2fdb79e60be1df35273c7bc7d680ede50a8e7145074",
+      "state_file_sha256": "800ec41cede807d83234b0c7d06739cdf73471172968f05119dbbdb1a81e4987",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "ccf3816ca20101e58904d2a193169fd1b48066d71d4cec87c717b7886796f37b",
+      "p_sample_reference": 0.4206184672502279,
+      "eta_acc": 1.0204187208883716e-05,
+      "gamma_original": 0.4206184672502277,
+      "original_after_sha256": "83ba35f8457da3a8c34c18f3b78e529f60670138c2b3a895352f60f5c460108e",
+      "original_loss_sample": 1.29165616980024
+    },
+    {
+      "key": "23_P536_u5",
+      "start": "23_P536",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_5.pt",
+      "state_sha256": "8dbfd61b821408ee5cf055687a63e9d0a114b05bac86a45e11654344b5316a65",
+      "state_file_sha256": "d5249343e0a260b6d0c43aebc44a1edd88818403d0903b93831a708666665a8d",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "35010c7bc41fa81da84931dc3b47859fd419dda6624ddaf34a97ca33aa2a1d6e",
+      "p_sample_reference": 0.15351798630569702,
+      "eta_acc": 1.0204187208883716e-05,
+      "gamma_original": 0.15351798630569807,
+      "original_after_sha256": "410348ebc3d2606b3fa0f1c9a64749215ec030fa4353ab0cbdd19be547ae5c53",
+      "original_loss_sample": 1.416992007945749
+    },
+    {
+      "key": "23_P536_u9",
+      "start": "23_P536",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_9.pt",
+      "state_sha256": "1efea2c4b5f312a93f30bcd05b95890b28a139fa2d1c3b7cce25560a5ebe387b",
+      "state_file_sha256": "877d1dee278369e1fc28624d8c54209fe2d706630c926b8c15e88fe9f4eefbaf",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "b2199a45d1d426976ef7e83abf734a1ad3ce9d911f7fe1630df6f7037ef0216d",
+      "p_sample_reference": 0.0741870469173914,
+      "eta_acc": 1.0204187208883716e-05,
+      "gamma_original": 0.07418704691739413,
+      "original_after_sha256": "bab323ef81e2fc5ba990876fd4b027155c0f29f7815a041749cffab05c5740c8",
+      "original_loss_sample": 1.4087200010720915
+    }
+  ],
+  "parameter_order": [
+    {
+      "name": "c_input_layers.0.weight",
+      "shape": [
+        32,
+        8
+      ],
+      "numel": 256,
+      "start": 0,
+      "stop": 256,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_input_layers.1.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 256,
+      "stop": 288,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_input_layers.1.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 288,
+      "stop": 320,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_output_layer.bias",
+      "shape": [
+        3
+      ],
+      "numel": 3,
+      "start": 320,
+      "stop": 323,
+      "block": "correlation_head"
+    },
+    {
+      "name": "c_output_layer.weight",
+      "shape": [
+        3,
+        64
+      ],
+      "numel": 192,
+      "start": 323,
+      "stop": 515,
+      "block": "correlation_head"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 515,
+      "stop": 1539,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 1539,
+      "stop": 1571,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 1571,
+      "stop": 1603,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 1603,
+      "stop": 2627,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 2627,
+      "stop": 2659,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 2659,
+      "stop": 2691,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 2691,
+      "stop": 3715,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 3715,
+      "stop": 3747,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 3747,
+      "stop": 3779,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 3779,
+      "stop": 4803,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 4803,
+      "stop": 4835,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 4835,
+      "stop": 4867,
+      "block": "correlation_trunk"
+    },
+    {
+      "name": "x_feature_extractor.0.weight",
+      "shape": [
+        32,
+        2
+      ],
+      "numel": 64,
+      "start": 4867,
+      "stop": 4931,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.1.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 4931,
+      "stop": 4963,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.1.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 4963,
+      "stop": 4995,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 4995,
+      "stop": 6019,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 6019,
+      "stop": 6051,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 6051,
+      "stop": 6083,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 6083,
+      "stop": 7107,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 7107,
+      "stop": 7139,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 7139,
+      "stop": 7171,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 7171,
+      "stop": 8195,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 8195,
+      "stop": 8227,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 8227,
+      "stop": 8259,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "numel": 1024,
+      "start": 8259,
+      "stop": 9283,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 9283,
+      "stop": 9315,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "numel": 32,
+      "start": 9315,
+      "stop": 9347,
+      "block": "exchange_trunk"
+    },
+    {
+      "name": "x_output_layer.bias",
+      "shape": [
+        3
+      ],
+      "numel": 3,
+      "start": 9347,
+      "stop": 9350,
+      "block": "exchange_head"
+    },
+    {
+      "name": "x_output_layer.weight",
+      "shape": [
+        3,
+        32
+      ],
+      "numel": 96,
+      "start": 9350,
+      "stop": 9446,
+      "block": "exchange_head"
+    }
+  ],
+  "inputs": {
+    "store": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json",
+    "central": "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json",
+    "ao": "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json",
+    "disp": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle",
+    "mrksdisp": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle"
+  },
+  "immutable_files": {
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_exact_parameter_jacobian_qualification_metrics.json": "7c4017e791402b85eec77cd49045560e6b3ec462c9c4bbae4000945e4e7f1949",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\protocol.json": "004405540c9e4d9605aefddd0e2e52d601c173cfbde8230c6b619f6f58688ee9",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_exact_jacobian_runs_20261006\\protocol.json": "5987d7f22d83bd66c3d6f590d3543901f422ef0037c7e6d09170e5f51752b228",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\protocol.json": "41961dd45446b55778918e95187da6d1d892640c78fffb472ccc089f55e9785e",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\matrix.py": "1a8da2a878094ac9c86e30675541e6cb873e69deaf11a4effde2c3fe1678a86d",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\11_P67.pt": "d79c78b34e81a44f6a5ea1bebba1283bbf293c522e662f0c750b3cbcf425a381",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\11_P67.json": "2821ab8bf8a483f99f74722a7b5ec2dcfde287e1e3a9211330ffe18e6f406b29",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_exact_jacobian_runs_20261006\\seed11_P67_exact.npz": "8b1d825cd8871c2a247ae2494815e68d65936640e4631609d91a7f731ab865dc",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P67.pt": "264a8d189d53d49007d7de11d8cfb5382e8b8262e4b48068142c8771e293c834",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\11_P536.pt": "e7c4c07f53dc4b1598c29d29bb1e51a1704c22474c29f1ecd3070bdfc611a7e5",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\11_P536.json": "ae0ce01aa855c7658a569cf47973400c3345b0d136c4a4881dfc99aedb1ce41b",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_exact_jacobian_runs_20261006\\seed11_P536_exact.npz": "7a50fcaac9f42063c822aeffa2914c850bec2816c065e93da8c44ec6cddedc91",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P536.pt": "0ca0f77367214c171e6edf0576bdb043d64479245ad1a0e539fa11fb0cee542d",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\dft_functionals\\PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\dft_functionals\\constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\train_lap_s5.py": "4d0763629c1d7f4db266ef7f9e156b20d1a6c3f5f2c7975ee4719e51bb3c6279",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\run_lap_pbe_predopt_reference.py": "a0b8842d8c6b3733cf6dd3897267d8570f4870922e51beee6a0e4d288294977a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\predopt.py": "48dfd7f393110d5c3b61bdb37acbc30aed250b2cb99b184ca31f856d2e5eb3cb",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\predopt_targets.py": "5cda0a835a445352edf8b5fbdb386e453ddaedc21a33eb7b154bc156700516d2",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dataset.py": "c0f141bcd7dc824510ad85d1a0a4d040f3aac4b56e753d4422bea92b8275b768",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "C:\\Dev\\readWFN_share_ms\\lap_cursor10_geometry_runs_20261005\\analyze.py": "376b6ad7c3cdbaa55842be1ef77bdb7f0c23ca195ec1b2eef0e70d4000a892f3",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\window_metrics_raw.json": "f7b64b3f27856088eb742498c9619d6a437c616db0645ff95e1dfbf8bf8a6600",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_exact_parameter_jacobian_diagnostic.py": "b4775ae185b9f8cc593359b62903ea35e13845a5dd88ae8a7c3765a87e7ec9bf",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_parameter_sketch_diagnostic.py": "bfb4c21bbf2a727defe4169e60ae23b3f1ab17a8bcb9f4b4b1d45e60e06022a3",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_objective_coupling_diagnostic.py": "04feb158a7077db50f5240c9f56d7a68061fabd52b259ab27df5831e1776d0bb",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\q_probe.pt": "bcc3d01872d0181b197800e2a0295178224fe1d81e9ebfb2b8b8e2f64437b81a",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\window_arrays.pt": "447d747e26b5f0021afb245129414cafeee0a5d6e07064d7d2ecea36f95fc264",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P67.pt": "1cac6eb351372adab090c60f7daaf0013935857ed56648ccf0cd68b541b62666",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\23_P67.pt": "173703ef9c7d63fddfff58fabc31efbe96223b23dbb407ea38ea05473fcbe625",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\23_P67.json": "e85cb17bdf470d5248282aaa70e384f5abdc3de9ed02337237911b79b31f49b0",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P536.pt": "ca1d4df5cb84b66e17f9964d645de5d4f00fa9f5f3afede56fa632b5ff7057a7",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\23_P536.pt": "cf1a6fd2f39a0788646a7f7a36f22ad6c4c91c21f31ba7a261832611f3917981",
+    "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\23_P536.json": "499fe6567e9023c060604f9861fb2cc029c938c9982c8133b4dde7fac445573b",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_seed23_replication_runs_20261006\\seed23_P67_exact.npz": "ebce429e1f0f36a1193ae67a86f3a098fcf2d9f35d9367b6caf04d12de2b8e9e",
+    "C:\\Dev\\readWFN_share_ms\\lap_q_seed23_replication_runs_20261006\\seed23_P536_exact.npz": "4b90ec0f7483f2f4f9733d262b999e1b70d6179ee2d77b15539f59b814113ff6",
+    "C:\\Dev\\readWFN_share_ms\\lap_25_runs_20261005\\sampling_manifest_25.json": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc",
+    "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\sampling_manifest_268.json": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+    "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\protocol.json": "65c0336fd17a9f5b3dab5c76d794cc0b7726253b4a6237897114476a7e56a743",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_symmetric_moo_trajectory_arena.py": "ff25e840b1268715c5f3ef0abaa3c3d129750d4fa3e5766dfb93fd70dd59bc7e",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\result.json": "b7d89bd3b7c518216af8f8258e820d279edcc9fac4ea7050c58f4b9bd95f22f9",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\checkpoint_0.pt": "250eaac59494a8cd3dd349dc08d81615ab63f5234e312da50a5b48b9c2c5142a",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\checkpoint_5.pt": "d7c04a7ab6ac400f4c5d313e96b3e5502c133d683b611937f7d3b06ec7be50fe",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\checkpoint_10.pt": "814f5b3b130fa595583376075fadba40522c22cd940401e2b4a4c711ddb09f9d",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_0_geometry.npz": "3d5fec762923b050ef7a8261097441c6f2b1815ed1085c3d665476b35ed028e3",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_0.pt": "221adc2267c21f4775cca5df8e4e8fb9001816de5dd1efdfc1158ee46b8200c1",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_1_geometry.npz": "5f452f64449ba4987a84e417b1e7e5c99d1046013ecee523520c9235de2b18ca",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_2_geometry.npz": "69da216e07f248b8c090fe416071bb5cf931fb597781127188192883399209dc",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_3_geometry.npz": "e77094f89d560000566f40dfac1857b906e539bd662ca85762414bac4cf22ffd",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_4_geometry.npz": "181e84c2255a745b63f73e360bb7de6bc78cfe8da1f94c5f4f9777e334e3eabb",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_5_geometry.npz": "9e9e2af012d1d2e380d882e7e23aab79865fd07831117854a01650c0f49adf61",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_5.pt": "fdfe7161bd3b167b346eb17b1751b65474cbf9fecfc227b305086cd7a45caed9",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_6_geometry.npz": "0c3bad670b35c509bc67f105e85520fcde95d860d479423133091f7a82062ba2",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_7_geometry.npz": "6ccd017e9ef6e8f67763ffa6aa49f62de9aa92057e3f461b1f57926715ebd546",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_8_geometry.npz": "7fb5b2f596b0861cd60b4b38d2d53d22ae10bcb01f991756f940a18d8e52907a",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_9_geometry.npz": "18469d12c01a3f6e6b626b2ca5499c9bcffcc3103a48619cd8bae8dbfb2b53e5",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_9.pt": "e16508243078f97674753fa63da67a612b98fce7f64c7ed69c066adb912a7a82",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\result.json": "8d37ec4253eff45a4abf60243eb7396c7b61670c849057fb0b8d11af0880864c",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\checkpoint_0.pt": "cd895c225082c386bf92782c9672702becbe0d9abced0b6d8cd1a3e649e4b676",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\checkpoint_5.pt": "1a817ea69205d154bfe875b2a2b295b5f36a60a5109d1eb54abb5bdc20e94be2",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\checkpoint_10.pt": "5b910a0be849bba2671fa25f193db95e06154a9b2faf230a48b85100e07125c1",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_0_geometry.npz": "073abc35cf382db8c7694eb254b9f3070dd7bc692aa23ec91ad30870c6d79f82",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_0.pt": "89a2b31f2f2487819f8339fbcd29cceda0c8d3a5ab1bf7d946231198289f89cc",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_1_geometry.npz": "f9a94bb0fbf78302d524ed8360cb4890b724499d9e110113c13e8cd94129c863",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_2_geometry.npz": "864155bd19b4f3295ce219b7d8926fa5f100daf5bc81fea7e59364d226a98667",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_3_geometry.npz": "f9e4b4a3c4423e3d2913e3f2e46f1bf3da14edcc4e30a9a1a3c2381acd159ba3",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_4_geometry.npz": "bb83ea8d27be2dc69e7420a89d83e9159c2dd8bccf2fac64cd6333385a1485e8",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_5_geometry.npz": "6faac59f153943f33d6865ac540f816fe961a35a7a9a236637da0a9ef101c863",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_5.pt": "dda39bb0ebf4435ecbd65910d8a285fb5ee387a817d488b989caf8a8832b6adb",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_6_geometry.npz": "0bbdd0e34b96b7b817569fcd868cd387c9a7b888bfaf27d7a749e90e557e2c10",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_7_geometry.npz": "da67d4d3ceb3f09cd97a28945f7657fa05386e75d42512af2ed34932e7be3582",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_8_geometry.npz": "162c196f37d837073b0359ee76837984ff526b90e91374375111ab1461717eca",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_9_geometry.npz": "2509a81e44ea8acaf410d0f0657736d1dfab9cb86f0ae590d8dc8e4c0528b460",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_9.pt": "7ba6093d0f4fa907c27f51c1bc2ce5773881559e266d00d035cf3aa7a3fe9b6e",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\result.json": "adbe7e57b00e547cccc4269d0b82779d6c41a86e4f4124d7021db9827aa44cbf",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\checkpoint_0.pt": "a7c8ef2f456d7319d6c29394c3a922790b12a8856755818fd0a9a49f2398da25",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\checkpoint_5.pt": "a353c0365ac96355297f5c72454d6a3341798f2ffa6bd2b8fa76456657dd4395",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\checkpoint_10.pt": "8dfc345f7287ff6f971190cc7b232af5e416a9212951aaa71ac30327c234ae0b",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_0_geometry.npz": "600897c37676d16217722f843e3a1e5eb580257df9bbfad5684d556bd21e4ee1",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_0.pt": "fbe6f92dc055dec9a60cd68fa6689f0846f57a0c0d74ef0d584d7ff75287a896",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_1_geometry.npz": "673b599b5d23a6336eceb050e50244c440980b12e7c9bdff895bbadcb10f3e0e",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_2_geometry.npz": "7bbeed3ce9e0259b6146bc9744f7afdb769d8319a7507ae52c15a5bfd2638f1f",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_3_geometry.npz": "e3daa405e85ada4509205dbf9a79f3fc2c43235fd57041574e81762fd5de2712",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_4_geometry.npz": "024aa6690c7555b989a743e281b16aad445f3c81fc02bed73c5f4fa5df3fee57",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_5_geometry.npz": "c6e431eeaf855caa04fbcdeff50f7040944a5de38868b6d5d276eb1cab10b676",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_5.pt": "340638cb1105a0aafd21e5aced99827c977607b4b39ca274f312a93caabb617d",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_6_geometry.npz": "154e11a41e627d6f8d2bfc85838619e4de9ebc3dc646cb2187659c451dd206df",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_7_geometry.npz": "9ae8f200473297cc6717b131bf379307f2ca289d2ae9aa9b55953105d073957f",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_8_geometry.npz": "717411be7519cbb43b07933cedf7980ccb2664786c3a22ea003ba163e007e90c",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_9_geometry.npz": "d3253627de41de9a573cf7df7bf32441c6d1377f502a508539b7f7f48e7df573",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_9.pt": "6a4f41149044a530b43c395885fac9e82106e727302123de30d5df3109e4183c",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\result.json": "c19714f44059314b8a604aca55690a47a7c29d62d41669dbcd8a941ad4f01467",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\checkpoint_0.pt": "b01198c0a38c40398ef1a13a1bff7e3d87fc8656d791e86dedeb74ecbcc155e1",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\checkpoint_5.pt": "228b49c850034e9b717cea07d10e0d98bce33bea8e32d6c9a6899f43918a96f3",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\checkpoint_10.pt": "b2139a0b9819392ad9c42ef270afc4c53c5219a779ec37fbc38be71e746d9d31",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_0_geometry.npz": "ccf3816ca20101e58904d2a193169fd1b48066d71d4cec87c717b7886796f37b",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_0.pt": "800ec41cede807d83234b0c7d06739cdf73471172968f05119dbbdb1a81e4987",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_1_geometry.npz": "007419cf8d17c5e2fb975c7743d3e189c79ea006921519a08ecab08c2510ce12",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_2_geometry.npz": "dc53fa41012bfffddf86e637b53ccbeca174ff1aecbc5465e765af6213de5569",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_3_geometry.npz": "95177eb88e188d2b232eda6f34c3690f727993302a76aff0ed37a4d656c250fe",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_4_geometry.npz": "f20a1daf257c63ac7e50871a74817357b4b1451818b56f3beb07bd44c1277d3e",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_5_geometry.npz": "35010c7bc41fa81da84931dc3b47859fd419dda6624ddaf34a97ca33aa2a1d6e",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_5.pt": "d5249343e0a260b6d0c43aebc44a1edd88818403d0903b93831a708666665a8d",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_6_geometry.npz": "717362aa47a77177d7d0aa23f25c3ae1ee69ce58fae307aa577ad61f3c28536d",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_7_geometry.npz": "7cb0e79d23897262b77824d1376dfc11e806dc17c6fb0af946a0fac3c2b3e6b6",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_8_geometry.npz": "071ee2253586b14e5639d0fd17e8b5aa0fd5237c1fed57d459527a3e6080183f",
+    "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_9_geometry.npz": "b2199a45d1d426976ef7e83abf734a1ad3ce9d911f7fe1630df6f7037ef0216d",
+    "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_9.pt": "877d1dee278369e1fc28624d8c54209fe2d706630c926b8c15e88fe9f4eefbaf"
+  },
+  "script_sha256": "8f7952ad642eefe451ef9f2cde5d3bf0da4c9007a333c9123319b9bbed73b0f1",
+  "manifest_file_sha256": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc",
+  "manifest_canonical_sha256": "2e87f7e79a66b425628bdf59a821f785e05059f193a492d4a4f3130d7411e9f3",
+  "positions": [
+    0,
+    5,
+    9
+  ],
+  "task_order": [
+    "relchem",
+    "ae17",
+    "exc",
+    "op"
+  ],
+  "full_scalar": "Arithmetic mean of 251 corrected singleton batch_fchem losses; exact non-AE canonical variants from full268 manifest, F64 chemistry shadow on widened F32 stored state/source values.",
+  "precision": "Stored F32; chemistry real F64 leaves/forward/autograd; original source values widened; no output-after-F32 cast.",
+  "full_scalar_reduction": "sum singleton losses /251, exactly the Arena monitoring denominator; gradient sum scaled by1/251.",
+  "trials_actual_factors": [
+    1,
+    0.5,
+    0.25
+  ],
+  "trials_counterfactual": "1; additionally .5 iff full displacement does not descend",
+  "repeatability": "Repeat baseline and actual full-eta scalar at every state; retain absolute repeat differences, no hidden epsilon; signal label uses >20*observed max repeat difference, zero floor reported literally.",
+  "direction_progress_tolerance": 1e-13,
+  "classification": "A if sampled-descent/full-nondescent exists, B if positive full slope with finite-eta non-descent exists, C if both, D if neither; raw counts, half/quarter outcomes and cross-start replication govern strength, not added promotion thresholds.",
+  "gradient_norm_interpretation": "Unit-gradient angular fidelity and directional error are causal diagnostics; norm ratio reported separately, never used alone to assign causality.",
+  "scope": "12 states only, no training/retained trial/no new MOO/no Nash/no per-database gradients"
+}

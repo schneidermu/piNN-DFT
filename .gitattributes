@@ -44,3 +44,8 @@ lap_symmetric_moo_trajectory_arena.py -text whitespace=blank-at-eol,blank-at-eof
 test_lap_symmetric_moo_trajectory_arena.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_symmetric_moo_10update_trajectory_arena_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_symmetric_moo_10update_trajectory_arena_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+lap_fullchem_surrogate_fidelity_audit.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+test_lap_fullchem_surrogate_fidelity_audit.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+lap_fullchem_surrogate_fidelity_audit_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+lap_fullchem_surrogate_fidelity_audit_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

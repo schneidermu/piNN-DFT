@@ -1,0 +1,2811 @@
+{
+  "starting_commit": "d40bbcb5e7797728cdaedf5bcc6ef4950a4c85f4",
+  "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+  "manifest_file_sha256": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc",
+  "manifest_canonical_sha256": "2e87f7e79a66b425628bdf59a821f785e05059f193a492d4a4f3130d7411e9f3",
+  "full251_objective": "Arithmetic mean of 251 corrected singleton batch_fchem losses; exact non-AE canonical variants from full268 manifest, F64 chemistry shadow on widened F32 stored state/source values.",
+  "classification": "CASE A",
+  "summary": {
+    "cos_sample_full": {
+      "min": -0.10434520568653667,
+      "median": 0.8579033856795731,
+      "max": 0.981470657596131
+    },
+    "fraction_cos_positive": 0.9166666666666666,
+    "fraction_cos_above_0_5": 0.8333333333333334,
+    "fraction_cos_above_0_8": 0.5833333333333334,
+    "fraction_p_full_positive": 0.5,
+    "sample_descent_full_nondescent_count": 6,
+    "sample_descent_full_nondescent_fraction": 0.5,
+    "full_requested_descent_finite_nondescent_count": 0,
+    "median_p_sample": 0.18826543153734532,
+    "median_p_full": -0.027398448004557735,
+    "rotation_degrees": {
+      "min": 21.784925309704917,
+      "median": 37.88870041783102,
+      "max": 91.50666431152327
+    },
+    "gamma_change": {
+      "min": -0.6214409296007749,
+      "median": 0.02509602074444929,
+      "max": 0.12973639628943434
+    },
+    "counterfactual_common_descent_count": 12,
+    "counterfactual_full_eta_chemistry_descent_count": 12,
+    "actual_full_eta_chemistry_ascent_count": 6,
+    "maximum_observed_repeatability_difference": 0.0,
+    "resolved_actual_full_eta_changes": 12,
+    "resolved_finite_failure_with_requested_full_descent_count": 0,
+    "actual_requested_prediction_sign_matches_finite_count": 12,
+    "actual_realized_prediction_sign_matches_finite_count": 12,
+    "counterfactual_nondegenerate_count": 12,
+    "maximum_absolute_realized_first_order_remainder": 1.8722851703257062e-10,
+    "maximum_relative_realized_first_order_remainder": 2.1794686836933667e-05
+  },
+  "by_position": {
+    "0": {
+      "cosine": {
+        "min": -0.10434520568653667,
+        "median": 0.5981886561813972,
+        "max": 0.8228086962687524
+      },
+      "p_full": {
+        "min": -0.6709432962473274,
+        "median": -0.19503231172198915,
+        "max": -0.10507680020995498
+      },
+      "sample_full_nondescent_count": 4
+    },
+    "5": {
+      "cosine": {
+        "min": 0.7715874932448405,
+        "median": 0.9667444313073899,
+        "max": 0.981470657596131
+      },
+      "p_full": {
+        "min": -0.0984776150592121,
+        "median": 0.12823768189557566,
+        "max": 0.22843202098610427
+      },
+      "sample_full_nondescent_count": 1
+    },
+    "9": {
+      "cosine": {
+        "min": 0.7587364925619731,
+        "median": 0.918627254309016,
+        "max": 0.9663886366094703
+      },
+      "p_full": {
+        "min": -0.23742060581586827,
+        "median": 0.056113354033435994,
+        "max": 0.22668673148334323
+      },
+      "sample_full_nondescent_count": 1
+    }
+  },
+  "by_start": {
+    "11_P67": {
+      "positions": [
+        0,
+        5,
+        9
+      ],
+      "p_full": [
+        -0.1369093964992227,
+        0.22843202098610427,
+        0.04368071905009663
+      ],
+      "cos_sample_full": [
+        0.4147170225491107,
+        0.981470657596131,
+        0.8929980750903939
+      ],
+      "mismatch_count": 1
+    },
+    "11_P536": {
+      "positions": [
+        0,
+        5,
+        9
+      ],
+      "p_full": [
+        -0.2531552269447556,
+        -0.0984776150592121,
+        -0.23742060581586827
+      ],
+      "cos_sample_full": [
+        0.7816602898136835,
+        0.7715874932448405,
+        0.7587364925619731
+      ],
+      "mismatch_count": 3
+    },
+    "23_P67": {
+      "positions": [
+        0,
+        5,
+        9
+      ],
+      "p_full": [
+        -0.6709432962473274,
+        0.10477415949421756,
+        0.06854598901677536
+      ],
+      "cos_sample_full": [
+        -0.10434520568653667,
+        0.9541228673524347,
+        0.9442564335276382
+      ],
+      "mismatch_count": 1
+    },
+    "23_P536": {
+      "positions": [
+        0,
+        5,
+        9
+      ],
+      "p_full": [
+        -0.10507680020995498,
+        0.15170120429693376,
+        0.22668673148334323
+      ],
+      "cos_sample_full": [
+        0.8228086962687524,
+        0.9793659952623451,
+        0.9663886366094703
+      ],
+      "mismatch_count": 1
+    }
+  },
+  "states": [
+    {
+      "key": "11_P67_u0",
+      "start": "11_P67",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_0.pt",
+      "state_sha256": "ee815caf918e8ded13e99896070a95a32293100499746fd0623444e2c0023523",
+      "state_file_sha256": "221adc2267c21f4775cca5df8e4e8fb9001816de5dd1efdfc1158ee46b8200c1",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "3d5fec762923b050ef7a8261097441c6f2b1815ed1085c3d665476b35ed028e3",
+      "p_sample_reference": 0.3307809488700342,
+      "eta_acc": 7.256894944827483e-06,
+      "gamma_original": 0.3307809488700345,
+      "original_after_sha256": "659baac98f9bf8739ccffbd2265066ab4c5016bc1d54b88f099e58177ba4ec72",
+      "original_loss_sample": 1.4651522498555365,
+      "sample_norm": 20.34111612104575,
+      "full_norm": 10.94129565216992,
+      "norm_ratio": 1.859114017909901,
+      "cos_sample_full": 0.4147170225491107,
+      "p_sample": 0.33078094887003395,
+      "p_full": -0.1369093964992227,
+      "p_full_minus_sample": -0.4676903453692567,
+      "sign_agreement": false,
+      "unit_gradient_difference_norm": 1.0819269637557698,
+      "e_direction": 0.46769034536925647,
+      "L_full": 1.2370270547648547,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 7.256894944827483e-06,
+          "loss": 1.2370378475530246,
+          "delta": 1.0792788169844414e-05,
+          "normalized_delta": 8.724779404195007e-06,
+          "prediction": 1.0870583232968246e-05,
+          "prediction_error": -7.779506312383188e-08,
+          "realized_prediction": 1.0792629886865056e-05,
+          "requested_norm": 7.256894944827484e-06,
+          "realized_norm": 7.254111289956875e-06,
+          "trial_state_sha256": "659baac98f9bf8739ccffbd2265066ab4c5016bc1d54b88f099e58177ba4ec72",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 3.6284474724137414e-06,
+          "loss": 1.237032540926987,
+          "delta": 5.486162132140038e-06,
+          "normalized_delta": 4.434957271959502e-06,
+          "prediction": 5.435291616484123e-06,
+          "prediction_error": 5.0870515655914885e-08,
+          "realized_prediction": 5.486128935684723e-06,
+          "requested_norm": 3.628447472413742e-06,
+          "realized_norm": 3.63978670570499e-06,
+          "trial_state_sha256": "b19eb318c42a51bea3936a5fe93a4458b872ac62dfbd7176818c780e321630f5",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 1.8142237362068707e-06,
+          "loss": 1.237029719570881,
+          "delta": 2.6648060262868256e-06,
+          "normalized_delta": 2.154201895603145e-06,
+          "prediction": 2.7176458082420614e-06,
+          "prediction_error": -5.2839781955235836e-08,
+          "realized_prediction": 2.6647990897694742e-06,
+          "requested_norm": 1.814223736206871e-06,
+          "realized_norm": 1.816484773318667e-06,
+          "trial_state_sha256": "814dc15de1ea7624b83e6f6ea7c2303f1f8156b706b11ce237234a10623c62d5",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.24537682394061447,
+        "gamma_change": -0.08540412492942004,
+        "original_gamma_replay": 0.3307809488700345,
+        "direction_cosine": 0.7663172767508174,
+        "angle_degrees": 39.975674434941055,
+        "task_progress": {
+          "relchem": 0.2453768239406144,
+          "ae17": 0.24537682394061427,
+          "exc": 0.26903503707913445,
+          "op": 0.2738409983748167
+        },
+        "original_direction_true_task_progress": {
+          "relchem": -0.13690939649922249,
+          "ae17": 0.5129823954990959,
+          "exc": 0.4652845881582479,
+          "op": 0.330780948870035
+        },
+        "progress_changes": {
+          "relchem": 0.3822862204398369,
+          "ae17": -0.2676055715584816,
+          "exc": -0.19624955107911346,
+          "op": -0.05693995049521833
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17"
+        ],
+        "solver": {
+          "gamma_star": 0.24537682394061447,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.24537682394061444,
+          "gradient_space_products": [
+            0.24537682394061472,
+            0.24537682394061416,
+            0.26903503707913434,
+            0.2738409983748167
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.5000000000000001,
+              0.5000000000000001,
+              0.0,
+              0.0
+            ],
+            "squared_norm": 0.06020978572718312,
+            "KKT_residual": 1.3877787807814457e-17
+          },
+          "certificate": {
+            "simplex_primal": 2.220446049250313e-16,
+            "active_stationarity": 1.3877787807814457e-17,
+            "inactive_dual": 1.3877787807814457e-17,
+            "complementarity": 6.93889390390723e-18
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 7.256894944827483e-06,
+            "loss": 1.237007546642919,
+            "delta": -1.950812193585172e-05,
+            "prediction": -1.948287886947916e-05,
+            "realized_prediction": -1.950822917540274e-05,
+            "trial_state_sha256": "2514e5b51a2b01b44393f9a85e29fe70fc01c8d99930f5264016996abfd11895",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u0_arrays.npz",
+      "array_sha256": "b6d43d8cb985106f7b4042723d6659985dbfae1b30e9d808b52331f4df277d47",
+      "elapsed_seconds": 1061.6538619999992,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u0_result.json",
+        "sha256": "d4d03abb7b8cae8af830014515cdefe26d31420c71ba439652e830e8ed655866"
+      }
+    },
+    {
+      "key": "11_P67_u5",
+      "start": "11_P67",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_5.pt",
+      "state_sha256": "f43f0166d4483f0c08021ecf5e16984c774b569ce58920a7510806167ea494cf",
+      "state_file_sha256": "fdfe7161bd3b167b346eb17b1751b65474cbf9fecfc227b305086cd7a45caed9",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "9e9e2af012d1d2e380d882e7e23aab79865fd07831117854a01650c0f49adf61",
+      "p_sample_reference": 0.22301287676899398,
+      "eta_acc": 7.256894944827483e-06,
+      "gamma_original": 0.2230128767689958,
+      "original_after_sha256": "815e1a48b73010effe8946364230512f44befdb15d4d7eb7a4ad9608ee5cebbe",
+      "original_loss_sample": 1.3425942322049145,
+      "sample_norm": 26.381218943465658,
+      "full_norm": 10.941357485866321,
+      "norm_ratio": 2.4111467866344767,
+      "cos_sample_full": 0.981470657596131,
+      "p_sample": 0.2230128767689937,
+      "p_full": 0.22843202098610427,
+      "p_full_minus_sample": 0.005419144217110566,
+      "sign_agreement": true,
+      "unit_gradient_difference_norm": 0.19250632407205978,
+      "e_direction": -0.0054191442171105594,
+      "L_full": 1.2370283714765529,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 7.256894944827483e-06,
+          "loss": 1.2370102656792021,
+          "delta": -1.810579735073148e-05,
+          "normalized_delta": -1.4636525538310713e-05,
+          "prediction": -1.8137566845003864e-05,
+          "prediction_error": 3.1769494272385404e-08,
+          "realized_prediction": -1.8105783061647816e-05,
+          "requested_norm": 7.256894944827483e-06,
+          "realized_norm": 7.262658460997401e-06,
+          "trial_state_sha256": "815e1a48b73010effe8946364230512f44befdb15d4d7eb7a4ad9608ee5cebbe",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 3.6284474724137414e-06,
+          "loss": 1.2370194129054675,
+          "delta": -8.958571085404543e-06,
+          "normalized_delta": -7.2420093928091024e-06,
+          "prediction": -9.068783422501932e-06,
+          "prediction_error": 1.1021233709738887e-07,
+          "realized_prediction": -8.958567257211e-06,
+          "requested_norm": 3.6284474724137414e-06,
+          "realized_norm": 3.6300181743134535e-06,
+          "trial_state_sha256": "c03b0b83d431c6ad6ff293cdf0af04f7a211e2e2f8007eaf9396e959c7452a18",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 1.8142237362068707e-06,
+          "loss": 1.2370239620730923,
+          "delta": -4.409403460581274e-06,
+          "normalized_delta": -3.5645127971625114e-06,
+          "prediction": -4.534391711250966e-06,
+          "prediction_error": 1.2498825066969221e-07,
+          "realized_prediction": -4.409404173674109e-06,
+          "requested_norm": 1.8142237362068707e-06,
+          "realized_norm": 1.8213054196789125e-06,
+          "trial_state_sha256": "f35d5aeb4612c8eabcdd3cb4c70c1d1a3aad44fae83b46a6f0bf23384833a678",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.24537309010606959,
+        "gamma_change": 0.022360213337073775,
+        "original_gamma_replay": 0.2230128767689958,
+        "direction_cosine": 0.9199152554991903,
+        "angle_degrees": 23.08630398861325,
+        "task_progress": {
+          "relchem": 0.24537309010606825,
+          "ae17": 0.2453730901060707,
+          "exc": 0.25826239176924487,
+          "op": 0.2836156056849022
+        },
+        "original_direction_true_task_progress": {
+          "relchem": 0.22843202098610382,
+          "ae17": 0.22301287676899778,
+          "exc": 0.2799980003004602,
+          "op": 0.3851357664856346
+        },
+        "progress_changes": {
+          "relchem": 0.01694106911996443,
+          "ae17": 0.022360213337072915,
+          "exc": -0.02173560853121531,
+          "op": -0.1015201608007324
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17"
+        ],
+        "solver": {
+          "gamma_star": 0.24537309010606959,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.24537309010606953,
+          "gradient_space_products": [
+            0.24537309010606875,
+            0.2453730901060706,
+            0.2582623917692444,
+            0.283615605684902
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.49999999999999967,
+              0.4999999999999999,
+              0.0,
+              0.0
+            ],
+            "squared_norm": 0.060207953348201004,
+            "KKT_residual": 0.0
+          },
+          "certificate": {
+            "simplex_primal": 4.440892098500626e-16,
+            "active_stationarity": 5.551115123125783e-17,
+            "inactive_dual": 0.0,
+            "complementarity": 2.7755575615628895e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 7.256894944827483e-06,
+            "loss": 1.2370088651451774,
+            "delta": -1.9506331375485075e-05,
+            "prediction": -1.9482692507609082e-05,
+            "realized_prediction": -1.950643786710696e-05,
+            "trial_state_sha256": "6ca0f4600697ec9efbf92da4efc937a955411f778d88c298cadfb66d5ca421cc",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u5_arrays.npz",
+      "array_sha256": "d03ea36da6fd6874adfc98bc0d4e8cfbffa439917f620a4caac883cb7dca4374",
+      "elapsed_seconds": 1092.8556409000012,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u5_result.json",
+        "sha256": "b23e9eab63161347552598c34b61c515d52a5c622edc72c718b22359126b03c1"
+      }
+    },
+    {
+      "key": "11_P67_u9",
+      "start": "11_P67",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_9.pt",
+      "state_sha256": "8bccb4bffd887ee676bf54365231370165d0218698be19340333baff4af430d4",
+      "state_file_sha256": "e16508243078f97674753fa63da67a612b98fce7f64c7ed69c066adb912a7a82",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "18469d12c01a3f6e6b626b2ca5499c9bcffcc3103a48619cd8bae8dbfb2b53e5",
+      "p_sample_reference": 0.13592622297539414,
+      "eta_acc": 7.256894944827483e-06,
+      "gamma_original": 0.1359262229753956,
+      "original_after_sha256": "b613b3a443e498031d4ab69c363fd2737f5bcd4f5eeac807d7c37eeccf555fe9",
+      "original_loss_sample": 1.3129411054240345,
+      "sample_norm": 24.02496670663577,
+      "full_norm": 10.941524719100666,
+      "norm_ratio": 2.1957604011710803,
+      "cos_sample_full": 0.8929980750903939,
+      "p_sample": 0.13592622297539458,
+      "p_full": 0.04368071905009663,
+      "p_full_minus_sample": -0.09224550392529796,
+      "sign_agreement": true,
+      "unit_gradient_difference_norm": 0.46260550128507194,
+      "e_direction": 0.09224550392529804,
+      "L_full": 1.2370634205826856,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 7.256894944827483e-06,
+          "loss": 1.2370600085085057,
+          "delta": -3.412074179864888e-06,
+          "normalized_delta": -2.758204731538923e-06,
+          "prediction": -3.468314413718515e-06,
+          "prediction_error": 5.6240233853627235e-08,
+          "realized_prediction": -3.4121485449531025e-06,
+          "requested_norm": 7.256894944827483e-06,
+          "realized_norm": 7.268221192930091e-06,
+          "trial_state_sha256": "b613b3a443e498031d4ab69c363fd2737f5bcd4f5eeac807d7c37eeccf555fe9",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 3.6284474724137414e-06,
+          "loss": 1.2370615632850892,
+          "delta": -1.8572975963859761e-06,
+          "normalized_delta": -1.5013762152235864e-06,
+          "prediction": -1.7341572068592576e-06,
+          "prediction_error": -1.2314038952671856e-07,
+          "realized_prediction": -1.8573130752058638e-06,
+          "requested_norm": 3.6284474724137414e-06,
+          "realized_norm": 3.6327660683564005e-06,
+          "trial_state_sha256": "cf138f4fdc6dd333455894e9aa1e01bdbe144ffc83500b20dceb65f4581d5785",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 1.8142237362068707e-06,
+          "loss": 1.2370625153145582,
+          "delta": -9.052681273491459e-07,
+          "normalized_delta": -7.31787968415349e-07,
+          "prediction": -8.670786034296288e-07,
+          "prediction_error": -3.818952391951707e-08,
+          "realized_prediction": -9.052693955469754e-07,
+          "requested_norm": 1.8142237362068707e-06,
+          "realized_norm": 1.8183629928028246e-06,
+          "trial_state_sha256": "e0fef0524837f1ae4e0f5d511533118bf119d65c08c45fbcf27d9b09df1d2fd4",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.24379974899932158,
+        "gamma_change": 0.10787352602392597,
+        "original_gamma_replay": 0.1359262229753956,
+        "direction_cosine": 0.3683493169346773,
+        "angle_degrees": 68.3861486501543,
+        "task_progress": {
+          "relchem": 0.24379974899932222,
+          "ae17": 0.24690088792384046,
+          "exc": 0.24379974899932103,
+          "op": 0.35951568831595915
+        },
+        "original_direction_true_task_progress": {
+          "relchem": 0.043680719050096524,
+          "ae17": 0.13738343518535953,
+          "exc": 0.13592622297539542,
+          "op": 0.3074982805477822
+        },
+        "progress_changes": {
+          "relchem": 0.2001190299492257,
+          "ae17": 0.10951745273848093,
+          "exc": 0.10787352602392561,
+          "op": 0.052017407768176926
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "exc"
+        ],
+        "solver": {
+          "gamma_star": 0.24379974899932158,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.24379974899932158,
+          "gradient_space_products": [
+            0.24379974899932233,
+            0.24690088792384052,
+            0.24379974899932114,
+            0.35951568831595904
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.5,
+              0.0,
+              0.4999999999999999,
+              0.0
+            ],
+            "squared_norm": 0.05943831761213202,
+            "KKT_residual": 1.5959455978986625e-16
+          },
+          "certificate": {
+            "simplex_primal": 1.1102230246251565e-16,
+            "active_stationarity": 1.734723475976807e-16,
+            "inactive_dual": 1.5959455978986625e-16,
+            "complementarity": 8.673617379884035e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 7.256894944827483e-06,
+            "loss": 1.237044026779124,
+            "delta": -1.939380356152931e-05,
+            "prediction": -1.9358064654236436e-05,
+            "realized_prediction": -1.9393907373550505e-05,
+            "trial_state_sha256": "668e991b774b4262ed6384a104403670942db84c427c5f7f1895321caf152a0f",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u9_arrays.npz",
+      "array_sha256": "6a3bb6c62f95c240f808fd384b78a4cd1ef35d47f7d591decc30947546ee72e7",
+      "elapsed_seconds": 1145.6867147000012,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u9_result.json",
+        "sha256": "c5050edde57a20a23a2c9535db569921aad9fca265ba732c822724d9a42c4bea"
+      }
+    },
+    {
+      "key": "11_P536_u0",
+      "start": "11_P536",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_0.pt",
+      "state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6",
+      "state_file_sha256": "89a2b31f2f2487819f8339fbcd29cceda0c8d3a5ab1bf7d946231198289f89cc",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "073abc35cf382db8c7694eb254b9f3070dd7bc692aa23ec91ad30870c6d79f82",
+      "p_sample_reference": 0.31255714866612366,
+      "eta_acc": 6.383541909850447e-06,
+      "gamma_original": 0.31255714866612416,
+      "original_after_sha256": "c54a50a7010d007a58d4da7a58187c9257fa84488f3f8c0363b7c9a11d61051e",
+      "original_loss_sample": 1.3309242125679874,
+      "sample_norm": 18.297792601034434,
+      "full_norm": 9.62453223792005,
+      "norm_ratio": 1.9011617550557194,
+      "cos_sample_full": 0.7816602898136835,
+      "p_sample": 0.31255714866612383,
+      "p_full": -0.2531552269447556,
+      "p_full_minus_sample": -0.5657123756108795,
+      "sign_agreement": false,
+      "unit_gradient_difference_norm": 0.6608172367399574,
+      "e_direction": 0.5657123756108795,
+      "L_full": 1.2373332147936549,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 6.383541909850447e-06,
+          "loss": 1.237348710938351,
+          "delta": 1.5496144696092173e-05,
+          "normalized_delta": 1.2523825038250834e-05,
+          "prediction": 1.5553503967506956e-05,
+          "prediction_error": -5.735927141478254e-08,
+          "realized_prediction": 1.5496259512038353e-05,
+          "requested_norm": 6.383541909850447e-06,
+          "realized_norm": 6.384002047340752e-06,
+          "trial_state_sha256": "c54a50a7010d007a58d4da7a58187c9257fa84488f3f8c0363b7c9a11d61051e",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 3.1917709549252234e-06,
+          "loss": 1.2373409724589222,
+          "delta": 7.757665267282832e-06,
+          "normalized_delta": 6.2696654179582065e-06,
+          "prediction": 7.776751983753478e-06,
+          "prediction_error": -1.908671647064628e-08,
+          "realized_prediction": 7.757694351716959e-06,
+          "requested_norm": 3.1917709549252234e-06,
+          "realized_norm": 3.1948029646708247e-06,
+          "trial_state_sha256": "85988e1ff2ce01afaae32ea732247012061bc0c1168ab8eceea9d7f05e66c11e",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 1.5958854774626117e-06,
+          "loss": 1.237337041867442,
+          "delta": 3.827073787210367e-06,
+          "normalized_delta": 3.093001740722359e-06,
+          "prediction": 3.888375991876739e-06,
+          "prediction_error": -6.130220466637236e-08,
+          "realized_prediction": 3.827076952328747e-06,
+          "requested_norm": 1.5958854774626117e-06,
+          "realized_norm": 1.5954725991197404e-06,
+          "trial_state_sha256": "0c4b04a706de7a3f33459470443512bf12c5208e67b4a5b41bb9fc3894962145",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.14771716872841573,
+        "gamma_change": -0.16483997993770844,
+        "original_gamma_replay": 0.31255714866612416,
+        "direction_cosine": 0.6012688785196598,
+        "angle_degrees": 53.039171469411514,
+        "task_progress": {
+          "relchem": 0.14771716872841503,
+          "ae17": 0.14771716872841678,
+          "exc": 0.16837036887837026,
+          "op": 0.14771716872841598
+        },
+        "original_direction_true_task_progress": {
+          "relchem": -0.2531552269447556,
+          "ae17": 0.699675475121461,
+          "exc": 0.6201062247255907,
+          "op": 0.31255714866612494
+        },
+        "progress_changes": {
+          "relchem": 0.4008723956731707,
+          "ae17": -0.5519583063930442,
+          "exc": -0.4517358558472205,
+          "op": -0.16483997993770896
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17",
+          "op"
+        ],
+        "solver": {
+          "gamma_star": 0.14771716872841573,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.1477171687284157,
+          "gradient_space_products": [
+            0.14771716872841573,
+            0.14771716872841628,
+            0.1683703688783698,
+            0.14771716872841556
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.48719792693450154,
+              0.1340016238112844,
+              0.0,
+              0.3788004492542144
+            ],
+            "squared_norm": 0.021820361937139245,
+            "KKT_residual": 1.457167719820518e-16
+          },
+          "certificate": {
+            "simplex_primal": 4.440892098500626e-16,
+            "active_stationarity": 2.0122792321330962e-16,
+            "inactive_dual": 1.3183898417423734e-16,
+            "complementarity": 4.9940666434420366e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 6.383541909850447e-06,
+            "loss": 1.2373241146782057,
+            "delta": -9.100115449189872e-06,
+            "prediction": -9.075536766964214e-06,
+            "realized_prediction": -9.10012221004072e-06,
+            "trial_state_sha256": "4c8cccbad682d067994b753272ffc85b655a116d0fbe941f263def3c57fef567",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u0_arrays.npz",
+      "array_sha256": "6e5613dbc83d9291d1aac414971970909a78b0731a2478a651b381b315f096d4",
+      "elapsed_seconds": 1191.9112223999982,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u0_result.json",
+        "sha256": "9f9c8b82b8665d8e69c8fc42cd4f5cfeeb54079db69d2d9be8efe366f9c9b394"
+      }
+    },
+    {
+      "key": "11_P536_u5",
+      "start": "11_P536",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_5.pt",
+      "state_sha256": "3fdd1714976299a06a8717aae1e14d6dd69770998e7cf626f105f9d80a1b7f6c",
+      "state_file_sha256": "dda39bb0ebf4435ecbd65910d8a285fb5ee387a817d488b989caf8a8832b6adb",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "6faac59f153943f33d6865ac540f816fe961a35a7a9a236637da0a9ef101c863",
+      "p_sample_reference": 0.22528397857062674,
+      "eta_acc": 6.383541909850447e-06,
+      "gamma_original": 0.22528397857062854,
+      "original_after_sha256": "2b08142b6099289d8657ecfdbd804f5c39cdd4d97745e597556a60dc1a713375",
+      "original_loss_sample": 1.3789158624927897,
+      "sample_norm": 25.747184335789086,
+      "full_norm": 9.62461343376168,
+      "norm_ratio": 2.67513957968139,
+      "cos_sample_full": 0.7715874932448405,
+      "p_sample": 0.2252839785706267,
+      "p_full": -0.0984776150592121,
+      "p_full_minus_sample": -0.3237615936298388,
+      "sign_agreement": false,
+      "unit_gradient_difference_norm": 0.6758883143762129,
+      "e_direction": 0.3237615936298389,
+      "L_full": 1.2373610614977837,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 6.383541909850447e-06,
+          "loss": 1.2373671591784994,
+          "delta": 6.097680715688725e-06,
+          "normalized_delta": 4.9279720410044975e-06,
+          "prediction": 6.050378326086585e-06,
+          "prediction_error": 4.7302389602140096e-08,
+          "realized_prediction": 6.097669678278733e-06,
+          "requested_norm": 6.383541909850448e-06,
+          "realized_norm": 6.386250679192812e-06,
+          "trial_state_sha256": "2b08142b6099289d8657ecfdbd804f5c39cdd4d97745e597556a60dc1a713375",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 3.1917709549252234e-06,
+          "loss": 1.2373641467222054,
+          "delta": 3.0852244217172142e-06,
+          "normalized_delta": 2.4933905855924176e-06,
+          "prediction": 3.0251891630432923e-06,
+          "prediction_error": 6.003525867392192e-08,
+          "realized_prediction": 3.085224161786542e-06,
+          "requested_norm": 3.191770954925224e-06,
+          "realized_norm": 3.1908637693396615e-06,
+          "trial_state_sha256": "e93af28361d8cb5b238ae766526e846cc0043c71bd3d7574789869e00a28336e",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 1.5958854774626117e-06,
+          "loss": 1.2373625780707884,
+          "delta": 1.5165730047339565e-06,
+          "normalized_delta": 1.225651147368575e-06,
+          "prediction": 1.5125945815216462e-06,
+          "prediction_error": 3.9784232123103535e-09,
+          "realized_prediction": 1.5165743634032373e-06,
+          "requested_norm": 1.595885477462612e-06,
+          "realized_norm": 1.598861520006514e-06,
+          "trial_state_sha256": "6da37814e20cb55c9b3d43f9dafca1071f6c3fda61dbe3ac7918912d0392f742",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.14395544453758066,
+        "gamma_change": -0.08132853403304788,
+        "original_gamma_replay": 0.22528397857062854,
+        "direction_cosine": 0.8316066133541813,
+        "angle_degrees": 33.735868517311864,
+        "task_progress": {
+          "relchem": 0.14395544453758047,
+          "ae17": 0.14395544453758233,
+          "exc": 0.15798944675448587,
+          "op": 0.14395544453758016
+        },
+        "original_direction_true_task_progress": {
+          "relchem": -0.0984776150592121,
+          "ae17": 0.22528397857063023,
+          "exc": 0.2868278125895882,
+          "op": 0.3685174659951399
+        },
+        "progress_changes": {
+          "relchem": 0.24243305959679257,
+          "ae17": -0.0813285340330479,
+          "exc": -0.12883836583510236,
+          "op": -0.22456202145755974
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17",
+          "op"
+        ],
+        "solver": {
+          "gamma_star": 0.14395544453758066,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.14395544453758066,
+          "gradient_space_products": [
+            0.14395544453758027,
+            0.14395544453758205,
+            0.15798944675448576,
+            0.14395544453757997
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.483190850341514,
+              0.1616620274053872,
+              0.0,
+              0.3551471222530991
+            ],
+            "squared_norm": 0.020723170012012574,
+            "KKT_residual": 5.898059818321144e-17
+          },
+          "certificate": {
+            "simplex_primal": 2.220446049250313e-16,
+            "active_stationarity": 2.0122792321330962e-16,
+            "inactive_dual": 4.85722573273506e-17,
+            "complementarity": 3.253091403723921e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 6.383541909850447e-06,
+            "loss": 1.2373522126779253,
+            "delta": -8.84881985840913e-06,
+            "prediction": -8.844496295210188e-06,
+            "realized_prediction": -8.848834232489352e-06,
+            "trial_state_sha256": "34f5d753e719283e149dd3dac7bf8d44d98ff3c5e85d3ef9acd04affaa3740fe",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u5_arrays.npz",
+      "array_sha256": "d72cfe59dcd56a9bfc713dc175b3d6f18d45991ca0a6cc952c67d1df86933935",
+      "elapsed_seconds": 1145.642214899999,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u5_result.json",
+        "sha256": "24ccbfe1343b6cfc1a0bb97c42777891d62c1f599fb295a76adab8d8f52fcbc0"
+      }
+    },
+    {
+      "key": "11_P536_u9",
+      "start": "11_P536",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_9.pt",
+      "state_sha256": "adda51706fe4c164fb7693d227cf1607c608cf822bcb958aeabe402145ebb61b",
+      "state_file_sha256": "7ba6093d0f4fa907c27f51c1bc2ce5773881559e266d00d035cf3aa7a3fe9b6e",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "2509a81e44ea8acaf410d0f0657736d1dfab9cb86f0ae590d8dc8e4c0528b460",
+      "p_sample_reference": 0.119922516355724,
+      "eta_acc": 6.383541909850447e-06,
+      "gamma_original": 0.1199225163557246,
+      "original_after_sha256": "1b550578d5170c471856c1032635008bb530e8d7607639b6ab824ba250ff1e94",
+      "original_loss_sample": 1.3767689041504123,
+      "sample_norm": 23.488633760140864,
+      "full_norm": 9.62468744438531,
+      "norm_ratio": 2.4404567832322983,
+      "cos_sample_full": 0.7587364925619731,
+      "p_sample": 0.11992251635572398,
+      "p_full": -0.23742060581586827,
+      "p_full_minus_sample": -0.35734312217159225,
+      "sign_agreement": false,
+      "unit_gradient_difference_norm": 0.6946416449335976,
+      "e_direction": 0.35734312217159214,
+      "L_full": 1.2374768007432035,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 6.383541909850447e-06,
+          "loss": 1.2374913235038014,
+          "delta": 1.452276059787927e-05,
+          "normalized_delta": 1.1735784128766853e-05,
+          "prediction": 1.4587026025159051e-05,
+          "prediction_error": -6.426542727978135e-08,
+          "realized_prediction": 1.4522790622128153e-05,
+          "requested_norm": 6.383541909850448e-06,
+          "realized_norm": 6.388854612258888e-06,
+          "trial_state_sha256": "1b550578d5170c471856c1032635008bb530e8d7607639b6ab824ba250ff1e94",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 3.1917709549252234e-06,
+          "loss": 1.237484048420206,
+          "delta": 7.247677002553132e-06,
+          "normalized_delta": 5.8568184859710695e-06,
+          "prediction": 7.2935130125795254e-06,
+          "prediction_error": -4.583601002639315e-08,
+          "realized_prediction": 7.247681432398015e-06,
+          "requested_norm": 3.191770954925224e-06,
+          "realized_norm": 3.202962170867496e-06,
+          "trial_state_sha256": "0100e2b9bbcf418cf20e79b2594f6fbf58bca3b90edc951aa2b29ef6eb680d60",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 1.5958854774626117e-06,
+          "loss": 1.2374803803106935,
+          "delta": 3.5795674899752328e-06,
+          "normalized_delta": 2.892634017724952e-06,
+          "prediction": 3.6467565062897627e-06,
+          "prediction_error": -6.718901631452995e-08,
+          "realized_prediction": 3.5795690792510264e-06,
+          "requested_norm": 1.595885477462612e-06,
+          "realized_norm": 1.5951462719031173e-06,
+          "trial_state_sha256": "d1498801ce44ebd616f73eb88fbec3e70a19864d9fb8c814dc37d316d695a47b",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.24965891264515894,
+        "gamma_change": 0.12973639628943434,
+        "original_gamma_replay": 0.1199225163557246,
+        "direction_cosine": -0.026293222451032838,
+        "angle_degrees": 91.50666431152327,
+        "task_progress": {
+          "relchem": 0.24965891264515908,
+          "ae17": 0.24994942927685593,
+          "exc": 0.24965891264515835,
+          "op": 0.24965891264515877
+        },
+        "original_direction_true_task_progress": {
+          "relchem": -0.2374206058158681,
+          "ae17": 0.12180056276011497,
+          "exc": 0.119922516355725,
+          "op": 0.22825060904674965
+        },
+        "progress_changes": {
+          "relchem": 0.48707951846102715,
+          "ae17": 0.12814886651674096,
+          "exc": 0.12973639628943334,
+          "op": 0.021408303598409117
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "exc",
+          "op"
+        ],
+        "solver": {
+          "gamma_star": 0.24965891264515894,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.24965891264515896,
+          "gradient_space_products": [
+            0.24965891264515877,
+            0.24994942927685582,
+            0.24965891264515866,
+            0.24965891264515916
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.49929283050412787,
+              0.0,
+              0.0213116225293854,
+              0.479395546966487
+            ],
+            "squared_norm": 0.06232957266316298,
+            "KKT_residual": 6.938893903907228e-17
+          },
+          "certificate": {
+            "simplex_primal": 2.220446049250313e-16,
+            "active_stationarity": 6.938893903907228e-17,
+            "inactive_dual": 6.938893903907228e-17,
+            "complementarity": 3.464539977849678e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 6.383541909850447e-06,
+            "loss": 1.2374615200941175,
+            "delta": -1.5280649086069076e-05,
+            "prediction": -1.533894264844152e-05,
+            "realized_prediction": -1.528053808979926e-05,
+            "trial_state_sha256": "1fa6c14e514d2b906607c4f18f1416b6b5a7af61930d4ce029e348f0a7238e05",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u9_arrays.npz",
+      "array_sha256": "0b37e09c83ff5749bb49ce3b7bce308482c68cbcbf6d69c17d954750dde494ea",
+      "elapsed_seconds": 1139.2088736000005,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u9_result.json",
+        "sha256": "af37a0f9fe00738fa1e74113e0bb7b8651e9d4efb54ec06e2038e4b85ade0ef8"
+      }
+    },
+    {
+      "key": "23_P67_u0",
+      "start": "23_P67",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_0.pt",
+      "state_sha256": "69f6e7c90a5f4cf6f51e885b8f3c1b9679508c71a57a8363149de6783820e4d8",
+      "state_file_sha256": "fbe6f92dc055dec9a60cd68fa6689f0846f57a0c0d74ef0d584d7ff75287a896",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "600897c37676d16217722f843e3a1e5eb580257df9bbfad5684d556bd21e4ee1",
+      "p_sample_reference": 0.7815416169917502,
+      "eta_acc": 8.539282669870804e-06,
+      "gamma_original": 0.7815416169917504,
+      "original_after_sha256": "8aa6a0b2dd3b27782a5b31c4308c7fd5529fff090c071c74e767f9861cdd1ace",
+      "original_loss_sample": 1.3062416408572872,
+      "sample_norm": 12.310808944206928,
+      "full_norm": 12.874764904114029,
+      "norm_ratio": 0.9561967955059985,
+      "cos_sample_full": -0.10434520568653667,
+      "p_sample": 0.7815416169917501,
+      "p_full": -0.6709432962473274,
+      "p_full_minus_sample": -1.4524849132390774,
+      "sign_agreement": false,
+      "unit_gradient_difference_norm": 1.4861663471405457,
+      "e_direction": 1.4524849132390776,
+      "L_full": 1.2443206461009375,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 8.539282669870804e-06,
+          "loss": 1.244394420983199,
+          "delta": 7.377488226145701e-05,
+          "normalized_delta": 5.928928567779506e-05,
+          "prediction": 7.376434924731124e-05,
+          "prediction_error": 1.0533014145768286e-08,
+          "realized_prediction": 7.377469503293998e-05,
+          "requested_norm": 8.539282669870806e-06,
+          "realized_norm": 8.54615997069885e-06,
+          "trial_state_sha256": "8aa6a0b2dd3b27782a5b31c4308c7fd5529fff090c071c74e767f9861cdd1ace",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 4.269641334935402e-06,
+          "loss": 1.2443574759941263,
+          "delta": 3.6829893188761176e-05,
+          "normalized_delta": 2.9598394356122888e-05,
+          "prediction": 3.688217462365562e-05,
+          "prediction_error": -5.2281434894444455e-08,
+          "realized_prediction": 3.682984645779079e-05,
+          "requested_norm": 4.269641334935403e-06,
+          "realized_norm": 4.264679131313798e-06,
+          "trial_state_sha256": "671cf3ffb0b264d72b36954c403b70e99146ed15c10dde2085d6988fca64cf6c",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 2.134820667467701e-06,
+          "loss": 1.2443390963293595,
+          "delta": 1.845022842195121e-05,
+          "normalized_delta": 1.4827551467352695e-05,
+          "prediction": 1.844108731182781e-05,
+          "prediction_error": 9.141110123399033e-09,
+          "realized_prediction": 1.8450216732604395e-05,
+          "requested_norm": 2.1348206674677015e-06,
+          "realized_norm": 2.1408932352769326e-06,
+          "trial_state_sha256": "0bf23269e187344f34d08d16b96db95c634e9d4cf97b841ccf8fcf67f68207a0",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.1601006873909755,
+        "gamma_change": -0.6214409296007749,
+        "original_gamma_replay": 0.7815416169917504,
+        "direction_cosine": 0.45681236582136714,
+        "angle_degrees": 62.818394201885525,
+        "task_progress": {
+          "relchem": 0.160100687390976,
+          "ae17": 0.17786502542858323,
+          "exc": 0.16010068739097502,
+          "op": 0.1601006873909748
+        },
+        "original_direction_true_task_progress": {
+          "relchem": -0.6709432962473274,
+          "ae17": 0.8742571199154295,
+          "exc": 0.8401581369399073,
+          "op": 0.7815416169917507
+        },
+        "progress_changes": {
+          "relchem": 0.8310439836383035,
+          "ae17": -0.6963920944868462,
+          "exc": -0.6800574495489322,
+          "op": -0.6214409296007759
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "exc",
+          "op"
+        ],
+        "solver": {
+          "gamma_star": 0.1601006873909755,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.1601006873909755,
+          "gradient_space_products": [
+            0.16010068739097594,
+            0.17786502542858343,
+            0.1601006873909751,
+            0.16010068739097477
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.49914174673465833,
+              0.0,
+              0.2830296561364077,
+              0.21782859712893438
+            ],
+            "squared_norm": 0.025632230103062873,
+            "KKT_residual": 2.255140518769849e-16
+          },
+          "certificate": {
+            "simplex_primal": 4.440892098500626e-16,
+            "active_stationarity": 2.2898349882893854e-16,
+            "inactive_dual": 2.2898349882893854e-16,
+            "complementarity": 7.966030734286271e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 8.539282669870804e-06,
+            "loss": 1.2443030805706807,
+            "delta": -1.7565530256780093e-05,
+            "prediction": -1.7601670790208155e-05,
+            "realized_prediction": -1.7565587751173566e-05,
+            "trial_state_sha256": "ab33b72b046333b9feb4b49e448119804d747b86d2c94c92f8b8f914e8c3117c",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u0_arrays.npz",
+      "array_sha256": "d5836a723bdd4eb71f82ac18c64d13556eb557ea3cea8d7c6d5d4fcf42f65cf3",
+      "elapsed_seconds": 1144.383138600002,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u0_result.json",
+        "sha256": "0226ed4b3dea27bb2fe300b6c3021259bb107ff86e27c1732219cba1c885a1fc"
+      }
+    },
+    {
+      "key": "23_P67_u5",
+      "start": "23_P67",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_5.pt",
+      "state_sha256": "22e05f98bc8f34f61e8e9b7f60480d5e3da656ca51b2ae5c4f0dc7c0a173121e",
+      "state_file_sha256": "340638cb1105a0aafd21e5aced99827c977607b4b39ca274f312a93caabb617d",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "c6e431eeaf855caa04fbcdeff50f7040944a5de38868b6d5d276eb1cab10b676",
+      "p_sample_reference": 0.09550901935769657,
+      "eta_acc": 8.539282669870804e-06,
+      "gamma_original": 0.09550901935769163,
+      "original_after_sha256": "faa3e077c8ebed89b2f49e8a19b7a62a29671934ef8aa47ddcf4c4afd021e84f",
+      "original_loss_sample": 1.3811516430787236,
+      "sample_norm": 44.61075732117841,
+      "full_norm": 12.874805591157319,
+      "norm_ratio": 3.46496550998937,
+      "cos_sample_full": 0.9541228673524347,
+      "p_sample": 0.09550901935769668,
+      "p_full": 0.10477415949421756,
+      "p_full_minus_sample": 0.009265140136520883,
+      "sign_agreement": true,
+      "unit_gradient_difference_norm": 0.30290966523887974,
+      "e_direction": -0.00926514013652088,
+      "L_full": 1.2443508881587202,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 8.539282669870804e-06,
+          "loss": 1.2443393517685537,
+          "delta": -1.1536390166488886e-05,
+          "normalized_delta": -9.27101051340865e-06,
+          "prediction": -1.151903918005199e-05,
+          "prediction_error": -1.7350986436895263e-08,
+          "realized_prediction": -1.1536493875716862e-05,
+          "requested_norm": 8.539282669870803e-06,
+          "realized_norm": 8.547911562676413e-06,
+          "trial_state_sha256": "faa3e077c8ebed89b2f49e8a19b7a62a29671934ef8aa47ddcf4c4afd021e84f",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 4.269641334935402e-06,
+          "loss": 1.2443451764143656,
+          "delta": -5.7117443545973146e-06,
+          "normalized_delta": -4.590139653493595e-06,
+          "prediction": -5.759519590025995e-06,
+          "prediction_error": 4.777523542868067e-08,
+          "realized_prediction": -5.71176808791352e-06,
+          "requested_norm": 4.269641334935401e-06,
+          "realized_norm": 4.271401354263694e-06,
+          "trial_state_sha256": "f13fb6e6d9b66ed3426810d02e0283a44898635c9522ea2987e382237c3ca5f2",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 2.134820667467701e-06,
+          "loss": 1.244348037662153,
+          "delta": -2.850496567230465e-06,
+          "normalized_delta": -2.290749815310034e-06,
+          "prediction": -2.8797597950129976e-06,
+          "prediction_error": 2.926322778253265e-08,
+          "realized_prediction": -2.8505000588744256e-06,
+          "requested_norm": 2.1348206674677007e-06,
+          "realized_norm": 2.135881669435812e-06,
+          "trial_state_sha256": "81ae2a98b39a43db0df7516480807eb025103bbc68d4a237144061d402326632",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.157051651620348,
+        "gamma_change": 0.06154263226265638,
+        "original_gamma_replay": 0.09550901935769163,
+        "direction_cosine": 0.8110461930410359,
+        "angle_degrees": 35.80172640072097,
+        "task_progress": {
+          "relchem": 0.1570516516203516,
+          "ae17": 0.164559954814473,
+          "exc": 0.1570516516203448,
+          "op": 0.15705165162034432
+        },
+        "original_direction_true_task_progress": {
+          "relchem": 0.10477415949421769,
+          "ae17": 0.09550901935768666,
+          "exc": 0.11298859388153226,
+          "op": 0.16263592064474447
+        },
+        "progress_changes": {
+          "relchem": 0.052277492126133904,
+          "ae17": 0.06905093545678634,
+          "exc": 0.04406305773881253,
+          "op": -0.005584269024400151
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "exc",
+          "op"
+        ],
+        "solver": {
+          "gamma_star": 0.157051651620348,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.157051651620348,
+          "gradient_space_products": [
+            0.15705165162035173,
+            0.16455995481447294,
+            0.1570516516203447,
+            0.15705165162034435
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.49932561404968223,
+              0.0,
+              0.12826304024670787,
+              0.37241134570361023
+            ],
+            "squared_norm": 0.024665221276679174,
+            "KKT_residual": 4.2327252813834093e-16
+          },
+          "certificate": {
+            "simplex_primal": 4.440892098500626e-16,
+            "active_stationarity": 4.371503159461554e-16,
+            "inactive_dual": 4.371503159461554e-16,
+            "complementarity": 1.697736055103096e-16
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 8.539282669870804e-06,
+            "loss": 1.2443336789833308,
+            "delta": -1.720917538938771e-05,
+            "prediction": -1.72665105312207e-05,
+            "realized_prediction": -1.7209221731953847e-05,
+            "trial_state_sha256": "471613bb4d1122cfdc8fef66c503c52ca14a9033d2d3be5e039a972bb9b5c2fb",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u5_arrays.npz",
+      "array_sha256": "9d7331509a9972f5f2a3ac70775ab0d5068141f8c0930ba69ef4b43994eabc3f",
+      "elapsed_seconds": 1141.4701408000037,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u5_result.json",
+        "sha256": "ea99a071fb1e1679e1e66f0416211417a0bbb52bbdc46b8a7fe728eee890933d"
+      }
+    },
+    {
+      "key": "23_P67_u9",
+      "start": "23_P67",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_9.pt",
+      "state_sha256": "bcfe3066bd1ab2342cb78c1829f28a2f9dc060e9217eb0e41c5ab65a1a149830",
+      "state_file_sha256": "6a4f41149044a530b43c395885fac9e82106e727302123de30d5df3109e4183c",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "d3253627de41de9a573cf7df7bf32441c6d1377f502a508539b7f7f48e7df573",
+      "p_sample_reference": 0.07453456353458304,
+      "eta_acc": 8.539282669870804e-06,
+      "gamma_original": 0.0745345635345819,
+      "original_after_sha256": "c1d62377e7539fa70fd1d25da5f053b66084ac8374b2398a12e815fbb1e47994",
+      "original_loss_sample": 1.3831950041649907,
+      "sample_norm": 46.82939028428204,
+      "full_norm": 12.874826184659842,
+      "norm_ratio": 3.637283300964369,
+      "cos_sample_full": 0.9442564335276382,
+      "p_sample": 0.07453456353458313,
+      "p_full": 0.06854598901677536,
+      "p_full_minus_sample": -0.005988574517807765,
+      "sign_agreement": true,
+      "unit_gradient_difference_norm": 0.3338968896901003,
+      "e_direction": 0.005988574517807672,
+      "L_full": 1.2444638823632104,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 8.539282669870804e-06,
+          "loss": 1.2444563140923266,
+          "delta": -7.568270883773209e-06,
+          "normalized_delta": -6.081551253541585e-06,
+          "prediction": -7.53606805233421e-06,
+          "prediction_error": -3.220283143899948e-08,
+          "realized_prediction": -7.568416491751027e-06,
+          "requested_norm": 8.539282669870808e-06,
+          "realized_norm": 8.538879384686765e-06,
+          "trial_state_sha256": "c1d62377e7539fa70fd1d25da5f053b66084ac8374b2398a12e815fbb1e47994",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 4.269641334935402e-06,
+          "loss": 1.2444602099866222,
+          "delta": -3.672376588159665e-06,
+          "normalized_delta": -2.9509708077553042e-06,
+          "prediction": -3.768034026167105e-06,
+          "prediction_error": 9.56574380074401e-08,
+          "realized_prediction": -3.67241311028647e-06,
+          "requested_norm": 4.269641334935404e-06,
+          "realized_norm": 4.2658118534565165e-06,
+          "trial_state_sha256": "5344e7ea93aaae72d00c269b59221ddfb076a46ea5acf9e8440651936ddcf937",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 2.134820667467701e-06,
+          "loss": 1.2444619934907353,
+          "delta": -1.8888724750976138e-06,
+          "normalized_delta": -1.517820245221328e-06,
+          "prediction": -1.8840170130835525e-06,
+          "prediction_error": -4.855462014061337e-09,
+          "realized_prediction": -1.8888822602561566e-06,
+          "requested_norm": 2.134820667467702e-06,
+          "realized_norm": 2.151859702047846e-06,
+          "trial_state_sha256": "cdaabf6f2bf0741142a55da2ef4010686405b79492c5cb6148958f80069dedca",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.18150698461071232,
+        "gamma_change": 0.10697242107613042,
+        "original_gamma_replay": 0.0745345635345819,
+        "direction_cosine": 0.39543095117460203,
+        "angle_degrees": 66.70714590963483,
+        "task_progress": {
+          "relchem": 0.18150698461071155,
+          "ae17": 0.18150698461071268,
+          "exc": 0.1816871204464977,
+          "op": 0.21117499735885906
+        },
+        "original_direction_true_task_progress": {
+          "relchem": 0.06854598901677535,
+          "ae17": 0.07500097012212045,
+          "exc": 0.07453456353458086,
+          "op": 0.13746361058350162
+        },
+        "progress_changes": {
+          "relchem": 0.1129609955939362,
+          "ae17": 0.10650601448859223,
+          "exc": 0.10715255691191684,
+          "op": 0.07371138677535743
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17"
+        ],
+        "solver": {
+          "gamma_star": 0.18150698461071232,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.18150698461071232,
+          "gradient_space_products": [
+            0.18150698461071227,
+            0.1815069846107124,
+            0.18168712044649754,
+            0.2111749973588587
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.5,
+              0.5,
+              0.0,
+              0.0
+            ],
+            "squared_norm": 0.03294478546247348,
+            "KKT_residual": 1.6653345369377348e-16
+          },
+          "certificate": {
+            "simplex_primal": 0.0,
+            "active_stationarity": 1.6653345369377348e-16,
+            "inactive_dual": 1.6653345369377348e-16,
+            "complementarity": 8.326672684688674e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 8.539282669870804e-06,
+            "loss": 1.244443973875384,
+            "delta": -1.9908487826292287e-05,
+            "prediction": -1.9955200991637116e-05,
+            "realized_prediction": -1.9908540601529653e-05,
+            "trial_state_sha256": "fa3567fb2a2e9befdd24438ba26d92b7732aa5077a4b0859c0f71e094aa793a5",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u9_arrays.npz",
+      "array_sha256": "d8ada51bbe6bdd2ea445f782ac8f2505d73a2c4d1a1149715dece5fb722fb254",
+      "elapsed_seconds": 1147.5029560999974,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u9_result.json",
+        "sha256": "3635b56de86bb04a7c688f48e37774d58e48127a778efbb5fafa5fbe66599928"
+      }
+    },
+    {
+      "key": "23_P536_u0",
+      "start": "23_P536",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_0.pt",
+      "state_sha256": "0b0c2aefc703c90be250c2fdb79e60be1df35273c7bc7d680ede50a8e7145074",
+      "state_file_sha256": "800ec41cede807d83234b0c7d06739cdf73471172968f05119dbbdb1a81e4987",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "ccf3816ca20101e58904d2a193169fd1b48066d71d4cec87c717b7886796f37b",
+      "p_sample_reference": 0.4206184672502279,
+      "eta_acc": 1.0204187208883716e-05,
+      "gamma_original": 0.4206184672502277,
+      "original_after_sha256": "83ba35f8457da3a8c34c18f3b78e529f60670138c2b3a895352f60f5c460108e",
+      "original_loss_sample": 1.29165616980024,
+      "sample_norm": 13.686954973031943,
+      "full_norm": 15.384958717373507,
+      "norm_ratio": 0.8896322196546366,
+      "cos_sample_full": 0.8228086962687524,
+      "p_sample": 0.42061846725022756,
+      "p_full": -0.10507680020995498,
+      "p_full_minus_sample": -0.5256952674601826,
+      "sign_agreement": false,
+      "unit_gradient_difference_norm": 0.5953004346231364,
+      "e_direction": 0.5256952674601827,
+      "L_full": 1.2508059070353623,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 1.0204187208883716e-05,
+          "loss": 1.250822367751526,
+          "delta": 1.6460716163679834e-05,
+          "normalized_delta": 1.3160088284756128e-05,
+          "prediction": 1.6496111831748437e-05,
+          "prediction_error": -3.539566806860339e-08,
+          "realized_prediction": 1.6460731443651478e-05,
+          "requested_norm": 1.0204187208883718e-05,
+          "realized_norm": 1.0207605526695995e-05,
+          "trial_state_sha256": "83ba35f8457da3a8c34c18f3b78e529f60670138c2b3a895352f60f5c460108e",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 5.102093604441858e-06,
+          "loss": 1.2508142715610113,
+          "delta": 8.364525649007248e-06,
+          "normalized_delta": 6.687309039683621e-06,
+          "prediction": 8.248055915874219e-06,
+          "prediction_error": 1.1646973313302977e-07,
+          "realized_prediction": 8.364529633270319e-06,
+          "requested_norm": 5.102093604441859e-06,
+          "realized_norm": 5.1054732154026155e-06,
+          "trial_state_sha256": "12d5a144af41ec28a03160af367eaabb5ddf0d230d718a0c778e2cfd0790c70a",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 2.551046802220929e-06,
+          "loss": 1.2508101197401273,
+          "delta": 4.212704765027553e-06,
+          "normalized_delta": 3.367992381018115e-06,
+          "prediction": 4.124027957937109e-06,
+          "prediction_error": 8.867680709044357e-08,
+          "realized_prediction": 4.212703399483142e-06,
+          "requested_norm": 2.5510468022209294e-06,
+          "realized_norm": 2.5516499671097555e-06,
+          "trial_state_sha256": "6e677236bf76440e38194d30cb537b2e5925e13d43ca16c096a6f2d66e3e2420",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.18297126341063294,
+        "gamma_change": -0.23764720383959478,
+        "original_gamma_replay": 0.4206184672502277,
+        "direction_cosine": 0.9285835027273913,
+        "angle_degrees": 21.784925309704917,
+        "task_progress": {
+          "relchem": 0.1829712634106324,
+          "ae17": 0.18297126341063344,
+          "exc": 0.19076957099198494,
+          "op": 0.18297126341063394
+        },
+        "original_direction_true_task_progress": {
+          "relchem": -0.10507680020995477,
+          "ae17": 0.44677441294372594,
+          "exc": 0.4491161273871202,
+          "op": 0.42061846725022806
+        },
+        "progress_changes": {
+          "relchem": 0.2880480636205872,
+          "ae17": -0.2638031495330925,
+          "exc": -0.25834655639513526,
+          "op": -0.23764720383959412
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17",
+          "op"
+        ],
+        "solver": {
+          "gamma_star": 0.18297126341063294,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.18297126341063297,
+          "gradient_space_products": [
+            0.18297126341063236,
+            0.18297126341063327,
+            0.19076957099198485,
+            0.18297126341063408
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.4993859782849906,
+              0.4515407313069577,
+              0.0,
+              0.04907329040805147
+            ],
+            "squared_norm": 0.033478483234083214,
+            "KKT_residual": 9.020562075079397e-17
+          },
+          "certificate": {
+            "simplex_primal": 2.220446049250313e-16,
+            "active_stationarity": 2.5673907444456745e-16,
+            "inactive_dual": 6.938893903907228e-17,
+            "complementarity": 3.1331932278316606e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 1.0204187208883716e-05,
+            "loss": 1.2507770469526953,
+            "delta": -2.8860082667003795e-05,
+            "prediction": -2.87248414225326e-05,
+            "realized_prediction": -2.8860110526304585e-05,
+            "trial_state_sha256": "72bd3614e5446d3da7a9371be612c32ddd84a0ccb211727b0ea8a393796bb918",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u0_arrays.npz",
+      "array_sha256": "3e2251182c184c3958729f7290e81f665d7b8d9f1aa48749103f09a8a74115ba",
+      "elapsed_seconds": 1089.4327513000026,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u0_result.json",
+        "sha256": "dbe7ce6ef4554420bfc8e7c4c0671b4ce7eec38bbfe1a2adfb95a1bcb68c434e"
+      }
+    },
+    {
+      "key": "23_P536_u5",
+      "start": "23_P536",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_5.pt",
+      "state_sha256": "8dbfd61b821408ee5cf055687a63e9d0a114b05bac86a45e11654344b5316a65",
+      "state_file_sha256": "d5249343e0a260b6d0c43aebc44a1edd88818403d0903b93831a708666665a8d",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "35010c7bc41fa81da84931dc3b47859fd419dda6624ddaf34a97ca33aa2a1d6e",
+      "p_sample_reference": 0.15351798630569702,
+      "eta_acc": 1.0204187208883716e-05,
+      "gamma_original": 0.15351798630569807,
+      "original_after_sha256": "410348ebc3d2606b3fa0f1c9a64749215ec030fa4353ab0cbdd19be547ae5c53",
+      "original_loss_sample": 1.416992007945749,
+      "sample_norm": 58.944582032937824,
+      "full_norm": 15.384933704968853,
+      "norm_ratio": 3.8313185590068914,
+      "cos_sample_full": 0.9793659952623451,
+      "p_sample": 0.1535179863056969,
+      "p_full": 0.15170120429693376,
+      "p_full_minus_sample": -0.0018167820087631459,
+      "sign_agreement": true,
+      "unit_gradient_difference_norm": 0.20314529154107905,
+      "e_direction": 0.0018167820087631424,
+      "L_full": 1.2507474455749463,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 1.0204187208883716e-05,
+          "loss": 1.2507236043015355,
+          "delta": -2.384127341081843e-05,
+          "normalized_delta": -1.90616207094143e-05,
+          "prediction": -2.381568488606337e-05,
+          "prediction_error": -2.5588524755060097e-08,
+          "realized_prediction": -2.384134598763637e-05,
+          "requested_norm": 1.0204187208883718e-05,
+          "realized_norm": 1.0205183017577335e-05,
+          "trial_state_sha256": "410348ebc3d2606b3fa0f1c9a64749215ec030fa4353ab0cbdd19be547ae5c53",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 5.102093604441858e-06,
+          "loss": 1.2507355280978534,
+          "delta": -1.1917477092948658e-05,
+          "normalized_delta": -9.528284175284008e-06,
+          "prediction": -1.1907842443031685e-05,
+          "prediction_error": -9.634649916972978e-09,
+          "realized_prediction": -1.1917497281226418e-05,
+          "requested_norm": 5.102093604441859e-06,
+          "realized_norm": 5.10833104732242e-06,
+          "trial_state_sha256": "890f6330a8dfa6240cbb891f81ec6f7e8be933e4deee8d64cbb6cba3ca5b50ec",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 2.551046802220929e-06,
+          "loss": 1.250741534264915,
+          "delta": -5.911310031248007e-06,
+          "normalized_delta": -4.726221950052181e-06,
+          "prediction": -5.953921221515843e-06,
+          "prediction_error": 4.261119026783559e-08,
+          "realized_prediction": -5.9113133056309726e-06,
+          "requested_norm": 2.5510468022209294e-06,
+          "realized_norm": 2.5563364367104027e-06,
+          "trial_state_sha256": "9eda585991806cbe9e58a8725e9bae3fa3399f9443a965322a4d61f001b9a2f4",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.18134981445752288,
+        "gamma_change": 0.027831828151824806,
+        "original_gamma_replay": 0.15351798630569807,
+        "direction_cosine": 0.8975468111980883,
+        "angle_degrees": 26.162543035887104,
+        "task_progress": {
+          "relchem": 0.18134981445752105,
+          "ae17": 0.18134981445752482,
+          "exc": 0.19446775533808483,
+          "op": 0.18134981445752252
+        },
+        "original_direction_true_task_progress": {
+          "relchem": 0.15170120429693393,
+          "ae17": 0.15351798630569907,
+          "exc": 0.1876187189396031,
+          "op": 0.23640484822862745
+        },
+        "progress_changes": {
+          "relchem": 0.02964861016058712,
+          "ae17": 0.02783182815182575,
+          "exc": 0.006849036398481723,
+          "op": -0.05505503377110493
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17",
+          "op"
+        ],
+        "solver": {
+          "gamma_star": 0.18134981445752288,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.1813498144575229,
+          "gradient_space_products": [
+            0.1813498144575213,
+            0.18134981445752454,
+            0.19446775533808439,
+            0.18134981445752213
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.49884484709603777,
+              0.37859949716167773,
+              0.0,
+              0.12255565574228522
+            ],
+            "squared_norm": 0.032887755203777826,
+            "KKT_residual": 1.1796119636642288e-16
+          },
+          "certificate": {
+            "simplex_primal": 8.881784197001252e-16,
+            "active_stationarity": 1.3877787807814457e-16,
+            "inactive_dual": 1.249000902703301e-16,
+            "complementarity": 6.230576643318413e-17
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 1.0204187208883716e-05,
+            "loss": 1.25071884112148,
+            "delta": -2.860445346630769e-05,
+            "prediction": -2.847024224549072e-05,
+            "realized_prediction": -2.86044961633065e-05,
+            "trial_state_sha256": "036521d5cb5a63d1d36e91b6a20c5038a95b64009692afbb26802d583f4a1029",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u5_arrays.npz",
+      "array_sha256": "9450082bdaaaa83db444076d23070d08efc31f6c6381a6f00857a6f1c473c677",
+      "elapsed_seconds": 1146.016706800001,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u5_result.json",
+        "sha256": "a6440969ee8fa59ed8d10a5c92b75f2b0c0ee0f4f8192845eb73dc749df59705"
+      }
+    },
+    {
+      "key": "23_P536_u9",
+      "start": "23_P536",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_9.pt",
+      "state_sha256": "1efea2c4b5f312a93f30bcd05b95890b28a139fa2d1c3b7cce25560a5ebe387b",
+      "state_file_sha256": "877d1dee278369e1fc28624d8c54209fe2d706630c926b8c15e88fe9f4eefbaf",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "b2199a45d1d426976ef7e83abf734a1ad3ce9d911f7fe1630df6f7037ef0216d",
+      "p_sample_reference": 0.0741870469173914,
+      "eta_acc": 1.0204187208883716e-05,
+      "gamma_original": 0.07418704691739413,
+      "original_after_sha256": "bab323ef81e2fc5ba990876fd4b027155c0f29f7815a041749cffab05c5740c8",
+      "original_loss_sample": 1.4087200010720915,
+      "sample_norm": 46.22062575002192,
+      "full_norm": 15.384995045581963,
+      "norm_ratio": 3.00426653457356,
+      "cos_sample_full": 0.9663886366094703,
+      "p_sample": 0.07418704691739136,
+      "p_full": 0.22668673148334323,
+      "p_full_minus_sample": 0.15249968456595187,
+      "sign_agreement": true,
+      "unit_gradient_difference_norm": 0.2592734594613564,
+      "e_direction": -0.1524996845659519,
+      "L_full": 1.2508456530304746,
+      "baseline_repeat_absolute_difference": 0.0,
+      "actual_trials": [
+        {
+          "factor": 1.0,
+          "eta": 1.0204187208883716e-05,
+          "loss": 1.2508099881527484,
+          "delta": -3.566487772621585e-05,
+          "normalized_delta": -2.851261275906352e-05,
+          "prediction": -3.558786045770168e-05,
+          "prediction_error": -7.70172685141666e-08,
+          "realized_prediction": -3.566498228289798e-05,
+          "requested_norm": 1.0204187208883716e-05,
+          "realized_norm": 1.0207477268615463e-05,
+          "trial_state_sha256": "bab323ef81e2fc5ba990876fd4b027155c0f29f7815a041749cffab05c5740c8",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.5,
+          "eta": 5.102093604441858e-06,
+          "loss": 1.2508278991579966,
+          "delta": -1.7753872477932475e-05,
+          "normalized_delta": -1.4193495764181174e-05,
+          "prediction": -1.779393022885084e-05,
+          "prediction_error": 4.0057750918365926e-08,
+          "realized_prediction": -1.7753905000619466e-05,
+          "requested_norm": 5.102093604441858e-06,
+          "realized_norm": 5.102678439460099e-06,
+          "trial_state_sha256": "45048dd7233d7026e69349f5efd5416560603f0591456288f0515209f53dae4c",
+          "restoration_max_abs_difference": 0
+        },
+        {
+          "factor": 0.25,
+          "eta": 2.551046802220929e-06,
+          "loss": 1.250836716459078,
+          "delta": -8.936571396667148e-06,
+          "normalized_delta": -7.144423754454559e-06,
+          "prediction": -8.89696511442542e-06,
+          "prediction_error": -3.960628224172725e-08,
+          "realized_prediction": -8.9365811868292e-06,
+          "requested_norm": 2.551046802220929e-06,
+          "realized_norm": 2.5601677463778273e-06,
+          "trial_state_sha256": "c1d2944214a0eae4c9b3efc705c6bbffa32a413708b9dccc57929c175e08034b",
+          "restoration_max_abs_difference": 0
+        }
+      ],
+      "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+      "counterfactual": {
+        "gamma": 0.18331769660370736,
+        "gamma_change": 0.10913064968631324,
+        "original_gamma_replay": 0.07418704691739413,
+        "direction_cosine": 0.8221576238727097,
+        "angle_degrees": 34.69863291600081,
+        "task_progress": {
+          "relchem": 0.18331769660370748,
+          "ae17": 0.1833176966037073,
+          "exc": 0.1833955584438171,
+          "op": 0.2211222828983144
+        },
+        "original_direction_true_task_progress": {
+          "relchem": 0.22668673148334348,
+          "ae17": 0.0747453522237016,
+          "exc": 0.07418704691739691,
+          "op": 0.13283669080121385
+        },
+        "progress_changes": {
+          "relchem": -0.043369034879636004,
+          "ae17": 0.10857234438000571,
+          "exc": 0.1092085115264202,
+          "op": 0.08828559209710055
+        },
+        "strict_common_descent": true,
+        "active_tasks": [
+          "relchem",
+          "ae17"
+        ],
+        "solver": {
+          "gamma_star": 0.18331769660370736,
+          "stationary_label": false,
+          "status": "PASS",
+          "gamma": 0.18331769660370736,
+          "gradient_space_products": [
+            0.18331769660370792,
+            0.18331769660370678,
+            0.18339555844381666,
+            0.2211222828983137
+          ],
+          "descent_update_sign": "apply -d, so predicted products are negative of these",
+          "MGDA": {
+            "coefficients": [
+              0.5,
+              0.4999999999999999,
+              0.0,
+              0.0
+            ],
+            "squared_norm": 0.033605377888089094,
+            "KKT_residual": 0.0
+          },
+          "certificate": {
+            "simplex_primal": 1.1102230246251565e-16,
+            "active_stationarity": 0.0,
+            "inactive_dual": 0.0,
+            "complementarity": 0.0
+          }
+        },
+        "trials": [
+          {
+            "factor": 1.0,
+            "eta": 1.0204187208883716e-05,
+            "loss": 1.250816722250876,
+            "delta": -2.8930779598645984e-05,
+            "prediction": -2.8779296271424742e-05,
+            "realized_prediction": -2.8930804274636635e-05,
+            "trial_state_sha256": "df19c8c78f84425e5961d4cb8e8f2f4f3efa5c60ab21987b5be5250e0dd61f97",
+            "restoration_max_abs_difference": 0
+          }
+        ]
+      },
+      "full_eta_repeat_absolute_difference": 0.0,
+      "observed_scalar_repeatability_floor": 0.0,
+      "actual_change_resolved": true,
+      "unchanged_state": true,
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u9_arrays.npz",
+      "array_sha256": "f079ee15a28b3bd21fd0fdcc508e037b0337992b61d83aca74c3ffa0a22490b2",
+      "elapsed_seconds": 1142.6085940999983,
+      "result_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u9_result.json",
+        "sha256": "174151eba012736a872248a5501ca197de97191a8bb49bb8c9a558ba1d5e7f92"
+      }
+    }
+  ],
+  "next_experiment": "A preregistered chemistry-estimator variance-reduction/fidelity comparison on the same frozen states; keep UNIT_MAXMIN and the controller fixed.",
+  "validation": {
+    "status": "PASS",
+    "tests": {
+      "passed": 128,
+      "skipped": 3,
+      "platform": "Windows/CUDA",
+      "skips": "Two native Gloo rendezvous tests and one four-task Gloo test are Linux-only; no production or DDP code was changed.",
+      "focused_diagnostic_tests": 9
+    },
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "immutable_hashes_before_and_after": 124,
+    "hash_mismatches": 0,
+    "vector_receipts_checked": 12,
+    "committed_trajectory_files_anchored": 57,
+    "exact_accepted_after_state_replays": 12,
+    "restoration": "Bitwise equality of model tensors/digest and RNG asserted after every temporary trial; zero field records assertion success.",
+    "state_mutation": "NONE",
+    "production_source_changes": [],
+    "repository_state": "Only audit/report/test artifacts and their byte-preservation attributes changed; pre-existing untracked planning files preserved.",
+    "receipt_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\vector_receipt_validation.json",
+    "receipt_sha256": "faaaaea56549802357d2bae4266b971edcdc155bad5bd4d58516540c39c8c448"
+  },
+  "independent_review": {
+    "status": "PASS",
+    "review_kind": "Independent read-only numerical and scientific review",
+    "reviewed_draft_snapshot_stage": "Pre-final-status-embedding report/metrics snapshot. The parent may regenerate only to embed validation.json and this receipt; those regenerated files should be rechecked against these conclusions.",
+    "reviewed_commit": "d40bbcb5e7797728cdaedf5bcc6ef4950a4c85f4",
+    "protocol_sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18",
+    "diagnostic_source_sha256": "8f7952ad642eefe451ef9f2cde5d3bf0da4c9007a333c9123319b9bbed73b0f1",
+    "frozen_immutable_inventory_count": 123,
+    "frozen_immutable_hash_mismatches": 0,
+    "reviewed_file_sha_snapshot": {
+      "report_draft": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_fullchem_surrogate_fidelity_audit_report.md",
+        "sha256": "e3035b895f82229a5c3e0e3370cd0aa184b26130fdd27c5546cabdfc4d66166c"
+      },
+      "metrics_draft": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_fullchem_surrogate_fidelity_audit_metrics.json",
+        "sha256": "7e0cc323f0f6aacc819c657a59d1e8289cd724cbc5166f0a0a03b92eb55820f5"
+      },
+      "diagnostic_source": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_fullchem_surrogate_fidelity_audit.py",
+        "sha256": "8f7952ad642eefe451ef9f2cde5d3bf0da4c9007a333c9123319b9bbed73b0f1"
+      },
+      "diagnostic_tests": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\test_lap_fullchem_surrogate_fidelity_audit.py",
+        "sha256": "3e5721dae038896a5d82ce5846067148ba37c52c5e91a71bf9495c468e0ba33b"
+      },
+      "repo_protocol_copy": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_fullchem_surrogate_fidelity_audit_protocol.json",
+        "sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18"
+      },
+      "committed_trajectory_metrics": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_symmetric_moo_10update_trajectory_arena_metrics.json",
+        "sha256": "4136e90c812d50428f1e3639d6b8225c7bcd9790428db2f787f365361974f5b9"
+      },
+      "external_protocol.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\protocol.json",
+        "sha256": "a789813b6df1f2f40ffd5434b29c63afdf03cc3330068f88a8b86b8cd4a1af18"
+      },
+      "external_summarize.py": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\summarize.py",
+        "sha256": "82997af7c871df6f55a7b10dfe5159494020bb6a5aa384715b93a3ed9b6609de"
+      },
+      "external_validate_receipts.py": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\validate_receipts.py",
+        "sha256": "4429a550b4b641ae7307562bf3bc1b22bb8ef5617da34fe439cf66750aee2ce3"
+      },
+      "external_validation.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\validation.json",
+        "sha256": "9a1ec7aef01f8be9b80b80cfe030d355e2fb308739e52da6b5c0e74fe4f61ea7"
+      },
+      "external_vector_receipt_validation.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\vector_receipt_validation.json",
+        "sha256": "faaaaea56549802357d2bae4266b971edcdc155bad5bd4d58516540c39c8c448"
+      },
+      "external_committed_trajectory_anchor_validation.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\committed_trajectory_anchor_validation.json",
+        "sha256": "06592afdd9d834bb40ce0aca77d9d3be4f0ad0b79460b8dcd2444f45a116473f"
+      },
+      "external_variant_identity_diagnostic.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\variant_identity_diagnostic.json",
+        "sha256": "555ca658b02088b0a5ef2864a1fdd59896ea999b754b20aa68364e734e27693c"
+      },
+      "external_independent_review_seed11_provisional.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\independent_review_seed11_provisional.json",
+        "sha256": "da0eec58433bd977fcdaf81446ebb23918975b855a5a41ba67708ca6c41f8e55"
+      },
+      "external_independent_review_23_P67_u5_provisional.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\independent_review_23_P67_u5_provisional.json",
+        "sha256": "079eda998ba2568add56106c7e0a2573212acb6e785c76ecc8622cc559ed3f8a"
+      },
+      "manifest_sampling_manifest_25.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_25_runs_20261005\\sampling_manifest_25.json",
+        "sha256": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc"
+      },
+      "manifest_sampling_manifest_268.json": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\sampling_manifest_268.json",
+        "sha256": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070"
+      },
+      "11_P67_u0_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u0_result.json",
+        "sha256": "d4d03abb7b8cae8af830014515cdefe26d31420c71ba439652e830e8ed655866"
+      },
+      "11_P67_u0_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u0_arrays.npz",
+        "sha256": "b6d43d8cb985106f7b4042723d6659985dbfae1b30e9d808b52331f4df277d47"
+      },
+      "11_P67_u0_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_0.pt",
+        "sha256": "221adc2267c21f4775cca5df8e4e8fb9001816de5dd1efdfc1158ee46b8200c1"
+      },
+      "11_P67_u0_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+        "sha256": "3d5fec762923b050ef7a8261097441c6f2b1815ed1085c3d665476b35ed028e3"
+      },
+      "11_P67_u5_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u5_result.json",
+        "sha256": "b23e9eab63161347552598c34b61c515d52a5c622edc72c718b22359126b03c1"
+      },
+      "11_P67_u5_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u5_arrays.npz",
+        "sha256": "d03ea36da6fd6874adfc98bc0d4e8cfbffa439917f620a4caac883cb7dca4374"
+      },
+      "11_P67_u5_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_5.pt",
+        "sha256": "fdfe7161bd3b167b346eb17b1751b65474cbf9fecfc227b305086cd7a45caed9"
+      },
+      "11_P67_u5_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+        "sha256": "9e9e2af012d1d2e380d882e7e23aab79865fd07831117854a01650c0f49adf61"
+      },
+      "11_P67_u9_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u9_result.json",
+        "sha256": "c5050edde57a20a23a2c9535db569921aad9fca265ba732c822724d9a42c4bea"
+      },
+      "11_P67_u9_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u9_arrays.npz",
+        "sha256": "6a3bb6c62f95c240f808fd384b78a4cd1ef35d47f7d591decc30947546ee72e7"
+      },
+      "11_P67_u9_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_9.pt",
+        "sha256": "e16508243078f97674753fa63da67a612b98fce7f64c7ed69c066adb912a7a82"
+      },
+      "11_P67_u9_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+        "sha256": "18469d12c01a3f6e6b626b2ca5499c9bcffcc3103a48619cd8bae8dbfb2b53e5"
+      },
+      "11_P536_u0_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u0_result.json",
+        "sha256": "9f9c8b82b8665d8e69c8fc42cd4f5cfeeb54079db69d2d9be8efe366f9c9b394"
+      },
+      "11_P536_u0_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u0_arrays.npz",
+        "sha256": "6e5613dbc83d9291d1aac414971970909a78b0731a2478a651b381b315f096d4"
+      },
+      "11_P536_u0_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_0.pt",
+        "sha256": "89a2b31f2f2487819f8339fbcd29cceda0c8d3a5ab1bf7d946231198289f89cc"
+      },
+      "11_P536_u0_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+        "sha256": "073abc35cf382db8c7694eb254b9f3070dd7bc692aa23ec91ad30870c6d79f82"
+      },
+      "11_P536_u5_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u5_result.json",
+        "sha256": "24ccbfe1343b6cfc1a0bb97c42777891d62c1f599fb295a76adab8d8f52fcbc0"
+      },
+      "11_P536_u5_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u5_arrays.npz",
+        "sha256": "d72cfe59dcd56a9bfc713dc175b3d6f18d45991ca0a6cc952c67d1df86933935"
+      },
+      "11_P536_u5_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_5.pt",
+        "sha256": "dda39bb0ebf4435ecbd65910d8a285fb5ee387a817d488b989caf8a8832b6adb"
+      },
+      "11_P536_u5_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+        "sha256": "6faac59f153943f33d6865ac540f816fe961a35a7a9a236637da0a9ef101c863"
+      },
+      "11_P536_u9_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u9_result.json",
+        "sha256": "af37a0f9fe00738fa1e74113e0bb7b8651e9d4efb54ec06e2038e4b85ade0ef8"
+      },
+      "11_P536_u9_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u9_arrays.npz",
+        "sha256": "0b37e09c83ff5749bb49ce3b7bce308482c68cbcbf6d69c17d954750dde494ea"
+      },
+      "11_P536_u9_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_9.pt",
+        "sha256": "7ba6093d0f4fa907c27f51c1bc2ce5773881559e266d00d035cf3aa7a3fe9b6e"
+      },
+      "11_P536_u9_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+        "sha256": "2509a81e44ea8acaf410d0f0657736d1dfab9cb86f0ae590d8dc8e4c0528b460"
+      },
+      "23_P67_u0_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u0_result.json",
+        "sha256": "0226ed4b3dea27bb2fe300b6c3021259bb107ff86e27c1732219cba1c885a1fc"
+      },
+      "23_P67_u0_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u0_arrays.npz",
+        "sha256": "d5836a723bdd4eb71f82ac18c64d13556eb557ea3cea8d7c6d5d4fcf42f65cf3"
+      },
+      "23_P67_u0_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_0.pt",
+        "sha256": "fbe6f92dc055dec9a60cd68fa6689f0846f57a0c0d74ef0d584d7ff75287a896"
+      },
+      "23_P67_u0_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+        "sha256": "600897c37676d16217722f843e3a1e5eb580257df9bbfad5684d556bd21e4ee1"
+      },
+      "23_P67_u5_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u5_result.json",
+        "sha256": "ea99a071fb1e1679e1e66f0416211417a0bbb52bbdc46b8a7fe728eee890933d"
+      },
+      "23_P67_u5_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u5_arrays.npz",
+        "sha256": "9d7331509a9972f5f2a3ac70775ab0d5068141f8c0930ba69ef4b43994eabc3f"
+      },
+      "23_P67_u5_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_5.pt",
+        "sha256": "340638cb1105a0aafd21e5aced99827c977607b4b39ca274f312a93caabb617d"
+      },
+      "23_P67_u5_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+        "sha256": "c6e431eeaf855caa04fbcdeff50f7040944a5de38868b6d5d276eb1cab10b676"
+      },
+      "23_P67_u9_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u9_result.json",
+        "sha256": "3635b56de86bb04a7c688f48e37774d58e48127a778efbb5fafa5fbe66599928"
+      },
+      "23_P67_u9_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u9_arrays.npz",
+        "sha256": "d8ada51bbe6bdd2ea445f782ac8f2505d73a2c4d1a1149715dece5fb722fb254"
+      },
+      "23_P67_u9_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_9.pt",
+        "sha256": "6a4f41149044a530b43c395885fac9e82106e727302123de30d5df3109e4183c"
+      },
+      "23_P67_u9_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+        "sha256": "d3253627de41de9a573cf7df7bf32441c6d1377f502a508539b7f7f48e7df573"
+      },
+      "23_P536_u0_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u0_result.json",
+        "sha256": "dbe7ce6ef4554420bfc8e7c4c0671b4ce7eec38bbfe1a2adfb95a1bcb68c434e"
+      },
+      "23_P536_u0_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u0_arrays.npz",
+        "sha256": "3e2251182c184c3958729f7290e81f665d7b8d9f1aa48749103f09a8a74115ba"
+      },
+      "23_P536_u0_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_0.pt",
+        "sha256": "800ec41cede807d83234b0c7d06739cdf73471172968f05119dbbdb1a81e4987"
+      },
+      "23_P536_u0_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+        "sha256": "ccf3816ca20101e58904d2a193169fd1b48066d71d4cec87c717b7886796f37b"
+      },
+      "23_P536_u5_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u5_result.json",
+        "sha256": "a6440969ee8fa59ed8d10a5c92b75f2b0c0ee0f4f8192845eb73dc749df59705"
+      },
+      "23_P536_u5_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u5_arrays.npz",
+        "sha256": "9450082bdaaaa83db444076d23070d08efc31f6c6381a6f00857a6f1c473c677"
+      },
+      "23_P536_u5_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_5.pt",
+        "sha256": "d5249343e0a260b6d0c43aebc44a1edd88818403d0903b93831a708666665a8d"
+      },
+      "23_P536_u5_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+        "sha256": "35010c7bc41fa81da84931dc3b47859fd419dda6624ddaf34a97ca33aa2a1d6e"
+      },
+      "23_P536_u9_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u9_result.json",
+        "sha256": "174151eba012736a872248a5501ca197de97191a8bb49bb8c9a558ba1d5e7f92"
+      },
+      "23_P536_u9_arrays": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u9_arrays.npz",
+        "sha256": "f079ee15a28b3bd21fd0fdcc508e037b0337992b61d83aca74c3ffa0a22490b2"
+      },
+      "23_P536_u9_state": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_9.pt",
+        "sha256": "877d1dee278369e1fc28624d8c54209fe2d706630c926b8c15e88fe9f4eefbaf"
+      },
+      "23_P536_u9_geometry": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+        "sha256": "b2199a45d1d426976ef7e83abf734a1ad3ce9d911f7fe1630df6f7037ef0216d"
+      }
+    },
+    "protocol_immutable_file_sha_snapshot": {
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_exact_parameter_jacobian_qualification_metrics.json": "7c4017e791402b85eec77cd49045560e6b3ec462c9c4bbae4000945e4e7f1949",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\protocol.json": "004405540c9e4d9605aefddd0e2e52d601c173cfbde8230c6b619f6f58688ee9",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_exact_jacobian_runs_20261006\\protocol.json": "5987d7f22d83bd66c3d6f590d3543901f422ef0037c7e6d09170e5f51752b228",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\protocol.json": "41961dd45446b55778918e95187da6d1d892640c78fffb472ccc089f55e9785e",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\matrix.py": "1a8da2a878094ac9c86e30675541e6cb873e69deaf11a4effde2c3fe1678a86d",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\11_P67.pt": "d79c78b34e81a44f6a5ea1bebba1283bbf293c522e662f0c750b3cbcf425a381",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\11_P67.json": "2821ab8bf8a483f99f74722a7b5ec2dcfde287e1e3a9211330ffe18e6f406b29",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_exact_jacobian_runs_20261006\\seed11_P67_exact.npz": "8b1d825cd8871c2a247ae2494815e68d65936640e4631609d91a7f731ab865dc",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P67.pt": "264a8d189d53d49007d7de11d8cfb5382e8b8262e4b48068142c8771e293c834",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\11_P536.pt": "e7c4c07f53dc4b1598c29d29bb1e51a1704c22474c29f1ecd3070bdfc611a7e5",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\11_P536.json": "ae0ce01aa855c7658a569cf47973400c3345b0d136c4a4881dfc99aedb1ce41b",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_exact_jacobian_runs_20261006\\seed11_P536_exact.npz": "7a50fcaac9f42063c822aeffa2914c850bec2816c065e93da8c44ec6cddedc91",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P536.pt": "0ca0f77367214c171e6edf0576bdb043d64479245ad1a0e539fa11fb0cee542d",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_optimizers.py": "8983a381d73718d480488327d6c8a61080b83310c96e76165ffeccb25bba1d57",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_protocol.py": "203b98a654a843fcde88d4b14d06dbf3c356b5ff91a23b25acee9e4913a826e9",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\moo_aggregators.py": "f3b3d9b36d1ee8f6e998877b1673f1b6981601c0138afdc808da4505cc912b7e",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\dft_functionals\\PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\dft_functionals\\constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_training.py": "657975b2b57e1147224b3e42baccc319ad8bebb7ec5fa018942c698fb26e918f",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\train_lap_s5.py": "4d0763629c1d7f4db266ef7f9e156b20d1a6c3f5f2c7975ee4719e51bb3c6279",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\run_lap_pbe_predopt_reference.py": "a0b8842d8c6b3733cf6dd3897267d8570f4870922e51beee6a0e4d288294977a",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\predopt.py": "48dfd7f393110d5c3b61bdb37acbc30aed250b2cb99b184ca31f856d2e5eb3cb",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\predopt_targets.py": "5cda0a835a445352edf8b5fbdb386e453ddaedc21a33eb7b154bc156700516d2",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dataset.py": "c0f141bcd7dc824510ad85d1a0a4d040f3aac4b56e753d4422bea92b8275b768",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+      "C:\\Dev\\readWFN_share_ms\\lap_cursor10_geometry_runs_20261005\\analyze.py": "376b6ad7c3cdbaa55842be1ef77bdb7f0c23ca195ec1b2eef0e70d4000a892f3",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\window_metrics_raw.json": "f7b64b3f27856088eb742498c9619d6a437c616db0645ff95e1dfbf8bf8a6600",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_exact_parameter_jacobian_diagnostic.py": "b4775ae185b9f8cc593359b62903ea35e13845a5dd88ae8a7c3765a87e7ec9bf",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_parameter_sketch_diagnostic.py": "bfb4c21bbf2a727defe4169e60ae23b3f1ab17a8bcb9f4b4b1d45e60e06022a3",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_q_objective_coupling_diagnostic.py": "04feb158a7077db50f5240c9f56d7a68061fabd52b259ab27df5831e1776d0bb",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\q_probe.pt": "bcc3d01872d0181b197800e2a0295178224fe1d81e9ebfb2b8b8e2f64437b81a",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_controllability_runs_20261005\\window_arrays.pt": "447d747e26b5f0021afb245129414cafeee0a5d6e07064d7d2ecea36f95fc264",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P67.pt": "1cac6eb351372adab090c60f7daaf0013935857ed56648ccf0cd68b541b62666",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\23_P67.pt": "173703ef9c7d63fddfff58fabc31efbe96223b23dbb407ea38ea05473fcbe625",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\23_P67.json": "e85cb17bdf470d5248282aaa70e384f5abdc3de9ed02337237911b79b31f49b0",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P536.pt": "ca1d4df5cb84b66e17f9964d645de5d4f00fa9f5f3afede56fa632b5ff7057a7",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\arrays\\23_P536.pt": "cf1a6fd2f39a0788646a7f7a36f22ad6c4c91c21f31ba7a261832611f3917981",
+      "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\results\\23_P536.json": "499fe6567e9023c060604f9861fb2cc029c938c9982c8133b4dde7fac445573b",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_seed23_replication_runs_20261006\\seed23_P67_exact.npz": "ebce429e1f0f36a1193ae67a86f3a098fcf2d9f35d9367b6caf04d12de2b8e9e",
+      "C:\\Dev\\readWFN_share_ms\\lap_q_seed23_replication_runs_20261006\\seed23_P536_exact.npz": "4b90ec0f7483f2f4f9733d262b999e1b70d6179ee2d77b15539f59b814113ff6",
+      "C:\\Dev\\readWFN_share_ms\\lap_25_runs_20261005\\sampling_manifest_25.json": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc",
+      "C:\\Dev\\readWFN_share_ms\\lap_chem_full268_eval_runs_20261004\\sampling_manifest_268.json": "b47a7271b9cbbe696e735f6f332345d59812fb4dbe87bebca32556104e82c070",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mn_group_store_268\\manifest.json": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a",
+      "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\manifest.json": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+      "C:\\Dev\\readWFN_share_ms\\lap_moo_runs_20261001\\mrks_15system_ao_cache\\manifest.json": "60631c23d1683dcf7855ef5897464994addb990c1c8cf33ea2572adbf532a00a",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions.pickle": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\protocol.json": "65c0336fd17a9f5b3dab5c76d794cc0b7726253b4a6237897114476a7e56a743",
+      "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_symmetric_moo_trajectory_arena.py": "ff25e840b1268715c5f3ef0abaa3c3d129750d4fa3e5766dfb93fd70dd59bc7e",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\result.json": "b7d89bd3b7c518216af8f8258e820d279edcc9fac4ea7050c58f4b9bd95f22f9",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\checkpoint_0.pt": "250eaac59494a8cd3dd349dc08d81615ab63f5234e312da50a5b48b9c2c5142a",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\checkpoint_5.pt": "d7c04a7ab6ac400f4c5d313e96b3e5502c133d683b611937f7d3b06ec7be50fe",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\checkpoint_10.pt": "814f5b3b130fa595583376075fadba40522c22cd940401e2b4a4c711ddb09f9d",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_0_geometry.npz": "3d5fec762923b050ef7a8261097441c6f2b1815ed1085c3d665476b35ed028e3",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_0.pt": "221adc2267c21f4775cca5df8e4e8fb9001816de5dd1efdfc1158ee46b8200c1",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_1_geometry.npz": "5f452f64449ba4987a84e417b1e7e5c99d1046013ecee523520c9235de2b18ca",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_2_geometry.npz": "69da216e07f248b8c090fe416071bb5cf931fb597781127188192883399209dc",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_3_geometry.npz": "e77094f89d560000566f40dfac1857b906e539bd662ca85762414bac4cf22ffd",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_4_geometry.npz": "181e84c2255a745b63f73e360bb7de6bc78cfe8da1f94c5f4f9777e334e3eabb",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_5_geometry.npz": "9e9e2af012d1d2e380d882e7e23aab79865fd07831117854a01650c0f49adf61",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_5.pt": "fdfe7161bd3b167b346eb17b1751b65474cbf9fecfc227b305086cd7a45caed9",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_6_geometry.npz": "0c3bad670b35c509bc67f105e85520fcde95d860d479423133091f7a82062ba2",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_7_geometry.npz": "6ccd017e9ef6e8f67763ffa6aa49f62de9aa92057e3f461b1f57926715ebd546",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_8_geometry.npz": "7fb5b2f596b0861cd60b4b38d2d53d22ae10bcb01f991756f940a18d8e52907a",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_9_geometry.npz": "18469d12c01a3f6e6b626b2ca5499c9bcffcc3103a48619cd8bae8dbfb2b53e5",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_9.pt": "e16508243078f97674753fa63da67a612b98fce7f64c7ed69c066adb912a7a82",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\result.json": "8d37ec4253eff45a4abf60243eb7396c7b61670c849057fb0b8d11af0880864c",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\checkpoint_0.pt": "cd895c225082c386bf92782c9672702becbe0d9abced0b6d8cd1a3e649e4b676",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\checkpoint_5.pt": "1a817ea69205d154bfe875b2a2b295b5f36a60a5109d1eb54abb5bdc20e94be2",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\checkpoint_10.pt": "5b910a0be849bba2671fa25f193db95e06154a9b2faf230a48b85100e07125c1",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_0_geometry.npz": "073abc35cf382db8c7694eb254b9f3070dd7bc692aa23ec91ad30870c6d79f82",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_0.pt": "89a2b31f2f2487819f8339fbcd29cceda0c8d3a5ab1bf7d946231198289f89cc",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_1_geometry.npz": "f9a94bb0fbf78302d524ed8360cb4890b724499d9e110113c13e8cd94129c863",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_2_geometry.npz": "864155bd19b4f3295ce219b7d8926fa5f100daf5bc81fea7e59364d226a98667",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_3_geometry.npz": "f9e4b4a3c4423e3d2913e3f2e46f1bf3da14edcc4e30a9a1a3c2381acd159ba3",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_4_geometry.npz": "bb83ea8d27be2dc69e7420a89d83e9159c2dd8bccf2fac64cd6333385a1485e8",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_5_geometry.npz": "6faac59f153943f33d6865ac540f816fe961a35a7a9a236637da0a9ef101c863",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_5.pt": "dda39bb0ebf4435ecbd65910d8a285fb5ee387a817d488b989caf8a8832b6adb",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_6_geometry.npz": "0bbdd0e34b96b7b817569fcd868cd387c9a7b888bfaf27d7a749e90e557e2c10",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_7_geometry.npz": "da67d4d3ceb3f09cd97a28945f7657fa05386e75d42512af2ed34932e7be3582",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_8_geometry.npz": "162c196f37d837073b0359ee76837984ff526b90e91374375111ab1461717eca",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_9_geometry.npz": "2509a81e44ea8acaf410d0f0657736d1dfab9cb86f0ae590d8dc8e4c0528b460",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_9.pt": "7ba6093d0f4fa907c27f51c1bc2ce5773881559e266d00d035cf3aa7a3fe9b6e",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\result.json": "adbe7e57b00e547cccc4269d0b82779d6c41a86e4f4124d7021db9827aa44cbf",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\checkpoint_0.pt": "a7c8ef2f456d7319d6c29394c3a922790b12a8856755818fd0a9a49f2398da25",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\checkpoint_5.pt": "a353c0365ac96355297f5c72454d6a3341798f2ffa6bd2b8fa76456657dd4395",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\checkpoint_10.pt": "8dfc345f7287ff6f971190cc7b232af5e416a9212951aaa71ac30327c234ae0b",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_0_geometry.npz": "600897c37676d16217722f843e3a1e5eb580257df9bbfad5684d556bd21e4ee1",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_0.pt": "fbe6f92dc055dec9a60cd68fa6689f0846f57a0c0d74ef0d584d7ff75287a896",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_1_geometry.npz": "673b599b5d23a6336eceb050e50244c440980b12e7c9bdff895bbadcb10f3e0e",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_2_geometry.npz": "7bbeed3ce9e0259b6146bc9744f7afdb769d8319a7507ae52c15a5bfd2638f1f",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_3_geometry.npz": "e3daa405e85ada4509205dbf9a79f3fc2c43235fd57041574e81762fd5de2712",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_4_geometry.npz": "024aa6690c7555b989a743e281b16aad445f3c81fc02bed73c5f4fa5df3fee57",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_5_geometry.npz": "c6e431eeaf855caa04fbcdeff50f7040944a5de38868b6d5d276eb1cab10b676",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_5.pt": "340638cb1105a0aafd21e5aced99827c977607b4b39ca274f312a93caabb617d",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_6_geometry.npz": "154e11a41e627d6f8d2bfc85838619e4de9ebc3dc646cb2187659c451dd206df",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_7_geometry.npz": "9ae8f200473297cc6717b131bf379307f2ca289d2ae9aa9b55953105d073957f",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_8_geometry.npz": "717411be7519cbb43b07933cedf7980ccb2664786c3a22ea003ba163e007e90c",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_9_geometry.npz": "d3253627de41de9a573cf7df7bf32441c6d1377f502a508539b7f7f48e7df573",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_9.pt": "6a4f41149044a530b43c395885fac9e82106e727302123de30d5df3109e4183c",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\result.json": "c19714f44059314b8a604aca55690a47a7c29d62d41669dbcd8a941ad4f01467",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\checkpoint_0.pt": "b01198c0a38c40398ef1a13a1bff7e3d87fc8656d791e86dedeb74ecbcc155e1",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\checkpoint_5.pt": "228b49c850034e9b717cea07d10e0d98bce33bea8e32d6c9a6899f43918a96f3",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\checkpoint_10.pt": "b2139a0b9819392ad9c42ef270afc4c53c5219a779ec37fbc38be71e746d9d31",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_0_geometry.npz": "ccf3816ca20101e58904d2a193169fd1b48066d71d4cec87c717b7886796f37b",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_0.pt": "800ec41cede807d83234b0c7d06739cdf73471172968f05119dbbdb1a81e4987",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_1_geometry.npz": "007419cf8d17c5e2fb975c7743d3e189c79ea006921519a08ecab08c2510ce12",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_2_geometry.npz": "dc53fa41012bfffddf86e637b53ccbeca174ff1aecbc5465e765af6213de5569",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_3_geometry.npz": "95177eb88e188d2b232eda6f34c3690f727993302a76aff0ed37a4d656c250fe",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_4_geometry.npz": "f20a1daf257c63ac7e50871a74817357b4b1451818b56f3beb07bd44c1277d3e",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_5_geometry.npz": "35010c7bc41fa81da84931dc3b47859fd419dda6624ddaf34a97ca33aa2a1d6e",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_5.pt": "d5249343e0a260b6d0c43aebc44a1edd88818403d0903b93831a708666665a8d",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_6_geometry.npz": "717362aa47a77177d7d0aa23f25c3ae1ee69ce58fae307aa577ad61f3c28536d",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_7_geometry.npz": "7cb0e79d23897262b77824d1376dfc11e806dc17c6fb0af946a0fac3c2b3e6b6",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_8_geometry.npz": "071ee2253586b14e5639d0fd17e8b5aa0fd5237c1fed57d459527a3e6080183f",
+      "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_9_geometry.npz": "b2199a45d1d426976ef7e83abf734a1ad3ce9d911f7fe1630df6f7037ef0216d",
+      "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_9.pt": "877d1dee278369e1fc28624d8c54209fe2d706630c926b8c15e88fe9f4eefbaf"
+    },
+    "summary": {
+      "literal_frozen_classification": "CASE A",
+      "sample_descent_fullchem_nondescent_count": 6,
+      "case_a_states": [
+        "11_P67_u0",
+        "11_P536_u0",
+        "11_P536_u5",
+        "11_P536_u9",
+        "23_P67_u0",
+        "23_P536_u0"
+      ],
+      "positive_fullchem_slope_finite_nondescent_count": 0,
+      "case_b_states": [],
+      "neither_case_a_nor_case_b_state_count": 6,
+      "all_sample_slopes_positive": true,
+      "actual_eta_chemistry_ascent_count": 6,
+      "actual_requested_and_realized_prediction_sign_matches": 36,
+      "full_eta_resolved_count_under_frozen_rule": 12,
+      "counterfactual_common_descent_count": 12,
+      "counterfactual_non_degenerate_count": 12,
+      "counterfactual_full_eta_fullchem_descent_count": 12,
+      "median_rotation_degrees": 37.88870041783102,
+      "median_counterfactual_gamma_change": 0.02509602074444929,
+      "max_realized_first_order_remainder_from_saved_predictions": 1.8722851703257062e-10,
+      "max_relative_realized_first_order_remainder": 2.1794686836933667e-05,
+      "max_observed_repeatability_difference": 0.0
+    },
+    "independent_checks": {
+      "all_12_raw_gradient_matrices_bitwise_match_geometry": true,
+      "all_12_actual_unit_directions_bitwise_match_geometry": true,
+      "all_12_sample_full_norm_cosine_and_projection_fields_recomputed": true,
+      "all_12_fullchem_replacement_maxmin_qps_independently_solved_by_active_support_enumeration": true,
+      "all_12_counterfactual_vectors_match_saved_d_fullchem_within_4.1e-15_max_abs": true,
+      "all_12_counterfactual_margins_and_saved_gamma_consistent": true,
+      "all_36_requested_displacements_exact": true,
+      "all_36_f32_realized_displacements_replayed_exact": true,
+      "all_36_actual_after_state_sha256_replayed_exact": true,
+      "all_12_original_accepted_after_state_sha256_matched": true,
+      "all_12_counterfactual_f32_realized_predictions_and_after_hashes_replayed": true,
+      "all_trial_loss_deltas_equal_saved_loss_minus_baseline": true,
+      "no_functional_or_objective_evaluations_performed_by_reviewer": true
+    },
+    "provenance_and_validation": {
+      "committed_start": "d40bbcb5e7797728cdaedf5bcc6ef4950a4c85f4",
+      "committed_trajectory_anchor_receipt": {
+        "status": "PASS",
+        "commit": "d40bbcb5e7797728cdaedf5bcc6ef4950a4c85f4",
+        "committed_metrics_sha256": "4136e90c812d50428f1e3639d6b8225c7bcd9790428db2f787f365361974f5b9",
+        "trajectory_input_paths_checked": 57,
+        "protocol_anchor_matches": true,
+        "all12_before_state_receipts_match": true,
+        "mismatches": 0
+      },
+      "fullchem_variant_diagnostic_rows_matching_full268_database_id_suffix": 24,
+      "validation_receipt": {
+        "status": "PASS",
+        "tests": {
+          "passed": 128,
+          "skipped": 3,
+          "platform": "Windows/CUDA",
+          "skips": "Two native Gloo rendezvous tests and one four-task Gloo test are Linux-only; no production or DDP code was changed.",
+          "focused_diagnostic_tests": 9
+        },
+        "ruff": "PASS",
+        "compileall": "PASS",
+        "git_diff_check": "PASS",
+        "immutable_hashes_before_and_after": 124,
+        "hash_mismatches": 0,
+        "vector_receipts_checked": 12,
+        "committed_trajectory_files_anchored": 57,
+        "exact_accepted_after_state_replays": 12,
+        "restoration": "Bitwise equality of model tensors/digest and RNG asserted after every temporary trial; zero field records assertion success.",
+        "state_mutation": "NONE",
+        "production_source_changes": [],
+        "repository_state": "Only audit/report/test artifacts and their byte-preservation attributes changed; pre-existing untracked planning files preserved.",
+        "receipt_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\vector_receipt_validation.json",
+        "receipt_sha256": "faaaaea56549802357d2bae4266b971edcdc155bad5bd4d58516540c39c8c448"
+      },
+      "vector_receipt_validation": {
+        "status": "PASS",
+        "checked": 12,
+        "immutable_hashes_checked": 124,
+        "mismatches": 0,
+        "checks": [
+          {
+            "key": "11_P67_u0",
+            "status": "PASS",
+            "counterfactual_gamma": 0.24537682394061447,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "11_P67_u5",
+            "status": "PASS",
+            "counterfactual_gamma": 0.24537309010606959,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "11_P67_u9",
+            "status": "PASS",
+            "counterfactual_gamma": 0.24379974899932158,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "11_P536_u0",
+            "status": "PASS",
+            "counterfactual_gamma": 0.14771716872841573,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "11_P536_u5",
+            "status": "PASS",
+            "counterfactual_gamma": 0.14395544453758066,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "11_P536_u9",
+            "status": "PASS",
+            "counterfactual_gamma": 0.24965891264515894,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "23_P67_u0",
+            "status": "PASS",
+            "counterfactual_gamma": 0.1601006873909755,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "23_P67_u5",
+            "status": "PASS",
+            "counterfactual_gamma": 0.157051651620348,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "23_P67_u9",
+            "status": "PASS",
+            "counterfactual_gamma": 0.18150698461071232,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "23_P536_u0",
+            "status": "PASS",
+            "counterfactual_gamma": 0.18297126341063294,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "23_P536_u5",
+            "status": "PASS",
+            "counterfactual_gamma": 0.18134981445752288,
+            "maximum_repeatability_difference": 0.0
+          },
+          {
+            "key": "23_P536_u9",
+            "status": "PASS",
+            "counterfactual_gamma": 0.18331769660370736,
+            "maximum_repeatability_difference": 0.0
+          }
+        ]
+      },
+      "focused_tests": 9,
+      "test_summary": "128 passed, 3 Windows-only Gloo skips; Ruff, compileall and diff check passed."
+    },
+    "scientific_interpretation": {
+      "scope": "Descriptive local surrogate-fidelity result for these 12 fixed saved states and three prespecified positions on four starts.",
+      "not_established": [
+        "Estimator unbiasedness or generalization to other samples/states.",
+        "Causal attribution of the full ten-update endpoint regression.",
+        "A universally worsening trajectory trend; positions and stochastic samples change together.",
+        "Finite-step descent of all four objectives under the counterfactual direction.",
+        "Any trained or retained benefit from the counterfactual replacement."
+      ],
+      "zero_repeatability_floor": "Reported explicitly; the frozen signal predicate passes nonzero deltas because it uses >20*observed floor with floor=0. Do not reinterpret this as a separately measured noise tolerance.",
+      "pocock_lens": "No hypothesis test, p-value, confidence interval, or independent-sample claim is used. These repeated trajectory positions are descriptive; no sequential alpha-spending interpretation is warranted.",
+      "ponytail_lens": "Scope stayed bounded to saved arrays, one fullchem scalar gradient per state, three requested actual step scales and one CF eta; no new state, optimizer, database-level gradient, or follow-up experiment was run. The optional next-step text is unlaunched."
+    },
+    "nonblocking_editorial_note": "Consider scoping \u201cdominant bottleneck\u201d explicitly to the twelve audited states and labeling the unlaunched next experiment as optional. Nearby text already limits the inference; neither point changes CASE A or the numeric result.",
+    "blockers": [],
+    "reviewed_state_rows": [
+      {
+        "key": "11_P67_u0",
+        "p_sample": 0.33078094887003395,
+        "p_full": -0.1369093964992227,
+        "cos_sample_full": 0.4147170225491107,
+        "delta_eta": 1.0792788169844414e-05,
+        "delta_eta_half": 5.486162132140038e-06,
+        "delta_eta_quarter": 2.6648060262868256e-06,
+        "counterfactual_gamma": 0.24537682394061447,
+        "counterfactual_min_progress": 0.24537682394061427,
+        "counterfactual_delta_eta": -1.950812193585172e-05,
+        "rotation_degrees": 39.975674434941055
+      },
+      {
+        "key": "11_P67_u5",
+        "p_sample": 0.2230128767689937,
+        "p_full": 0.22843202098610427,
+        "cos_sample_full": 0.981470657596131,
+        "delta_eta": -1.810579735073148e-05,
+        "delta_eta_half": -8.958571085404543e-06,
+        "delta_eta_quarter": -4.409403460581274e-06,
+        "counterfactual_gamma": 0.24537309010606959,
+        "counterfactual_min_progress": 0.24537309010606825,
+        "counterfactual_delta_eta": -1.9506331375485075e-05,
+        "rotation_degrees": 23.08630398861325
+      },
+      {
+        "key": "11_P67_u9",
+        "p_sample": 0.13592622297539458,
+        "p_full": 0.04368071905009663,
+        "cos_sample_full": 0.8929980750903939,
+        "delta_eta": -3.412074179864888e-06,
+        "delta_eta_half": -1.8572975963859761e-06,
+        "delta_eta_quarter": -9.052681273491459e-07,
+        "counterfactual_gamma": 0.24379974899932158,
+        "counterfactual_min_progress": 0.24379974899932103,
+        "counterfactual_delta_eta": -1.939380356152931e-05,
+        "rotation_degrees": 68.3861486501543
+      },
+      {
+        "key": "11_P536_u0",
+        "p_sample": 0.31255714866612383,
+        "p_full": -0.2531552269447556,
+        "cos_sample_full": 0.7816602898136835,
+        "delta_eta": 1.5496144696092173e-05,
+        "delta_eta_half": 7.757665267282832e-06,
+        "delta_eta_quarter": 3.827073787210367e-06,
+        "counterfactual_gamma": 0.14771716872841573,
+        "counterfactual_min_progress": 0.14771716872841503,
+        "counterfactual_delta_eta": -9.100115449189872e-06,
+        "rotation_degrees": 53.039171469411514
+      },
+      {
+        "key": "11_P536_u5",
+        "p_sample": 0.2252839785706267,
+        "p_full": -0.0984776150592121,
+        "cos_sample_full": 0.7715874932448405,
+        "delta_eta": 6.097680715688725e-06,
+        "delta_eta_half": 3.0852244217172142e-06,
+        "delta_eta_quarter": 1.5165730047339565e-06,
+        "counterfactual_gamma": 0.14395544453758066,
+        "counterfactual_min_progress": 0.14395544453758016,
+        "counterfactual_delta_eta": -8.84881985840913e-06,
+        "rotation_degrees": 33.735868517311864
+      },
+      {
+        "key": "11_P536_u9",
+        "p_sample": 0.11992251635572398,
+        "p_full": -0.23742060581586827,
+        "cos_sample_full": 0.7587364925619731,
+        "delta_eta": 1.452276059787927e-05,
+        "delta_eta_half": 7.247677002553132e-06,
+        "delta_eta_quarter": 3.5795674899752328e-06,
+        "counterfactual_gamma": 0.24965891264515894,
+        "counterfactual_min_progress": 0.24965891264515835,
+        "counterfactual_delta_eta": -1.5280649086069076e-05,
+        "rotation_degrees": 91.50666431152327
+      },
+      {
+        "key": "23_P67_u0",
+        "p_sample": 0.7815416169917501,
+        "p_full": -0.6709432962473274,
+        "cos_sample_full": -0.10434520568653667,
+        "delta_eta": 7.377488226145701e-05,
+        "delta_eta_half": 3.6829893188761176e-05,
+        "delta_eta_quarter": 1.845022842195121e-05,
+        "counterfactual_gamma": 0.1601006873909755,
+        "counterfactual_min_progress": 0.1601006873909748,
+        "counterfactual_delta_eta": -1.7565530256780093e-05,
+        "rotation_degrees": 62.818394201885525
+      },
+      {
+        "key": "23_P67_u5",
+        "p_sample": 0.09550901935769668,
+        "p_full": 0.10477415949421756,
+        "cos_sample_full": 0.9541228673524347,
+        "delta_eta": -1.1536390166488886e-05,
+        "delta_eta_half": -5.7117443545973146e-06,
+        "delta_eta_quarter": -2.850496567230465e-06,
+        "counterfactual_gamma": 0.157051651620348,
+        "counterfactual_min_progress": 0.15705165162034432,
+        "counterfactual_delta_eta": -1.720917538938771e-05,
+        "rotation_degrees": 35.80172640072097
+      },
+      {
+        "key": "23_P67_u9",
+        "p_sample": 0.07453456353458313,
+        "p_full": 0.06854598901677536,
+        "cos_sample_full": 0.9442564335276382,
+        "delta_eta": -7.568270883773209e-06,
+        "delta_eta_half": -3.672376588159665e-06,
+        "delta_eta_quarter": -1.8888724750976138e-06,
+        "counterfactual_gamma": 0.18150698461071232,
+        "counterfactual_min_progress": 0.18150698461071155,
+        "counterfactual_delta_eta": -1.9908487826292287e-05,
+        "rotation_degrees": 66.70714590963483
+      },
+      {
+        "key": "23_P536_u0",
+        "p_sample": 0.42061846725022756,
+        "p_full": -0.10507680020995498,
+        "cos_sample_full": 0.8228086962687524,
+        "delta_eta": 1.6460716163679834e-05,
+        "delta_eta_half": 8.364525649007248e-06,
+        "delta_eta_quarter": 4.212704765027553e-06,
+        "counterfactual_gamma": 0.18297126341063294,
+        "counterfactual_min_progress": 0.1829712634106324,
+        "counterfactual_delta_eta": -2.8860082667003795e-05,
+        "rotation_degrees": 21.784925309704917
+      },
+      {
+        "key": "23_P536_u5",
+        "p_sample": 0.1535179863056969,
+        "p_full": 0.15170120429693376,
+        "cos_sample_full": 0.9793659952623451,
+        "delta_eta": -2.384127341081843e-05,
+        "delta_eta_half": -1.1917477092948658e-05,
+        "delta_eta_quarter": -5.911310031248007e-06,
+        "counterfactual_gamma": 0.18134981445752288,
+        "counterfactual_min_progress": 0.18134981445752105,
+        "counterfactual_delta_eta": -2.860445346630769e-05,
+        "rotation_degrees": 26.162543035887104
+      },
+      {
+        "key": "23_P536_u9",
+        "p_sample": 0.07418704691739136,
+        "p_full": 0.22668673148334323,
+        "cos_sample_full": 0.9663886366094703,
+        "delta_eta": -3.566487772621585e-05,
+        "delta_eta_half": -1.7753872477932475e-05,
+        "delta_eta_quarter": -8.936571396667148e-06,
+        "counterfactual_gamma": 0.18331769660370736,
+        "counterfactual_min_progress": 0.1833176966037073,
+        "counterfactual_delta_eta": -2.8930779598645984e-05,
+        "rotation_degrees": 34.69863291600081
+      }
+    ]
+  },
+  "external_analysis_source_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\summarize.py",
+  "external_analysis_source_sha256": "91ca84d6dd891c84a6808a594aa0df9665d073dcb1b33cbfada42a731ab91323",
+  "committed_trajectory_anchor": {
+    "status": "PASS",
+    "commit": "d40bbcb5e7797728cdaedf5bcc6ef4950a4c85f4",
+    "committed_metrics_sha256": "4136e90c812d50428f1e3639d6b8225c7bcd9790428db2f787f365361974f5b9",
+    "trajectory_input_paths_checked": 57,
+    "protocol_anchor_matches": true,
+    "all12_before_state_receipts_match": true,
+    "mismatches": 0
+  },
+  "external_receipts": {
+    "committed_trajectory_anchor_validation.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\committed_trajectory_anchor_validation.json",
+      "sha256": "06592afdd9d834bb40ce0aca77d9d3be4f0ad0b79460b8dcd2444f45a116473f"
+    },
+    "variant_identity_diagnostic.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\variant_identity_diagnostic.json",
+      "sha256": "555ca658b02088b0a5ef2864a1fdd59896ea999b754b20aa68364e734e27693c"
+    },
+    "vector_receipt_validation.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\vector_receipt_validation.json",
+      "sha256": "faaaaea56549802357d2bae4266b971edcdc155bad5bd4d58516540c39c8c448"
+    },
+    "validation.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\validation.json",
+      "sha256": "9a1ec7aef01f8be9b80b80cfe030d355e2fb308739e52da6b5c0e74fe4f61ea7"
+    },
+    "review.json": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\review.json",
+      "sha256": "4e9f432dbda43c9c3a31718ffe122b706ae3d44c79936cc765f620f54d073cb7"
+    }
+  },
+  "sample_variant_identity": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\variant_identity_diagnostic.json",
+    "sha256": "555ca658b02088b0a5ef2864a1fdd59896ea999b754b20aa68364e734e27693c",
+    "same_variants": "All8 listed reactions at each of updates0/5/9 match the full251 canonical variants; all weights equal database group counts/251."
+  }
+}
