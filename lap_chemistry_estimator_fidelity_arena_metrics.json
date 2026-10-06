@@ -1,0 +1,3341 @@
+{
+  "starting_commit": "bc3aa4f5e684e0e79b4c71288ce0b751114322e0",
+  "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+  "replicate_manifest_sha256": "59913c53189401e92bcfbd40c07763e598519bd4021f3b0c50fa63669bca9e29",
+  "parameter_count": 9446,
+  "task_order": [
+    "relchem",
+    "ae17",
+    "exc",
+    "op"
+  ],
+  "small_database_policy": "strict",
+  "selection": "NO K\u22648 QUALIFIES",
+  "summary": [
+    {
+      "K": 1,
+      "status": "EVALUATED",
+      "replicates": 192,
+      "descent_count": 39,
+      "fullchem_descent_fraction": 0.203125,
+      "per_state_descent_fraction": {
+        "11_P67_u0": 0.1875,
+        "11_P67_u5": 0.1875,
+        "11_P67_u9": 0.25,
+        "11_P536_u0": 0.0,
+        "11_P536_u5": 0.0,
+        "11_P536_u9": 0.125,
+        "23_P67_u0": 0.25,
+        "23_P67_u5": 0.25,
+        "23_P67_u9": 0.25,
+        "23_P536_u0": 0.3125,
+        "23_P536_u5": 0.3125,
+        "23_P536_u9": 0.3125
+      },
+      "cosine": {
+        "min": -0.8661175735843207,
+        "p05": -0.7236643513135311,
+        "median": 0.4503752877293986
+      },
+      "p_full": {
+        "min": -0.9853837193669607,
+        "p05": -0.8938779234565628,
+        "median": -0.39136438157421194
+      },
+      "median_gamma": 0.5506660579061606,
+      "unit_maxmin_solver_qualified": true,
+      "catastrophic_negative_tail_count": 151,
+      "reaction_evaluations_per_replicate": 8,
+      "evaluation_count_ratio_to_K1": 1.0,
+      "evaluation_count_ratio_to_FULL251": 0.03187250996015936,
+      "qualifies": false,
+      "failures": [
+        {
+          "key": "11_P67_u0",
+          "replicate": 0,
+          "p_full": -0.4464440384650232,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 1,
+          "p_full": -0.08678847117801408,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 2,
+          "p_full": -0.37327522375072086,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 3,
+          "p_full": -0.23214645973349113,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 4,
+          "p_full": -0.5281360302821874,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 5,
+          "p_full": -0.8279387442775793,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 6,
+          "p_full": -0.44018672628477146,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 8,
+          "p_full": -0.5586811796649784,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 9,
+          "p_full": -0.33033942993353754,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 10,
+          "p_full": -0.13529105699755267,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 11,
+          "p_full": -0.09307049818680901,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 13,
+          "p_full": -0.4625279314241773,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 14,
+          "p_full": -0.7039738272233577,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 0,
+          "p_full": -0.4464486472487381,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 1,
+          "p_full": -0.06772312661517417,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 2,
+          "p_full": -0.3732726434481088,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 3,
+          "p_full": -0.23214333134925788,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 4,
+          "p_full": -0.5281357276024752,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 5,
+          "p_full": -0.8193397879161176,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 6,
+          "p_full": -0.44018746283010446,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 8,
+          "p_full": -0.5608718707542466,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 9,
+          "p_full": -0.3128638639341652,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 10,
+          "p_full": -0.05628001093614494,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 11,
+          "p_full": -0.08462391825751371,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 13,
+          "p_full": -0.4625263887920815,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 14,
+          "p_full": -0.7079718229963045,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 0,
+          "p_full": -0.4481790163438139,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 2,
+          "p_full": -0.3752813261923556,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 3,
+          "p_full": -0.23375912588031614,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 4,
+          "p_full": -0.5298948297410572,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 5,
+          "p_full": -0.9225026420943637,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 6,
+          "p_full": -0.4418598931312995,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 8,
+          "p_full": -0.5427101635242246,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 9,
+          "p_full": -0.38497771917738527,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 10,
+          "p_full": -0.25748954854579353,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 11,
+          "p_full": -0.034709217881386936,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 13,
+          "p_full": -0.4642865744653208,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 14,
+          "p_full": -0.7044215259659046,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 0,
+          "p_full": -0.6684406181318427,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 1,
+          "p_full": -0.00976785437352243,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 2,
+          "p_full": -0.6828573158891134,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 3,
+          "p_full": -0.34951429005228285,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 4,
+          "p_full": -0.8992652244785012,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 5,
+          "p_full": -0.8263268378340305,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 6,
+          "p_full": -0.6857945794644283,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 7,
+          "p_full": -0.03760618389462359,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 8,
+          "p_full": -0.7037485829149892,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 9,
+          "p_full": -0.600353252387308,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 10,
+          "p_full": -0.2584164136968542,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 11,
+          "p_full": -0.02957310127447829,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 12,
+          "p_full": -0.03998745762678332,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 13,
+          "p_full": -0.8090075541307319,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 14,
+          "p_full": -0.8894505985252272,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 15,
+          "p_full": -0.26827516121501066,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 0,
+          "p_full": -0.6888171588568622,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 1,
+          "p_full": -0.03331048242624861,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 2,
+          "p_full": -0.6828506451471495,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 3,
+          "p_full": -0.36490874618199143,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 4,
+          "p_full": -0.8992662153610584,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 5,
+          "p_full": -0.8214147860681683,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 6,
+          "p_full": -0.6857974302179753,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 7,
+          "p_full": -0.052490073523765765,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 8,
+          "p_full": -0.7187955511930606,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 9,
+          "p_full": -0.6073791387263017,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 10,
+          "p_full": -0.2540228673164121,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 11,
+          "p_full": -0.038061541122526854,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 12,
+          "p_full": -0.03999017042239639,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 13,
+          "p_full": -0.8090077914862641,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 14,
+          "p_full": -0.8894532018081183,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 15,
+          "p_full": -0.2766685929579647,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 0,
+          "p_full": -0.6224005727117585,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 2,
+          "p_full": -0.6830418446114327,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 3,
+          "p_full": -0.17076474389951538,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 4,
+          "p_full": -0.8995262054465661,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 5,
+          "p_full": -0.7741070869741509,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 6,
+          "p_full": -0.6856730832610823,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 7,
+          "p_full": -0.021705677155932086,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 8,
+          "p_full": -0.5538248494775245,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 9,
+          "p_full": -0.4876268029804033,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 10,
+          "p_full": -0.01844753826057684,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 12,
+          "p_full": -0.039318631360640705,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 13,
+          "p_full": -0.8091660741313552,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 14,
+          "p_full": -0.8894701317113405,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 15,
+          "p_full": -0.07499652402416657,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 0,
+          "p_full": -0.5252735706317814,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 2,
+          "p_full": -0.1794879867265541,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 3,
+          "p_full": -0.5537474916491808,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 4,
+          "p_full": -0.8797954196423242,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 5,
+          "p_full": -0.9286795809236614,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 6,
+          "p_full": -0.4087577668305131,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 8,
+          "p_full": -0.8613474261593503,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 9,
+          "p_full": -0.669907408542529,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 10,
+          "p_full": -0.4914994287508354,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 13,
+          "p_full": -0.5060483885545022,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 14,
+          "p_full": -0.844816559828125,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 15,
+          "p_full": -0.28464519778342234,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 0,
+          "p_full": -0.5252728191389398,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 2,
+          "p_full": -0.17948929113177184,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 3,
+          "p_full": -0.5576384647452252,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 4,
+          "p_full": -0.8797995816968199,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 5,
+          "p_full": -0.9262269472749628,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 6,
+          "p_full": -0.4087568574957415,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 8,
+          "p_full": -0.8621015105663467,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 9,
+          "p_full": -0.6699095542312987,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 10,
+          "p_full": -0.489555805783324,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 13,
+          "p_full": -0.5060504664249654,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 14,
+          "p_full": -0.844818318921534,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 15,
+          "p_full": -0.29204157657097884,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 0,
+          "p_full": -0.5252755128795819,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 2,
+          "p_full": -0.1794926418398038,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 3,
+          "p_full": -0.5431967754782572,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 4,
+          "p_full": -0.8798039410717025,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 5,
+          "p_full": -0.9036149122011146,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 6,
+          "p_full": -0.408759290283635,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 8,
+          "p_full": -0.8489539106814508,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 9,
+          "p_full": -0.6699134076311614,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 10,
+          "p_full": -0.41592027606121507,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 13,
+          "p_full": -0.5060546651307832,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 14,
+          "p_full": -0.8448213124238008,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 15,
+          "p_full": -0.2643874531826186,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 0,
+          "p_full": -0.3977510439710386,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 3,
+          "p_full": -0.5351868233510845,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 4,
+          "p_full": -0.32905282674028663,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 5,
+          "p_full": -0.9853837193669607,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 6,
+          "p_full": -0.23733993345476806,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 8,
+          "p_full": -0.8326442070948223,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 9,
+          "p_full": -0.6042232027897978,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 10,
+          "p_full": -0.2148165838011403,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 13,
+          "p_full": -0.1682328513735299,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 14,
+          "p_full": -0.7613594924215877,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 15,
+          "p_full": -0.30738789679218703,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 0,
+          "p_full": -0.3977521417397033,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 3,
+          "p_full": -0.5450669826752752,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 4,
+          "p_full": -0.32905350804350464,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 5,
+          "p_full": -0.9846405847248064,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 6,
+          "p_full": -0.23734064081614167,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 8,
+          "p_full": -0.8386792395540966,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 9,
+          "p_full": -0.6042253974974282,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 10,
+          "p_full": -0.23534632427756197,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 13,
+          "p_full": -0.16823352361633256,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 14,
+          "p_full": -0.7613602471107305,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 15,
+          "p_full": -0.31888194428611016,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 0,
+          "p_full": -0.3977550659312686,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 3,
+          "p_full": -0.5414601119759904,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 4,
+          "p_full": -0.3290555929756527,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 5,
+          "p_full": -0.9769595045237995,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 6,
+          "p_full": -0.23734248712516312,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 8,
+          "p_full": -0.8364512649465631,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 9,
+          "p_full": -0.6042283774774417,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 10,
+          "p_full": -0.1536654319864375,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 13,
+          "p_full": -0.16823510247955661,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 14,
+          "p_full": -0.7613631125037739,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 15,
+          "p_full": -0.28551380540536664,
+          "solver_qualified": true
+        }
+      ],
+      "summed_singleton_runtime_ratio_to_K1": 1.0,
+      "summed_singleton_runtime_ratio_to_projected_FULL251": 0.037218830192560476
+    },
+    {
+      "K": 2,
+      "status": "EVALUATED",
+      "replicates": 192,
+      "descent_count": 43,
+      "fullchem_descent_fraction": 0.22395833333333334,
+      "per_state_descent_fraction": {
+        "11_P67_u0": 0.1875,
+        "11_P67_u5": 0.1875,
+        "11_P67_u9": 0.1875,
+        "11_P536_u0": 0.0625,
+        "11_P536_u5": 0.0625,
+        "11_P536_u9": 0.125,
+        "23_P67_u0": 0.125,
+        "23_P67_u5": 0.125,
+        "23_P67_u9": 0.125,
+        "23_P536_u0": 0.5,
+        "23_P536_u5": 0.5,
+        "23_P536_u9": 0.5
+      },
+      "cosine": {
+        "min": -0.6985881570195198,
+        "p05": -0.21160787004646184,
+        "median": 0.6519425921102151
+      },
+      "p_full": {
+        "min": -0.8634494247769181,
+        "p05": -0.7389028104929714,
+        "median": -0.24913961939837065
+      },
+      "median_gamma": 0.3875884859784557,
+      "unit_maxmin_solver_qualified": true,
+      "catastrophic_negative_tail_count": 146,
+      "reaction_evaluations_per_replicate": 16,
+      "evaluation_count_ratio_to_K1": 2.0,
+      "evaluation_count_ratio_to_FULL251": 0.06374501992031872,
+      "qualifies": false,
+      "failures": [
+        {
+          "key": "11_P67_u0",
+          "replicate": 0,
+          "p_full": -0.6089110023241783,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 2,
+          "p_full": -0.24034690664183905,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 4,
+          "p_full": -0.3279489769956406,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 5,
+          "p_full": -0.6107675694252119,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 6,
+          "p_full": -0.4355132691831094,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 7,
+          "p_full": -0.2534309186522817,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 8,
+          "p_full": -0.045231131431704596,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 9,
+          "p_full": -0.10094458509709647,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 10,
+          "p_full": -0.38005769283489277,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 11,
+          "p_full": -0.1320134003678927,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 12,
+          "p_full": -0.16956846849528276,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 13,
+          "p_full": -0.21466533784514752,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 14,
+          "p_full": -0.5287302087597453,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 0,
+          "p_full": -0.6076359360169029,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 2,
+          "p_full": -0.24034238054524923,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 4,
+          "p_full": -0.32794697013072044,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 5,
+          "p_full": -0.6027764565688121,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 6,
+          "p_full": -0.43645280932513797,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 7,
+          "p_full": -0.2534284259679396,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 8,
+          "p_full": -0.0483063263812196,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 9,
+          "p_full": -0.100599811061375,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 10,
+          "p_full": -0.2836385876805197,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 11,
+          "p_full": -0.13201341785794676,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 12,
+          "p_full": -0.12225630956281561,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 13,
+          "p_full": -0.214659954469101,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 14,
+          "p_full": -0.5287301032223889,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 0,
+          "p_full": -0.6033384135054334,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 2,
+          "p_full": -0.2424396477671594,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 4,
+          "p_full": -0.3299530690175768,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 5,
+          "p_full": -0.5719668242950797,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 6,
+          "p_full": -0.4289019575287064,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 7,
+          "p_full": -0.255563352765132,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 8,
+          "p_full": -0.07418433539950037,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 9,
+          "p_full": -0.10651304510980564,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 10,
+          "p_full": -0.46825026399232716,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 11,
+          "p_full": -0.13418878912121707,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 12,
+          "p_full": -0.24213241722363715,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 13,
+          "p_full": -0.21661453699060823,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 14,
+          "p_full": -0.5302913605562484,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 0,
+          "p_full": -0.7251295222013551,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 1,
+          "p_full": -0.4382914928444284,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 2,
+          "p_full": -0.37108446484155266,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 3,
+          "p_full": -0.04805978567860157,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 4,
+          "p_full": -0.6127509816151863,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 5,
+          "p_full": -0.5109059454362425,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 6,
+          "p_full": -0.5864008247463304,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 7,
+          "p_full": -0.689475077993965,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 8,
+          "p_full": -0.5998486794141253,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 9,
+          "p_full": -0.34304206333733595,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 10,
+          "p_full": -0.38047507197695285,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 11,
+          "p_full": -0.5760367811639417,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 12,
+          "p_full": -0.24168508867291838,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 13,
+          "p_full": -0.18218728467798156,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 14,
+          "p_full": -0.8633685401024637,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 0,
+          "p_full": -0.7390556948846726,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 1,
+          "p_full": -0.4382848149817884,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 2,
+          "p_full": -0.3710703948241581,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 3,
+          "p_full": -0.05522256662813235,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 4,
+          "p_full": -0.6127464144193195,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 5,
+          "p_full": -0.5009125227137744,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 6,
+          "p_full": -0.5939870056927283,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 7,
+          "p_full": -0.6894744161983015,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 8,
+          "p_full": -0.6073989729845592,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 9,
+          "p_full": -0.3627692088663304,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 10,
+          "p_full": -0.3705811054673953,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 11,
+          "p_full": -0.5760359624269766,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 12,
+          "p_full": -0.24218629703163613,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 13,
+          "p_full": -0.1821738264977827,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 14,
+          "p_full": -0.8633710442773126,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 0,
+          "p_full": -0.5892486270316891,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 1,
+          "p_full": -0.43940236699309604,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 2,
+          "p_full": -0.3710661843062971,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 4,
+          "p_full": -0.6129583621321871,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 5,
+          "p_full": -0.44734585352324746,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 6,
+          "p_full": -0.46813956943678237,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 7,
+          "p_full": -0.6902973417930829,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 8,
+          "p_full": -0.4797015982919816,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 9,
+          "p_full": -0.2969039601895058,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 10,
+          "p_full": -0.08759410652537941,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 11,
+          "p_full": -0.5769560108398638,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 12,
+          "p_full": -0.08268646751709116,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 13,
+          "p_full": -0.1821734572620036,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 14,
+          "p_full": -0.8634494247769181,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 0,
+          "p_full": -0.8516501801220844,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 1,
+          "p_full": -0.013205735246503111,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 2,
+          "p_full": -0.07656849343308329,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 4,
+          "p_full": -0.09466731885136656,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 5,
+          "p_full": -0.571625528232774,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 6,
+          "p_full": -0.6206192544043928,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 7,
+          "p_full": -0.2106955114254261,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 8,
+          "p_full": -0.6980503495487953,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 9,
+          "p_full": -0.24913834515687583,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 10,
+          "p_full": -0.5456834821089572,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 11,
+          "p_full": -0.13319313475933608,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 12,
+          "p_full": -0.5796884660953537,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 13,
+          "p_full": -0.13570507424588543,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 14,
+          "p_full": -0.6749863374821614,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 0,
+          "p_full": -0.8541472705869746,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 1,
+          "p_full": -0.013210929957770052,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 2,
+          "p_full": -0.0765715617231231,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 4,
+          "p_full": -0.09466953477489097,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 5,
+          "p_full": -0.562618993240714,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 6,
+          "p_full": -0.6206202114020269,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 7,
+          "p_full": -0.21069651059885725,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 8,
+          "p_full": -0.7004498449675892,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 9,
+          "p_full": -0.249138500275256,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 10,
+          "p_full": -0.5417902589141217,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 11,
+          "p_full": -0.13319358558982766,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 12,
+          "p_full": -0.5835968028541815,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 13,
+          "p_full": -0.13814512729106804,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 14,
+          "p_full": -0.6749864805731702,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 0,
+          "p_full": -0.8422099291386458,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 1,
+          "p_full": -0.013217106543735327,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 2,
+          "p_full": -0.07657641267257272,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 4,
+          "p_full": -0.09467301974127969,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 5,
+          "p_full": -0.5132788836663614,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 6,
+          "p_full": -0.620624104146328,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 7,
+          "p_full": -0.21069928494764897,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 8,
+          "p_full": -0.6493884571272968,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 9,
+          "p_full": -0.2491407385214853,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 10,
+          "p_full": -0.474140915936247,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 11,
+          "p_full": -0.13319591513278242,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 12,
+          "p_full": -0.5362909828961057,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 13,
+          "p_full": -0.12405566250129461,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 14,
+          "p_full": -0.6749896291394283,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 0,
+          "p_full": -0.8236275828599448,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 5,
+          "p_full": -0.7387777232633976,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 6,
+          "p_full": -0.5363000657190072,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 8,
+          "p_full": -0.6307999480957774,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 9,
+          "p_full": -0.07119069934715111,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 10,
+          "p_full": -0.5310305015394214,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 12,
+          "p_full": -0.2229811740677403,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 14,
+          "p_full": -0.542049130747552,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 0,
+          "p_full": -0.8229556005317548,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 5,
+          "p_full": -0.7288848135123827,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 6,
+          "p_full": -0.5363017351471041,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 8,
+          "p_full": -0.6333596323855434,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 9,
+          "p_full": -0.07119131298265756,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 10,
+          "p_full": -0.5284386884763413,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 12,
+          "p_full": -0.23457241716160487,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 14,
+          "p_full": -0.5420494901632296,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 0,
+          "p_full": -0.8221143906479554,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 5,
+          "p_full": -0.7167698970018537,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 6,
+          "p_full": -0.5363050205247816,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 8,
+          "p_full": -0.6308053000140512,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 9,
+          "p_full": -0.07119269935927507,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 10,
+          "p_full": -0.45782633882119944,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 12,
+          "p_full": -0.22249547837305805,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 14,
+          "p_full": -0.5420526612854779,
+          "solver_qualified": true
+        }
+      ],
+      "summed_singleton_runtime_ratio_to_K1": 1.982079783342179,
+      "summed_singleton_runtime_ratio_to_projected_FULL251": 0.07380763163044322
+    },
+    {
+      "K": 4,
+      "status": "EVALUATED",
+      "replicates": 192,
+      "descent_count": 110,
+      "fullchem_descent_fraction": 0.5729166666666666,
+      "per_state_descent_fraction": {
+        "11_P67_u0": 0.6875,
+        "11_P67_u5": 0.6875,
+        "11_P67_u9": 0.625,
+        "11_P536_u0": 0.5,
+        "11_P536_u5": 0.4375,
+        "11_P536_u9": 0.5625,
+        "23_P67_u0": 0.5,
+        "23_P67_u5": 0.5,
+        "23_P67_u9": 0.5,
+        "23_P536_u0": 0.625,
+        "23_P536_u5": 0.625,
+        "23_P536_u9": 0.625
+      },
+      "cosine": {
+        "min": -0.7110763505898444,
+        "p05": -0.4114716559970959,
+        "median": 0.9175874674176849
+      },
+      "p_full": {
+        "min": -0.9350562999547969,
+        "p05": -0.7274529366840395,
+        "median": 0.054256302121129626
+      },
+      "median_gamma": 0.23959158343443443,
+      "unit_maxmin_solver_qualified": true,
+      "catastrophic_negative_tail_count": 74,
+      "reaction_evaluations_per_replicate": 32,
+      "evaluation_count_ratio_to_K1": 4.0,
+      "evaluation_count_ratio_to_FULL251": 0.12749003984063745,
+      "qualifies": false,
+      "failures": [
+        {
+          "key": "11_P67_u0",
+          "replicate": 6,
+          "p_full": -0.06623202689515922,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 7,
+          "p_full": -0.12943943296590074,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 10,
+          "p_full": -0.638078224222768,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 12,
+          "p_full": -0.09496083153156974,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u0",
+          "replicate": 14,
+          "p_full": -0.24285339259191296,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 6,
+          "p_full": -0.07033337214545546,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 7,
+          "p_full": -0.1294370128052428,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 10,
+          "p_full": -0.5863163177657625,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 12,
+          "p_full": -0.09496295760982898,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u5",
+          "replicate": 14,
+          "p_full": -0.24285267273540515,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 6,
+          "p_full": -0.1341425975056363,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 7,
+          "p_full": -0.13176123642228563,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 8,
+          "p_full": -0.12960222278624478,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 10,
+          "p_full": -0.6484315162307498,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 12,
+          "p_full": -0.09669563835204067,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P67_u9",
+          "replicate": 14,
+          "p_full": -0.24490712946818802,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 0,
+          "p_full": -0.1343263017486978,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 6,
+          "p_full": -0.5688672059457084,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 7,
+          "p_full": -0.37118319602025074,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 8,
+          "p_full": -0.3449349875462857,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 10,
+          "p_full": -0.5819420601564876,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 12,
+          "p_full": -0.10567125895136333,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 13,
+          "p_full": -0.14626900960428402,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u0",
+          "replicate": 14,
+          "p_full": -0.6907864950836641,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 0,
+          "p_full": -0.1270171796966959,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 2,
+          "p_full": -0.00375712818477518,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 6,
+          "p_full": -0.5842149559348387,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 7,
+          "p_full": -0.3711778375115947,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 8,
+          "p_full": -0.3579190173772212,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 10,
+          "p_full": -0.5991843812668093,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 12,
+          "p_full": -0.11683664462616632,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 13,
+          "p_full": -0.1462660830002362,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u5",
+          "replicate": 14,
+          "p_full": -0.6907880459111894,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 0,
+          "p_full": -0.012045024467447735,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 6,
+          "p_full": -0.40840225819993115,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 7,
+          "p_full": -0.3718136571457685,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 8,
+          "p_full": -0.12199212471414894,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 10,
+          "p_full": -0.3597053579298017,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 13,
+          "p_full": -0.145921045647715,
+          "solver_qualified": true
+        },
+        {
+          "key": "11_P536_u9",
+          "replicate": 14,
+          "p_full": -0.6912828081350505,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 0,
+          "p_full": -0.2933278188158509,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 6,
+          "p_full": -0.7666132604805369,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 7,
+          "p_full": -0.04016490760735673,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 8,
+          "p_full": -0.5069543967411919,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 10,
+          "p_full": -0.8711629849412436,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 12,
+          "p_full": -0.12160560985703715,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 13,
+          "p_full": -0.0001256073610428921,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u0",
+          "replicate": 14,
+          "p_full": -0.10622098986487973,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 0,
+          "p_full": -0.2960968691263846,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 6,
+          "p_full": -0.7710432560001369,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 7,
+          "p_full": -0.040167400576328616,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 8,
+          "p_full": -0.5075669905738908,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 10,
+          "p_full": -0.8702317305565721,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 12,
+          "p_full": -0.1216053659232395,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 13,
+          "p_full": -0.00012762213479713033,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u5",
+          "replicate": 14,
+          "p_full": -0.1062231775243499,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 0,
+          "p_full": -0.27709854020623187,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 6,
+          "p_full": -0.7448033071349659,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 7,
+          "p_full": -0.040171370625900794,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 8,
+          "p_full": -0.4398920529766624,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 10,
+          "p_full": -0.8334654918102954,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 12,
+          "p_full": -0.1216065579872292,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 13,
+          "p_full": -0.00013084926984412347,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P67_u9",
+          "replicate": 14,
+          "p_full": -0.10622667097403746,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 0,
+          "p_full": -0.13505570525445215,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 6,
+          "p_full": -0.727275427955271,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 8,
+          "p_full": -0.47961228752400703,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 10,
+          "p_full": -0.9344742021709382,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 12,
+          "p_full": -0.005118473789815942,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u0",
+          "replicate": 14,
+          "p_full": -0.04954846680762721,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 0,
+          "p_full": -0.13417783648598797,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 6,
+          "p_full": -0.7267207070722781,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 8,
+          "p_full": -0.48761410849101533,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 10,
+          "p_full": -0.9350562999547969,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 12,
+          "p_full": -0.005118774647436134,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u5",
+          "replicate": 14,
+          "p_full": -0.04954969238690687,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 0,
+          "p_full": -0.1351294129337243,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 6,
+          "p_full": -0.7276698917969788,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 8,
+          "p_full": -0.4407042362183805,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 10,
+          "p_full": -0.913096114167955,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 12,
+          "p_full": -0.005119895741414474,
+          "solver_qualified": true
+        },
+        {
+          "key": "23_P536_u9",
+          "replicate": 14,
+          "p_full": -0.04955159769199336,
+          "solver_qualified": true
+        }
+      ],
+      "summed_singleton_runtime_ratio_to_K1": 3.957145424028035,
+      "summed_singleton_runtime_ratio_to_projected_FULL251": 0.14739366189607728
+    },
+    {
+      "K": 8,
+      "status": "INFEASIBLE",
+      "qualifies": false
+    }
+  ],
+  "states": [
+    {
+      "key": "11_P67_u0",
+      "start": "11_P67",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_0.pt",
+      "state_sha256": "ee815caf918e8ded13e99896070a95a32293100499746fd0623444e2c0023523",
+      "state_file_sha256": "221adc2267c21f4775cca5df8e4e8fb9001816de5dd1efdfc1158ee46b8200c1",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u0_arrays.npz",
+      "array_sha256": "b6d43d8cb985106f7b4042723d6659985dbfae1b30e9d808b52331f4df277d47",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "3d5fec762923b050ef7a8261097441c6f2b1815ed1085c3d665476b35ed028e3",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          249,
+          0.2788844621513944
+        ],
+        [
+          17,
+          0.043824701195219126
+        ],
+        [
+          48,
+          0.05179282868525897
+        ],
+        [
+          225,
+          0.41434262948207173
+        ],
+        [
+          35,
+          0.11155378486055777
+        ],
+        [
+          89,
+          0.03187250996015936
+        ],
+        [
+          72,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P67_u0_singleton_gradients.npz",
+      "cache_sha256": "0fdf160c7b1650c6b132c173379fd6add18f04771cdfa225e08e74ef51f23879",
+      "original_sample_gradient_reconstruction_relative_L2": 8.621830058804298e-17,
+      "unique_reactions_computed": 158,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P67_u0_result.json",
+        "sha256": "01f7274fec464b5f52a3c9dc1a1a40c99bcfa03952f83e888e7a6ec0e12fe557"
+      }
+    },
+    {
+      "key": "11_P67_u5",
+      "start": "11_P67",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_5.pt",
+      "state_sha256": "f43f0166d4483f0c08021ecf5e16984c774b569ce58920a7510806167ea494cf",
+      "state_file_sha256": "fdfe7161bd3b167b346eb17b1751b65474cbf9fecfc227b305086cd7a45caed9",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u5_arrays.npz",
+      "array_sha256": "d03ea36da6fd6874adfc98bc0d4e8cfbffa439917f620a4caac883cb7dca4374",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "9e9e2af012d1d2e380d882e7e23aab79865fd07831117854a01650c0f49adf61",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          176,
+          0.2788844621513944
+        ],
+        [
+          216,
+          0.043824701195219126
+        ],
+        [
+          99,
+          0.05179282868525897
+        ],
+        [
+          149,
+          0.41434262948207173
+        ],
+        [
+          143,
+          0.11155378486055777
+        ],
+        [
+          0,
+          0.03187250996015936
+        ],
+        [
+          78,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P67_u5_singleton_gradients.npz",
+      "cache_sha256": "34e1afddcfee57f4cb1039e00f899e1c5e794c0fc5d9eec1c959fc32a7b7e7fa",
+      "original_sample_gradient_reconstruction_relative_L2": 1.0897499239443476e-16,
+      "unique_reactions_computed": 157,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P67_u5_result.json",
+        "sha256": "c4690a2870f3838d14f2f1bda82acaa9e53c16662df62dc698964971498f61c7"
+      }
+    },
+    {
+      "key": "11_P67_u9",
+      "start": "11_P67",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_before_9.pt",
+      "state_sha256": "8bccb4bffd887ee676bf54365231370165d0218698be19340333baff4af430d4",
+      "state_file_sha256": "e16508243078f97674753fa63da67a612b98fce7f64c7ed69c066adb912a7a82",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P67_u9_arrays.npz",
+      "array_sha256": "6a3bb6c62f95c240f808fd384b78a4cd1ef35d47f7d591decc30947546ee72e7",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "18469d12c01a3f6e6b626b2ca5499c9bcffcc3103a48619cd8bae8dbfb2b53e5",
+      "original_batch": [
+        [
+          180,
+          0.01593625498007968
+        ],
+        [
+          10,
+          0.2788844621513944
+        ],
+        [
+          224,
+          0.043824701195219126
+        ],
+        [
+          246,
+          0.05179282868525897
+        ],
+        [
+          148,
+          0.41434262948207173
+        ],
+        [
+          241,
+          0.11155378486055777
+        ],
+        [
+          197,
+          0.03187250996015936
+        ],
+        [
+          154,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P67_u9_singleton_gradients.npz",
+      "cache_sha256": "7c6f97cd68fc2ca78e22390731ddb07a35c67de7c15deb7d9188bd52f37ac9bd",
+      "original_sample_gradient_reconstruction_relative_L2": 1.2077652360806122e-16,
+      "unique_reactions_computed": 159,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P67_u9_result.json",
+        "sha256": "ddc4a38ab0e0a42027c46f0979a67f51ea360486cdd8363c0129a70f3e2f9680"
+      }
+    },
+    {
+      "key": "11_P536_u0",
+      "start": "11_P536",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_0.pt",
+      "state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6",
+      "state_file_sha256": "89a2b31f2f2487819f8339fbcd29cceda0c8d3a5ab1bf7d946231198289f89cc",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u0_arrays.npz",
+      "array_sha256": "6e5613dbc83d9291d1aac414971970909a78b0731a2478a651b381b315f096d4",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "073abc35cf382db8c7694eb254b9f3070dd7bc692aa23ec91ad30870c6d79f82",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          249,
+          0.2788844621513944
+        ],
+        [
+          17,
+          0.043824701195219126
+        ],
+        [
+          48,
+          0.05179282868525897
+        ],
+        [
+          225,
+          0.41434262948207173
+        ],
+        [
+          35,
+          0.11155378486055777
+        ],
+        [
+          89,
+          0.03187250996015936
+        ],
+        [
+          72,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P536_u0_singleton_gradients.npz",
+      "cache_sha256": "51f4580bb77951fc33a2ca203519cf1009a05e2c2f6ccf571825b6e0d8839f23",
+      "original_sample_gradient_reconstruction_relative_L2": 9.529978646294985e-17,
+      "unique_reactions_computed": 158,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P536_u0_result.json",
+        "sha256": "00c0992fad29e69b32c1b21e76ece015dffd2dce4b6cbc63a7e348184d1f2bd1"
+      }
+    },
+    {
+      "key": "11_P536_u5",
+      "start": "11_P536",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_5.pt",
+      "state_sha256": "3fdd1714976299a06a8717aae1e14d6dd69770998e7cf626f105f9d80a1b7f6c",
+      "state_file_sha256": "dda39bb0ebf4435ecbd65910d8a285fb5ee387a817d488b989caf8a8832b6adb",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u5_arrays.npz",
+      "array_sha256": "d72cfe59dcd56a9bfc713dc175b3d6f18d45991ca0a6cc952c67d1df86933935",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "6faac59f153943f33d6865ac540f816fe961a35a7a9a236637da0a9ef101c863",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          176,
+          0.2788844621513944
+        ],
+        [
+          216,
+          0.043824701195219126
+        ],
+        [
+          99,
+          0.05179282868525897
+        ],
+        [
+          149,
+          0.41434262948207173
+        ],
+        [
+          143,
+          0.11155378486055777
+        ],
+        [
+          0,
+          0.03187250996015936
+        ],
+        [
+          78,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P536_u5_singleton_gradients.npz",
+      "cache_sha256": "c684c04baa1c8e050e15bddc4f371cc3cb8d40b0e453b05eb74b8c1a10b0fe49",
+      "original_sample_gradient_reconstruction_relative_L2": 1.0647307067409079e-16,
+      "unique_reactions_computed": 157,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P536_u5_result.json",
+        "sha256": "f06d5243b017619447d4dab5bd903b913981e90e8f80a36f1a3f5c48846d6ece"
+      }
+    },
+    {
+      "key": "11_P536_u9",
+      "start": "11_P536",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_before_9.pt",
+      "state_sha256": "adda51706fe4c164fb7693d227cf1607c608cf822bcb958aeabe402145ebb61b",
+      "state_file_sha256": "7ba6093d0f4fa907c27f51c1bc2ce5773881559e266d00d035cf3aa7a3fe9b6e",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\11_P536_u9_arrays.npz",
+      "array_sha256": "0b37e09c83ff5749bb49ce3b7bce308482c68cbcbf6d69c17d954750dde494ea",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\11_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "2509a81e44ea8acaf410d0f0657736d1dfab9cb86f0ae590d8dc8e4c0528b460",
+      "original_batch": [
+        [
+          180,
+          0.01593625498007968
+        ],
+        [
+          10,
+          0.2788844621513944
+        ],
+        [
+          224,
+          0.043824701195219126
+        ],
+        [
+          246,
+          0.05179282868525897
+        ],
+        [
+          148,
+          0.41434262948207173
+        ],
+        [
+          241,
+          0.11155378486055777
+        ],
+        [
+          197,
+          0.03187250996015936
+        ],
+        [
+          154,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P536_u9_singleton_gradients.npz",
+      "cache_sha256": "00f9caee303dc858090d9ed17cfd5ab5365ba3ea559c03223d6181554b598c3b",
+      "original_sample_gradient_reconstruction_relative_L2": 7.97774912920152e-17,
+      "unique_reactions_computed": 159,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\11_P536_u9_result.json",
+        "sha256": "00d4ed23ef45ef8d6f5a4c78b76afa490999c2fe806804be1b5205d576829a53"
+      }
+    },
+    {
+      "key": "23_P67_u0",
+      "start": "23_P67",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_0.pt",
+      "state_sha256": "69f6e7c90a5f4cf6f51e885b8f3c1b9679508c71a57a8363149de6783820e4d8",
+      "state_file_sha256": "fbe6f92dc055dec9a60cd68fa6689f0846f57a0c0d74ef0d584d7ff75287a896",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u0_arrays.npz",
+      "array_sha256": "d5836a723bdd4eb71f82ac18c64d13556eb557ea3cea8d7c6d5d4fcf42f65cf3",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "600897c37676d16217722f843e3a1e5eb580257df9bbfad5684d556bd21e4ee1",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          249,
+          0.2788844621513944
+        ],
+        [
+          17,
+          0.043824701195219126
+        ],
+        [
+          48,
+          0.05179282868525897
+        ],
+        [
+          225,
+          0.41434262948207173
+        ],
+        [
+          35,
+          0.11155378486055777
+        ],
+        [
+          89,
+          0.03187250996015936
+        ],
+        [
+          72,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P67_u0_singleton_gradients.npz",
+      "cache_sha256": "f6d69ad90cf807e1e027bbff258fc8fdbe3082fde6399a45f4ceffd0510ee944",
+      "original_sample_gradient_reconstruction_relative_L2": 1.4091300484639252e-16,
+      "unique_reactions_computed": 158,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P67_u0_result.json",
+        "sha256": "38d596c3b87ec5e9ef717822320aa72ac6ecc181aa876bbb7d21f18fd33d7241"
+      }
+    },
+    {
+      "key": "23_P67_u5",
+      "start": "23_P67",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_5.pt",
+      "state_sha256": "22e05f98bc8f34f61e8e9b7f60480d5e3da656ca51b2ae5c4f0dc7c0a173121e",
+      "state_file_sha256": "340638cb1105a0aafd21e5aced99827c977607b4b39ca274f312a93caabb617d",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u5_arrays.npz",
+      "array_sha256": "9d7331509a9972f5f2a3ac70775ab0d5068141f8c0930ba69ef4b43994eabc3f",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "c6e431eeaf855caa04fbcdeff50f7040944a5de38868b6d5d276eb1cab10b676",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          176,
+          0.2788844621513944
+        ],
+        [
+          216,
+          0.043824701195219126
+        ],
+        [
+          99,
+          0.05179282868525897
+        ],
+        [
+          149,
+          0.41434262948207173
+        ],
+        [
+          143,
+          0.11155378486055777
+        ],
+        [
+          0,
+          0.03187250996015936
+        ],
+        [
+          78,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P67_u5_singleton_gradients.npz",
+      "cache_sha256": "fbe61a5167184e7bfd713388fe8c001c6e573c96c5a60dd352f33c03e5964d19",
+      "original_sample_gradient_reconstruction_relative_L2": 1.2889341063621803e-16,
+      "unique_reactions_computed": 157,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P67_u5_result.json",
+        "sha256": "fd6b09b59e7bee8a246f908aec309c27ec54c080d4ec455fcfd5d39a771ed56a"
+      }
+    },
+    {
+      "key": "23_P67_u9",
+      "start": "23_P67",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_before_9.pt",
+      "state_sha256": "bcfe3066bd1ab2342cb78c1829f28a2f9dc060e9217eb0e41c5ab65a1a149830",
+      "state_file_sha256": "6a4f41149044a530b43c395885fac9e82106e727302123de30d5df3109e4183c",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P67_u9_arrays.npz",
+      "array_sha256": "d8ada51bbe6bdd2ea445f782ac8f2505d73a2c4d1a1149715dece5fb722fb254",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P67_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "d3253627de41de9a573cf7df7bf32441c6d1377f502a508539b7f7f48e7df573",
+      "original_batch": [
+        [
+          180,
+          0.01593625498007968
+        ],
+        [
+          10,
+          0.2788844621513944
+        ],
+        [
+          224,
+          0.043824701195219126
+        ],
+        [
+          246,
+          0.05179282868525897
+        ],
+        [
+          148,
+          0.41434262948207173
+        ],
+        [
+          241,
+          0.11155378486055777
+        ],
+        [
+          197,
+          0.03187250996015936
+        ],
+        [
+          154,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P67_u9_singleton_gradients.npz",
+      "cache_sha256": "919e83c1cc04273dd453c83480eaaaa91657e9c845af2e3a426cfa5c50b0b8db",
+      "original_sample_gradient_reconstruction_relative_L2": 1.0590486429139078e-16,
+      "unique_reactions_computed": 159,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P67_u9_result.json",
+        "sha256": "c45be72d06d26bc34d70f12ac30f115370600899dfdd340a454d828a944b6db4"
+      }
+    },
+    {
+      "key": "23_P536_u0",
+      "start": "23_P536",
+      "update": 0,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_0.pt",
+      "state_sha256": "0b0c2aefc703c90be250c2fdb79e60be1df35273c7bc7d680ede50a8e7145074",
+      "state_file_sha256": "800ec41cede807d83234b0c7d06739cdf73471172968f05119dbbdb1a81e4987",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u0_arrays.npz",
+      "array_sha256": "3e2251182c184c3958729f7290e81f665d7b8d9f1aa48749103f09a8a74115ba",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_0_geometry.npz",
+      "geometry_sha256": "ccf3816ca20101e58904d2a193169fd1b48066d71d4cec87c717b7886796f37b",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          249,
+          0.2788844621513944
+        ],
+        [
+          17,
+          0.043824701195219126
+        ],
+        [
+          48,
+          0.05179282868525897
+        ],
+        [
+          225,
+          0.41434262948207173
+        ],
+        [
+          35,
+          0.11155378486055777
+        ],
+        [
+          89,
+          0.03187250996015936
+        ],
+        [
+          72,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P536_u0_singleton_gradients.npz",
+      "cache_sha256": "f6f9ced3dd33be49632b10f2f925e6e85afe85c9bac69119615f42c6858b31c6",
+      "original_sample_gradient_reconstruction_relative_L2": 1.6681020292212216e-16,
+      "unique_reactions_computed": 158,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P536_u0_result.json",
+        "sha256": "26c4468efb582042e1dd9e10e72243a39abb05e05cd456fb10a9d34680d908d7"
+      }
+    },
+    {
+      "key": "23_P536_u5",
+      "start": "23_P536",
+      "update": 5,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_5.pt",
+      "state_sha256": "8dbfd61b821408ee5cf055687a63e9d0a114b05bac86a45e11654344b5316a65",
+      "state_file_sha256": "d5249343e0a260b6d0c43aebc44a1edd88818403d0903b93831a708666665a8d",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u5_arrays.npz",
+      "array_sha256": "9450082bdaaaa83db444076d23070d08efc31f6c6381a6f00857a6f1c473c677",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_5_geometry.npz",
+      "geometry_sha256": "35010c7bc41fa81da84931dc3b47859fd419dda6624ddaf34a97ca33aa2a1d6e",
+      "original_batch": [
+        [
+          146,
+          0.01593625498007968
+        ],
+        [
+          176,
+          0.2788844621513944
+        ],
+        [
+          216,
+          0.043824701195219126
+        ],
+        [
+          99,
+          0.05179282868525897
+        ],
+        [
+          149,
+          0.41434262948207173
+        ],
+        [
+          143,
+          0.11155378486055777
+        ],
+        [
+          0,
+          0.03187250996015936
+        ],
+        [
+          78,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P536_u5_singleton_gradients.npz",
+      "cache_sha256": "e7b69de9e4ffcb79f94b8dffae3398cc841e09f720d85fb074eee64cd8f2fe3f",
+      "original_sample_gradient_reconstruction_relative_L2": 6.514990453801849e-17,
+      "unique_reactions_computed": 157,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P536_u5_result.json",
+        "sha256": "bc9a1f83b9afb2efe14b944328693feba670bd3aa313893b275ef5193aaed7b6"
+      }
+    },
+    {
+      "key": "23_P536_u9",
+      "start": "23_P536",
+      "update": 9,
+      "state_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_before_9.pt",
+      "state_sha256": "1efea2c4b5f312a93f30bcd05b95890b28a139fa2d1c3b7cce25560a5ebe387b",
+      "state_file_sha256": "877d1dee278369e1fc28624d8c54209fe2d706630c926b8c15e88fe9f4eefbaf",
+      "array_path": "C:\\Dev\\readWFN_share_ms\\lap_fullchem_surrogate_fidelity_runs_20261006\\23_P536_u9_arrays.npz",
+      "array_sha256": "f079ee15a28b3bd21fd0fdcc508e037b0337992b61d83aca74c3ffa0a22490b2",
+      "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_symmetric_moo_10update_runs_20261006\\23_P536_UNIT_MAXMIN\\update_9_geometry.npz",
+      "geometry_sha256": "b2199a45d1d426976ef7e83abf734a1ad3ce9d911f7fe1630df6f7037ef0216d",
+      "original_batch": [
+        [
+          180,
+          0.01593625498007968
+        ],
+        [
+          10,
+          0.2788844621513944
+        ],
+        [
+          224,
+          0.043824701195219126
+        ],
+        [
+          246,
+          0.05179282868525897
+        ],
+        [
+          148,
+          0.41434262948207173
+        ],
+        [
+          241,
+          0.11155378486055777
+        ],
+        [
+          197,
+          0.03187250996015936
+        ],
+        [
+          154,
+          0.05179282868525897
+        ]
+      ],
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "cache_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P536_u9_singleton_gradients.npz",
+      "cache_sha256": "9d8b715d0bd429feb65716ab108c6594c16ffb3aabb322d02c87a43e2342a6c3",
+      "original_sample_gradient_reconstruction_relative_L2": 6.794632610535252e-17,
+      "unique_reactions_computed": 159,
+      "model_state_unchanged": true,
+      "RNG_unchanged": true,
+      "receipt_artifact": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\23_P536_u9_result.json",
+        "sha256": "c1f700fdb01dc595fb8eb382913b67cbe08f56e6dbbab4a552ad0cd336e1c7b8"
+      }
+    }
+  ],
+  "per_replicate_results": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\arena_rows.json",
+    "sha256": "5a076a111604ea6edab87314b4c5992910ed7120733512d761f41141482a250f"
+  },
+  "next_experiment": "A separate read-only per-database chemistry-gradient variance decomposition/control-variate feasibility experiment on the frozen states; no K escalation or optimizer change. Not launched.",
+  "validation": {
+    "status": "PASS",
+    "states_checked": 12,
+    "replicates_checked": 576,
+    "immutable_hashes_checked": 139,
+    "mismatches": 0,
+    "maximum_grouped_progress_reconstruction_absolute_error": 3.2085445411667024e-14,
+    "model_and_rng_mutation": "NONE",
+    "states": [
+      "11_P67_u0",
+      "11_P67_u5",
+      "11_P67_u9",
+      "11_P536_u0",
+      "11_P536_u5",
+      "11_P536_u9",
+      "23_P67_u0",
+      "23_P67_u5",
+      "23_P67_u9",
+      "23_P536_u0",
+      "23_P536_u5",
+      "23_P536_u9"
+    ],
+    "tests": {
+      "passed": 133,
+      "skipped": 3,
+      "skip_reason": "Windows Gloo tests"
+    },
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "production_source_changes": 0,
+    "tracked_start_state": "bc3aa4f5e684e0e79b4c71288ce0b751114322e0",
+    "git_diff_check": "PASS",
+    "preexisting_untracked_preserved": true
+  },
+  "review": {
+    "schema": "lap-chemistry-estimator-fidelity-review-v1",
+    "status": "PASS",
+    "reviewed_at_utc": "2026-10-06T21:55:29.204917+00:00",
+    "review_type": "Independent read-only artifact and numerical review",
+    "scope": "Frozen chemistry-estimator fidelity Arena only; no model/objective forward or backward recomputation, no training, and no production edits.",
+    "reviewed_snapshot": {
+      "starting_commit": "bc3aa4f5e684e0e79b4c71288ce0b751114322e0",
+      "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\protocol.json",
+      "protocol_sha256": "925ff4fcd5dc7e3c38dc181d856921bbf6ada760f3cc56ad40feb998e78c9eeb",
+      "replicate_manifest_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\replicate_manifest.json",
+      "replicate_manifest_sha256": "59913c53189401e92bcfbd40c07763e598519bd4021f3b0c50fa63669bca9e29",
+      "executed_source_path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_chemistry_estimator_fidelity_arena.py",
+      "executed_source_sha256": "e4414ff3b058e142be6c9663799ff3a29eff23c92928c588499948fc1fa7d3db",
+      "test_path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\test_lap_chemistry_estimator_fidelity_arena.py",
+      "test_sha256": "d729883230578a5be6e1348a79192cc3e34b9adf0d663c40d89c8a5ec7eae141",
+      "arena_rows_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\arena_rows.json",
+      "arena_rows_sha256": "5a076a111604ea6edab87314b4c5992910ed7120733512d761f41141482a250f",
+      "artifact_validator_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\numerical_validation.json",
+      "artifact_validator_sha256": "b7a41be499de2d4b7530cfde7dc1f61fb751defea56ea0ab8d26ef136df42a93",
+      "report_snapshot_path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_chemistry_estimator_fidelity_arena_report.md",
+      "report_snapshot_sha256": "e1e2ba507e40fb91a7f84bd59fc58e81aeabbccdc80d41217f30de383cd34126",
+      "metrics_snapshot_path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_chemistry_estimator_fidelity_arena_metrics.json",
+      "metrics_snapshot_sha256": "56ff1512237cd11f7403b53a330685f31d51a01ccd40fd5d68e1e6ec34b33d80"
+    },
+    "evidence": {
+      "frozen_inventory_sha256_checks": 139,
+      "frozen_inventory_mismatches": 0,
+      "completed_states": 12,
+      "state_replicate_rows_replayed": 576,
+      "replicate_seeds_recreated_exactly": [
+        41000,
+        41001,
+        41002,
+        41003,
+        41004,
+        41005,
+        41006,
+        41007,
+        41008,
+        41009,
+        41010,
+        41011,
+        41012,
+        41013,
+        41014,
+        41015
+      ],
+      "sampling_check": "Independent per-DB permutation streams, without replacement; K1/K2/K4 are exact nested prefixes shared across states. Manifest contains catalog and seeds only; samples do not depend on gold-gradient values.",
+      "database_counts": {
+        "ABDE4": 4,
+        "DBH76": 70,
+        "EA13": 11,
+        "IP13": 13,
+        "MGAE109": 104,
+        "NCCE31": 28,
+        "PA8": 8,
+        "pTC13": 13
+      },
+      "sample_reconstruction_max_relative_L2": 1.6681020292212214e-16,
+      "geometry_binding": "For every state, saved raw_original equals its SHA-bound geometry raw array. Historical raw_original[0] is the original sampled chemistry gradient and is reconstructed from the original batch; g_full251 is a separate SHA-bound gold full-251 gradient used for true-progress scoring.",
+      "independent_method": "Pure NumPy replay from cached F64 singleton gradients; rebuilt each stratified estimator and solved the normalized four-task simplex minimum-norm problem by enumerating all 15 faces.",
+      "max_abs_differences_from_saved_rows": {
+        "cosine": 6.661338147750939e-16,
+        "norm_ratio": 1.3322676295501878e-15,
+        "gamma": 1.5543122344752192e-15,
+        "estimated_chemistry_progress": 1.078998002057574e-14,
+        "true_task_progress_vector": 2.381844721455195e-13,
+        "simplex_coefficients": 3.5714875501469123e-11,
+        "independent_qp_kkt_residual": 1.2212453270876722e-15
+      },
+      "true_progress_comparison_tolerance": "All 576 vector comparisons pass the frozen validator tolerance rtol=1e-10, atol=2e-13; the independent face-enumeration solve has a maximum absolute floating-point replay difference of 2.39e-13.",
+      "execution_mutation_receipts": "All 12 state receipts report unchanged model state and RNG; the frozen-source hash inventory and artifact validator pass.",
+      "root_validation_snapshot": {
+        "status": "PASS",
+        "states_checked": 12,
+        "replicates_checked": 576,
+        "immutable_hashes_checked": 139,
+        "mismatches": 0,
+        "maximum_grouped_progress_reconstruction_absolute_error": 3.2085445411667024e-14,
+        "model_and_rng_mutation": "NONE",
+        "states": [
+          "11_P67_u0",
+          "11_P67_u5",
+          "11_P67_u9",
+          "11_P536_u0",
+          "11_P536_u5",
+          "11_P536_u9",
+          "23_P67_u0",
+          "23_P67_u5",
+          "23_P67_u9",
+          "23_P536_u0",
+          "23_P536_u5",
+          "23_P536_u9"
+        ]
+      }
+    },
+    "qualification": {
+      "frozen_gates": {
+        "overall_success_min": 0.95,
+        "each_state_success_min": 0.9,
+        "true_fullchem_progress_floor": -0.02,
+        "solver_kkt_max": 1e-09,
+        "common_descent_gamma_min": 1e-12
+      },
+      "K1": {
+        "rows": 192,
+        "fullchem_descent": 39,
+        "overall_rate": 0.203125,
+        "worst_state_rate": 0.0,
+        "minimum_p_full": -0.9853837193669607,
+        "count_below_minus_0_02": 151,
+        "solver_failures": 0,
+        "qualifies": false
+      },
+      "K2": {
+        "rows": 192,
+        "fullchem_descent": 43,
+        "overall_rate": 0.22395833333333334,
+        "worst_state_rate": 0.0625,
+        "minimum_p_full": -0.8634494247769181,
+        "count_below_minus_0_02": 146,
+        "solver_failures": 0,
+        "qualifies": false
+      },
+      "K4": {
+        "rows": 192,
+        "fullchem_descent": 110,
+        "overall_rate": 0.5729166666666666,
+        "worst_state_rate": 0.4375,
+        "minimum_p_full": -0.9350562999547969,
+        "count_below_minus_0_02": 74,
+        "solver_failures": 0,
+        "qualifies": false
+      },
+      "K8": {
+        "status": "INFEASIBLE",
+        "reason": "Exact K-per-DB sampling without replacement is impossible for ABDE4, which contains 4 canonical reactions."
+      },
+      "failures_retained": "All non-descent rows remain in the structured per-replicate results and summary; the 16-draw state rates and the p_full lower-tail counts agree with the frozen gate.",
+      "selection": "NO K\u0432\u2030\u00a48 QUALIFIES"
+    },
+    "interpretation_limits": [
+      "The 95% value is an empirical success-frequency threshold, not a statistical confidence guarantee. The 192 state/draw records share paired draws and are not independent population replicates.",
+      "This result is limited to the 12 frozen states and 16 preregistered draws. It does not establish trajectory or long-horizon training behavior, general estimator bias, or initializer preference.",
+      "Exact K-per-DB was preserved. K8 is infeasible and was not converted to an up-to-K design; K1/K2/K4 are the only evaluated candidates.",
+      "Per-replicate reaction-gradient counts are 8/16/32 for K1/K2/K4, but the audit computed singleton gradients once and reuses them across K and replicates. FULL251 runtime is projected from measured singleton timings rather than an end-to-end benchmark.",
+      "No K qualifies; the proposed next step is read-only per-database variance/control-variate feasibility analysis, not a K escalation or optimizer change."
+    ]
+  },
+  "analysis_source_path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\summarize.py",
+  "analysis_source_sha256": "8a4a8a51bd6c2accb963cf75dbf3f6f1d9004adef69956c21553f3656caec0ab",
+  "qualification": {
+    "overall_success_min": 0.95,
+    "each_state_success_min": 0.9,
+    "catastrophic_negative_tail_floor": -0.02,
+    "tail_rule": "No normalized true fullchem progress below -0.02; inherited offline Arena Tier2 safety boundary, frozen before evaluation.",
+    "solver_KKT_max": 1e-09,
+    "common_descent_gamma_min": 1e-12
+  },
+  "strict_policy_confirmation": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_chemistry_estimator_fidelity_runs_20261006\\strict_policy_confirmation.json",
+    "sha256": "96578533e18c5754920a1f96928a3d1510daf7036545d12c107ce24cafa4302d",
+    "answer": "Keep the exact K-per-DB requirement; mark K=8 infeasible and evaluate K=1/2/4 only"
+  }
+}

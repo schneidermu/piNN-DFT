@@ -49,3 +49,9 @@ lap_fullchem_surrogate_fidelity_audit.py -text whitespace=blank-at-eol,blank-at-
 test_lap_fullchem_surrogate_fidelity_audit.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_fullchem_surrogate_fidelity_audit_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_fullchem_surrogate_fidelity_audit_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+lap_chemistry_estimator_fidelity_arena.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+test_lap_chemistry_estimator_fidelity_arena.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+lap_chemistry_estimator_fidelity_arena_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+lap_chemistry_estimator_fidelity_arena_replicate_manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+lap_chemistry_estimator_fidelity_arena_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
