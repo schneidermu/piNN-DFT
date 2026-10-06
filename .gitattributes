@@ -29,3 +29,8 @@ test_lap_q_objective_coupling_diagnostic.py -text
 lap_q_objective_coupling_audit_protocol.json -text
 
 lap_q_objective_coupling_audit_metrics.json -text
+
+lap_q_objective_coupling_seed23_diagnostic.py -text
+test_lap_q_seed23_replication.py -text
+lap_q_objective_coupling_seed23_replication_protocol.json -text
+lap_q_objective_coupling_seed23_replication_metrics.json -text
