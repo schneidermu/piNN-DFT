@@ -61,3 +61,8 @@ test_lap_chemistry_db_variance_svrg_audit.py -text whitespace=blank-at-eol,blank
 lap_chemistry_db_variance_svrg_audit_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_chemistry_db_variance_svrg_audit_replicate_manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_chemistry_db_variance_svrg_audit_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+lap_unitmax_full251_gold.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+test_lap_unitmax_full251_gold.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+lap_unitmax_full251_10update_gold_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+lap_unitmax_full251_10update_gold_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

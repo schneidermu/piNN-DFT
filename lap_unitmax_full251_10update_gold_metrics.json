@@ -1,0 +1,3635 @@
+{
+  "starting_commit": "789d04d0638aa9ded44f0e9012cb5b4fc584a235",
+  "qualification": "INCOMPLETE \u2014 user requested stop after >5 hours",
+  "trajectory_passes": 1,
+  "scientific_passes": 1,
+  "required_scientific_passes": 4,
+  "trajectories_started": 2,
+  "trajectories_completed": 1,
+  "accepted_updates_total": 15,
+  "protocol_sha256": "284074b3919fdd262bc75927e6622bdd472a123be88ffd2ad6a9853cd341898c",
+  "manifest_canonical_sha256": "2e87f7e79a66b425628bdf59a821f785e05059f193a492d4a4f3130d7411e9f3",
+  "manifest_file_sha256": "eb64fb2ba9a98eead1dc518a1b0853eeb90d66dcb92c117dbfba23964e6afcfc",
+  "arms": [
+    {
+      "start": "11_P67",
+      "starting_state": {
+        "seed": 11,
+        "regime": "P67",
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P67.pt",
+        "file_sha256": "264a8d189d53d49007d7de11d8cfb5382e8b8262e4b48068142c8771e293c834",
+        "state_sha256": "ee815caf918e8ded13e99896070a95a32293100499746fd0623444e2c0023523"
+      },
+      "eta0": 7.256894944827483e-06,
+      "status": "SCIENTIFIC-PASS",
+      "accepted_updates": 10,
+      "resume_exact": true,
+      "initial_gradient_replay": {
+        "relative_L2": 0.0,
+        "bitwise_equal": true
+      },
+      "source_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\result.json",
+        "sha256": "4ff5d337a4214ba564c4602e50204fe557a69aa75fa8b51be0eb485473336590"
+      },
+      "checkpoints": {
+        "0": {
+          "objectives": {
+            "relchem": 1.237027054764855,
+            "ae17": 29.08069447031722,
+            "exc": 80.9058999863264,
+            "op": 0.04142061014895267
+          },
+          "relative": {
+            "task_ratios": {
+              "relchem": 1.0,
+              "ae17": 1.0,
+              "exc": 1.0,
+              "op": 1.0
+            },
+            "R_max": 1.0,
+            "R_mean": 1.0,
+            "geometric_mean": 1.0,
+            "max_abs_log": 0.0,
+            "improved_objectives": 0
+          },
+          "human": {
+            "J_rel": 1.237027054764855,
+            "nonAE_RMSE": 46.01917263444382,
+            "AE_MAE": 55.054852923241945,
+            "AE_RMSE": 65.8051919521405,
+            "per_database": {
+              "ABDE4": {
+                "MAE": 1.8916906769204758,
+                "RMSE": 2.1390148528514605
+              },
+              "AE17": {
+                "MAE": 55.054852923241945,
+                "RMSE": 65.8051919521405
+              },
+              "DBH76": {
+                "MAE": 8.351460702974768,
+                "RMSE": 9.727505824495763
+              },
+              "EA13": {
+                "MAE": 2.6625469385741356,
+                "RMSE": 3.1103686780546473
+              },
+              "IP13": {
+                "MAE": 3.1790389696420394,
+                "RMSE": 4.298337369000639
+              },
+              "MGAE109": {
+                "MAE": 18.410275231503626,
+                "RMSE": 23.10166612946597
+              },
+              "NCCE31": {
+                "MAE": 0.9616714984626663,
+                "RMSE": 1.3220104194674567
+              },
+              "PA8": {
+                "MAE": 1.483716456157687,
+                "RMSE": 1.8416649280414819
+              },
+              "pTC13": {
+                "MAE": 5.681430285671628,
+                "RMSE": 6.802173670829549
+              }
+            },
+            "exc_median": 65.63818613807702,
+            "op_median": 0.040201473003760445
+          },
+          "model_sha256": "ee815caf918e8ded13e99896070a95a32293100499746fd0623444e2c0023523",
+          "monitor_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\monitor_0.json",
+          "monitor_sha256": "75dcde5f893f75090d5d02640fecdb5855e851668439a6b747702e6fd4cc6ca8"
+        },
+        "5": {
+          "objectives": {
+            "relchem": 1.236929755908782,
+            "ae17": 29.031453376897407,
+            "exc": 80.77181849480051,
+            "op": 0.04141132948425939
+          },
+          "relative": {
+            "task_ratios": {
+              "relchem": 0.9999213446013988,
+              "ae17": 0.9983067428644088,
+              "exc": 0.9983427476667517,
+              "op": 0.9997759408985066
+            },
+            "R_max": 0.9999213446013988,
+            "R_mean": 0.9990866940077665,
+            "geometric_mean": 0.9990864020576201,
+            "max_abs_log": 0.0016946923157696843,
+            "improved_objectives": 4
+          },
+          "human": {
+            "J_rel": 1.236929755908782,
+            "nonAE_RMSE": 46.01490945914102,
+            "AE_MAE": 54.96163090068074,
+            "AE_RMSE": 65.69018724491198,
+            "per_database": {
+              "ABDE4": {
+                "MAE": 1.8916407899478855,
+                "RMSE": 2.13985807394504
+              },
+              "AE17": {
+                "MAE": 54.96163090068074,
+                "RMSE": 65.69018724491198
+              },
+              "DBH76": {
+                "MAE": 8.350088521165125,
+                "RMSE": 9.72605110297428
+              },
+              "EA13": {
+                "MAE": 2.6623865088026415,
+                "RMSE": 3.11009191741471
+              },
+              "IP13": {
+                "MAE": 3.179292015068241,
+                "RMSE": 4.298246431736152
+              },
+              "MGAE109": {
+                "MAE": 18.401873296579286,
+                "RMSE": 23.091711312932475
+              },
+              "NCCE31": {
+                "MAE": 0.9613248934800523,
+                "RMSE": 1.3215814831135149
+              },
+              "PA8": {
+                "MAE": 1.4841310646634653,
+                "RMSE": 1.8429882070679613
+              },
+              "pTC13": {
+                "MAE": 5.684316442718134,
+                "RMSE": 6.8039586369033085
+              }
+            },
+            "exc_median": 65.52470428953488,
+            "op_median": 0.040196005111271416
+          },
+          "model_sha256": "6bf1c2670e336d4c733ec2dffcd492a461bd138cbd5ae0f923664e24470e56b2",
+          "monitor_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\monitor_5.json",
+          "monitor_sha256": "bfc82bfc3098fb7f42a5164a90a67226fc07112eb6f26f6bb75718eacf89b4de"
+        },
+        "10": {
+          "objectives": {
+            "relchem": 1.2368326754086787,
+            "ae17": 28.982231902751522,
+            "exc": 80.63500184299656,
+            "op": 0.041400275173670995
+          },
+          "relative": {
+            "task_ratios": {
+              "relchem": 0.9998428657195269,
+              "ae17": 0.9966141603782469,
+              "exc": 0.9966516886484715,
+              "op": 0.9995090614259773
+            },
+            "R_max": 0.9998428657195269,
+            "R_mean": 0.9981544440430556,
+            "geometric_mean": 0.9981532773471581,
+            "max_abs_log": 0.003391584547989935,
+            "improved_objectives": 4
+          },
+          "human": {
+            "J_rel": 1.2368326754086787,
+            "nonAE_RMSE": 46.01073325466291,
+            "AE_MAE": 54.86844602084464,
+            "AE_RMSE": 65.57576338885501,
+            "per_database": {
+              "ABDE4": {
+                "MAE": 1.8915692292913988,
+                "RMSE": 2.1408367395948273
+              },
+              "AE17": {
+                "MAE": 54.86844602084464,
+                "RMSE": 65.57576338885501
+              },
+              "DBH76": {
+                "MAE": 8.348626809516645,
+                "RMSE": 9.724484030038369
+              },
+              "EA13": {
+                "MAE": 2.662216728271503,
+                "RMSE": 3.1098211666852524
+              },
+              "IP13": {
+                "MAE": 3.179443347328793,
+                "RMSE": 4.298111372176912
+              },
+              "MGAE109": {
+                "MAE": 18.393057132668673,
+                "RMSE": 23.08130000814323
+              },
+              "NCCE31": {
+                "MAE": 0.9609463456243887,
+                "RMSE": 1.3211181988075185
+              },
+              "PA8": {
+                "MAE": 1.4846642586015353,
+                "RMSE": 1.8445220902748423
+              },
+              "pTC13": {
+                "MAE": 5.687675882866899,
+                "RMSE": 6.806074897105093
+              }
+            },
+            "exc_median": 65.40671639723145,
+            "op_median": 0.040189283135205214
+          },
+          "model_sha256": "df7f9c9f464d47dc2f07af0a0722c62d0e00940c15f2b97426dde0bef030dcd4",
+          "monitor_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\monitor_10.json",
+          "monitor_sha256": "c6f69f3b496d23750a3da80c88c32255ccd9f4d44869823fdcafd67c181d5eed"
+        }
+      },
+      "updates": [
+        {
+          "update": 0,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "BeH2",
+                "rank": 0,
+                "reaction": {
+                  "database": "PA8",
+                  "reaction_id": 3
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 48,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 1,
+                      "variant_suffix": "level2",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 23,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 0,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 5,
+                      "variant_suffix": "level3",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level2_mura"
+              }
+            ],
+            "update": 0
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941295652169918,
+          "normalized_progress": [
+            0.24537682394061452,
+            0.24537682394061436,
+            0.2690350370791345,
+            0.27384099837481674
+          ],
+          "gamma": 0.24537682394061447,
+          "active_tasks": [
+            "relchem",
+            "ae17"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "ee815caf918e8ded13e99896070a95a32293100499746fd0623444e2c0023523",
+          "after_sha256": "2514e5b51a2b01b44393f9a85e29fe70fc01c8d99930f5264016996abfd11895",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_0_geometry.npz",
+          "geometry_sha256": "9e9a3755d385c2f1716ee19950ee980dd2190656e6562f29d0cac54551bf0df7"
+        },
+        {
+          "update": 1,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "H2",
+                "rank": 0,
+                "reaction": {
+                  "database": "pTC13",
+                  "reaction_id": 2
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 33,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 42,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 23,
+                      "variant_suffix": "level3",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 5,
+                      "variant_suffix": "level3",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level2_delley"
+              }
+            ],
+            "update": 1
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941280266203036,
+          "normalized_progress": [
+            0.2453760290428749,
+            0.2453760290428752,
+            0.2575166496799612,
+            0.3702432671959163
+          ],
+          "gamma": 0.24537602904287523,
+          "active_tasks": [
+            "relchem",
+            "ae17"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "2514e5b51a2b01b44393f9a85e29fe70fc01c8d99930f5264016996abfd11895",
+          "after_sha256": "244d9164d45f44bcdb4ba30da0ce1eda1b0eb79755a96d939e4c0074f16127fd",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_1_geometry.npz",
+          "geometry_sha256": "eefcd1418c7eefd0c273fe6c7fce78b326834a547fd0695e6ebb037b19c4316a"
+        },
+        {
+          "update": 2,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "BH",
+                "rank": 0,
+                "reaction": {
+                  "database": "DBH76",
+                  "reaction_id": 13
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 36,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 6,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 47,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 26,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 7,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3"
+              }
+            ],
+            "update": 2
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.94126500697924,
+          "normalized_progress": [
+            0.24534049590015683,
+            0.24534049590014886,
+            0.2711170830712643,
+            0.24534049590015286
+          ],
+          "gamma": 0.24534049590015292,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "244d9164d45f44bcdb4ba30da0ce1eda1b0eb79755a96d939e4c0074f16127fd",
+          "after_sha256": "c81284f83eb281c3f087abe03bf58f18c2239acc1f82de5c75b872099e10e95a",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_2_geometry.npz",
+          "geometry_sha256": "5f84117961b1fffe7f9e04432b28a489a5d5defb8ff7aba0320fa2dca0190aa8"
+        },
+        {
+          "update": 3,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "CH4",
+                "rank": 0,
+                "reaction": {
+                  "database": "MGAE109",
+                  "reaction_id": 27
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 57,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 6,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 24,
+                      "variant_suffix": "level2",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 7,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 5,
+                      "variant_suffix": "level3",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3_gauss_chebyshev"
+              }
+            ],
+            "update": 3
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941250708830912,
+          "normalized_progress": [
+            0.2450388283572408,
+            0.24503882835723934,
+            0.2628297724198656,
+            0.2450388283572387
+          ],
+          "gamma": 0.2450388283572401,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "c81284f83eb281c3f087abe03bf58f18c2239acc1f82de5c75b872099e10e95a",
+          "after_sha256": "bfc251f7a96aeb829407dd71ea085e8782761ffebaf90f8161a21875793ee40d",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_3_geometry.npz",
+          "geometry_sha256": "8cad8a4d96a3dec312c7a46978572972ce8f4a3f8d99aa65b01163fc644067db"
+        },
+        {
+          "update": 4,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "HPSi_iso2",
+                "rank": 0,
+                "reaction": {
+                  "database": "EA13",
+                  "reaction_id": 3
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 10,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 68,
+                      "variant_suffix": "level2",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3_mura"
+              }
+            ],
+            "update": 4
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941238550149444,
+          "normalized_progress": [
+            0.24349213014725726,
+            0.2457164951300665,
+            0.24349213014725912,
+            0.2902134188197389
+          ],
+          "gamma": 0.2434921301472581,
+          "active_tasks": [
+            "relchem",
+            "exc"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "bfc251f7a96aeb829407dd71ea085e8782761ffebaf90f8161a21875793ee40d",
+          "after_sha256": "6bf1c2670e336d4c733ec2dffcd492a461bd138cbd5ae0f923664e24470e56b2",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_4_geometry.npz",
+          "geometry_sha256": "cd79bf2d85fbd3d4be9bee05cd0784a0548179a82341fa5b8815f61b19405e2f"
+        },
+        {
+          "update": 5,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "HLi",
+                "rank": 0,
+                "reaction": {
+                  "database": "DBH76",
+                  "reaction_id": 67
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 41,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 51,
+                      "variant_suffix": "level3",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3_gauss_chebyshev"
+              }
+            ],
+            "update": 5
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941217135281095,
+          "normalized_progress": [
+            0.2453728767548585,
+            0.2453728767548614,
+            0.2582651892957882,
+            0.2834897099051876
+          ],
+          "gamma": 0.2453728767548599,
+          "active_tasks": [
+            "relchem",
+            "ae17"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "6bf1c2670e336d4c733ec2dffcd492a461bd138cbd5ae0f923664e24470e56b2",
+          "after_sha256": "b20f46319e740b65716e3bd05d36cf3239f8b94307e377216643cd4dbc45ff98",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_5_geometry.npz",
+          "geometry_sha256": "955fff471f05a35d0f72466eba3d5e094c1302a408f29cdd6bb1603306f1e1d8"
+        },
+        {
+          "update": 6,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "N2",
+                "rank": 0,
+                "reaction": {
+                  "database": "MGAE109",
+                  "reaction_id": 104
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 0,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 18,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 1,
+                      "variant_suffix": "level2",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level2"
+              }
+            ],
+            "update": 6
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941201595998175,
+          "normalized_progress": [
+            0.24446166582634185,
+            0.24446166582634526,
+            0.26396110370702497,
+            0.24446166582634524
+          ],
+          "gamma": 0.2444616658263437,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "b20f46319e740b65716e3bd05d36cf3239f8b94307e377216643cd4dbc45ff98",
+          "after_sha256": "05412a3412e847d5bbb9909048765337af6c3862fa57f50ad146aa7598cb8204",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_6_geometry.npz",
+          "geometry_sha256": "d9157caaf193a1cb6bae398a9250ac49aef494b954a2a715cfc279f772627106"
+        },
+        {
+          "update": 7,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "CH2O",
+                "rank": 0,
+                "reaction": {
+                  "database": "MGAE109",
+                  "reaction_id": 67
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 52,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 104,
+                      "variant_suffix": "level2",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 22,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 10,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3_mura"
+              }
+            ],
+            "update": 7
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941191577918943,
+          "normalized_progress": [
+            0.24412573751541294,
+            0.24412573751541114,
+            0.2606899600607322,
+            0.24412573751540986
+          ],
+          "gamma": 0.24412573751541206,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "05412a3412e847d5bbb9909048765337af6c3862fa57f50ad146aa7598cb8204",
+          "after_sha256": "811cfa02b68a2401552e14a2df5d5bdbe31b510addc8b9a7e5370b39ce23d4e7",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_7_geometry.npz",
+          "geometry_sha256": "8048ac8aa5c723ec89ae4ac29352cff51c50fa484f0b1e38563a39077b88fbdb"
+        },
+        {
+          "update": 8,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "C2H2_iso2",
+                "rank": 0,
+                "reaction": {
+                  "database": "MGAE109",
+                  "reaction_id": 46
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 33,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 80,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 5,
+                      "variant_suffix": "level3",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level2_mura"
+              }
+            ],
+            "update": 8
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941182625773202,
+          "normalized_progress": [
+            0.2445414247131838,
+            0.24454142471318843,
+            0.2647719905118351,
+            0.24454142471318788
+          ],
+          "gamma": 0.2445414247131862,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "811cfa02b68a2401552e14a2df5d5bdbe31b510addc8b9a7e5370b39ce23d4e7",
+          "after_sha256": "62cf8413bf04b6501fd8cd21a3dc345e98593b5c7c4ddd76c0d25e79fb8686f3",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_8_geometry.npz",
+          "geometry_sha256": "49b524d0b91b628425668dcc38ae33a89925f724d680b8eeb000307f3645776c"
+        },
+        {
+          "update": 9,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "H4Si",
+                "rank": 0,
+                "reaction": {
+                  "database": "MGAE109",
+                  "reaction_id": 36
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 70,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 108,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 18,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3_delley"
+              }
+            ],
+            "update": 9
+          },
+          "accepted": true,
+          "full251_gradient_norm": 10.941172503082543,
+          "normalized_progress": [
+            0.24379832877192584,
+            0.24689953884629084,
+            0.2437983287719299,
+            0.3594625147149782
+          ],
+          "gamma": 0.2437983287719277,
+          "active_tasks": [
+            "relchem",
+            "exc"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 7.256894944827483e-06,
+          "backtracks": 0,
+          "before_sha256": "62cf8413bf04b6501fd8cd21a3dc345e98593b5c7c4ddd76c0d25e79fb8686f3",
+          "after_sha256": "df7f9c9f464d47dc2f07af0a0722c62d0e00940c15f2b97426dde0bef030dcd4",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_9_geometry.npz",
+          "geometry_sha256": "2f6e7014ed460088bb6a6e399e790045c68b06e60da0d2cf3cf4d8c49d9e8a01"
+        }
+      ],
+      "gamma_summary": {
+        "min": 0.2434921301472581,
+        "median": 0.24479012653521315,
+        "max": 0.24537682394061447
+      }
+    },
+    {
+      "start": "11_P536",
+      "starting_state": {
+        "seed": 11,
+        "regime": "P536",
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P536.pt",
+        "file_sha256": "0ca0f77367214c171e6edf0576bdb043d64479245ad1a0e539fa11fb0cee542d",
+        "state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6"
+      },
+      "eta0": 6.383541909850447e-06,
+      "status": "USER_STOPPED_AT_CURSOR5",
+      "accepted_updates": 5,
+      "resume_exact": true,
+      "initial_gradient_replay": {
+        "relative_L2": 0.0,
+        "bitwise_equal": true
+      },
+      "source_result": {
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\progress.json",
+        "sha256": "9b2c81069f893e9f10535d60a9e0b6f765fda3781f88d177b9790263d3751ba1"
+      },
+      "checkpoints": {
+        "0": {
+          "objectives": {
+            "relchem": 1.2373332147936535,
+            "ae17": 24.87457454408775,
+            "exc": 69.98481862305971,
+            "op": 0.03686135457451291
+          },
+          "relative": {
+            "task_ratios": {
+              "relchem": 1.0,
+              "ae17": 1.0,
+              "exc": 1.0,
+              "op": 1.0
+            },
+            "R_max": 1.0,
+            "R_mean": 1.0,
+            "geometric_mean": 1.0,
+            "max_abs_log": 0.0,
+            "improved_objectives": 0
+          },
+          "human": {
+            "J_rel": 1.2373332147936535,
+            "nonAE_RMSE": 46.11912079680149,
+            "AE_MAE": 47.091930505675805,
+            "AE_RMSE": 56.46606900362357,
+            "per_database": {
+              "ABDE4": {
+                "MAE": 2.520871414287832,
+                "RMSE": 3.0668914571218115
+              },
+              "AE17": {
+                "MAE": 47.091930505675805,
+                "RMSE": 56.46606900362357
+              },
+              "DBH76": {
+                "MAE": 8.566174515844608,
+                "RMSE": 9.92600270498071
+              },
+              "EA13": {
+                "MAE": 2.502921190797144,
+                "RMSE": 3.086235301772018
+              },
+              "IP13": {
+                "MAE": 3.415451898700726,
+                "RMSE": 4.566902243801514
+              },
+              "MGAE109": {
+                "MAE": 16.206321756041753,
+                "RMSE": 20.291283969036453
+              },
+              "NCCE31": {
+                "MAE": 0.9041050285434101,
+                "RMSE": 1.2680496222252642
+              },
+              "PA8": {
+                "MAE": 1.4484880635745583,
+                "RMSE": 1.7110349205173487
+              },
+              "pTC13": {
+                "MAE": 5.761090958501911,
+                "RMSE": 6.7952208288651805
+              }
+            },
+            "exc_median": 53.77353949162298,
+            "op_median": 0.03757695455658534
+          },
+          "model_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6",
+          "monitor_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\monitor_0.json",
+          "monitor_sha256": "8fc55d74979a13a4984883809e4eba44a43aa434e1cfd46e51f189831f71cfd7"
+        },
+        "5": {
+          "objectives": {
+            "relchem": 1.237281109633465,
+            "ae17": 24.840441908775023,
+            "exc": 69.89461031515985,
+            "op": 0.03686038085217681
+          },
+          "relative": {
+            "task_ratios": {
+              "relchem": 0.9999578891445202,
+              "ae17": 0.9986278102866752,
+              "exc": 0.9987110303395124,
+              "op": 0.9999735841954986
+            },
+            "R_max": 0.9999735841954986,
+            "R_mean": 0.9993175784915516,
+            "geometric_mean": 0.9993173678444808,
+            "max_abs_log": 0.001373132027750852,
+            "improved_objectives": 4
+          },
+          "human": {
+            "J_rel": 1.237281109633465,
+            "nonAE_RMSE": 46.11680298475704,
+            "AE_MAE": 47.027311443055304,
+            "AE_RMSE": 56.38487380552798,
+            "per_database": {
+              "ABDE4": {
+                "MAE": 2.521771630910205,
+                "RMSE": 3.0682264493603637
+              },
+              "AE17": {
+                "MAE": 47.027311443055304,
+                "RMSE": 56.38487380552798
+              },
+              "DBH76": {
+                "MAE": 8.565313507294157,
+                "RMSE": 9.92514373485856
+              },
+              "EA13": {
+                "MAE": 2.502791037315303,
+                "RMSE": 3.0859791120078137
+              },
+              "IP13": {
+                "MAE": 3.41587992718275,
+                "RMSE": 4.567032971446209
+              },
+              "MGAE109": {
+                "MAE": 16.20226878068803,
+                "RMSE": 20.28630605311761
+              },
+              "NCCE31": {
+                "MAE": 0.9039149999231775,
+                "RMSE": 1.2678055152521222
+              },
+              "PA8": {
+                "MAE": 1.4484766402878524,
+                "RMSE": 1.7113609711934934
+              },
+              "pTC13": {
+                "MAE": 5.761754114390407,
+                "RMSE": 6.7957190123813564
+              }
+            },
+            "exc_median": 53.70054714260112,
+            "op_median": 0.03757663585178891
+          },
+          "model_sha256": "04a92dd278582b10d4614e3618d3b87cf90c9daca2fca6799b11e76b11bc67cf",
+          "monitor_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\monitor_5.json",
+          "monitor_sha256": "b3980f5e7319b26b33b369ae4b801183fa6306e5c2dae1d163962ac82686d658"
+        }
+      },
+      "updates": [
+        {
+          "update": 0,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "BeH2",
+                "rank": 0,
+                "reaction": {
+                  "database": "PA8",
+                  "reaction_id": 3
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 48,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 1,
+                      "variant_suffix": "level2",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 23,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 0,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 5,
+                      "variant_suffix": "level3",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level2_mura"
+              }
+            ],
+            "update": 0
+          },
+          "accepted": true,
+          "full251_gradient_norm": 9.62453223792005,
+          "normalized_progress": [
+            0.14771716872841503,
+            0.14771716872841678,
+            0.16837036887837026,
+            0.14771716872841598
+          ],
+          "gamma": 0.14771716872841573,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 6.383541909850447e-06,
+          "backtracks": 0,
+          "before_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6",
+          "after_sha256": "4c8cccbad682d067994b753272ffc85b655a116d0fbe941f263def3c57fef567",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_0_geometry.npz",
+          "geometry_sha256": "d2508fdd1d6bd1e48c0436e0ce07d7a3de75985e08f5b2397793e8b2e8c93931"
+        },
+        {
+          "update": 1,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "H2",
+                "rank": 0,
+                "reaction": {
+                  "database": "pTC13",
+                  "reaction_id": 2
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 33,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 42,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 23,
+                      "variant_suffix": "level3",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 5,
+                      "variant_suffix": "level3",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level2_delley"
+              }
+            ],
+            "update": 1
+          },
+          "accepted": true,
+          "full251_gradient_norm": 9.624527856921297,
+          "normalized_progress": [
+            0.1751357715293091,
+            0.29075989312191464,
+            0.17513577152930807,
+            0.29726467474160123
+          ],
+          "gamma": 0.17513577152930854,
+          "active_tasks": [
+            "relchem",
+            "exc"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 6.383541909850447e-06,
+          "backtracks": 0,
+          "before_sha256": "4c8cccbad682d067994b753272ffc85b655a116d0fbe941f263def3c57fef567",
+          "after_sha256": "8016d093a5e603051827ab0a3d23ad2d2341c967e938e85c4f93e1355db0e236",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_1_geometry.npz",
+          "geometry_sha256": "1454edbbee0d21d5cf07890a53d45e79695465ea8f34412a112dcb0c204e6768"
+        },
+        {
+          "update": 2,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "BH",
+                "rank": 0,
+                "reaction": {
+                  "database": "DBH76",
+                  "reaction_id": 13
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 36,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 6,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 47,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 26,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 7,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3"
+              }
+            ],
+            "update": 2
+          },
+          "accepted": true,
+          "full251_gradient_norm": 9.624533692730747,
+          "normalized_progress": [
+            0.1385605299118979,
+            0.13856052991190287,
+            0.14997117291953416,
+            0.13856052991190074
+          ],
+          "gamma": 0.1385605299118998,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 6.383541909850447e-06,
+          "backtracks": 0,
+          "before_sha256": "8016d093a5e603051827ab0a3d23ad2d2341c967e938e85c4f93e1355db0e236",
+          "after_sha256": "a32b73b2eb4ccf2337f6009a501191bec19ef71dc37528422ad10d7b5d837760",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_2_geometry.npz",
+          "geometry_sha256": "d67a4d33eb0175cabe4c3728ce126ce3f3ccfa0cda04edbfc762d1a409051456"
+        },
+        {
+          "update": 3,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "CH4",
+                "rank": 0,
+                "reaction": {
+                  "database": "MGAE109",
+                  "reaction_id": 27
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 57,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 6,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 24,
+                      "variant_suffix": "level2",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 7,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 5,
+                      "variant_suffix": "level3",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3_gauss_chebyshev"
+              }
+            ],
+            "update": 3
+          },
+          "accepted": true,
+          "full251_gradient_norm": 9.624539321993796,
+          "normalized_progress": [
+            0.142575221856638,
+            0.14257522185664068,
+            0.14538464736696108,
+            0.14257522185663782
+          ],
+          "gamma": 0.1425752218566384,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 6.383541909850447e-06,
+          "backtracks": 0,
+          "before_sha256": "a32b73b2eb4ccf2337f6009a501191bec19ef71dc37528422ad10d7b5d837760",
+          "after_sha256": "18cca88d489d33da0079858ec5675bec302dac0910a34de3f3df64ef71b165d7",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_3_geometry.npz",
+          "geometry_sha256": "ef901b8249cc1d2c5f5c3533167556917bd96809c2ad5bc174a1671ce8f95fe7"
+        },
+        {
+          "update": 4,
+          "sample": {
+            "per_rank": [
+              {
+                "mrks_system": "HPSi_iso2",
+                "rank": 0,
+                "reaction": {
+                  "database": "EA13",
+                  "reaction_id": 3
+                },
+                "task_samples": {
+                  "ae17": [
+                    {
+                      "database": "AE17",
+                      "reaction_id": 9,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 5,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 1,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 10,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 7,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 11,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 16,
+                      "variant_suffix": "level2_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 2,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 3,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 14,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 15,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 8,
+                      "variant_suffix": "level2_mura",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 0,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.058823529411764705
+                    },
+                    {
+                      "database": "AE17",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.058823529411764705
+                    }
+                  ],
+                  "relchem": [
+                    {
+                      "database": "ABDE4",
+                      "reaction_id": 2,
+                      "variant_suffix": "level2",
+                      "weight": 0.01593625498007968
+                    },
+                    {
+                      "database": "DBH76",
+                      "reaction_id": 13,
+                      "variant_suffix": "level3",
+                      "weight": 0.2788844621513944
+                    },
+                    {
+                      "database": "EA13",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_gauss_chebyshev",
+                      "weight": 0.043824701195219126
+                    },
+                    {
+                      "database": "IP13",
+                      "reaction_id": 10,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.05179282868525897
+                    },
+                    {
+                      "database": "MGAE109",
+                      "reaction_id": 68,
+                      "variant_suffix": "level2",
+                      "weight": 0.41434262948207173
+                    },
+                    {
+                      "database": "NCCE31",
+                      "reaction_id": 6,
+                      "variant_suffix": "level2_delley",
+                      "weight": 0.11155378486055777
+                    },
+                    {
+                      "database": "PA8",
+                      "reaction_id": 4,
+                      "variant_suffix": "level3_delley",
+                      "weight": 0.03187250996015936
+                    },
+                    {
+                      "database": "pTC13",
+                      "reaction_id": 12,
+                      "variant_suffix": "level3_mura",
+                      "weight": 0.05179282868525897
+                    }
+                  ]
+                },
+                "variant_suffix": "level3_mura"
+              }
+            ],
+            "update": 4
+          },
+          "accepted": true,
+          "full251_gradient_norm": 9.624538486866454,
+          "normalized_progress": [
+            0.24548664816472687,
+            0.2454866481647258,
+            0.2588267260732808,
+            0.24548664816472454
+          ],
+          "gamma": 0.24548664816472573,
+          "active_tasks": [
+            "relchem",
+            "ae17",
+            "op"
+          ],
+          "accepted_t": 1.0,
+          "accepted_eta": 6.383541909850447e-06,
+          "backtracks": 0,
+          "before_sha256": "18cca88d489d33da0079858ec5675bec302dac0910a34de3f3df64ef71b165d7",
+          "after_sha256": "04a92dd278582b10d4614e3618d3b87cf90c9daca2fca6799b11e76b11bc67cf",
+          "restoration_checks": [
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            },
+            {
+              "exact": true,
+              "max_abs_difference": 0
+            }
+          ],
+          "geometry_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_4_geometry.npz",
+          "geometry_sha256": "31a3d2de960d5abe02a66511a81b756d7fac9475ca2363a5043184fb3678e1e0"
+        }
+      ],
+      "gamma_summary": {
+        "min": 0.1385605299118998,
+        "median": 0.14771716872841573,
+        "max": 0.24548664816472573
+      },
+      "interrupted_attempt": {
+        "update": 5,
+        "phase": "full251 gradient",
+        "accepted": false,
+        "saved_cursor": 5,
+        "no_trial_started": true
+      }
+    },
+    {
+      "start": "23_P67",
+      "starting_state": {
+        "seed": 23,
+        "regime": "P67",
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P67.pt",
+        "file_sha256": "1cac6eb351372adab090c60f7daaf0013935857ed56648ccf0cd68b541b62666",
+        "state_sha256": "69f6e7c90a5f4cf6f51e885b8f3c1b9679508c71a57a8363149de6783820e4d8"
+      },
+      "eta0": 8.539282669870804e-06,
+      "status": "NOT_STARTED",
+      "accepted_updates": 0,
+      "checkpoints": {},
+      "updates": []
+    },
+    {
+      "start": "23_P536",
+      "starting_state": {
+        "seed": 23,
+        "regime": "P536",
+        "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed23_P536.pt",
+        "file_sha256": "ca1d4df5cb84b66e17f9964d645de5d4f00fa9f5f3afede56fa632b5ff7057a7",
+        "state_sha256": "0b0c2aefc703c90be250c2fdb79e60be1df35273c7bc7d680ede50a8e7145074"
+      },
+      "eta0": 1.0204187208883716e-05,
+      "status": "NOT_STARTED",
+      "accepted_updates": 0,
+      "checkpoints": {},
+      "updates": []
+    }
+  ],
+  "hashes_checked": 61,
+  "hash_mismatches": 0,
+  "accepted_state_reconstruction": "bitwise PASS for all15 accepted updates",
+  "max_normalized_progress_reconstruction_difference": 0,
+  "production_source_changes": [],
+  "review": {
+    "schema": "lap-unitmax-full251-gold-independent-review-v1",
+    "status": "PASS",
+    "scope_status": "PARTIAL_USER_DIRECTED_STOP",
+    "reviewed_at_utc": "2026-10-07T12:29:29.521660+00:00",
+    "review_type": "Independent read-only source, protocol, provenance and partial-artifact review",
+    "scope": "Current minimal full251 gold-control experiment only. No model forward/backward, objective recomputation, training, or production edits were performed by this reviewer.",
+    "reviewed_snapshot": {
+      "starting_commit": "789d04d0638aa9ded44f0e9012cb5b4fc584a235",
+      "protocol_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\protocol.json",
+      "protocol_sha256": "284074b3919fdd262bc75927e6622bdd472a123be88ffd2ad6a9853cd341898c",
+      "executed_source_path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_unitmax_full251_gold.py",
+      "executed_source_sha256": "6afac84ca0f70598af3ffe5022844332dce7ef451fbbe751724036fe332ef93a",
+      "test_path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\test_lap_unitmax_full251_gold.py",
+      "test_sha256": "ebaed264d6cdff5ce40aff193b676833fb116b14273ffca8458e439c0a6c4311",
+      "partial_validator_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\audit_partial.py",
+      "first_completed_result_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\result.json",
+      "first_completed_result_sha256": "4ff5d337a4214ba564c4602e50204fe557a69aa75fa8b51be0eb485473336590",
+      "partial_arm_progress_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\progress.json",
+      "partial_arm_progress_sha256": "9b2c81069f893e9f10535d60a9e0b6f765fda3781f88d177b9790263d3751ba1",
+      "partial_arm_checkpoint_5_path": "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\checkpoint_5.pt",
+      "partial_arm_checkpoint_5_sha256": "a84d5ecf2be7431305615d94c88189b4377eae9186a47ee5aa1dc517af4f3c99",
+      "repository_tracked_diff": "NONE",
+      "repository_head": "789d04d0638aa9ded44f0e9012cb5b4fc584a235"
+    },
+    "findings": {
+      "source_and_protocol": "PASS. The frozen source hash matches the protocol. The protocol binds four prescribed starts, prior state/gradient and parameter-order provenance, the 25-entry sampling manifest and reference etas. All 60 immutable_file hashes plus the executed-source hash match (61 total checks, zero mismatches). The adapter is a ChemistryBatchObjective subclass; its gradient and trial-scalar methods both call the same qualified streamed full251 F64-shadow evaluator. UNIT_MAXMIN is supplied by the custom aggregation hook; method=pcd is only the existing direct-Armijo API guard. Only the relchem factory changes. The runner loops while cursor<10, so entries 0\u20139 are the only training/update entries; manifest entry 10 is not consumed.",
+      "first_arm_11_P67": "PASS for this arm only. Ten of ten accepted updates, all accepted_t=1 and zero backtracks. Independently recomputed ratios from saved monitor_0/5/10 objective panels exactly match saved ratios; cursor10 Rmax=0.9998428657195269 and all four task ratios are strictly below 1. Cursor0 full251 chemistry objective matches the frozen previous gold L_full within 2.22e-16. Resume verification is recorded exact at cursors 5 and 10.",
+      "partial_arm_11_P536": "Checkpointed at cursor 5 with five accepted updates. All five accepted_t=1, zero backtracks, all saved Armijo checks pass, all task reductions are positive, restoration checks are exact, and resume_exact=true. The saved monitor_5 ratios are relchem=0.9999578891445202, ae17=0.9986278102866752, exc=0.9987110303395124, op=0.999973584195499, but cursor10 is absent; these do not satisfy or replace the frozen endpoint gate.",
+      "unstarted_arms": "Neither 23_P67 nor 23_P536 has an output directory/result. The required four-arm experiment is incomplete.",
+      "partial_artifact_replay": "The artifact-only validator reproduced every accepted F32 state for the two available arms: 15/15 accepted updates, max normalized-progress discrepancy 0, latest checkpoint cursor/model digest consistent, and 61 hash checks with zero mismatches. Independently, I reconstructed 11_P67/update0 from checkpoint_0 plus saved unit direction and eta0; its F32 after-state digest matched exactly. Recomputed raw-gradient directional slopes from the saved update0 geometry; max absolute difference from diagnostics was 1.02e-20.",
+      "stop_and_interpretation": "The parent reports the requested stop after more than five hours, during the next 11_P536 chemistry-gradient evaluation before a trial or committed update. The durable 11_P536 cursor5 checkpoint and matching latest checkpoint remain valid. The partial receipt makes no four-arm or method-level qualification claim and makes no SVRG recommendation.",
+      "checkpoint_caveat": "The reused checkpoint helper writes latest.pt directly rather than through an atomic replace. This does not affect the present stop: latest.pt and checkpoint_5.pt have the same SHA and both load as cursor5. This review does not claim crash safety for interruption during a checkpoint-file write."
+    },
+    "validation_snapshot": {
+      "protocol_immutable_files": 60,
+      "source_hash_checks": 1,
+      "hash_checks_total": 61,
+      "hash_mismatches": 0,
+      "available_arms": 2,
+      "complete_arms": 1,
+      "partial_arms": 1,
+      "unstarted_arms": 2,
+      "accepted_updates_reconstructed": 15,
+      "max_progress_replay_difference": 0.0,
+      "independent_update0_f32_state_sha_match": true,
+      "independent_update0_max_slope_difference": 1.0164395367051604e-20,
+      "tests_passed_before_run": 141,
+      "tests_skipped": 3,
+      "skip_reason": "Windows Gloo tests",
+      "ruff": "PASS",
+      "compileall": "PASS",
+      "tracked_production_changes": 0
+    },
+    "qualification": {
+      "scientific_qualification": "INCOMPLETE",
+      "reason": "The frozen gate requires all four starts to complete 10 updates, have Rmax10<1, and avoid the frozen collapse criteria. Only 11_P67 reached cursor10; 11_P536 is at cursor5 and both seed23 starts are unstarted.",
+      "whole_experiment_pass": false,
+      "blockers": [
+        "User-directed stop left the four-arm gold-control experiment incomplete; do not generalize the 11_P67 result to the method or all starts."
+      ]
+    }
+  },
+  "validation": {
+    "tests": {
+      "passed": 141,
+      "skipped": 3,
+      "scope": "existing MOO, PCD, Armijo, trajectory and diagnostic groups plus three full251 integration tests; Windows/Gloo platform skips"
+    },
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "hash_checks": 61,
+    "hash_mismatches": 0,
+    "exact_accepted_state_replay": "PASS all15",
+    "resume": "exact cursor5/10 identity checks PASS",
+    "process": "stopped at user request; no Python process remains",
+    "git_diff_check": "PASS"
+  },
+  "artifacts": {
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\checkpoint_0.pt": "8ef05f89435bfb22d7862a239314544d668e3bb34ea75e7c28e7298f306582d2",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\checkpoint_10.pt": "95f3530209d7c2cd6218fcce6b34fece5a0f3e9c90eb2d6c0dcf51ac596c3879",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\checkpoint_5.pt": "88b1a52c7499b3dec6c2d5f00abca5e2cce56f7b77962db54ea022df9091a6ee",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\latest.pt": "95f3530209d7c2cd6218fcce6b34fece5a0f3e9c90eb2d6c0dcf51ac596c3879",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\monitor_0.json": "75dcde5f893f75090d5d02640fecdb5855e851668439a6b747702e6fd4cc6ca8",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\monitor_10.json": "c6f69f3b496d23750a3da80c88c32255ccd9f4d44869823fdcafd67c181d5eed",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\monitor_5.json": "bfc82bfc3098fb7f42a5164a90a67226fc07112eb6f26f6bb75718eacf89b4de",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\progress.json": "c55bbd02f7e76958e2be95bb0b79a3cbc137fd30b88d94fea69208fa0616fc6d",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\result.json": "4ff5d337a4214ba564c4602e50204fe557a69aa75fa8b51be0eb485473336590",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_0_geometry.npz": "9e9a3755d385c2f1716ee19950ee980dd2190656e6562f29d0cac54551bf0df7",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_1_geometry.npz": "eefcd1418c7eefd0c273fe6c7fce78b326834a547fd0695e6ebb037b19c4316a",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_2_geometry.npz": "5f84117961b1fffe7f9e04432b28a489a5d5defb8ff7aba0320fa2dca0190aa8",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_3_geometry.npz": "8cad8a4d96a3dec312c7a46978572972ce8f4a3f8d99aa65b01163fc644067db",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_4_geometry.npz": "cd79bf2d85fbd3d4be9bee05cd0784a0548179a82341fa5b8815f61b19405e2f",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_5_geometry.npz": "955fff471f05a35d0f72466eba3d5e094c1302a408f29cdd6bb1603306f1e1d8",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_6_geometry.npz": "d9157caaf193a1cb6bae398a9250ac49aef494b954a2a715cfc279f772627106",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_7_geometry.npz": "8048ac8aa5c723ec89ae4ac29352cff51c50fa484f0b1e38563a39077b88fbdb",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_8_geometry.npz": "49b524d0b91b628425668dcc38ae33a89925f724d680b8eeb000307f3645776c",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P67\\update_9_geometry.npz": "2f6e7014ed460088bb6a6e399e790045c68b06e60da0d2cf3cf4d8c49d9e8a01",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\checkpoint_0.pt": "e6f9e38b40e7357bfd0736866dbad475baeac8b3aaf24714588d04bac0b6a33d",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\checkpoint_5.pt": "a84d5ecf2be7431305615d94c88189b4377eae9186a47ee5aa1dc517af4f3c99",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\latest.pt": "a84d5ecf2be7431305615d94c88189b4377eae9186a47ee5aa1dc517af4f3c99",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\monitor_0.json": "8fc55d74979a13a4984883809e4eba44a43aa434e1cfd46e51f189831f71cfd7",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\monitor_5.json": "b3980f5e7319b26b33b369ae4b801183fa6306e5c2dae1d163962ac82686d658",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\progress.json": "9b2c81069f893e9f10535d60a9e0b6f765fda3781f88d177b9790263d3751ba1",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_0_geometry.npz": "d2508fdd1d6bd1e48c0436e0ce07d7a3de75985e08f5b2397793e8b2e8c93931",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_1_geometry.npz": "1454edbbee0d21d5cf07890a53d45e79695465ea8f34412a112dcb0c204e6768",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_2_geometry.npz": "d67a4d33eb0175cabe4c3728ce126ce3f3ccfa0cda04edbfc762d1a409051456",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_3_geometry.npz": "ef901b8249cc1d2c5f5c3533167556917bd96809c2ad5bc174a1671ce8f95fe7",
+    "C:\\Dev\\readWFN_share_ms\\lap_unitmax_full251_gold_runs_20261007\\11_P536\\update_4_geometry.npz": "31a3d2de960d5abe02a66511a81b756d7fac9475ca2363a5043184fb3678e1e0"
+  },
+  "next_experiment": "Complete the remaining exact-full251 gold-control work under an explicit compute budget: resume seed11 P536 at cursor5 and run the two frozen seed23 starts. Do not implement SVRG until all four t10 gates pass.",
+  "scope": "No SVRG, new optimizer, initialization, sampler, controller, full90/SCF/Diet/Slurm or 25/100-update extension. Exactly two arms started, one completed10, one stopped after5; both seed23 arms not started."
+}
