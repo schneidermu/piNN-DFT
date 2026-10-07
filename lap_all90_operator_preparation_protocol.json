@@ -1,0 +1,25 @@
+{
+  "protocol": "lap-all90-operator-preparation-v1",
+  "starting_commit": "519ef3ef0965473b5533018f266f5ba4280a9531",
+  "systems": "all 90 canonical central records, sorted by system_name",
+  "generation_chunk": 2048,
+  "production_read_chunk": 4096,
+  "operator_point_chunk": 256,
+  "source_manifest_sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887",
+  "frozen_model": "seed11 P67",
+  "frozen_model_file_sha256": "264a8d189d53d49007d7de11d8cfb5382e8b8262e4b48068142c8771e293c834",
+  "historical_oracle": "15-system qualified AO-factor cache",
+  "parity": "exact arrays, exact frozen-model loss and parameter gradient",
+  "overlap_gate": "existing lap_operator._inverse_sqrt_overlap",
+  "targets": "existing hash-bound central RefAO, Overlap, VxcLegacy and Exc, unchanged",
+  "precision": "existing production repair; stored F32, learned F64, PBE F32, AO assembly F64",
+  "source_identity": {
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_operator_data.py": "8d411952a579728dac395e38d1255e5e5bb412ea77d4e2fb8c9f6116e55f93c9",
+    "train_models/lap_moo_panel.py": "663f93c147be6870d89de898694f9099da200f0388ea82a3ff033bccd7aba587",
+    "train_models/lap_moo_training.py": "8f44a919487b9817431004542ccceeb15b0057d5b864cd224ab49f46e1dbe983",
+    "train_models/train_lap_moo.py": "b28f36963fac9653cc2ae5439b572ba7de6c4cb800c60155086585be1c70bfab"
+  },
+  "training": false,
+  "scientific_qualification": false
+}
