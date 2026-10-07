@@ -1,6 +1,6 @@
 # Exact full251 UNIT_MAXMIN gold control — partial qualification
 
-**INCOMPLETE.** The user requested wrap-up after more than five hours. One of four required arms completed ten updates and passed scientifically; a second reached cursor5; two were not started. This does not qualify UNIT_MAXMIN at method level and does not authorize SVRG.
+**PARTIAL PASS / causal validation.** The latest user instruction ended gold continuation at the next safe checkpoint: seed11 P536 cursor6. Seed11 P67 remains scientifically passed at cursor10, and both seed23 gold arms remain unstarted. This is not full four-arm scientific qualification. The user now authorizes only static SVRG K1 qualification.
 
 Starting commit: `789d04d0638aa9ded44f0e9012cb5b4fc584a235` on `lap_full_vxc`.
 
@@ -23,13 +23,13 @@ Frozen protocol SHA: `284074b3919fdd262bc75927e6622bdd472a123be88ffd2ad6a9853cd3
 | Start | Accepted | Status | Chemistry | AE17 | Exc | Operator |
 |---|---:|---|---:|---:|---:|---:|
 | 11_P67 | 10 | SCIENTIFIC-PASS | 0.9998428657195269 | 0.9966141603782469 | 0.9966516886484715 | 0.9995090614259773 |
-| 11_P536 | 5 | USER_STOPPED_AT_CURSOR5 | not reached | not reached | not reached | not reached |
+| 11_P536 | 6 | USER_SAFE_STOP_CURSOR6 | not reached | not reached | not reached | not reached |
 | 23_P67 | 0 | NOT_STARTED | not reached | not reached | not reached | not reached |
 | 23_P536 | 0 | NOT_STARTED | not reached | not reached | not reached | not reached |
 
-All15 committed updates accepted t=1 with zero backtracks and strict four-task decrease/Armijo. No step collapse or solver failure was observed. Both update0 full251 gradients matched their prior stored gold arrays bit for bit. Cursor5/10 resume checks were exact for the completed checkpoints.
+All16 committed updates accepted t=1 with zero backtracks and strict four-task decrease/Armijo. No step collapse or solver failure was observed. Both update0 full251 gradients matched their prior stored gold arrays bit for bit. Cursor5/10 resume checks were exact for the completed checkpoints.
 
-The user interruption occurred during seed11 P536 update5 full251 gradient calculation, before any trial parameter perturbation. Its saved model/cursor remains5. The process exited and is no longer running. No claim is made about unsaved in-memory RNG after process termination.
+After the authorized resume, seed11 P536 update5 completed at full displacement with zero backtracks. The latest user instruction stopped gold at its saved cursor6 checkpoint, before any trial at update6. The process exited and is no longer running. No claim is made about unsaved in-memory RNG after process termination.
 
 ## Frozen displacement and gamma
 
@@ -48,14 +48,14 @@ The existing helpers save `latest.pt` directly rather than by atomic replacement
 
 Validation receipt: `{"tests": {"passed": 141, "skipped": 3, "scope": "existing MOO, PCD, Armijo, trajectory and diagnostic groups plus three full251 integration tests; Windows/Gloo platform skips"}, "ruff": "PASS", "compileall": "PASS", "hash_checks": 61, "hash_mismatches": 0, "exact_accepted_state_replay": "PASS all15", "resume": "exact cursor5/10 identity checks PASS", "process": "stopped at user request; no Python process remains", "git_diff_check": "PASS"}`.
 
-Independent partial-scope review PASS; overall scientific qualification INCOMPLETE. Receipt: `C:\Dev\readWFN_share_ms\lap_unitmax_full251_gold_runs_20261007\review.json`; SHA: `6d720726d46de7cdd79bfbe4ada02b6e5362a54bd524d5a660b66a1ae736a486`. The reviewer independently reconstructed the accepted states/progress and checked both available panels, exact cursor/resume identity and the unstarted seed23 arms.
+Independent partial-scope review PASS for the earlier first15 updates; the safe cursor6 stop adds one accepted update outside that review scope. Overall scientific qualification remains incomplete. Receipt: `C:\Dev\readWFN_share_ms\lap_unitmax_full251_gold_runs_20261007\review.json`; SHA: `6d720726d46de7cdd79bfbe4ada02b6e5362a54bd524d5a660b66a1ae736a486`. The reviewer independently reconstructed the accepted states/progress and checked both available panels, exact cursor/resume identity and the unstarted seed23 arms.
 
 Ponytail: only a narrow experimental full251 factory adapter; no new optimizer or production behavior. Pocock: fresh SHA-bound starts, own fresh denominators, unchanged unit direction/eta budgets, exact full251 gradient/scalar identity, exact accepted-state replay, no skipped/restarted failures. One arm passes; incomplete arms are retained explicitly rather than promoted.
 
 ## Decision
 
-Complete the remaining exact-full251 gold-control work under an explicit compute budget: resume seed11 P536 at cursor5 and run the two frozen seed23 starts. Do not implement SVRG until all four t10 gates pass.
+Gold qualification is **PARTIAL PASS / causal validation**, not full four-arm scientific qualification. The user stopped it safely at seed11 P536 cursor6. No remaining gold work is authorized. The next experiment is canonical static SVRG K1 under the separately frozen protocol.
 
-Only the current qualified15-system operator panel was monitored; this is not full90 readiness. No SVRG, new optimizer, new initialization, adaptive sampler, new line search, or25/100-update extension was introduced. Two trajectories were started: one completed ten updates and one stopped after five at the user’s request. The two seed23 trajectories were not run.
+Only the current qualified15-system operator panel was monitored; this is not full90 readiness. No SVRG, new optimizer, new initialization, adaptive sampler, new line search, or25/100-update extension was introduced. Two trajectories were started: one completed ten updates and one stopped safely after six at the user’s request. The two seed23 trajectories were not run.
 
 Artifacts: `C:/Dev/readWFN_share_ms/lap_unitmax_full251_gold_runs_20261007`; see the machine-readable metrics for exact checkpoint, geometry, monitoring and starting-state SHAs.

@@ -66,3 +66,11 @@ lap_unitmax_full251_gold.py -text whitespace=blank-at-eol,blank-at-eof,space-bef
 test_lap_unitmax_full251_gold.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_unitmax_full251_10update_gold_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 lap_unitmax_full251_10update_gold_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+lap_unitmax_svrg_k1.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+test_lap_unitmax_svrg_k1.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+lap_unitmax_svrg_k1_10update_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+lap_unitmax_svrg_k1_10update_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
