@@ -1,0 +1,2602 @@
+{
+  "schema": "lap-chemistry-stratified-replicates-v1",
+  "catalog": [
+    {
+      "database": "PA8",
+      "reaction_id": 3,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 2,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 13,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 27,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 3,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 67,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 104,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 67,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 46,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 36,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 70,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 14,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 52,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 79,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 94,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 47,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "ABDE4",
+      "reaction_id": 2,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 1,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 5,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 72,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 10,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 66,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 63,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 11,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 17,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 82,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 0,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 87,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 1,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 40,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 75,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 45,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 3,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 0,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 65,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 0,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 1,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 7,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 93,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 8,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 56,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 2,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 1,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 6,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 34,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 24,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 12,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 16,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 4,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 62,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 62,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 52,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 24,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 5,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 28,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 19,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 21,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 0,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 69,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 19,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 53,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 20,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 22,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 76,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 4,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 105,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 71,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 98,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 99,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 46,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 8,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 83,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 6,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 68,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 25,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 73,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 89,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 2,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 7,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 102,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 73,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 35,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 92,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 1,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 50,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 77,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 3,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 24,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 68,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 5,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 13,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 4,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 13,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 27,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 53,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 7,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 29,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "ABDE4",
+      "reaction_id": 3,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 38,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 5,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 39,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 48,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 10,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 88,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 29,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 65,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 4,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 69,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 17,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 17,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 12,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 44,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 22,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 3,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 96,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 95,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 64,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 29,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 4,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 6,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 10,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 11,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 27,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 81,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 6,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 32,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 58,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 0,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 8,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 7,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 49,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 1,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 2,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 3,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 10,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 7,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 58,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 11,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 101,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 7,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 72,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 11,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 40,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 16,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 25,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 23,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "ABDE4",
+      "reaction_id": 0,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 43,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 108,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 51,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 1,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 103,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 22,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 8,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 3,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 9,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 26,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 10,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 5,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 44,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 25,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 6,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 23,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 54,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 32,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 31,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 33,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 86,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 16,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 85,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 90,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 11,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 100,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 33,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 15,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 41,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 41,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 12,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 9,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 51,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "ABDE4",
+      "reaction_id": 1,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 8,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 37,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 19,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 26,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 30,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 5,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 50,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 70,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 107,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 84,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 12,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 64,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 56,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 15,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 9,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 10,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 2,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 42,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 49,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 80,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 2,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 61,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 71,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 0,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 31,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 7,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 4,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 9,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 60,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 78,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 75,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "PA8",
+      "reaction_id": 6,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 63,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 14,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 60,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 0,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 74,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 61,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 57,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 91,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 21,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 39,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 6,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "EA13",
+      "reaction_id": 5,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 23,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 30,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 47,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 36,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 20,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 38,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 45,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 59,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 59,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 37,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 106,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 12,
+      "variant_suffix": "level3_delley"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 28,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 26,
+      "variant_suffix": "level2_gauss_chebyshev"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 11,
+      "variant_suffix": "level3"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 20,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 18,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "NCCE31",
+      "reaction_id": 9,
+      "variant_suffix": "level2"
+    },
+    {
+      "database": "pTC13",
+      "reaction_id": 9,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 14,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 66,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "IP13",
+      "reaction_id": 2,
+      "variant_suffix": "level3_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 57,
+      "variant_suffix": "level3_gauss_chebyshev"
+    },
+    {
+      "database": "MGAE109",
+      "reaction_id": 97,
+      "variant_suffix": "level2_mura"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 48,
+      "variant_suffix": "level2_delley"
+    },
+    {
+      "database": "DBH76",
+      "reaction_id": 18,
+      "variant_suffix": "level3_gauss_chebyshev"
+    }
+  ],
+  "database_order": [
+    "ABDE4",
+    "DBH76",
+    "EA13",
+    "IP13",
+    "MGAE109",
+    "NCCE31",
+    "PA8",
+    "pTC13"
+  ],
+  "counts": {
+    "ABDE4": 4,
+    "DBH76": 70,
+    "EA13": 11,
+    "IP13": 13,
+    "MGAE109": 104,
+    "NCCE31": 28,
+    "PA8": 8,
+    "pTC13": 13
+  },
+  "K": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "replicates": [
+    {
+      "replicate": 0,
+      "seed": 41000,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          16,
+          97,
+          180,
+          146
+        ],
+        "DBH76": [
+          54,
+          187,
+          227,
+          193,
+          19,
+          209,
+          46,
+          21
+        ],
+        "EA13": [
+          224,
+          208,
+          77,
+          196,
+          23,
+          4,
+          17,
+          37
+        ],
+        "IP13": [
+          133,
+          48,
+          57,
+          171,
+          110,
+          206,
+          99,
+          155
+        ],
+        "MGAE109": [
+          114,
+          164,
+          52,
+          236,
+          73,
+          25,
+          86,
+          225
+        ],
+        "NCCE31": [
+          239,
+          24,
+          122,
+          118,
+          214,
+          113,
+          237,
+          153
+        ],
+        "PA8": [
+          42,
+          91,
+          0,
+          95,
+          127,
+          197,
+          212,
+          89
+        ],
+        "pTC13": [
+          177,
+          18,
+          106,
+          120,
+          39,
+          83,
+          78,
+          1
+        ]
+      }
+    },
+    {
+      "replicate": 1,
+      "seed": 41001,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          180,
+          146,
+          97,
+          16
+        ],
+        "DBH76": [
+          249,
+          193,
+          75,
+          195,
+          66,
+          10,
+          112,
+          21
+        ],
+        "EA13": [
+          216,
+          17,
+          224,
+          196,
+          4,
+          37,
+          161,
+          191
+        ],
+        "IP13": [
+          110,
+          206,
+          246,
+          133,
+          70,
+          48,
+          171,
+          124
+        ],
+        "MGAE109": [
+          226,
+          149,
+          14,
+          170,
+          148,
+          117,
+          98,
+          220
+        ],
+        "NCCE31": [
+          35,
+          240,
+          242,
+          118,
+          92,
+          113,
+          74,
+          55
+        ],
+        "PA8": [
+          95,
+          42,
+          197,
+          0,
+          212,
+          89,
+          127,
+          91
+        ],
+        "pTC13": [
+          243,
+          154,
+          83,
+          78,
+          137,
+          106,
+          72,
+          18
+        ]
+      }
+    },
+    {
+      "replicate": 2,
+      "seed": 41002,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          16,
+          97,
+          146,
+          180
+        ],
+        "DBH76": [
+          250,
+          32,
+          160,
+          230,
+          238,
+          227,
+          30,
+          176
+        ],
+        "EA13": [
+          224,
+          208,
+          17,
+          37,
+          4,
+          196,
+          23,
+          77
+        ],
+        "IP13": [
+          155,
+          206,
+          57,
+          110,
+          171,
+          70,
+          99,
+          48
+        ],
+        "MGAE109": [
+          85,
+          173,
+          90,
+          25,
+          210,
+          169,
+          41,
+          172
+        ],
+        "NCCE31": [
+          92,
+          214,
+          122,
+          152,
+          96,
+          74,
+          153,
+          20
+        ],
+        "PA8": [
+          91,
+          42,
+          89,
+          197,
+          127,
+          95,
+          212,
+          0
+        ],
+        "pTC13": [
+          106,
+          137,
+          78,
+          72,
+          177,
+          18,
+          83,
+          204
+        ]
+      }
+    },
+    {
+      "replicate": 3,
+      "seed": 41003,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          180,
+          97,
+          16,
+          146
+        ],
+        "DBH76": [
+          227,
+          185,
+          49,
+          19,
+          30,
+          199,
+          125,
+          45
+        ],
+        "EA13": [
+          23,
+          216,
+          4,
+          161,
+          77,
+          224,
+          17,
+          37
+        ],
+        "IP13": [
+          99,
+          171,
+          155,
+          110,
+          246,
+          57,
+          102,
+          133
+        ],
+        "MGAE109": [
+          84,
+          119,
+          52,
+          149,
+          148,
+          108,
+          61,
+          117
+        ],
+        "NCCE31": [
+          241,
+          143,
+          153,
+          240,
+          132,
+          174,
+          87,
+          152
+        ],
+        "PA8": [
+          0,
+          212,
+          197,
+          89,
+          127,
+          91,
+          95,
+          42
+        ],
+        "pTC13": [
+          204,
+          154,
+          83,
+          72,
+          39,
+          78,
+          137,
+          1
+        ]
+      }
+    },
+    {
+      "replicate": 4,
+      "seed": 41004,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          16,
+          97,
+          180,
+          146
+        ],
+        "DBH76": [
+          5,
+          249,
+          34,
+          126,
+          187,
+          10,
+          234,
+          207
+        ],
+        "EA13": [
+          191,
+          224,
+          161,
+          17,
+          4,
+          208,
+          77,
+          216
+        ],
+        "IP13": [
+          155,
+          171,
+          102,
+          133,
+          57,
+          70,
+          99,
+          246
+        ],
+        "MGAE109": [
+          200,
+          164,
+          211,
+          80,
+          9,
+          27,
+          194,
+          85
+        ],
+        "NCCE31": [
+          113,
+          74,
+          240,
+          20,
+          132,
+          237,
+          153,
+          87
+        ],
+        "PA8": [
+          91,
+          89,
+          0,
+          95,
+          127,
+          42,
+          212,
+          197
+        ],
+        "pTC13": [
+          83,
+          1,
+          243,
+          72,
+          18,
+          137,
+          106,
+          154
+        ]
+      }
+    },
+    {
+      "replicate": 5,
+      "seed": 41005,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          180,
+          97,
+          16,
+          146
+        ],
+        "DBH76": [
+          217,
+          249,
+          112,
+          160,
+          141,
+          66,
+          11,
+          234
+        ],
+        "EA13": [
+          23,
+          208,
+          161,
+          191,
+          17,
+          4,
+          216,
+          77
+        ],
+        "IP13": [
+          110,
+          206,
+          133,
+          124,
+          246,
+          70,
+          171,
+          48
+        ],
+        "MGAE109": [
+          235,
+          163,
+          170,
+          219,
+          138,
+          68,
+          76,
+          244
+        ],
+        "NCCE31": [
+          96,
+          55,
+          186,
+          152,
+          132,
+          153,
+          92,
+          214
+        ],
+        "PA8": [
+          91,
+          197,
+          89,
+          42,
+          212,
+          127,
+          0,
+          95
+        ],
+        "pTC13": [
+          177,
+          137,
+          78,
+          154,
+          106,
+          83,
+          72,
+          18
+        ]
+      }
+    },
+    {
+      "replicate": 6,
+      "seed": 41006,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          16,
+          180,
+          146,
+          97
+        ],
+        "DBH76": [
+          227,
+          195,
+          30,
+          94,
+          10,
+          46,
+          2,
+          135
+        ],
+        "EA13": [
+          224,
+          4,
+          77,
+          208,
+          17,
+          216,
+          37,
+          196
+        ],
+        "IP13": [
+          102,
+          70,
+          48,
+          131,
+          206,
+          124,
+          171,
+          133
+        ],
+        "MGAE109": [
+          226,
+          172,
+          144,
+          167,
+          71,
+          6,
+          56,
+          68
+        ],
+        "NCCE31": [
+          74,
+          239,
+          87,
+          129,
+          92,
+          55,
+          28,
+          20
+        ],
+        "PA8": [
+          42,
+          212,
+          197,
+          127,
+          95,
+          89,
+          91,
+          0
+        ],
+        "pTC13": [
+          1,
+          83,
+          39,
+          106,
+          78,
+          154,
+          72,
+          120
+        ]
+      }
+    },
+    {
+      "replicate": 7,
+      "seed": 41007,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          146,
+          180,
+          16,
+          97
+        ],
+        "DBH76": [
+          135,
+          238,
+          157,
+          229,
+          145,
+          202,
+          125,
+          66
+        ],
+        "EA13": [
+          161,
+          216,
+          77,
+          37,
+          224,
+          4,
+          196,
+          17
+        ],
+        "IP13": [
+          110,
+          57,
+          131,
+          206,
+          99,
+          124,
+          246,
+          155
+        ],
+        "MGAE109": [
+          140,
+          130,
+          139,
+          175,
+          134,
+          200,
+          15,
+          198
+        ],
+        "NCCE31": [
+          143,
+          186,
+          241,
+          239,
+          55,
+          92,
+          87,
+          174
+        ],
+        "PA8": [
+          212,
+          91,
+          95,
+          197,
+          127,
+          0,
+          89,
+          42
+        ],
+        "pTC13": [
+          243,
+          120,
+          83,
+          72,
+          177,
+          204,
+          1,
+          154
+        ]
+      }
+    },
+    {
+      "replicate": 8,
+      "seed": 41008,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          16,
+          146,
+          97,
+          180
+        ],
+        "DBH76": [
+          107,
+          229,
+          228,
+          166,
+          207,
+          157,
+          247,
+          158
+        ],
+        "EA13": [
+          196,
+          208,
+          161,
+          191,
+          77,
+          37,
+          23,
+          216
+        ],
+        "IP13": [
+          70,
+          131,
+          48,
+          102,
+          206,
+          124,
+          110,
+          133
+        ],
+        "MGAE109": [
+          115,
+          52,
+          245,
+          63,
+          3,
+          156,
+          165,
+          71
+        ],
+        "NCCE31": [
+          20,
+          74,
+          152,
+          162,
+          241,
+          240,
+          96,
+          28
+        ],
+        "PA8": [
+          91,
+          95,
+          197,
+          0,
+          212,
+          42,
+          127,
+          89
+        ],
+        "pTC13": [
+          243,
+          39,
+          106,
+          137,
+          72,
+          204,
+          1,
+          18
+        ]
+      }
+    },
+    {
+      "replicate": 9,
+      "seed": 41009,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          180,
+          146,
+          16,
+          97
+        ],
+        "DBH76": [
+          46,
+          205,
+          221,
+          107,
+          93,
+          159,
+          12,
+          47
+        ],
+        "EA13": [
+          161,
+          23,
+          196,
+          17,
+          37,
+          224,
+          191,
+          77
+        ],
+        "IP13": [
+          70,
+          124,
+          102,
+          155,
+          131,
+          246,
+          133,
+          171
+        ],
+        "MGAE109": [
+          76,
+          114,
+          136,
+          164,
+          189,
+          139,
+          235,
+          25
+        ],
+        "NCCE31": [
+          129,
+          74,
+          162,
+          152,
+          214,
+          118,
+          153,
+          113
+        ],
+        "PA8": [
+          42,
+          91,
+          127,
+          212,
+          89,
+          95,
+          197,
+          0
+        ],
+        "pTC13": [
+          72,
+          243,
+          137,
+          106,
+          177,
+          78,
+          204,
+          39
+        ]
+      }
+    },
+    {
+      "replicate": 10,
+      "seed": 41010,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          146,
+          180,
+          16,
+          97
+        ],
+        "DBH76": [
+          166,
+          30,
+          179,
+          247,
+          217,
+          94,
+          228,
+          185
+        ],
+        "EA13": [
+          4,
+          37,
+          77,
+          23,
+          216,
+          196,
+          191,
+          161
+        ],
+        "IP13": [
+          131,
+          57,
+          102,
+          133,
+          171,
+          110,
+          155,
+          99
+        ],
+        "MGAE109": [
+          8,
+          168,
+          222,
+          134,
+          84,
+          198,
+          140,
+          111
+        ],
+        "NCCE31": [
+          152,
+          55,
+          96,
+          35,
+          214,
+          162,
+          240,
+          223
+        ],
+        "PA8": [
+          197,
+          212,
+          127,
+          42,
+          0,
+          95,
+          91,
+          89
+        ],
+        "pTC13": [
+          72,
+          1,
+          177,
+          154,
+          39,
+          204,
+          120,
+          137
+        ]
+      }
+    },
+    {
+      "replicate": 11,
+      "seed": 41011,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          180,
+          146,
+          97,
+          16
+        ],
+        "DBH76": [
+          19,
+          193,
+          45,
+          234,
+          205,
+          221,
+          33,
+          183
+        ],
+        "EA13": [
+          208,
+          224,
+          77,
+          17,
+          196,
+          161,
+          4,
+          191
+        ],
+        "IP13": [
+          206,
+          99,
+          124,
+          48,
+          110,
+          57,
+          131,
+          70
+        ],
+        "MGAE109": [
+          168,
+          63,
+          25,
+          71,
+          81,
+          41,
+          190,
+          169
+        ],
+        "NCCE31": [
+          153,
+          186,
+          214,
+          92,
+          240,
+          129,
+          55,
+          74
+        ],
+        "PA8": [
+          95,
+          89,
+          197,
+          91,
+          42,
+          0,
+          127,
+          212
+        ],
+        "pTC13": [
+          154,
+          137,
+          18,
+          243,
+          39,
+          177,
+          78,
+          204
+        ]
+      }
+    },
+    {
+      "replicate": 12,
+      "seed": 41012,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          180,
+          146,
+          97,
+          16
+        ],
+        "DBH76": [
+          30,
+          109,
+          150,
+          247,
+          229,
+          187,
+          199,
+          128
+        ],
+        "EA13": [
+          191,
+          37,
+          17,
+          208,
+          23,
+          224,
+          161,
+          4
+        ],
+        "IP13": [
+          206,
+          133,
+          171,
+          99,
+          110,
+          124,
+          102,
+          57
+        ],
+        "MGAE109": [
+          80,
+          189,
+          226,
+          236,
+          26,
+          244,
+          172,
+          211
+        ],
+        "NCCE31": [
+          20,
+          143,
+          240,
+          28,
+          214,
+          74,
+          96,
+          152
+        ],
+        "PA8": [
+          212,
+          0,
+          127,
+          91,
+          89,
+          95,
+          197,
+          42
+        ],
+        "pTC13": [
+          120,
+          1,
+          204,
+          83,
+          177,
+          243,
+          72,
+          39
+        ]
+      }
+    },
+    {
+      "replicate": 13,
+      "seed": 41013,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          16,
+          180,
+          146,
+          97
+        ],
+        "DBH76": [
+          176,
+          126,
+          44,
+          33,
+          201,
+          66,
+          45,
+          247
+        ],
+        "EA13": [
+          17,
+          4,
+          224,
+          161,
+          37,
+          77,
+          216,
+          191
+        ],
+        "IP13": [
+          124,
+          99,
+          110,
+          155,
+          102,
+          48,
+          131,
+          171
+        ],
+        "MGAE109": [
+          200,
+          168,
+          136,
+          65,
+          86,
+          232,
+          67,
+          156
+        ],
+        "NCCE31": [
+          74,
+          143,
+          174,
+          20,
+          162,
+          35,
+          129,
+          152
+        ],
+        "PA8": [
+          91,
+          0,
+          95,
+          127,
+          42,
+          89,
+          197,
+          212
+        ],
+        "pTC13": [
+          83,
+          72,
+          137,
+          106,
+          78,
+          243,
+          39,
+          154
+        ]
+      }
+    },
+    {
+      "replicate": 14,
+      "seed": 41014,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          180,
+          97,
+          16,
+          146
+        ],
+        "DBH76": [
+          228,
+          234,
+          107,
+          54,
+          33,
+          34,
+          195,
+          230
+        ],
+        "EA13": [
+          161,
+          77,
+          224,
+          208,
+          37,
+          216,
+          23,
+          17
+        ],
+        "IP13": [
+          133,
+          246,
+          57,
+          206,
+          124,
+          102,
+          155,
+          99
+        ],
+        "MGAE109": [
+          108,
+          105,
+          50,
+          170,
+          244,
+          86,
+          134,
+          73
+        ],
+        "NCCE31": [
+          239,
+          214,
+          35,
+          143,
+          129,
+          87,
+          28,
+          153
+        ],
+        "PA8": [
+          127,
+          0,
+          95,
+          42,
+          89,
+          212,
+          91,
+          197
+        ],
+        "pTC13": [
+          83,
+          1,
+          18,
+          39,
+          177,
+          78,
+          72,
+          154
+        ]
+      }
+    },
+    {
+      "replicate": 15,
+      "seed": 41015,
+      "database_permutation_prefixes": {
+        "ABDE4": [
+          16,
+          97,
+          146,
+          180
+        ],
+        "DBH76": [
+          247,
+          238,
+          185,
+          49,
+          32,
+          116,
+          12,
+          141
+        ],
+        "EA13": [
+          4,
+          17,
+          196,
+          224,
+          37,
+          216,
+          23,
+          161
+        ],
+        "IP13": [
+          131,
+          102,
+          206,
+          110,
+          124,
+          70,
+          57,
+          155
+        ],
+        "MGAE109": [
+          85,
+          27,
+          6,
+          167,
+          105,
+          84,
+          170,
+          220
+        ],
+        "NCCE31": [
+          153,
+          113,
+          24,
+          129,
+          223,
+          55,
+          174,
+          214
+        ],
+        "PA8": [
+          197,
+          0,
+          91,
+          212,
+          127,
+          89,
+          42,
+          95
+        ],
+        "pTC13": [
+          106,
+          78,
+          1,
+          154,
+          18,
+          204,
+          177,
+          120
+        ]
+      }
+    }
+  ],
+  "small_database_policy": "strict",
+  "sampling": "Uniform random permutation without replacement per DB; nested prefixes across K; identical draws across all states."
+}
