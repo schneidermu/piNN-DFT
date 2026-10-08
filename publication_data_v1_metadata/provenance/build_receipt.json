@@ -1,0 +1,20 @@
+{
+  "elapsed_seconds": 245.120144277,
+  "final_tests_sha256": "7cb5d1aba88d512a6915c1896d95fae031e2bef36d8b1317e58385d48ee65072",
+  "historical_operator_preparation": "lap_all90_operator_preparation_metrics.json",
+  "immutable_by_convention": true,
+  "library_versions": {
+    "h5py": "3.16.0",
+    "numpy": "2.2.6",
+    "pyscf": "2.14.0",
+    "scipy": "1.15.3",
+    "torch": "2.14.1+cpu"
+  },
+  "loader_benchmark_sha256": "1c0897c905a712cff557eb7d055df728d0ba8bb51c0b1b0a438a26255e0c13bb",
+  "no_external_baseline": true,
+  "no_test_dataset": true,
+  "no_training": true,
+  "python_version": "3.10.12",
+  "reused_completed_artifacts": true,
+  "status": "qualified_frozen"
+}

@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "wsl": {
+    "skipped": 2,
+    "seconds": 18.29,
+    "skip_reason": "CUDA device unavailable in WSL test environment",
+    "passed": 71
+  },
+  "windows": {
+    "skipped": 2,
+    "seconds": 26.20,
+    "skip_reason": "Windows Gloo file-store platform tests",
+    "passed": 71
+  },
+  "ruff": "PASS",
+  "no_training": true,
+  "git_diff_check": "PASS",
+  "compileall": "PASS"
+}

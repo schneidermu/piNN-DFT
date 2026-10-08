@@ -1,0 +1,89 @@
+{
+  "ao_manifest": {
+    "logical_name": "manifest.json",
+    "sha256": "c2155e9e55b6c2a2c0f491947bed281fab82a0ab8e64a3c16ce663f910073704"
+  },
+  "central_manifest": {
+    "logical_name": "manifest.json",
+    "sha256": "7005cd869ea8be9636b03f385e7069f4e9023c9582fe7defc5437a7d6609b887"
+  },
+  "checkpoint_tar": {
+    "logical_name": "pbe0_diet_gmtkn55_30_chk_d3bj.tar.gz",
+    "sha256": "84a78a36e9c2e9c49e116fd84cc51da4166b77e834798f3af77e3da9f94679ab"
+  },
+  "chemistry_manifest": {
+    "logical_name": "manifest.json",
+    "sha256": "ec254952f51d854d8b23c01ff3d316d3b4fd756b58287c637d3f07ed8c385d2a"
+  },
+  "d3_pbe": {
+    "logical_name": "DispersionList_PBE.txt",
+    "sha256": "0c7c1a56e309e6d57362e0c6fe4ffb0dcee05e7cc3b578924a30de573843f505"
+  },
+  "d3_pbe0": {
+    "logical_name": "DispersionList_PBE0.txt",
+    "sha256": "4769180b9cbbbf480ff55780637fa48d2a0f53ffcbdb98b9af0e6760849afb6a"
+  },
+  "diet30": {
+    "logical_name": "AllElements_030.yaml",
+    "sha256": "033328633920c0bd4c8b19fdaade2f4204bc1c20e7823ef9a63f7a4f9e1c06a3",
+    "url": "https://github.com/gambort/DietGMTKN55/blob/0eedf4d4136e55d245a25f6ac0a0e92ac7c0662d/GoodSamples/AllElements_030.yaml"
+  },
+  "diet_benchmark_interface": {
+    "logical_name": "InterfaceG16.py",
+    "sha256": "0e2cf3bd7752a8073511e3deff33eeacec2e0b312330f6ed88a53ac18d864134",
+    "url": "https://github.com/gambort/DietGMTKN55/blob/0eedf4d4136e55d245a25f6ac0a0e92ac7c0662d/InterfaceG16.py"
+  },
+  "minnesota_catalog": {
+    "logical_name": "total_dataframe_sorted_final.csv",
+    "sha256": "7a77d13465a35bf4ff98d6a796f1953e15b46cb4b0a0b60eba8d96122372e01b"
+  },
+  "minnesota_geometries": {
+    "logical_name": "mn_databases.tar.gz",
+    "sha256": "80cad2eec568c3ad5f56a5c4c60fc4bfd3f811273ab03138069b86e0d2d5e6a0",
+    "url": "https://comp.chem.umn.edu/db/dbs/tar/mn_databases.tar.gz"
+  },
+  "mrks_dispersion": {
+    "logical_name": "dispersions_mrks.pickle",
+    "sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440"
+  },
+  "reserved_identities_only": {
+    "logical_name": "AllElements_100.yaml",
+    "sha256": "fb9eedd6e00f3e3361262d6ee6ffb576b007d1a7371ffbf15d11f094f3ce8327"
+  },
+  "tooling:tools/build_publication_dataset.py": {
+    "logical_name": "tools/build_publication_dataset.py",
+    "sha256": "5e84918c442be2d8625a278186c7d6c6707830a58fcfb8f62abed62b2f478bb5"
+  },
+  "tooling:tools/qualify_publication_dataset.py": {
+    "logical_name": "tools/qualify_publication_dataset.py",
+    "sha256": "954a951871213f4479b79fe5ec575c28160003e1ea187621679b4cce71a759e6"
+  },
+  "tooling:tools/validate_mconf_components.py": {
+    "logical_name": "tools/validate_mconf_components.py",
+    "sha256": "e5f58ac0705d1a935f745e27c1b642652826bff7d5ae60ed2fcafc7169527e19"
+  },
+  "tooling:train_models/publication_data/__init__.py": {
+    "logical_name": "train_models/publication_data/__init__.py",
+    "sha256": "4d99cb3d98b136281f2cb29ae8a4f5d44d3d1e05293f9d04b26e42f05c34c71c"
+  },
+  "tooling:train_models/publication_data/build.py": {
+    "logical_name": "train_models/publication_data/build.py",
+    "sha256": "413beffe469e7b36c5ae3185be22c2ba68d3b15bb98213a360efee7934c1db1a"
+  },
+  "tooling:train_models/publication_data/contracts.py": {
+    "logical_name": "train_models/publication_data/contracts.py",
+    "sha256": "47e6c5f1fb7a7889320adbfa4c969126fbeb67bc58095450907dfe8aac6b87cd"
+  },
+  "tooling:train_models/publication_data/loader.py": {
+    "logical_name": "train_models/publication_data/loader.py",
+    "sha256": "27415bd43f68e64467eec21b1ddf03ac1fc540d93c077483b1585f547579bb6f"
+  },
+  "tooling:train_models/publication_data/validation.py": {
+    "logical_name": "train_models/publication_data/validation.py",
+    "sha256": "2439df79f52da2a3c17cb23a215098b4521e0073e37a3776482e3c192479570e"
+  },
+  "training_dispersion": {
+    "logical_name": "dispersions.pickle",
+    "sha256": "f7bd56d6b8ad133b7729dbb9f47013bf2c9d0d14fcb41296ed7a4df100855927"
+  }
+}

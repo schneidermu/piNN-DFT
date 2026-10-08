@@ -410,3 +410,6 @@ __marimo__/
 .streamlit/secrets.toml
 # Per-submission launch provenance records
 train_models/launch_manifests/
+
+# Publication data are generated external scientific artifacts, never Git blobs.
+publication_dataset_v1*/

@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "method": "F64 component validation; no dense veff",
+  "systems": [
+    {
+      "source_id": "MCONF-1-1",
+      "checkpoint_sha256": "a4eeb4f7db76e93b2772c702f11f8ca0bc622715919881f1c910e4f8e5bff4a4",
+      "stored_shard_sha256": "b94146729f4b341c906e1a6181be98fc2f8ef596d86225f558f5fb4d77d764c3",
+      "density_max_abs_diff": 0.0,
+      "descriptor_max_abs_diff": 0.0,
+      "xc_energy_abs_diff": 0.0,
+      "one_electron_nuclear": -2253.244920350895,
+      "hartree": 1595.615968154096,
+      "stored_nonxc": -657.6289521968001,
+      "nonxc_component_abs_diff": 1.1368683772161603e-12,
+      "recombined_fixed_density_energy": -764.3748338289721,
+      "stored_fixed_density_energy": -764.3748338289732,
+      "recombined_abs_diff": 1.1368683772161603e-12,
+      "status": "PASS"
+    },
+    {
+      "source_id": "MCONF-1-2",
+      "checkpoint_sha256": "c6e75c65d4d31056f5b4ce355c676f971aea556b15486ccbdd4469d8fe57085b",
+      "stored_shard_sha256": "c9b53e35bf24bc256f6f1078a887ec49a98b981a28fc614bf71f5cfde71ed0e3",
+      "density_max_abs_diff": 0.0,
+      "descriptor_max_abs_diff": 0.0,
+      "xc_energy_abs_diff": 0.0,
+      "one_electron_nuclear": -2203.949420823129,
+      "hartree": 1546.3168483389024,
+      "stored_nonxc": -657.632572484227,
+      "nonxc_component_abs_diff": 4.547473508864641e-13,
+      "recombined_fixed_density_energy": -764.3770059010413,
+      "stored_fixed_density_energy": -764.3770059010418,
+      "recombined_abs_diff": 4.547473508864641e-13,
+      "status": "PASS"
+    }
+  ]
+}

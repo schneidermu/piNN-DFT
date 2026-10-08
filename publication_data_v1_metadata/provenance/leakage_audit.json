@@ -1,0 +1,194 @@
+{
+  "clean_count": 28,
+  "comparisons": [
+    {
+      "fingerprint": "chemical_reaction_aeaf04e0501c7f12870ad7cd",
+      "reserved_matches": 0,
+      "validation": "ACONF-10"
+    },
+    {
+      "fingerprint": "chemical_reaction_16a04de117ca753bb8aa7a06",
+      "reserved_matches": 0,
+      "validation": "Amino20x4-28"
+    },
+    {
+      "fingerprint": "chemical_reaction_26e258f6707f68cf47a23b41",
+      "reserved_matches": 0,
+      "validation": "Amino20x4-54"
+    },
+    {
+      "fingerprint": "chemical_reaction_d5b0a8f4a84e78c0a2e86961",
+      "reserved_matches": 1,
+      "validation": "BH76-5"
+    },
+    {
+      "fingerprint": "chemical_reaction_c070bd233968e9448b5733f1",
+      "reserved_matches": 0,
+      "validation": "BHPERI-11"
+    },
+    {
+      "fingerprint": "chemical_reaction_60e60c5da0c2c1acf8646ed7",
+      "reserved_matches": 0,
+      "validation": "BHROT27-16"
+    },
+    {
+      "fingerprint": "chemical_reaction_d074f3eb9e74b130a7d37c61",
+      "reserved_matches": 0,
+      "validation": "BHROT27-26"
+    },
+    {
+      "fingerprint": "chemical_reaction_bddde808dd082f993e1dd561",
+      "reserved_matches": 0,
+      "validation": "BSR36-31"
+    },
+    {
+      "fingerprint": "chemical_reaction_47da7f2c567d5f7bbff6d89d",
+      "reserved_matches": 0,
+      "validation": "BUT14DIOL-13"
+    },
+    {
+      "fingerprint": "chemical_reaction_352e381ef0b0fdc245ce20ea",
+      "reserved_matches": 0,
+      "validation": "CDIE20-9"
+    },
+    {
+      "fingerprint": "chemical_reaction_6043540cc2d1de57bd433b10",
+      "reserved_matches": 0,
+      "validation": "DC13-1"
+    },
+    {
+      "fingerprint": "chemical_reaction_eaa3536d4045ff0c1b96092f",
+      "reserved_matches": 0,
+      "validation": "DIPCS10-7"
+    },
+    {
+      "fingerprint": "chemical_reaction_5562afa9ffbfdbbe31c48b47",
+      "reserved_matches": 0,
+      "validation": "FH51-24"
+    },
+    {
+      "fingerprint": "chemical_reaction_78513813a39773e887604d87",
+      "reserved_matches": 0,
+      "validation": "FH51-30"
+    },
+    {
+      "fingerprint": "chemical_reaction_21714c58d0e96bf36dc304c5",
+      "reserved_matches": 0,
+      "validation": "G21EA-14"
+    },
+    {
+      "fingerprint": "chemical_reaction_06bcb10847d78af79aa67645",
+      "reserved_matches": 1,
+      "validation": "G21EA-25"
+    },
+    {
+      "fingerprint": "chemical_reaction_357b86afbb9eef61ff924a08",
+      "reserved_matches": 0,
+      "validation": "HAL59-40"
+    },
+    {
+      "fingerprint": "chemical_reaction_3e1e6b95adb9fa3805cc3184",
+      "reserved_matches": 0,
+      "validation": "HAL59-57"
+    },
+    {
+      "fingerprint": "chemical_reaction_0bd0a8fb4e172ee3b068806a",
+      "reserved_matches": 0,
+      "validation": "HEAVY28-16"
+    },
+    {
+      "fingerprint": "chemical_reaction_851ab8abb331cc3700825f65",
+      "reserved_matches": 0,
+      "validation": "MB16-43-10"
+    },
+    {
+      "fingerprint": "chemical_reaction_9c2c704fb5c49d0cabfc90ee",
+      "reserved_matches": 0,
+      "validation": "MCONF-1"
+    },
+    {
+      "fingerprint": "chemical_reaction_4ba457843a014dda1ce8697c",
+      "reserved_matches": 0,
+      "validation": "PNICO23-16"
+    },
+    {
+      "fingerprint": "chemical_reaction_7e1894b211111b5b296167d6",
+      "reserved_matches": 0,
+      "validation": "PX13-9"
+    },
+    {
+      "fingerprint": "chemical_reaction_d1206549b2980c71adf6a41e",
+      "reserved_matches": 0,
+      "validation": "S66-6"
+    },
+    {
+      "fingerprint": "chemical_reaction_e7610a9365ea980534aac645",
+      "reserved_matches": 0,
+      "validation": "S66-50"
+    },
+    {
+      "fingerprint": "chemical_reaction_0902444290f654ec3cf2edfd",
+      "reserved_matches": 0,
+      "validation": "SIE4x4-15"
+    },
+    {
+      "fingerprint": "chemical_reaction_060c6b3f78be8ec0c09d2ce1",
+      "reserved_matches": 0,
+      "validation": "W4-11-30"
+    },
+    {
+      "fingerprint": "chemical_reaction_879528a27ddeee3828269e1b",
+      "reserved_matches": 0,
+      "validation": "W4-11-57"
+    },
+    {
+      "fingerprint": "chemical_reaction_af0ecbd3b677439fe794e286",
+      "reserved_matches": 0,
+      "validation": "W4-11-132"
+    },
+    {
+      "fingerprint": "chemical_reaction_b02eb8b2136307bc4c639684",
+      "reserved_matches": 0,
+      "validation": "WCPT18-15"
+    }
+  ],
+  "diagnostic_count": 30,
+  "exclusions": [
+    {
+      "benchmark_weight_agrees": true,
+      "counterpart": "Diet100:BH76-6",
+      "reason": "identical stoichiometry + charge/spin + geometry fingerprint",
+      "reference_energy_agrees": true,
+      "validation": "BH76-5"
+    },
+    {
+      "benchmark_weight_agrees": true,
+      "counterpart": "Diet100:G21EA-25",
+      "reason": "identical stoichiometry + charge/spin + geometry fingerprint",
+      "reference_energy_agrees": true,
+      "validation": "G21EA-25"
+    },
+    {
+      "counterpart": "Minnesota:DBH76-0",
+      "exact_geometry_match": false,
+      "identity_status": "ambiguous_collision",
+      "reason": "composition/charge/spin/stoichiometry collision; differing geometries do not prove distinct chemistry; conservatively withheld",
+      "validation": "BH76-5"
+    }
+  ],
+  "reserved_source_sha256": "fb9eedd6e00f3e3361262d6ee6ffb576b007d1a7371ffbf15d11f094f3ce8327",
+  "reserved_use": "identity/fingerprint comparison only",
+  "training_correspondences": [
+    {
+      "counterpart": "Minnesota:DBH76-0",
+      "exact_geometry_match": false,
+      "identity_status": "ambiguous_collision",
+      "reason": "composition/charge/spin/stoichiometry collision; differing geometries do not prove distinct chemistry; conservatively withheld",
+      "validation": "BH76-5"
+    }
+  ],
+  "training_geometry_source": "official Minnesota Database 2.0 XYZ + Gaussian charge/multiplicity",
+  "training_identities_compared": 268,
+  "training_source_sha256": "7a77d13465a35bf4ff98d6a796f1953e15b46cb4b0a0b60eba8d96122372e01b",
+  "unknown_training_geometry_policy": "all source names mapped; composition collisions withheld, never inferred equal by formula"
+}

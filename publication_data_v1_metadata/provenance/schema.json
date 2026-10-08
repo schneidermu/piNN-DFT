@@ -1,0 +1,196 @@
+{
+  "chemistry_grid_columns": [
+    "rho_alpha",
+    "rho_beta",
+    "sigma_aa",
+    "sigma_aa+2sigma_ab+sigma_bb",
+    "sigma_bb",
+    "tau_alpha",
+    "tau_beta",
+    "lapl_alpha",
+    "lapl_beta"
+  ],
+  "chemistry_loss_constants": {
+    "FCHEM_DB_WEIGHTS": {
+      "ABDE4": 1,
+      "AE17": 1,
+      "DBH76": 1,
+      "EA13": 1,
+      "IP13": 1,
+      "MGAE109": 0.21124031007751937,
+      "NCCE31": 10,
+      "PA8": 1,
+      "pTC13": 1
+    },
+    "FREQ_WEIGHTS": {
+      "ABDE4": 0.25,
+      "AE17": 0.058823529411764705,
+      "DBH76": 0.013157894736842105,
+      "EA13": 0.07692307692307693,
+      "IP13": 0.07692307692307693,
+      "MGAE109": 0.009174311926605505,
+      "NCCE31": 0.03225806451612903,
+      "PA8": 0.125,
+      "pTC13": 0.07692307692307693
+    },
+    "MEAN_WEIGHT": 0.11136325384169465
+  },
+  "fields": {
+    "Densities": [
+      "point,spin",
+      "bohr^-3"
+    ],
+    "DensityDescriptorsN10": [
+      "point,rho2_grad6_lapl2",
+      "rho bohr^-3; grad bohr^-4; lapl bohr^-5"
+    ],
+    "Exc": [
+      "scalar",
+      "hartree"
+    ],
+    "Gradients": [
+      "point,sigma_aa_ab_bb",
+      "bohr^-8"
+    ],
+    "Grid": [
+      "point,descriptor",
+      "mixed: rho bohr^-3; sigma bohr^-8; tau/lapl bohr^-5"
+    ],
+    "HF_energies": [
+      "component",
+      "hartree"
+    ],
+    "Overlap": [
+      "ao,ao",
+      "dimensionless"
+    ],
+    "PBE_local_energies": [
+      "point",
+      "hartree/electron"
+    ],
+    "RefAO": [
+      "ao,ao",
+      "hartree"
+    ],
+    "VxcLegacy": [
+      "point",
+      "hartree"
+    ],
+    "Weights": [
+      "point",
+      "bohr^3"
+    ],
+    "coords64": [
+      "point,xyz",
+      "bohr"
+    ],
+    "dm": [
+      "ao,ao or spin,ao,ao",
+      "electron"
+    ],
+    "dmks": [
+      "ao,ao",
+      "electron"
+    ],
+    "features": [
+      "point,rho2_grad6_lapl2",
+      "rho bohr^-3; grad bohr^-4; lapl bohr^-5"
+    ],
+    "fixed_nonxc": [
+      "scalar",
+      "hartree"
+    ],
+    "grad_phi": [
+      "point,xyz,ao",
+      "bohr^-5/2"
+    ],
+    "lap_phi": [
+      "point,ao",
+      "bohr^-7/2"
+    ],
+    "legacycoords32": [
+      "point,xyz",
+      "bohr"
+    ],
+    "nonxc": [
+      "scalar",
+      "hartree"
+    ],
+    "npzrow": [
+      "point",
+      "index"
+    ],
+    "pbe_epsilon": [
+      "point",
+      "hartree/electron"
+    ],
+    "phi": [
+      "point,ao",
+      "bohr^-3/2"
+    ],
+    "sourcerow": [
+      "point",
+      "index"
+    ],
+    "weights": [
+      "point",
+      "bohr^3"
+    ]
+  },
+  "fixed_nonxc_training": "exact historical component ener[0] contribution, stored F32, no reinterpretation",
+  "full251_scalar": "arithmetic mean of 251 corrected singleton batch_fchem losses",
+  "gradient_columns": [
+    "sigma_aa",
+    "sigma_ab",
+    "sigma_bb"
+  ],
+  "mRKS_Exc": "exact qualified legacy target; do not replace with NPZ exc_wf",
+  "metadata_fields": {
+    "chemistry.coefficients": {
+      "production_dtype": "<f4 then matched-F64",
+      "source_dtype": "<f4",
+      "storage_dtype": "JSON float64",
+      "units": "stoichiometric count"
+    },
+    "chemistry.dispersion": {
+      "production_dtype": "<f8 through native torch.tensor semantics",
+      "source_dtype": "<f8 zero-dimensional numpy.ndarray",
+      "storage_dtype": "JSON float64 + dtype/shape metadata",
+      "units": "hartree"
+    },
+    "chemistry.target_kcal_mol": {
+      "production_dtype": "<f4 then matched-F64",
+      "source_dtype": "<f4",
+      "storage_dtype": "JSON float64",
+      "units": "kcal/mol"
+    },
+    "validation.dispersion": {
+      "production_dtype": "<f8",
+      "source_dtype": "text decimal parsed F64",
+      "storage_dtype": "JSON float64",
+      "units": "hartree"
+    },
+    "validation.reference_energy": {
+      "production_dtype": "<f8",
+      "source_dtype": "YAML float64",
+      "storage_dtype": "JSON float64",
+      "units": "kcal/mol"
+    }
+  },
+  "operator": "dExc/dP_total; symmetric-orthogonalized squared Frobenius/nAO",
+  "potential_gauge": "source asymptotic gauge unchanged; no constant or trace subtraction",
+  "reaction_energy_conversion": 627.5095,
+  "reaction_energy_units": "kcal/mol",
+  "schema": "lap-publication-dataset-v1",
+  "singleton_loss": "sqrt(max(squared kcal/mol error,1e-20)) * FCHEM_DB_WEIGHTS[db] * FREQ_WEIGHTS[db] / MEAN_WEIGHT",
+  "variants": [
+    "level2",
+    "level2_delley",
+    "level2_gauss_chebyshev",
+    "level2_mura",
+    "level3",
+    "level3_delley",
+    "level3_gauss_chebyshev",
+    "level3_mura"
+  ]
+}

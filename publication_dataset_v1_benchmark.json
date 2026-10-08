@@ -1,0 +1,82 @@
+{
+  "logical_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "workloads": {
+    "chemistry_random_variant": {
+      "first_handle_access_seconds_including_integrity_check": 0.46172549999755574,
+      "same_sample_warm_seconds": 0.0031822199991438536,
+      "dataloader": {
+        "0": {
+          "first_epoch_items_per_second": 7.582268202353581,
+          "warm_epoch_items_per_second": 110.26779222751522
+        },
+        "2": {
+          "first_epoch_items_per_second": 3.4486673304019426,
+          "warm_epoch_items_per_second": 163.4973722885794
+        }
+      },
+      "sampled_peak_host_ram_bytes_parent_and_workers": null
+    },
+    "chemistry_sequential": {
+      "first_handle_access_seconds_including_integrity_check": 0.1847295000043232,
+      "same_sample_warm_seconds": 0.006169919999956619,
+      "dataloader": {
+        "0": {
+          "first_epoch_items_per_second": 39.204914532243045,
+          "warm_epoch_items_per_second": 127.93613427950868
+        },
+        "2": {
+          "first_epoch_items_per_second": 5.243688458958709,
+          "warm_epoch_items_per_second": 201.19358092694046
+        }
+      },
+      "sampled_peak_host_ram_bytes_parent_and_workers": null
+    },
+    "mrks_energy": {
+      "first_handle_access_seconds_including_integrity_check": 0.1846813000011025,
+      "same_sample_warm_seconds": 0.01171852000115905,
+      "dataloader": {
+        "0": {
+          "first_epoch_items_per_second": 6.2304551109916755,
+          "warm_epoch_items_per_second": 84.97151329836699
+        },
+        "2": {
+          "first_epoch_items_per_second": 3.6166795292377607,
+          "warm_epoch_items_per_second": 143.3406616269226
+        }
+      },
+      "sampled_peak_host_ram_bytes_parent_and_workers": null
+    },
+    "operator_chunks": {
+      "first_handle_access_seconds_including_integrity_check": 0.20597080000152346,
+      "same_sample_warm_seconds": 0.026927379998960534,
+      "dataloader": {
+        "0": {
+          "first_epoch_items_per_second": 37.9280566403885,
+          "warm_epoch_items_per_second": 37.93582633372639
+        },
+        "2": {
+          "first_epoch_items_per_second": 5.364640481075299,
+          "warm_epoch_items_per_second": 66.5091508286615
+        }
+      },
+      "sampled_peak_host_ram_bytes_parent_and_workers": null
+    },
+    "validation_species": {
+      "first_handle_access_seconds_including_integrity_check": 0.014515900002152193,
+      "same_sample_warm_seconds": 0.007610619999468327,
+      "dataloader": {
+        "0": {
+          "first_epoch_items_per_second": 43.30332953881724,
+          "warm_epoch_items_per_second": 74.15585149978716
+        },
+        "2": {
+          "first_epoch_items_per_second": 5.801216319263569,
+          "warm_epoch_items_per_second": 134.47683468851824
+        }
+      },
+      "sampled_peak_host_ram_bytes_parent_and_workers": null
+    }
+  },
+  "method": "Fresh worker-local HDF5 handles; first access SHA checks included; OS cache not forcibly purged; persistent workers for second epoch",
+  "no_model_evaluation": true
+}

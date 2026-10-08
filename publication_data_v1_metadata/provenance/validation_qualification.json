@@ -1,0 +1,15 @@
+{
+  "component_density_descriptor_xc_exact": true,
+  "component_max_abs_error_hartree": 1.1368683772161603e-12,
+  "component_receipt_sha256": "5a64f01fa941d2e18cca8558b141dd4edc7fa707caa87082f872009a9309c441",
+  "component_species": 2,
+  "component_systems": [
+    "MCONF-1-1",
+    "MCONF-1-2"
+  ],
+  "description": "82 direct fixed-density total-energy parity + 2 large-system component-level parity",
+  "direct_max_abs_error_hartree": 5.684341886080801e-13,
+  "direct_species": 82,
+  "qualified_species": 84,
+  "status": "PASS"
+}
