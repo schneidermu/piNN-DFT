@@ -93,3 +93,37 @@ def test_chunked_pointwise_model_preserves_reaction_chain_rule(monkeypatch):
     torch.testing.assert_close(actual, gold, rtol=1e-12, atol=1e-12)
     with pytest.raises(ValueError):
         evaluate(-1)
+
+
+def test_ninety_update_schedule_resume_is_same_prefix(tmp_path):
+    model = torch.nn.Linear(2, 1)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-6)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=90, eta_min=1e-7)
+    for _ in range(10):
+        optimizer.zero_grad()
+        model(torch.ones(1, 2)).sum().backward()
+        optimizer.step()
+        scheduler.step()
+    path = tmp_path / 't10.pt'
+    save(path, model, optimizer, 10, 'frozen90', {}, scheduler, total_updates=90)
+    expected_lr = optimizer.param_groups[0]['lr']
+    assert expected_lr > 9e-7  # Not the endpoint of a ten-step schedule.
+    assert restore(path, model, optimizer, 'frozen90', {}, scheduler) == 10
+    assert scheduler.T_max == 90 and optimizer.param_groups[0]['lr'] == expected_lr
+
+
+def test_exc_chunk_override_does_not_change_operator_chunk(monkeypatch):
+    from types import SimpleNamespace
+
+    from train_models import lap_moo_training as core
+    calls = []
+    system = SimpleNamespace(features=torch.ones(3, 10), weights=torch.ones(3),
+                             ao_chunks=[object()], name='H2', exc_target=torch.tensor(0.))
+    monkeypatch.setattr(core, 'LapEnergy', lambda model: model)
+    monkeypatch.setattr(core, 'integrated_energy', lambda *a: calls.append(a[-1]) or torch.tensor(1.))
+    exc, _ = core.make_mrks_objective_factories(None, system, point_chunk_size=256,
+                                              exc_chunk_size=4096, dispersions={'H2': 0.0})
+    exc()
+    assert calls == [4096]
+    with pytest.raises(ValueError):
+        core.make_mrks_objective_factories(None, system, point_chunk_size=256, exc_chunk_size=0, dispersions=None)

@@ -659,10 +659,13 @@ def make_mrks_objective_factories(
     *,
     point_chunk_size: int,
     dispersions: Mapping[str, float] | None,
+    exc_chunk_size: int | None = None,
 ) -> tuple[Callable[[], torch.Tensor], Callable[[], torch.Tensor]]:
     """Build unchanged mRKS E and h-free AO-operator scalar objectives."""
     if point_chunk_size <= 0:
         raise ValueError("point_chunk_size must be positive.")
+    if exc_chunk_size is not None and exc_chunk_size <= 0:
+        raise ValueError("exc_chunk_size must be positive.")
     if system.features.ndim != 2 or system.features.shape[1] != 10:
         raise ValueError("mRKS features must use the ten-column central-grid layout.")
     if system.weights.shape != (len(system.features),):
@@ -673,7 +676,8 @@ def make_mrks_objective_factories(
     def energy_objective() -> torch.Tensor:
         energy = LapEnergy(model)
         prediction = integrated_energy(
-            energy, system.features[:, None, :], system.weights, point_chunk_size
+            energy, system.features[:, None, :], system.weights,
+            point_chunk_size if exc_chunk_size is None else exc_chunk_size
         )
         # This is the same one-time Name lookup/addition used by historical mRKS.
         try:

@@ -78,7 +78,7 @@ def chemistry(model, shadow, reaction, dispersion):
     return existing.core.ChemistryBatchObjective(model, shadow, (reaction,), (1.0,), dispersion)
 
 
-def measure(model, shadow, bundle, entry, dispersion, mrks_dispersion):
+def measure(model, shadow, bundle, entry, dispersion, mrks_dispersion, exc_chunk_size=None):
     times, losses, raw, grids = {}, {}, {}, {}
     torch.cuda.synchronize()
     torch.cuda.reset_peak_memory_stats()
@@ -104,7 +104,8 @@ def measure(model, shadow, bundle, entry, dispersion, mrks_dispersion):
     system = bundle.mrks().operator_system(entry['mrks_id'], device='cuda', dtype=torch.float32, chunk_size=4096)
     torch.cuda.synchronize()
     times['mrks_loading_transfers'] = time.perf_counter() - timer
-    exc, op = existing.core.make_mrks_objective_factories(model, system, point_chunk_size=256, dispersions=mrks_dispersion)
+    exc, op = existing.core.make_mrks_objective_factories(model, system, point_chunk_size=256,
+                                                      dispersions=mrks_dispersion, exc_chunk_size=exc_chunk_size)
     for task, objective in (('exc', exc), ('op', op)):
         timer = time.perf_counter()
         value, gradients = existing.core.compute_isolated_task_gradients(model, {task: objective}, task_order=(task,))
@@ -239,7 +240,7 @@ def profile(folder):
     print('MICROBATCH_PROFILE_COMPLETE', folder, flush=True)
 
 
-def train(folder, updates):
+def train(folder, updates, stop_at=None, runtime_seconds=3600):
     """Explicit bounded opt-in; never called by profiling or qualification."""
     torch.manual_seed(41)
     np.random.seed(41)
@@ -260,6 +261,7 @@ def train(folder, updates):
     arm = folder / 'ordinary_sgd_adamw'
     arm.mkdir(exist_ok=True)
     run_protocol = {'updates': updates, 'lr': 1e-6, 'scheduler': 'cosine to1e-7',
+                    'exc_chunk_size': protocol.get('exc_chunk_size', 256), 'operator_chunk_size': 256,
                     'chemistry_model_chunk': 16384, 'chunk_threshold': 131072,
                     'manifest_sha256': manifest_sha, 'calibration_sha256': file_sha256(folder / 'calibration.json'),
                     'source_sha256': file_sha256(__file__), 'dataset_sha256': DATA_SHA,
@@ -279,24 +281,34 @@ def train(folder, updates):
         logs = prior['logs']
     else:
         save(latest, model, optimizer, 0, manifest_sha, calibration, scheduler, logs, updates)
+        save(arm / 'checkpoint_0.pt', model, optimizer, 0, manifest_sha, calibration, scheduler, logs, updates)
     dispersion, mrks_dispersion = bundle.chemistry_dispersions(), read(DATA / 'mrks/dispersion.json')
+    began = time.perf_counter()
     try:
-        for index in range(cursor, updates):
+        for index in range(cursor, min(updates, stop_at if stop_at is not None else updates)):
+            if time.perf_counter() - began >= runtime_seconds:
+                print('SAFE_RUNTIME_PAUSE', index, flush=True)
+                break
             before = existing.digest(model)
-            record, raw = measure(model, shadow, bundle, manifest[index], dispersion, mrks_dispersion)
+            record, raw = measure(model, shadow, bundle, manifest[index], dispersion, mrks_dispersion,
+                                  run_protocol['exc_chunk_size'])
             torch.cuda.synchronize()
             timer = time.perf_counter()
             learning_rate = optimizer.param_groups[0]['lr']
-            adamw_step(model, optimizer, raw, calibration['lambda'])
+            joint = adamw_step(model, optimizer, raw, calibration['lambda'])
             scheduler.step()
             torch.cuda.synchronize()
             record['seconds']['weighted_aggregation_adamw'] = time.perf_counter() - timer
             record.update(total_seconds=sum(record['seconds'].values()), before_sha256=before,
-                          after_sha256=existing.digest(model), learning_rate=learning_rate)
+                          after_sha256=existing.digest(model), learning_rate=learning_rate,
+                          weighted_gradient_norm=float(torch.cat([g.flatten() for g in joint.values()]).norm()))
             logs.append(record)
             save(latest, model, optimizer, index + 1, manifest_sha, calibration, scheduler, logs, updates)
+            if index + 1 in (10, 45, 90):
+                save(arm / f'checkpoint_{index + 1}.pt', model, optimizer, index + 1,
+                     manifest_sha, calibration, scheduler, logs, updates)
             print('ADAMW_UPDATE', index + 1, record['total_seconds'], flush=True)
-            del raw
+            del raw, joint
     finally:
         bundle.close()
 

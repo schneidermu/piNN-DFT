@@ -1,0 +1,59 @@
+{
+  "initial_state": {
+    "seed": 11,
+    "regime": "P536",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P536.pt",
+    "file_sha256": "0ca0f77367214c171e6edf0576bdb043d64479245ad1a0e539fa11fb0cee542d",
+    "state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6"
+  },
+  "initialization": "seed11 P536, 536 PBE predopt steps, no additional displacement; not S5",
+  "updates": 90,
+  "lr": 1e-06,
+  "scheduler": "cosine to1e-7",
+  "exc_chunk_size": 4096,
+  "operator_chunk_size": 256,
+  "chemistry_model_chunk": 16384,
+  "chunk_threshold": 131072,
+  "manifest_sha256": "e84e237d88449edfae5c68f7caecd85791b57f60a4b6239a37e1ae1350a71089",
+  "calibration_sha256": "31b9438bf42238f6bd5e041d516725bc57402569d302b4fcc2130148226230a3",
+  "source_sha256": "6bf6fea4628b06d2d7d6344d5ad96240033d74f7dccac59ec8caf897963c717b",
+  "dataset_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "physics_sources_sha256": {
+    "lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+    "lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a"
+  },
+  "adamw": {
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "foreach": false
+  },
+  "lambda": {
+    "relchem": 0.001539594681340317,
+    "ae17": 6.168599732245809e-05,
+    "exc": 1.201237900036978e-05,
+    "op": 0.4972720839875645
+  },
+  "sampling": "Independent uniform relchem/AE17 identity and variant; shuffled balanced 90-system mRKS cycle",
+  "task_order": [
+    "relchem",
+    "ae17",
+    "exc",
+    "op"
+  ],
+  "svrg": false,
+  "checkpoints": [
+    0,
+    10,
+    45,
+    90
+  ],
+  "original_outer_protocol_sha256": "562ca79b091a33d3815e41dc7ed524218560c027d6469c1889215666e7323dc3",
+  "executable_protocol_sha256": "c698ce21b8deb9945038d12289ff2230a31b391bb0c8a35ae0bb71bb62c73dd1",
+  "calibration_manifest_sha256": "5dc0e660f078619f8f25051cb9489ccf568074c9450dbabf0bcce6943556bba5"
+}
