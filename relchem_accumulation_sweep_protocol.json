@@ -1,0 +1,340 @@
+{
+  "reference_commit": "fda7be602a5f0ec794912e57df328df303fba77a",
+  "ks": [
+    1,
+    2,
+    4,
+    6
+  ],
+  "updates": 20,
+  "lr": 0.0001,
+  "scheduler": "constant",
+  "control_reused": true,
+  "lambda": {
+    "relchem": 0.017015480965588553,
+    "ae17": 5.141254618347414e-05,
+    "exc": 1.5094644512009712e-05,
+    "op": 0.33597561607048215
+  },
+  "trainer_sha256": "2e837c3a88ca3d4737c3c3397dcfbb98adeb7f6917adc8c693cecf205dc37e9e",
+  "driver_sha256": "ad16fbd97256478a738d3a82924475beb6437868a60ac660b264e42a0cc8529a",
+  "control_protocol": {
+    "updates": 90,
+    "lr": 0.0001,
+    "scheduler": "constant",
+    "exc_chunk_size": 4096,
+    "operator_chunk_size": 256,
+    "chemistry_model_chunk": 16384,
+    "chunk_threshold": 131072,
+    "manifest_sha256": "e84e237d88449edfae5c68f7caecd85791b57f60a4b6239a37e1ae1350a71089",
+    "calibration_sha256": "4d97df1ec78aa01a2c9380a86a323b2f0b46828dfc5975f5e3a63c75f4440096",
+    "source_sha256": "2e837c3a88ca3d4737c3c3397dcfbb98adeb7f6917adc8c693cecf205dc37e9e",
+    "dataset_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+    "physics_sources_sha256": {
+      "lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+      "lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+      "lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+      "lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a"
+    },
+    "diagnostics": "Actual native AdamW movement/moments and SHA-bound raw gradients"
+  },
+  "historical_cursor59_sha256": "8938753bee6cfcb55ccdac9c02a15cbb3e3b2093290c9122e5e00ad400a966aa",
+  "sampling": "Primary unchanged; five independent uniform replacement streams seed941011..941015; nested prefixes",
+  "diagnostic_batches": [
+    [
+      {
+        "identity": "reaction_091fa723c745555026e45b47",
+        "database": "MGAE109",
+        "reaction_id": 22,
+        "variant": "level3_delley",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_fcbc6f8c1a9c1f8c5b31b1ac",
+        "database": "IP13",
+        "reaction_id": 9,
+        "variant": "level2",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_742b19392e7a569a6ffa7f3e",
+        "database": "MGAE109",
+        "reaction_id": 9,
+        "variant": "level3_delley",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_e2265998297f22c00106c8d5",
+        "database": "EA13",
+        "reaction_id": 2,
+        "variant": "level3_mura",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_dbe7b5f6933ba607a6f4087b",
+        "database": "MGAE109",
+        "reaction_id": 3,
+        "variant": "level3_gauss_chebyshev",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_9484d2563941cda5f2fca074",
+        "database": "MGAE109",
+        "reaction_id": 53,
+        "variant": "level2_mura",
+        "weight": 1.0
+      }
+    ],
+    [
+      {
+        "identity": "reaction_9b0567ec544af23925fbb2bd",
+        "database": "MGAE109",
+        "reaction_id": 52,
+        "variant": "level3_gauss_chebyshev",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_f77140560cc394ed26e96e5e",
+        "database": "MGAE109",
+        "reaction_id": 103,
+        "variant": "level2_gauss_chebyshev",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_243ca70b5fc6b15f1fae35cd",
+        "database": "MGAE109",
+        "reaction_id": 95,
+        "variant": "level2_mura",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_0d84c300f25b6c74a114f5ea",
+        "database": "MGAE109",
+        "reaction_id": 105,
+        "variant": "level3",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_5fc5d411c0a25ec1dfd51d67",
+        "database": "DBH76",
+        "reaction_id": 11,
+        "variant": "level3_mura",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_d55243f19fff54cf14fe160e",
+        "database": "MGAE109",
+        "reaction_id": 2,
+        "variant": "level3_gauss_chebyshev",
+        "weight": 1.0
+      }
+    ],
+    [
+      {
+        "identity": "reaction_5ab6482fdb45dabbeb650854",
+        "database": "MGAE109",
+        "reaction_id": 76,
+        "variant": "level3_delley",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_05593423987fb50e9efdf13c",
+        "database": "MGAE109",
+        "reaction_id": 106,
+        "variant": "level2_delley",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_d55243f19fff54cf14fe160e",
+        "database": "MGAE109",
+        "reaction_id": 2,
+        "variant": "level2",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_091fa723c745555026e45b47",
+        "database": "MGAE109",
+        "reaction_id": 22,
+        "variant": "level2_mura",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_4b225f46028b1fcbc986ca5d",
+        "database": "MGAE109",
+        "reaction_id": 71,
+        "variant": "level3_mura",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_07bb7d402ae549104308ceea",
+        "database": "MGAE109",
+        "reaction_id": 6,
+        "variant": "level2",
+        "weight": 1.0
+      }
+    ],
+    [
+      {
+        "identity": "reaction_2426fa1787c030e9ba59feee",
+        "database": "MGAE109",
+        "reaction_id": 57,
+        "variant": "level3_delley",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_0fd412eae12856c37024d4c7",
+        "database": "EA13",
+        "reaction_id": 7,
+        "variant": "level2_gauss_chebyshev",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_2711e62a8820baac39b75e55",
+        "database": "pTC13",
+        "reaction_id": 6,
+        "variant": "level2",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_9bb40e5f412a46fa89c24027",
+        "database": "NCCE31",
+        "reaction_id": 15,
+        "variant": "level3",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_e2736564e8ac944cf125d6d1",
+        "database": "DBH76",
+        "reaction_id": 41,
+        "variant": "level2_mura",
+        "weight": 1.0
+      },
+      {
+        "identity": "reaction_71a0b28b920a9772d1580f0d",
+        "database": "DBH76",
+        "reaction_id": 71,
+        "variant": "level3_mura",
+        "weight": 1.0
+      }
+    ]
+  ],
+  "reference_samples": [
+    {
+      "identity": "reaction_90bd41f40cb1bb64fa9d8604",
+      "database": "DBH76",
+      "reaction_id": 48,
+      "variant": "level2_delley",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_9484d2563941cda5f2fca074",
+      "database": "MGAE109",
+      "reaction_id": 53,
+      "variant": "level3_gauss_chebyshev",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_e5643cb85ab3252226463941",
+      "database": "pTC13",
+      "reaction_id": 10,
+      "variant": "level3_delley",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_1fe102a15a1c5e0614983b35",
+      "database": "MGAE109",
+      "reaction_id": 92,
+      "variant": "level2_delley",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_130cecec4bb35258bb6de724",
+      "database": "DBH76",
+      "reaction_id": 37,
+      "variant": "level2_delley",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_4b225f46028b1fcbc986ca5d",
+      "database": "MGAE109",
+      "reaction_id": 71,
+      "variant": "level2_mura",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_2a25298541cc2428588f6f8d",
+      "database": "MGAE109",
+      "reaction_id": 102,
+      "variant": "level3_gauss_chebyshev",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_1df7a0c92bf0d25835241373",
+      "database": "MGAE109",
+      "reaction_id": 80,
+      "variant": "level2_mura",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_c258198ad576955c8267a32b",
+      "database": "ABDE4",
+      "reaction_id": 2,
+      "variant": "level3_delley",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_a2afa0cb288b7d118498b49a",
+      "database": "DBH76",
+      "reaction_id": 46,
+      "variant": "level2_mura",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_97e9af9791a68e72d7655cca",
+      "database": "EA13",
+      "reaction_id": 6,
+      "variant": "level3_gauss_chebyshev",
+      "weight": 1.0
+    },
+    {
+      "identity": "reaction_ab43d4186b8395ac22ace39a",
+      "database": "pTC13",
+      "reaction_id": 11,
+      "variant": "level2_mura",
+      "weight": 1.0
+    }
+  ],
+  "other_diagnostic_tasks": {
+    "cursor": 0,
+    "relchem": {
+      "identity": "reaction_091fa723c745555026e45b47",
+      "database": "MGAE109",
+      "reaction_id": 22,
+      "variant": "level3_delley",
+      "weight": 1.0
+    },
+    "ae17": {
+      "identity": "reaction_a7240bb1ca1e7b14837bffcb",
+      "database": "AE17",
+      "reaction_id": 7,
+      "variant": "level3_mura",
+      "weight": 1.0
+    },
+    "mrks_id": "mrks_d5104caf7fa784b64f1f6fc0"
+  },
+  "large_chunk_sample": {
+    "identity": "reaction_a679f4e3b3e00f37f0e3fdd7",
+    "database": "DBH76",
+    "reaction_id": 33,
+    "variant": "level3_delley",
+    "weight": 1.0
+  },
+  "parity_tolerances": {
+    "mean_relative_l2": 1e-12,
+    "chunk_gradient_relative_l2": 1e-10,
+    "chunk_loss_relative": 1e-10
+  },
+  "bootstrap": "Existing paired5000 within-stratum resamples seed931002; limited probe only",
+  "variance": "Four independent nested batches per K; separate12-sample reference is an estimate, not full251",
+  "per_arm_runtime_cap_seconds": 1800
+}
