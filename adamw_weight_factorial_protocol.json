@@ -1,0 +1,114 @@
+{
+  "reference_commit": "09876e8dabeaf92e1934742ec1d15276fa077409",
+  "arms": {
+    "A": {
+      "relchem": 0.017015480965588553,
+      "ae17": 5.141254618347414e-05,
+      "exc": 1.5094644512009712e-05,
+      "op": 0.33597561607048215
+    },
+    "B": {
+      "relchem": 0.034030961931177106,
+      "ae17": 5.141254618347414e-05,
+      "exc": 1.5094644512009712e-05,
+      "op": 0.33597561607048215
+    },
+    "C": {
+      "relchem": 0.017015480965588553,
+      "ae17": 5.141254618347414e-05,
+      "exc": 1.5094644512009712e-05,
+      "op": 0.6719512321409643
+    },
+    "D": {
+      "relchem": 0.034030961931177106,
+      "ae17": 5.141254618347414e-05,
+      "exc": 1.5094644512009712e-05,
+      "op": 0.6719512321409643
+    }
+  },
+  "updates": 20,
+  "lr": 0.0001,
+  "scheduler": "constant",
+  "control_reused": true,
+  "control_protocol": {
+    "updates": 90,
+    "lr": 0.0001,
+    "scheduler": "constant",
+    "exc_chunk_size": 4096,
+    "operator_chunk_size": 256,
+    "chemistry_model_chunk": 16384,
+    "chunk_threshold": 131072,
+    "manifest_sha256": "e84e237d88449edfae5c68f7caecd85791b57f60a4b6239a37e1ae1350a71089",
+    "calibration_sha256": "4d97df1ec78aa01a2c9380a86a323b2f0b46828dfc5975f5e3a63c75f4440096",
+    "source_sha256": "2e837c3a88ca3d4737c3c3397dcfbb98adeb7f6917adc8c693cecf205dc37e9e",
+    "dataset_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+    "physics_sources_sha256": {
+      "lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+      "lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+      "lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+      "lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a"
+    },
+    "diagnostics": "Actual native AdamW movement/moments and SHA-bound raw gradients"
+  },
+  "t59_sha256": "8938753bee6cfcb55ccdac9c02a15cbb3e3b2093290c9122e5e00ad400a966aa",
+  "diagnostic_manifest": [
+    {
+      "cursor": 0,
+      "relchem": {
+        "identity": "reaction_00f666b6a686020ddee6075c",
+        "database": "MGAE109",
+        "reaction_id": 7,
+        "variant": "level2",
+        "weight": 1.0
+      },
+      "ae17": {
+        "identity": "reaction_a543ef6c6d87eb01a7d820d9",
+        "database": "AE17",
+        "reaction_id": 2,
+        "variant": "level2_gauss_chebyshev",
+        "weight": 1.0
+      },
+      "mrks_id": "mrks_d1c018d3d85c5c6bdd124e92"
+    },
+    {
+      "cursor": 1,
+      "relchem": {
+        "identity": "reaction_95f1cc16835fd529cbb80476",
+        "database": "MGAE109",
+        "reaction_id": 4,
+        "variant": "level2_delley",
+        "weight": 1.0
+      },
+      "ae17": {
+        "identity": "reaction_8f5791ad90d31b42cb5298dd",
+        "database": "AE17",
+        "reaction_id": 12,
+        "variant": "level3",
+        "weight": 1.0
+      },
+      "mrks_id": "mrks_9814b9a14e00568cbe7dad2c"
+    },
+    {
+      "cursor": 2,
+      "relchem": {
+        "identity": "reaction_0d74cab283e7f6e83f164854",
+        "database": "DBH76",
+        "reaction_id": 14,
+        "variant": "level2_gauss_chebyshev",
+        "weight": 1.0
+      },
+      "ae17": {
+        "identity": "reaction_a7240bb1ca1e7b14837bffcb",
+        "database": "AE17",
+        "reaction_id": 7,
+        "variant": "level2_gauss_chebyshev",
+        "weight": 1.0
+      },
+      "mrks_id": "mrks_5089ec8df2b96e0476dd037f"
+    }
+  ],
+  "driver_sha256": "1514f711e0b399a0c0d4a154ed03ed6946dc77c5a018d4703bd9f1b8fc2101c1",
+  "probe_manifest_sha256": "f23f6ff9966a4140df5341032eedf225c75e699934fb59ad6f0c1ee64c926309",
+  "bootstrap": "5000 paired within-stratum resamples seed931002; paired effects on t20/t0 ratios; limited panel only",
+  "decision": "Report uncertainty; no automatic continuation or winner; no validation/full-corpus endpoints"
+}
