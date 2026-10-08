@@ -1,0 +1,34 @@
+{
+  "source_commit": "a1081eac10c6ceab4e8989cd0a82369ef4a02baf",
+  "learning_rates": [
+    1e-06,
+    1e-05,
+    3e-05,
+    0.0001,
+    0.0003,
+    0.001
+  ],
+  "scheduler": "constant throughout 20-screen and continued 90-update arms",
+  "screen_updates": 20,
+  "total_updates": 90,
+  "probe_seed": 931001,
+  "probe": "16 stratified relchem; 8 AE17; 8 grid-size-stratified mRKS, shared Exc/op",
+  "probe_weighting": "Canonical population stratum size / task population / sampled stratum count",
+  "bootstrap": "5000 paired within-stratum resamples; seed931002; limited coverage is not exact qualification",
+  "training_seed": 41,
+  "sampling_manifest_sha256": "e84e237d88449edfae5c68f7caecd85791b57f60a4b6239a37e1ae1350a71089",
+  "calibration_sha256": "4d97df1ec78aa01a2c9380a86a323b2f0b46828dfc5975f5e3a63c75f4440096",
+  "dataset_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "trainer_sha256": "2e837c3a88ca3d4737c3c3397dcfbb98adeb7f6917adc8c693cecf205dc37e9e",
+  "driver_sha256": "acdf848522c5fc365db459a29dac92b7695a71dbf8254af02e7730016246ecff",
+  "probe_manifest_sha256": "f23f6ff9966a4140df5341032eedf225c75e699934fb59ad6f0c1ee64c926309",
+  "screening": {
+    "eligible": "Finite 20-update trajectory, relchem probe ratio<=1.05, every probe ratio<=1.25, at least one ratio<1, no persistent destructive flag",
+    "persistent_destructive": "A task has negative actual-step progress in >=8 of last10 updates AND its probe ratio>1.10",
+    "ranking": "Relchem improvement first; lower relchem ratio; more improved tasks; lower maximum ratio; lower LR",
+    "max_selected": 3,
+    "clean28_used": false
+  },
+  "endpoint": "Reuse exact t0; selected arms exact251x8/17x8/full90 before any clean28 evaluation",
+  "per_arm_runtime_cap_seconds": 1800
+}

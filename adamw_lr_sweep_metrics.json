@@ -1,0 +1,285 @@
+{
+  "status": "USER_STOPPED_PARTIAL",
+  "reference_commit": "a1081eac10c6ceab4e8989cd0a82369ef4a02baf",
+  "arms": [
+    {
+      "lr": 1e-06,
+      "stable": true,
+      "screen_complete": true,
+      "probe_ratios": {
+        "relchem": 1.001486568389513,
+        "ae17": 0.9386166990310901,
+        "exc": 0.9401898366844781,
+        "op": 0.9956635005658876
+      },
+      "probe_ratio_bootstrap95": {
+        "relchem": [
+          1.0002939087890839,
+          1.0032708083013964
+        ],
+        "ae17": [
+          0.93474273134903,
+          0.9458070590920564
+        ],
+        "exc": [
+          0.9377679009966772,
+          0.9423411457086379
+        ],
+        "op": [
+          0.9952236306800767,
+          0.9960015687718
+        ]
+      },
+      "persistent_destructive": {
+        "relchem": false,
+        "ae17": false,
+        "exc": false,
+        "op": false
+      },
+      "eligible_to_continue": true,
+      "probe_is_exact_full_corpus": false,
+      "mean_update_seconds": 9.407521205000922,
+      "peak_live_gib": 12.219730377197266,
+      "checkpoint20_sha256": "938dc214d383e9c4e00c7d04bfe3ae22b34e69392af79eb98753da105c446bc0",
+      "lr_label": "1e-6",
+      "saved_cursor": 20,
+      "latest_checkpoint_sha256": "2aa703e0c106cd82c7a46a2021c25bf3c2d37c57ebf16a247e525deb7ae7f3ed",
+      "exact_endpoint": "NOT EVALUATED",
+      "clean28": "NOT EVALUATED"
+    },
+    {
+      "lr": 1e-05,
+      "stable": true,
+      "screen_complete": true,
+      "probe_ratios": {
+        "relchem": 1.014864196897316,
+        "ae17": 0.3917936886384792,
+        "exc": 0.40380857151741517,
+        "op": 0.9581503357572954
+      },
+      "probe_ratio_bootstrap95": {
+        "relchem": [
+          1.0029790397512826,
+          1.0326570405047553
+        ],
+        "ae17": [
+          0.35339753532384033,
+          0.46897398912450855
+        ],
+        "exc": [
+          0.37966303921448646,
+          0.42525670347955224
+        ],
+        "op": [
+          0.9539552057803848,
+          0.9613467629961774
+        ]
+      },
+      "persistent_destructive": {
+        "relchem": false,
+        "ae17": false,
+        "exc": false,
+        "op": false
+      },
+      "eligible_to_continue": true,
+      "probe_is_exact_full_corpus": false,
+      "mean_update_seconds": 9.266047065001112,
+      "peak_live_gib": 12.231815814971924,
+      "checkpoint20_sha256": "fca65d6a93c56251cac6a4bbbd75edd6b5ec50e93c180d6ceaee6e62e786c007",
+      "lr_label": "1e-5",
+      "saved_cursor": 20,
+      "latest_checkpoint_sha256": "0043f9e6f88abb40f9c5c495363247fdfe5d3bd023a0c922eff54c5d32d6f97e",
+      "exact_endpoint": "NOT EVALUATED",
+      "clean28": "NOT EVALUATED"
+    },
+    {
+      "lr": 3e-05,
+      "stable": true,
+      "screen_complete": true,
+      "probe_ratios": {
+        "relchem": 1.019399660266229,
+        "ae17": 0.08668707429029093,
+        "exc": 0.10514419471376998,
+        "op": 0.9306042546709027
+      },
+      "probe_ratio_bootstrap95": {
+        "relchem": [
+          0.9977860096534809,
+          1.0512776668197694
+        ],
+        "ae17": [
+          0.04135970883309551,
+          0.19541427761186828
+        ],
+        "exc": [
+          0.08500317386775004,
+          0.1259286160664744
+        ],
+        "op": [
+          0.9241513320736039,
+          0.9357111810367131
+        ]
+      },
+      "persistent_destructive": {
+        "relchem": false,
+        "ae17": false,
+        "exc": false,
+        "op": false
+      },
+      "eligible_to_continue": true,
+      "probe_is_exact_full_corpus": false,
+      "mean_update_seconds": 9.300532544999987,
+      "peak_live_gib": 12.231815814971924,
+      "checkpoint20_sha256": "24dbbe41516324cb9d10c8e16e56ead5e5c232295bbdabbd13982f2ea636dc19",
+      "lr_label": "3e-5",
+      "saved_cursor": 20,
+      "latest_checkpoint_sha256": "f1bd9f2c2a4c5760ede891e7b576d67c3dc17673b3aeec5a50a114949f9a5c77",
+      "exact_endpoint": "NOT EVALUATED",
+      "clean28": "NOT EVALUATED"
+    },
+    {
+      "lr": 0.0001,
+      "stable": true,
+      "screen_complete": true,
+      "probe_ratios": {
+        "relchem": 0.9792597222459836,
+        "ae17": 0.5602235466679427,
+        "exc": 0.5699665884472509,
+        "op": 0.9365531949182108
+      },
+      "probe_ratio_bootstrap95": {
+        "relchem": [
+          0.9146384832015437,
+          1.0372688008056752
+        ],
+        "ae17": [
+          0.519426397005669,
+          0.5825524866427308
+        ],
+        "exc": [
+          0.5457206678388671,
+          0.5894160849571246
+        ],
+        "op": [
+          0.9221721345437194,
+          0.950244724239235
+        ]
+      },
+      "persistent_destructive": {
+        "relchem": false,
+        "ae17": false,
+        "exc": false,
+        "op": false
+      },
+      "eligible_to_continue": true,
+      "probe_is_exact_full_corpus": false,
+      "mean_update_seconds": 9.343827390000296,
+      "peak_live_gib": 12.231815814971924,
+      "checkpoint20_sha256": "63dfdc04fbef861b55767f0001d3626bcfa058b4a2927c87f0a3d39d352a96a3",
+      "lr_label": "1e-4",
+      "saved_cursor": 59,
+      "latest_checkpoint_sha256": "8938753bee6cfcb55ccdac9c02a15cbb3e3b2093290c9122e5e00ad400a966aa",
+      "exact_endpoint": "NOT EVALUATED",
+      "clean28": "NOT EVALUATED"
+    },
+    {
+      "lr": 0.0003,
+      "stable": true,
+      "screen_complete": true,
+      "probe_ratios": {
+        "relchem": 1.0210410837728554,
+        "ae17": 0.7079241147925949,
+        "exc": 0.6579962108140945,
+        "op": 0.8751039282881203
+      },
+      "probe_ratio_bootstrap95": {
+        "relchem": [
+          0.9648328599396132,
+          1.0847642170279153
+        ],
+        "ae17": [
+          0.5469623140906972,
+          0.798488580821178
+        ],
+        "exc": [
+          0.6023330911250465,
+          0.7205770774669783
+        ],
+        "op": [
+          0.8617225835563771,
+          0.886100358972003
+        ]
+      },
+      "persistent_destructive": {
+        "relchem": false,
+        "ae17": false,
+        "exc": false,
+        "op": false
+      },
+      "eligible_to_continue": true,
+      "probe_is_exact_full_corpus": false,
+      "mean_update_seconds": 9.28309531000159,
+      "peak_live_gib": 12.231815814971924,
+      "checkpoint20_sha256": "bc59806a1f36808f23b3977d936a608225e5213303defe8a813a21784f82a66e",
+      "lr_label": "3e-4",
+      "saved_cursor": 20,
+      "latest_checkpoint_sha256": "5ffe02ab7b027c0844d545f3b005c118dcd43eb6fe5c699e780da6fc1afe4ed7",
+      "exact_endpoint": "NOT EVALUATED",
+      "clean28": "NOT EVALUATED"
+    },
+    {
+      "lr": 0.001,
+      "stable": true,
+      "screen_complete": true,
+      "probe_ratios": {
+        "relchem": 1.0097511275874775,
+        "ae17": 0.4417710803652015,
+        "exc": 0.39821259004482246,
+        "op": 0.9385727793233488
+      },
+      "probe_ratio_bootstrap95": {
+        "relchem": [
+          0.9423145260089715,
+          1.0758908407769228
+        ],
+        "ae17": [
+          0.2700925119458411,
+          0.525925448456458
+        ],
+        "exc": [
+          0.35926943100117487,
+          0.4389206984439278
+        ],
+        "op": [
+          0.9149527359882632,
+          0.9572752347582243
+        ]
+      },
+      "persistent_destructive": {
+        "relchem": false,
+        "ae17": false,
+        "exc": false,
+        "op": false
+      },
+      "eligible_to_continue": true,
+      "probe_is_exact_full_corpus": false,
+      "mean_update_seconds": 9.285641124999893,
+      "peak_live_gib": 12.231815814971924,
+      "checkpoint20_sha256": "f9c105cb26da131771861f794aa9c45d13fb509e47b5567a01ac66894b6bf33d",
+      "lr_label": "1e-3",
+      "saved_cursor": 20,
+      "latest_checkpoint_sha256": "101014d716a1a5a928d49f3b3a95cef11a801cc091e79918c2bc4c0e1e1dd8dc",
+      "exact_endpoint": "NOT EVALUATED",
+      "clean28": "NOT EVALUATED"
+    }
+  ],
+  "total_completed_updates": 159,
+  "checkpoint_root": "C:\\Dev\\readWFN_share_ms\\lap_adamw_lr_sweep_20261008",
+  "scientific_qualification": "UNRESOLVED",
+  "tests": {
+    "passed": 25,
+    "ruff": "PASS",
+    "compileall": "PASS"
+  },
+  "no_future_test_or_scf": true
+}

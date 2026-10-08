@@ -240,7 +240,30 @@ def profile(folder):
     print('MICROBATCH_PROFILE_COMPLETE', folder, flush=True)
 
 
-def train(folder, updates, stop_at=None, runtime_seconds=3600):
+def adamw_diagnostics(model, optimizer, raw, before, initial):
+    """Actual rounded parameter movement and native moments; no update policy."""
+    parameters = existing.named_trainable_parameters(model)
+    current = torch.cat([p.detach().flatten().double() for p in parameters.values()])
+    descent = before - current
+    length = float(descent.norm())
+    matrix = torch.stack([torch.cat([g.flatten().double() for g in raw[t].values()]) for t in TASKS])
+    moments = {}
+    for name in ('exp_avg', 'exp_avg_sq'):
+        vector = torch.cat([optimizer.state[p][name].flatten().double() for p in parameters.values()])
+        if not torch.isfinite(vector).all():
+            raise FloatingPointError('Nonfinite native AdamW moments')
+        moments[name] = {'norm': float(vector.norm()), 'max_abs': float(vector.abs().max())}
+    return {'step_norm': length, 'parameter_displacement_from_t0': float((current - initial).norm()),
+            'relative_parameter_displacement_from_t0': float((current - initial).norm() / initial.norm()),
+            'task_predicted_loss_change_actual_step': (-matrix @ descent).tolist(),
+            'task_progress_actual_step': None if length == 0 else
+                ((matrix @ descent) / (matrix.norm(dim=1) * length)).tolist(),
+            'adamw_moments': moments,
+            'moment_step': int(next(iter(optimizer.state.values()))['step'])}
+
+
+def train(folder, updates, stop_at=None, runtime_seconds=3600, *,
+          learning_rate=1e-6, constant_lr=False, diagnostics=False):
     """Explicit bounded opt-in; never called by profiling or qualification."""
     torch.manual_seed(41)
     np.random.seed(41)
@@ -255,12 +278,16 @@ def train(folder, updates, stop_at=None, runtime_seconds=3600):
     bundle = PublicationDataset(DATA)
     assert bundle.manifest['logical_sha256'] == protocol['dataset_sha256'] == DATA_SHA
     model, shadow = model_at(protocol['initial_state'])
-    optimizer = torch.optim.AdamW(existing.named_trainable_parameters(model).values(), lr=1e-6,
+    if not np.isfinite(learning_rate) or learning_rate <= 0:
+        raise ValueError('Positive finite learning rate required')
+    optimizer = torch.optim.AdamW(existing.named_trainable_parameters(model).values(), lr=learning_rate,
                                  **{**protocol['adamw'], 'betas': tuple(protocol['adamw']['betas'])})
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=updates, eta_min=1e-7)
+    scheduler = None if constant_lr else torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=updates, eta_min=1e-7)
     arm = folder / 'ordinary_sgd_adamw'
     arm.mkdir(exist_ok=True)
-    run_protocol = {'updates': updates, 'lr': 1e-6, 'scheduler': 'cosine to1e-7',
+    run_protocol = {'updates': updates, 'lr': learning_rate,
+                    'scheduler': 'constant' if constant_lr else 'cosine to1e-7',
                     'exc_chunk_size': protocol.get('exc_chunk_size', 256), 'operator_chunk_size': 256,
                     'chemistry_model_chunk': 16384, 'chunk_threshold': 131072,
                     'manifest_sha256': manifest_sha, 'calibration_sha256': file_sha256(folder / 'calibration.json'),
@@ -268,10 +295,17 @@ def train(folder, updates, stop_at=None, runtime_seconds=3600):
                     'physics_sources_sha256': {name: file_sha256(ROOT / 'train_models' / name)
                                               for name in ('lap_training.py', 'lap_moo_training.py', 'lap_operator.py',
                                                            'lap_fixed_adamw.py')}}
+    if diagnostics:
+        run_protocol['diagnostics'] = 'Actual native AdamW movement/moments and SHA-bound raw gradients'
     if (arm / 'protocol.json').exists():
         assert read(arm / 'protocol.json') == run_protocol
     else:
         write(arm / 'protocol.json', run_protocol)
+    if diagnostics:
+        (arm / 'raw_gradients').mkdir(exist_ok=True)
+        write(arm / 'parameter_order.json', [{'name': n, 'shape': list(p.shape), 'numel': p.numel()}
+              for n, p in existing.named_trainable_parameters(model).items()])
+    initial = torch.cat([p.detach().flatten().double() for p in existing.named_trainable_parameters(model).values()])
     latest = arm / 'latest.pt'
     logs, cursor = [], 0
     if latest.exists():
@@ -290,21 +324,39 @@ def train(folder, updates, stop_at=None, runtime_seconds=3600):
                 print('SAFE_RUNTIME_PAUSE', index, flush=True)
                 break
             before = existing.digest(model)
+            before_vector = torch.cat([p.detach().flatten().double()
+                for p in existing.named_trainable_parameters(model).values()]) if diagnostics else None
             record, raw = measure(model, shadow, bundle, manifest[index], dispersion, mrks_dispersion,
                                   run_protocol['exc_chunk_size'])
             torch.cuda.synchronize()
             timer = time.perf_counter()
-            learning_rate = optimizer.param_groups[0]['lr']
+            step_learning_rate = optimizer.param_groups[0]['lr']
             joint = adamw_step(model, optimizer, raw, calibration['lambda'])
-            scheduler.step()
+            if scheduler is not None:
+                scheduler.step()
             torch.cuda.synchronize()
             record['seconds']['weighted_aggregation_adamw'] = time.perf_counter() - timer
             record.update(total_seconds=sum(record['seconds'].values()), before_sha256=before,
-                          after_sha256=existing.digest(model), learning_rate=learning_rate,
+                          after_sha256=existing.digest(model), learning_rate=step_learning_rate,
                           weighted_gradient_norm=float(torch.cat([g.flatten() for g in joint.values()]).norm()))
+            if diagnostics:
+                timer = time.perf_counter()
+                record.update(adamw_diagnostics(model, optimizer, raw, before_vector, initial))
+                path = arm / 'raw_gradients' / f'update_{index:03}.npz'
+                temporary = path.with_suffix('.tmp')
+                with temporary.open('wb') as stream:
+                    np.savez(stream, **{t: torch.cat([g.flatten() for g in raw[t].values()]).cpu().numpy()
+                                       for t in TASKS})
+                temporary.replace(path)
+                record['raw_gradients_sha256'] = file_sha256(path)
+                torch.cuda.synchronize()
+                record['diagnostic_seconds'] = time.perf_counter() - timer
+                record['total_seconds'] += record['diagnostic_seconds']
+                record['peak_allocated_bytes'] = torch.cuda.max_memory_allocated()
+                record['peak_reserved_bytes'] = torch.cuda.max_memory_reserved()
             logs.append(record)
             save(latest, model, optimizer, index + 1, manifest_sha, calibration, scheduler, logs, updates)
-            if index + 1 in (10, 45, 90):
+            if index + 1 in (10, 20, 45, 90):
                 save(arm / f'checkpoint_{index + 1}.pt', model, optimizer, index + 1,
                      manifest_sha, calibration, scheduler, logs, updates)
             print('ADAMW_UPDATE', index + 1, record['total_seconds'], flush=True)
