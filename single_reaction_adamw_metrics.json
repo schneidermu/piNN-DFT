@@ -1,0 +1,310 @@
+{
+  "dataset_logical_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "starting_state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6",
+  "protocol": "ordinary single-reaction stochastic relchem and ae17; no SVRG",
+  "new": {
+    "records": [
+      {
+        "sample": {
+          "cursor": 1,
+          "relchem": {
+            "identity": "reaction_a679f4e3b3e00f37f0e3fdd7",
+            "database": "DBH76",
+            "reaction_id": 33,
+            "variant": "level3_delley",
+            "weight": 1.0
+          },
+          "ae17": {
+            "identity": "reaction_b9d73b72246ebcd2d7ff0be5",
+            "database": "AE17",
+            "reaction_id": 14,
+            "variant": "level3_gauss_chebyshev",
+            "weight": 1.0
+          },
+          "mrks_id": "mrks_e824ca98cb1297dac1d16578"
+        },
+        "system": "AlHS",
+        "losses": {
+          "relchem": 0.9162108430509457,
+          "ae17": 47.07573883129285,
+          "exc": 179.54771515447638,
+          "op": 0.020873479424722893
+        },
+        "norms": {
+          "relchem": 7.997660353595774,
+          "ae17": 10950.470174966775,
+          "exc": 39886.66558676216,
+          "op": 0.537596793959866
+        },
+        "seconds": {
+          "chemistry_loading_transfers": 0.6563034000000698,
+          "relchem": 5.365570000000844,
+          "ae17": 0.38143529999979364,
+          "mrks_loading_transfers": 0.9643719000005149,
+          "exc": 17.988145199999963,
+          "op": 6.606988300000012,
+          "weighted_aggregation_adamw": 0.015048899999783316
+        },
+        "grid_points": {
+          "relchem": 263320,
+          "ae17": 17860
+        },
+        "gradient_elapsed_seconds": 31.978473000000122,
+        "peak_allocated_bytes": 11212625408,
+        "peak_reserved_bytes": 11267997696,
+        "total_seconds": 31.993889299999864,
+        "model_chunk": 16384,
+        "displacement_norm": 9.677146479370679e-05
+      },
+      {
+        "sample": {
+          "cursor": 5,
+          "relchem": {
+            "identity": "reaction_3916b324624d9dba5313d55e",
+            "database": "MGAE109",
+            "reaction_id": 19,
+            "variant": "level3_gauss_chebyshev",
+            "weight": 1.0
+          },
+          "ae17": {
+            "identity": "reaction_a543ef6c6d87eb01a7d820d9",
+            "database": "AE17",
+            "reaction_id": 2,
+            "variant": "level2_delley",
+            "weight": 1.0
+          },
+          "mrks_id": "mrks_98d851b84f8558c7c25e3c4a"
+        },
+        "system": "SSi",
+        "losses": {
+          "relchem": 0.18441433441194513,
+          "ae17": 5.313377855112769,
+          "exc": 184.10308059646883,
+          "op": 0.024896108521817683
+        },
+        "norms": {
+          "relchem": 6.3925644654043445,
+          "ae17": 880.4312969983481,
+          "exc": 41569.71311673,
+          "op": 0.6460599527776881
+        },
+        "seconds": {
+          "chemistry_loading_transfers": 0.1858885999990889,
+          "relchem": 1.1243438000001333,
+          "ae17": 0.19848569999976462,
+          "mrks_loading_transfers": 0.6228519999995115,
+          "exc": 13.131902000000082,
+          "op": 4.634616000000278,
+          "weighted_aggregation_adamw": 0.01314490000004298
+        },
+        "grid_points": {
+          "relchem": 68440,
+          "ae17": 9624
+        },
+        "gradient_elapsed_seconds": 19.89952319999975,
+        "peak_allocated_bytes": 8438078464,
+        "peak_reserved_bytes": 12673089536,
+        "total_seconds": 19.912965700000314,
+        "model_chunk": 0,
+        "displacement_norm": 9.676821347169355e-05
+      },
+      {
+        "sample": {
+          "cursor": 6,
+          "relchem": {
+            "identity": "reaction_22ac46b02d0187e74db074f4",
+            "database": "NCCE31",
+            "reaction_id": 14,
+            "variant": "level3_mura",
+            "weight": 1.0
+          },
+          "ae17": {
+            "identity": "reaction_2e18a589bf562eea4fbdcc10",
+            "database": "AE17",
+            "reaction_id": 1,
+            "variant": "level2_delley",
+            "weight": 1.0
+          },
+          "mrks_id": "mrks_a9a40b2df8b2e30ff81a2f37"
+        },
+        "system": "HNaO",
+        "losses": {
+          "relchem": 1.5308267637199289,
+          "ae17": 3.665802601633848,
+          "exc": 92.35404562459124,
+          "op": 0.03207734232395716
+        },
+        "norms": {
+          "relchem": 31.04090035621187,
+          "ae17": 488.34899799776343,
+          "exc": 20695.49972055582,
+          "op": 0.7892035542269678
+        },
+        "seconds": {
+          "chemistry_loading_transfers": 0.20579969999926107,
+          "relchem": 1.4324422999998205,
+          "ae17": 0.13439550000020972,
+          "mrks_loading_transfers": 1.0185980000005657,
+          "exc": 18.319234999999935,
+          "op": 6.1779937999999675,
+          "weighted_aggregation_adamw": 0.013722600000619423
+        },
+        "grid_points": {
+          "relchem": 81528,
+          "ae17": 4728
+        },
+        "gradient_elapsed_seconds": 27.29004210000039,
+        "peak_allocated_bytes": 10509440000,
+        "peak_reserved_bytes": 14141095936,
+        "total_seconds": 27.304082699999526,
+        "model_chunk": 0,
+        "displacement_norm": 9.666938901616682e-05
+      }
+    ],
+    "source_sha256": "d565d2507d84aa1d3e8a3c5f7cbc2b707db50531679b6fc6e4f636198fec17ae",
+    "retained_updates": 0,
+    "model_rng_restoration_exact": true,
+    "old_cursor7_checkpoint_sha256": "9cf49177f71d5eb3c4f11bc95d7098a1fd74ead14302e03a2977c324839e83fa",
+    "model_chunk_threshold": 131072,
+    "model_chunk_size": 16384
+  },
+  "old_profile": {
+    "source_artifact": "lap_simple_four_task_pilot_20261008/throughput_profile.json",
+    "source_artifact_sha256": "a3ceafe3729fdc42cc427ac12be63b6a3d7a8c8e9e261a07434efa94289ff8d5",
+    "source_checkpoint_sha256": "9cf49177f71d5eb3c4f11bc95d7098a1fd74ead14302e03a2977c324839e83fa",
+    "records": [
+      {
+        "manifest_entry": 1,
+        "frozen_state_cursor": 7,
+        "mrks_system": "AlH3",
+        "exclusive_seconds": {
+          "relchem": 18.80283099999815,
+          "ae17": 4.451781900002061,
+          "exc": 14.854621500005123,
+          "op": 28.40371899999991,
+          "data_loading_SHA_transfers": 3.0987456999946517,
+          "aggregation_AdamW": 0.11864580000019487
+        },
+        "peak_allocated_bytes": 11135895552,
+        "peak_reserved_bytes": 30517755904
+      },
+      {
+        "manifest_entry": 5,
+        "frozen_state_cursor": 7,
+        "mrks_system": "CS",
+        "exclusive_seconds": {
+          "relchem": 29.536317099997177,
+          "ae17": 4.183560499996929,
+          "exc": 10.216921300009744,
+          "op": 18.102878099999543,
+          "data_loading_SHA_transfers": 1.5589392999954725,
+          "aggregation_AdamW": 0.024905599999328842
+        },
+        "peak_allocated_bytes": 21767401984,
+        "peak_reserved_bytes": 31817990144
+      },
+      {
+        "manifest_entry": 6,
+        "frozen_state_cursor": 7,
+        "mrks_system": "CO",
+        "exclusive_seconds": {
+          "relchem": 17.108670400001756,
+          "ae17": 5.160698599992429,
+          "exc": 11.238341499993112,
+          "op": 14.878240200002438,
+          "data_loading_SHA_transfers": 0.6732383000107802,
+          "aggregation_AdamW": 0.028180199999951583
+        },
+        "peak_allocated_bytes": 13075268096,
+        "peak_reserved_bytes": 29322379264
+      }
+    ]
+  },
+  "parity": {
+    "relchem": {
+      "loss_exact": true,
+      "gradient_bitwise": true
+    },
+    "ae17": {
+      "loss_exact": true,
+      "gradient_bitwise": true
+    }
+  },
+  "calibration": {
+    "scales": {
+      "relchem": 7.997660353595703,
+      "ae17": 880.4312969983481,
+      "exc": 39886.66558676216,
+      "op": 0.6460599527776881
+    },
+    "lambda": {
+      "relchem": 0.03125914191737355,
+      "ae17": 0.000283951741438911,
+      "exc": 6.267758819202265e-06,
+      "op": 0.3869609916620633
+    },
+    "epsilon": 1e-12,
+    "C": 4.0,
+    "manifest_sha256": "e84e237d88449edfae5c68f7caecd85791b57f60a4b6239a37e1ae1350a71089",
+    "sample_indices": [
+      1,
+      5,
+      6
+    ],
+    "initial_state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6"
+  },
+  "large_reaction_chunk_parity": {
+    "reaction": "pTC13-7",
+    "variant": "level3_mura",
+    "grid_points": 500568,
+    "tolerances": {
+      "loss_absolute": 1e-10,
+      "gradient_relative_L2": 1e-10,
+      "gradient_max_abs": 1e-09
+    },
+    "records": [
+      {
+        "chunk": 0,
+        "loss": 5.7088005255572165,
+        "seconds": 13.868474800000513,
+        "peak_allocated_bytes": 21475997184,
+        "peak_reserved_bytes": 22171090944
+      },
+      {
+        "chunk": 16384,
+        "loss": 5.7088005255572165,
+        "seconds": 10.519174400000338,
+        "peak_allocated_bytes": 1246387200,
+        "peak_reserved_bytes": 1356857344,
+        "loss_absolute_error": 0.0,
+        "gradient_relative_L2": 3.0706352181870266e-12,
+        "gradient_max_abs_error": 2.545759159033878e-10
+      }
+    ],
+    "state_unchanged": true
+  },
+  "checkpoint_resume_exact": true,
+  "retained_training_updates": 0,
+  "artifact_hashes": {
+    "calibration.json": "32759c20ce568c6f491a0b4738322ad8488a679410217fc041ad95e0d6e5b9bb",
+    "diagnostic_checkpoint.pt": "4583d4a3a8533cce04bfbb92cecbb1bbf4105d26fe0c75b27505a3d4d2f58fb4",
+    "large_reaction_chunk_parity.json": "9ad3345369dc7bcc0746e3d90d039c22b39e46abe9f4d2af18c1812cf5fc85fe",
+    "metrics.json": "c02745537fb96955810b31be9f83e34dbd0412b968e826f7afd671bb6c7d5163",
+    "profile_source.py": "abdab9da837ccbf9107160a64eafb1a52873493a8a81ce2216c5abf304fbff87",
+    "protocol.json": "9317f30b29c4163c93407f3232f90a5e59e4f4dc51e031501150ae883ec6d8e8",
+    "qualified_timing_metrics.json": "2ac3eb961c621a704b15551517dc14f57cf61fd7f19ed463af341c7b405b3a90",
+    "sampling_manifest.json": "e84e237d88449edfae5c68f7caecd85791b57f60a4b6239a37e1ae1350a71089"
+  },
+  "tests": {
+    "passed": 40,
+    "skipped": 2,
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "diff_check": "PASS"
+  },
+  "qualified_source_sha256": {
+    "train_lap_microbatch.py": "262aa8dcaba2c0206e52a2768ab09a2696258ba7c2cb2e2c8a291ccd3f1a496f",
+    "train_models\\lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "train_models\\lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77"
+  }
+}

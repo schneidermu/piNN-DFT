@@ -47,7 +47,16 @@ def reaction_loss(model, reaction, target, device, dtype, dispersions=None):
         raise ValueError(
             "Minnesota standard sigma/model sigma-total boundary disagrees."
         )
-    constants = checkpoint(model, raw, use_reentrant=False)
+    model_chunk = reaction.get("model_point_chunk_size", 0)
+    if not isinstance(model_chunk, int) or model_chunk < 0:
+        raise ValueError("Model point chunk must be a nonnegative integer.")
+    if model_chunk:
+        constants = torch.cat(
+            [checkpoint(model, raw[start:start + model_chunk], use_reentrant=False)
+             for start in range(0, len(raw), model_chunk)], dim=0
+        )
+    else:
+        constants = checkpoint(model, raw, use_reentrant=False)
     prediction, _ = calculate_reaction_energy(
         reaction,
         constants,
