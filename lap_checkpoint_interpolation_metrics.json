@@ -1,0 +1,1812 @@
+{
+  "status": "GO",
+  "decision": {
+    "classification": "GO",
+    "winner": {
+      "alpha": 0.75,
+      "complete": true,
+      "eligible": true,
+      "clean28": 9.168650862151432
+    },
+    "best_clean28_candidate": {
+      "alpha": 0.25,
+      "complete": true,
+      "eligible": false,
+      "clean28": 8.807148549851018
+    },
+    "improves_on_j251": true,
+    "beats_historical_best": false
+  },
+  "shapes": {
+    "clean28": "monotonic",
+    "relchem": "monotonic",
+    "ae17": "monotonic",
+    "exc": "nonmonotonic",
+    "op": "nonmonotonic"
+  },
+  "candidates": [
+    {
+      "alpha": 0.25,
+      "complete": true,
+      "status": "complete",
+      "model_sha256": "0819d45b226ff8aa8c8634c5a62ea4fb427152b5f30334bcb0bb30a700a85675",
+      "clean28": 8.807148549851018,
+      "objectives": {
+        "relchem": 1.2663010010289801,
+        "ae17": 5.33996759512555,
+        "exc": 12.68290715438796,
+        "op": 0.030856494067145742
+      },
+      "ratios": {
+        "relchem": 1.0249539654914719,
+        "ae17": 0.21444751189857159,
+        "exc": 0.1375962460851995,
+        "op": 0.9308643731387717
+      },
+      "eligible": false,
+      "databases": {
+        "ABDE4": {
+          "count": 4,
+          "singleton_mean": 8.291097321072545,
+          "contribution": 0.13212904097326766
+        },
+        "DBH76": {
+          "count": 70,
+          "singleton_mean": 0.9358887327616903,
+          "contribution": 0.26100482586979407
+        },
+        "EA13": {
+          "count": 11,
+          "singleton_mean": 1.8265692319495053,
+          "contribution": 0.08004885080256796
+        },
+        "IP13": {
+          "count": 13,
+          "singleton_mean": 2.5850973484626403,
+          "contribution": 0.13388950410364273
+        },
+        "MGAE109": {
+          "count": 104,
+          "singleton_mean": 0.21953844370309825,
+          "contribution": 0.0909641360363435
+        },
+        "NCCE31": {
+          "count": 28,
+          "singleton_mean": 2.137519381077652,
+          "contribution": 0.23844837717200895
+        },
+        "PA8": {
+          "count": 8,
+          "singleton_mean": 2.3370744374602,
+          "contribution": 0.07448842828558407
+        },
+        "pTC13": {
+          "count": 13,
+          "singleton_mean": 4.929791329556043,
+          "contribution": 0.2553278377857711
+        }
+      },
+      "reactions": [
+        {
+          "reaction_id": "ACONF-10",
+          "predicted_energy_kcal_mol": 1.6333630842294482,
+          "signed_error_kcal_mol": 0.3833630842294482,
+          "absolute_error_kcal_mol": 0.3833630842294482,
+          "diet_weight": 30.99,
+          "contribution": 11.880421980270599
+        },
+        {
+          "reaction_id": "Amino20x4-28",
+          "predicted_energy_kcal_mol": 5.8199178291281,
+          "signed_error_kcal_mol": 0.6039178291280995,
+          "absolute_error_kcal_mol": 0.6039178291280995,
+          "diet_weight": 23.31,
+          "contribution": 14.077324596976
+        },
+        {
+          "reaction_id": "Amino20x4-54",
+          "predicted_energy_kcal_mol": 1.7019445338593233,
+          "signed_error_kcal_mol": -0.017055466140676767,
+          "absolute_error_kcal_mol": 0.017055466140676767,
+          "diet_weight": 23.31,
+          "contribution": 0.3975629157391754
+        },
+        {
+          "reaction_id": "BHPERI-11",
+          "predicted_energy_kcal_mol": 20.56507919933572,
+          "signed_error_kcal_mol": -7.034920800664281,
+          "absolute_error_kcal_mol": 7.034920800664281,
+          "diet_weight": 2.72,
+          "contribution": 19.134984577806847
+        },
+        {
+          "reaction_id": "BHROT27-16",
+          "predicted_energy_kcal_mol": 16.087847328890625,
+          "signed_error_kcal_mol": 1.5678473288906254,
+          "absolute_error_kcal_mol": 1.5678473288906254,
+          "diet_weight": 9.06,
+          "contribution": 14.204696799749067
+        },
+        {
+          "reaction_id": "BHROT27-26",
+          "predicted_energy_kcal_mol": 17.435786398593592,
+          "signed_error_kcal_mol": 0.23578639859359285,
+          "absolute_error_kcal_mol": 0.23578639859359285,
+          "diet_weight": 9.06,
+          "contribution": 2.136224771257951
+        },
+        {
+          "reaction_id": "BSR36-31",
+          "predicted_energy_kcal_mol": 19.698030722046116,
+          "signed_error_kcal_mol": -5.2619692779538845,
+          "absolute_error_kcal_mol": 5.2619692779538845,
+          "diet_weight": 3.51,
+          "contribution": 18.469512165618134
+        },
+        {
+          "reaction_id": "BUT14DIOL-13",
+          "predicted_energy_kcal_mol": 2.3149110838304914,
+          "signed_error_kcal_mol": 0.09491108383049118,
+          "absolute_error_kcal_mol": 0.09491108383049118,
+          "diet_weight": 20.3,
+          "contribution": 1.926695001758971
+        },
+        {
+          "reaction_id": "CDIE20-9",
+          "predicted_energy_kcal_mol": 3.513826197781051,
+          "signed_error_kcal_mol": 0.6138261977810511,
+          "absolute_error_kcal_mol": 0.6138261977810511,
+          "diet_weight": 14.02,
+          "contribution": 8.605843292890336
+        },
+        {
+          "reaction_id": "DC13-1",
+          "predicted_energy_kcal_mol": 1.5577895472169976,
+          "signed_error_kcal_mol": 2.5577895472169976,
+          "absolute_error_kcal_mol": 2.5577895472169976,
+          "diet_weight": 1.03,
+          "contribution": 2.6345232336335074
+        },
+        {
+          "reaction_id": "DIPCS10-7",
+          "predicted_energy_kcal_mol": 734.0812742673619,
+          "signed_error_kcal_mol": 1.0812742673618914,
+          "absolute_error_kcal_mol": 1.0812742673618914,
+          "diet_weight": 0.09,
+          "contribution": 0.09731468406257023
+        },
+        {
+          "reaction_id": "FH51-24",
+          "predicted_energy_kcal_mol": -18.96145635024634,
+          "signed_error_kcal_mol": 3.488543649753659,
+          "absolute_error_kcal_mol": 3.488543649753659,
+          "diet_weight": 1.83,
+          "contribution": 6.384034879049196
+        },
+        {
+          "reaction_id": "FH51-30",
+          "predicted_energy_kcal_mol": -16.04761182220097,
+          "signed_error_kcal_mol": 0.9323881777990302,
+          "absolute_error_kcal_mol": 0.9323881777990302,
+          "diet_weight": 1.83,
+          "contribution": 1.7062703653722253
+        },
+        {
+          "reaction_id": "G21EA-14",
+          "predicted_energy_kcal_mol": 29.605265832804818,
+          "signed_error_kcal_mol": 0.30526583280481745,
+          "absolute_error_kcal_mol": 0.30526583280481745,
+          "diet_weight": 1.69,
+          "contribution": 0.5158992574401414
+        },
+        {
+          "reaction_id": "HAL59-40",
+          "predicted_energy_kcal_mol": 3.6261549033410376,
+          "signed_error_kcal_mol": 0.28615490334103777,
+          "absolute_error_kcal_mol": 0.28615490334103777,
+          "diet_weight": 12.38,
+          "contribution": 3.542597703362048
+        },
+        {
+          "reaction_id": "HAL59-57",
+          "predicted_energy_kcal_mol": 2.477075296707802,
+          "signed_error_kcal_mol": -0.002924703292197961,
+          "absolute_error_kcal_mol": 0.002924703292197961,
+          "diet_weight": 12.38,
+          "contribution": 0.03620782675741076
+        },
+        {
+          "reaction_id": "HEAVY28-16",
+          "predicted_energy_kcal_mol": 2.126479144936724,
+          "signed_error_kcal_mol": 0.5564791449367241,
+          "absolute_error_kcal_mol": 0.5564791449367241,
+          "diet_weight": 45.79,
+          "contribution": 25.481180046652597
+        },
+        {
+          "reaction_id": "MB16-43-10",
+          "predicted_energy_kcal_mol": 53.82778459011726,
+          "signed_error_kcal_mol": 7.520484590117263,
+          "absolute_error_kcal_mol": 7.520484590117263,
+          "diet_weight": 0.12,
+          "contribution": 0.9024581508140715
+        },
+        {
+          "reaction_id": "MCONF-1",
+          "predicted_energy_kcal_mol": 0.3119500231490216,
+          "signed_error_kcal_mol": -0.07804997685097842,
+          "absolute_error_kcal_mol": 0.07804997685097842,
+          "diet_weight": 11.43,
+          "contribution": 0.8921112354066834
+        },
+        {
+          "reaction_id": "PNICO23-16",
+          "predicted_energy_kcal_mol": 1.9718614099780087,
+          "signed_error_kcal_mol": 0.1918614099780087,
+          "absolute_error_kcal_mol": 0.1918614099780087,
+          "diet_weight": 13.3,
+          "contribution": 2.551756752707516
+        },
+        {
+          "reaction_id": "PX13-9",
+          "predicted_energy_kcal_mol": 33.49594076176977,
+          "signed_error_kcal_mol": -8.804059238230224,
+          "absolute_error_kcal_mol": 8.804059238230224,
+          "diet_weight": 1.7,
+          "contribution": 14.96690070499138
+        },
+        {
+          "reaction_id": "S66-6",
+          "predicted_energy_kcal_mol": 8.381257699940097,
+          "signed_error_kcal_mol": 0.8312576999400969,
+          "absolute_error_kcal_mol": 0.8312576999400969,
+          "diet_weight": 10.4,
+          "contribution": 8.645080079377008
+        },
+        {
+          "reaction_id": "S66-50",
+          "predicted_energy_kcal_mol": 2.808785367409216,
+          "signed_error_kcal_mol": -0.0612146325907843,
+          "absolute_error_kcal_mol": 0.0612146325907843,
+          "diet_weight": 10.4,
+          "contribution": 0.6366321789441568
+        },
+        {
+          "reaction_id": "SIE4x4-15",
+          "predicted_energy_kcal_mol": 49.727416660728984,
+          "signed_error_kcal_mol": 32.827416660728986,
+          "absolute_error_kcal_mol": 32.827416660728986,
+          "diet_weight": 1.69,
+          "contribution": 55.47833415663198
+        },
+        {
+          "reaction_id": "W4-11-30",
+          "predicted_energy_kcal_mol": 105.96785941975487,
+          "signed_error_kcal_mol": -1.531140580245122,
+          "absolute_error_kcal_mol": 1.531140580245122,
+          "diet_weight": 0.19,
+          "contribution": 0.2909167102465732
+        },
+        {
+          "reaction_id": "W4-11-57",
+          "predicted_energy_kcal_mol": 184.32495144194291,
+          "signed_error_kcal_mol": 1.8079514419429188,
+          "absolute_error_kcal_mol": 1.8079514419429188,
+          "diet_weight": 0.19,
+          "contribution": 0.3435107739691546
+        },
+        {
+          "reaction_id": "W4-11-132",
+          "predicted_energy_kcal_mol": 157.23283575489052,
+          "signed_error_kcal_mol": 29.11283575489051,
+          "absolute_error_kcal_mol": 29.11283575489051,
+          "diet_weight": 0.19,
+          "contribution": 5.5314387934291975
+        },
+        {
+          "reaction_id": "WCPT18-15",
+          "predicted_energy_kcal_mol": 44.11782360437409,
+          "signed_error_kcal_mol": -15.512176395625914,
+          "absolute_error_kcal_mol": 15.512176395625914,
+          "diet_weight": 1.62,
+          "contribution": 25.129725760913985
+        }
+      ],
+      "seconds": 344.725240699976,
+      "changes_vs_iid_t70": {
+        "rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "delta_contribution": -0.16368866450966557
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "delta_contribution": 0.7992814615974524
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "delta_contribution": 0.3179504209974898
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "delta_contribution": 0.3377114261779717
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "delta_contribution": 0.5158944407309196
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "delta_contribution": 0.14839867795836503
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "delta_contribution": -0.13430667444441013
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "delta_contribution": 0.4810780680878257
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "delta_contribution": 0.06322047000333697
+          },
+          {
+            "reaction_id": "DC13-1",
+            "delta_contribution": -0.04759085893151438
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "delta_contribution": -0.0005301610005403745
+          },
+          {
+            "reaction_id": "FH51-24",
+            "delta_contribution": 0.1944019087884632
+          },
+          {
+            "reaction_id": "FH51-30",
+            "delta_contribution": 0.2696487414480597
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "delta_contribution": 0.06124499977891279
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "delta_contribution": -0.05996179155425674
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "delta_contribution": 0.03616515147528727
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "delta_contribution": 0.2342604833574029
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "delta_contribution": 0.1403277695644044
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "delta_contribution": 0.04108932034255852
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "delta_contribution": 0.03068558515516573
+          },
+          {
+            "reaction_id": "PX13-9",
+            "delta_contribution": 0.5611919866035997
+          },
+          {
+            "reaction_id": "S66-50",
+            "delta_contribution": -0.07908630857392251
+          },
+          {
+            "reaction_id": "S66-6",
+            "delta_contribution": 0.3333608615632908
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "delta_contribution": 0.2568781552790895
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "delta_contribution": 0.19591650929314142
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "delta_contribution": -0.007172577927049395
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "delta_contribution": 0.14538755687479807
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "delta_contribution": 0.2979159961222564
+          }
+        ],
+        "improved": 7,
+        "worsened": 21,
+        "unchanged": 0
+      },
+      "changes_vs_j251": {
+        "rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "delta_contribution": 0.42115442627554067
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "delta_contribution": -2.3393408169709797
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "delta_contribution": -1.3382145204884377
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "delta_contribution": -1.0722999865282432
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "delta_contribution": -1.4882809299669688
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "delta_contribution": -0.430849277790744
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "delta_contribution": 0.38477416937520914
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "delta_contribution": -1.3841600656760857
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "delta_contribution": -0.19798874816366663
+          },
+          {
+            "reaction_id": "DC13-1",
+            "delta_contribution": 0.13831486317553843
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "delta_contribution": 0.009226773292222115
+          },
+          {
+            "reaction_id": "FH51-24",
+            "delta_contribution": -0.5876567587220087
+          },
+          {
+            "reaction_id": "FH51-30",
+            "delta_contribution": -0.7791751114973162
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "delta_contribution": -0.1621940666085644
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "delta_contribution": 0.15187529577683234
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "delta_contribution": -0.09161811431952933
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "delta_contribution": -0.6899265896569382
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "delta_contribution": -0.4059625790437317
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "delta_contribution": -0.11378992430570922
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "delta_contribution": -0.10857172194431053
+          },
+          {
+            "reaction_id": "PX13-9",
+            "delta_contribution": -1.7062548991709559
+          },
+          {
+            "reaction_id": "S66-50",
+            "delta_contribution": 0.24362705531779344
+          },
+          {
+            "reaction_id": "S66-6",
+            "delta_contribution": -0.9615953807043987
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "delta_contribution": -0.7705828838494853
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "delta_contribution": -0.5642511350788819
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "delta_contribution": 0.01738436152140438
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "delta_contribution": -0.4192162071943753
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "delta_contribution": -0.8635662752200055
+          }
+        ],
+        "improved": 21,
+        "worsened": 7,
+        "unchanged": 0
+      },
+      "focus_delta_vs_p536": {
+        "ABDE4": 2.6806419160068984,
+        "pTC13": 0.9543146741378594,
+        "PA8": 0.7111646347088092
+      },
+      "clean28_minus_iid": 0.17748831979494462,
+      "clean28_minus_j251": -0.5396121088630981,
+      "clean28_minus_historical_best": 0.18745437785101693
+    },
+    {
+      "alpha": 0.5,
+      "complete": true,
+      "status": "complete",
+      "model_sha256": "ef04ade6acec9a409d642396ce1c39ce7bbcc9b9228c61e9c66381a8d153eb18",
+      "clean28": 8.988741021217889,
+      "objectives": {
+        "relchem": 1.2424004888614801,
+        "ae17": 4.233097346194711,
+        "exc": 7.6419790665094345,
+        "op": 0.030720593370430774
+      },
+      "ratios": {
+        "relchem": 1.0056087034223031,
+        "ae17": 0.16999676071902436,
+        "exc": 0.08290746115330354,
+        "op": 0.9267645840771427
+      },
+      "eligible": false,
+      "databases": {
+        "ABDE4": {
+          "count": 4,
+          "singleton_mean": 7.274565556555235,
+          "contribution": 0.11592933157856948
+        },
+        "DBH76": {
+          "count": 70,
+          "singleton_mean": 0.940964666681897,
+          "contribution": 0.26242042497104695
+        },
+        "EA13": {
+          "count": 11,
+          "singleton_mean": 1.7836976036306664,
+          "contribution": 0.07817001450174235
+        },
+        "IP13": {
+          "count": 13,
+          "singleton_mean": 2.5875553916233396,
+          "contribution": 0.13401681311196578
+        },
+        "MGAE109": {
+          "count": 104,
+          "singleton_mean": 0.23153346424349167,
+          "contribution": 0.09593418438774157
+        },
+        "NCCE31": {
+          "count": 28,
+          "singleton_mean": 2.1706828118346286,
+          "contribution": 0.2421478833919108
+        },
+        "PA8": {
+          "count": 8,
+          "singleton_mean": 2.1208960258154774,
+          "contribution": 0.06759827970726622
+        },
+        "pTC13": {
+          "count": 13,
+          "singleton_mean": 4.753236373847726,
+          "contribution": 0.2461835572112368
+        }
+      },
+      "reactions": [
+        {
+          "reaction_id": "ACONF-10",
+          "predicted_energy_kcal_mol": 1.6284628910555512,
+          "signed_error_kcal_mol": 0.3784628910555512,
+          "absolute_error_kcal_mol": 0.3784628910555512,
+          "diet_weight": 30.99,
+          "contribution": 11.728564993811531
+        },
+        {
+          "reaction_id": "Amino20x4-28",
+          "predicted_energy_kcal_mol": 5.853805126744587,
+          "signed_error_kcal_mol": 0.6378051267445866,
+          "absolute_error_kcal_mol": 0.6378051267445866,
+          "diet_weight": 23.31,
+          "contribution": 14.867237504416313
+        },
+        {
+          "reaction_id": "Amino20x4-54",
+          "predicted_energy_kcal_mol": 1.6821333817685087,
+          "signed_error_kcal_mol": -0.0368666182314914,
+          "absolute_error_kcal_mol": 0.0368666182314914,
+          "diet_weight": 23.31,
+          "contribution": 0.8593608709760645
+        },
+        {
+          "reaction_id": "BHPERI-11",
+          "predicted_energy_kcal_mol": 20.437312496765816,
+          "signed_error_kcal_mol": -7.162687503234185,
+          "absolute_error_kcal_mol": 7.162687503234185,
+          "diet_weight": 2.72,
+          "contribution": 19.482510008796986
+        },
+        {
+          "reaction_id": "BHROT27-16",
+          "predicted_energy_kcal_mol": 16.143707461722556,
+          "signed_error_kcal_mol": 1.6237074617225566,
+          "absolute_error_kcal_mol": 1.6237074617225566,
+          "diet_weight": 9.06,
+          "contribution": 14.710789603206363
+        },
+        {
+          "reaction_id": "BHROT27-26",
+          "predicted_energy_kcal_mol": 17.4519085408202,
+          "signed_error_kcal_mol": 0.25190854082019953,
+          "absolute_error_kcal_mol": 0.25190854082019953,
+          "diet_weight": 9.06,
+          "contribution": 2.282291379831008
+        },
+        {
+          "reaction_id": "BSR36-31",
+          "predicted_energy_kcal_mol": 19.735363031858274,
+          "signed_error_kcal_mol": -5.224636968141727,
+          "absolute_error_kcal_mol": 5.224636968141727,
+          "diet_weight": 3.51,
+          "contribution": 18.33847575817746
+        },
+        {
+          "reaction_id": "BUT14DIOL-13",
+          "predicted_energy_kcal_mol": 2.3381321022494337,
+          "signed_error_kcal_mol": 0.11813210224943349,
+          "absolute_error_kcal_mol": 0.11813210224943349,
+          "diet_weight": 20.3,
+          "contribution": 2.3980816756634997
+        },
+        {
+          "reaction_id": "CDIE20-9",
+          "predicted_energy_kcal_mol": 3.5184478752605948,
+          "signed_error_kcal_mol": 0.6184478752605949,
+          "absolute_error_kcal_mol": 0.6184478752605949,
+          "diet_weight": 14.02,
+          "contribution": 8.67063921115354
+        },
+        {
+          "reaction_id": "DC13-1",
+          "predicted_energy_kcal_mol": 1.5122914025625018,
+          "signed_error_kcal_mol": 2.512291402562502,
+          "absolute_error_kcal_mol": 2.512291402562502,
+          "diet_weight": 1.03,
+          "contribution": 2.587660144639377
+        },
+        {
+          "reaction_id": "DIPCS10-7",
+          "predicted_energy_kcal_mol": 734.0614012138542,
+          "signed_error_kcal_mol": 1.0614012138541966,
+          "absolute_error_kcal_mol": 1.0614012138541966,
+          "diet_weight": 0.09,
+          "contribution": 0.0955261092468777
+        },
+        {
+          "reaction_id": "FH51-24",
+          "predicted_energy_kcal_mol": -18.854774425203132,
+          "signed_error_kcal_mol": 3.595225574796867,
+          "absolute_error_kcal_mol": 3.595225574796867,
+          "diet_weight": 1.83,
+          "contribution": 6.579262801878267
+        },
+        {
+          "reaction_id": "FH51-30",
+          "predicted_energy_kcal_mol": -15.902951414933952,
+          "signed_error_kcal_mol": 1.0770485850660485,
+          "absolute_error_kcal_mol": 1.0770485850660485,
+          "diet_weight": 1.83,
+          "contribution": 1.9709989106708687
+        },
+        {
+          "reaction_id": "G21EA-14",
+          "predicted_energy_kcal_mol": 29.63928483989093,
+          "signed_error_kcal_mol": 0.3392848398909294,
+          "absolute_error_kcal_mol": 0.3392848398909294,
+          "diet_weight": 1.69,
+          "contribution": 0.5733913794156706
+        },
+        {
+          "reaction_id": "HAL59-40",
+          "predicted_energy_kcal_mol": 3.621679297984206,
+          "signed_error_kcal_mol": 0.2816792979842062,
+          "absolute_error_kcal_mol": 0.2816792979842062,
+          "diet_weight": 12.38,
+          "contribution": 3.4871897090444732
+        },
+        {
+          "reaction_id": "HAL59-57",
+          "predicted_energy_kcal_mol": 2.47437171411998,
+          "signed_error_kcal_mol": -0.005628285880019845,
+          "absolute_error_kcal_mol": 0.005628285880019845,
+          "diet_weight": 12.38,
+          "contribution": 0.0696781791946457
+        },
+        {
+          "reaction_id": "HEAVY28-16",
+          "predicted_energy_kcal_mol": 2.131550959715843,
+          "signed_error_kcal_mol": 0.561550959715843,
+          "absolute_error_kcal_mol": 0.561550959715843,
+          "diet_weight": 45.79,
+          "contribution": 25.713418445388452
+        },
+        {
+          "reaction_id": "MB16-43-10",
+          "predicted_energy_kcal_mol": 54.976008963648894,
+          "signed_error_kcal_mol": 8.668708963648896,
+          "absolute_error_kcal_mol": 8.668708963648896,
+          "diet_weight": 0.12,
+          "contribution": 1.0402450756378676
+        },
+        {
+          "reaction_id": "MCONF-1",
+          "predicted_energy_kcal_mol": 0.3084884644533262,
+          "signed_error_kcal_mol": -0.08151153554667379,
+          "absolute_error_kcal_mol": 0.08151153554667379,
+          "diet_weight": 11.43,
+          "contribution": 0.9316768512984813
+        },
+        {
+          "reaction_id": "PNICO23-16",
+          "predicted_energy_kcal_mol": 1.9743731694400997,
+          "signed_error_kcal_mol": 0.19437316944009964,
+          "absolute_error_kcal_mol": 0.19437316944009964,
+          "diet_weight": 13.3,
+          "contribution": 2.5851631535533253
+        },
+        {
+          "reaction_id": "PX13-9",
+          "predicted_energy_kcal_mol": 33.163549722308474,
+          "signed_error_kcal_mol": -9.136450277691523,
+          "absolute_error_kcal_mol": 9.136450277691523,
+          "diet_weight": 1.7,
+          "contribution": 15.531965472075589
+        },
+        {
+          "reaction_id": "S66-6",
+          "predicted_energy_kcal_mol": 8.412699860425251,
+          "signed_error_kcal_mol": 0.8626998604252512,
+          "absolute_error_kcal_mol": 0.8626998604252512,
+          "diet_weight": 10.4,
+          "contribution": 8.972078548422612
+        },
+        {
+          "reaction_id": "S66-50",
+          "predicted_energy_kcal_mol": 2.8164924702458616,
+          "signed_error_kcal_mol": -0.05350752975413853,
+          "absolute_error_kcal_mol": 0.05350752975413853,
+          "diet_weight": 10.4,
+          "contribution": 0.5564783094430407
+        },
+        {
+          "reaction_id": "SIE4x4-15",
+          "predicted_energy_kcal_mol": 49.879481271067924,
+          "signed_error_kcal_mol": 32.979481271067925,
+          "absolute_error_kcal_mol": 32.979481271067925,
+          "diet_weight": 1.69,
+          "contribution": 55.73532334810479
+        },
+        {
+          "reaction_id": "W4-11-30",
+          "predicted_energy_kcal_mol": 106.00209984094556,
+          "signed_error_kcal_mol": -1.4969001590544337,
+          "absolute_error_kcal_mol": 1.4969001590544337,
+          "diet_weight": 0.19,
+          "contribution": 0.2844110302203424
+        },
+        {
+          "reaction_id": "W4-11-57",
+          "predicted_energy_kcal_mol": 185.0756335064915,
+          "signed_error_kcal_mol": 2.5586335064915033,
+          "absolute_error_kcal_mol": 2.5586335064915033,
+          "diet_weight": 0.19,
+          "contribution": 0.48614036623338563
+        },
+        {
+          "reaction_id": "W4-11-132",
+          "predicted_energy_kcal_mol": 158.24399009238763,
+          "signed_error_kcal_mol": 30.12399009238763,
+          "absolute_error_kcal_mol": 30.12399009238763,
+          "diet_weight": 0.19,
+          "contribution": 5.723558117553649
+        },
+        {
+          "reaction_id": "WCPT18-15",
+          "predicted_energy_kcal_mol": 43.937017508613344,
+          "signed_error_kcal_mol": -15.692982491386658,
+          "absolute_error_kcal_mol": 15.692982491386658,
+          "diet_weight": 1.62,
+          "contribution": 25.42263163604639
+        }
+      ],
+      "seconds": 279.7123616000172,
+      "changes_vs_iid_t70": {
+        "rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "delta_contribution": -0.3155456509687333
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "delta_contribution": 1.5891943690377648
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "delta_contribution": 0.779748376234379
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "delta_contribution": 0.6852368571681104
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "delta_contribution": 1.0219872441882156
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "delta_contribution": 0.2944652865314217
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "delta_contribution": -0.26534308188508504
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "delta_contribution": 0.9524647419923544
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "delta_contribution": 0.12801638826654127
+          },
+          {
+            "reaction_id": "DC13-1",
+            "delta_contribution": -0.09445394792564477
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "delta_contribution": -0.002318735816232903
+          },
+          {
+            "reaction_id": "FH51-24",
+            "delta_contribution": 0.3896298316175342
+          },
+          {
+            "reaction_id": "FH51-30",
+            "delta_contribution": 0.5343772867467032
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "delta_contribution": 0.11873712175444201
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "delta_contribution": -0.11536978587183144
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "delta_contribution": 0.06963550391252221
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "delta_contribution": 0.4664988820932585
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "delta_contribution": 0.27811469438820047
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "delta_contribution": 0.08065493623435649
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "delta_contribution": 0.06409198600097499
+          },
+          {
+            "reaction_id": "PX13-9",
+            "delta_contribution": 1.1262567536878088
+          },
+          {
+            "reaction_id": "S66-50",
+            "delta_contribution": -0.15924017807503865
+          },
+          {
+            "reaction_id": "S66-6",
+            "delta_contribution": 0.6603593306088946
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "delta_contribution": 0.5138673467519013
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "delta_contribution": 0.38803583341759307
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "delta_contribution": -0.013678257953280148
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "delta_contribution": 0.2880171491390291
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "delta_contribution": 0.5908218712546613
+          }
+        ],
+        "improved": 7,
+        "worsened": 21,
+        "unchanged": 0
+      },
+      "changes_vs_j251": {
+        "rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "delta_contribution": 0.2692974398164729
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "delta_contribution": -1.5494279095306673
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "delta_contribution": -0.8764165652515485
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "delta_contribution": -0.7247745555381044
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "delta_contribution": -0.9821881265096728
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "delta_contribution": -0.28478266921768736
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "delta_contribution": 0.25373776193453423
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "delta_contribution": -0.912773391771557
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "delta_contribution": -0.13319282990046233
+          },
+          {
+            "reaction_id": "DC13-1",
+            "delta_contribution": 0.09145177418140804
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "delta_contribution": 0.007438198476529587
+          },
+          {
+            "reaction_id": "FH51-24",
+            "delta_contribution": -0.39242883589293776
+          },
+          {
+            "reaction_id": "FH51-30",
+            "delta_contribution": -0.5144465661986728
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "delta_contribution": -0.10470194463303517
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "delta_contribution": 0.09646730145925764
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "delta_contribution": -0.058147761882294396
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "delta_contribution": -0.4576881909210826
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "delta_contribution": -0.2681756542199356
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "delta_contribution": -0.07422430841391126
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "delta_contribution": -0.07516532109850127
+          },
+          {
+            "reaction_id": "PX13-9",
+            "delta_contribution": -1.1411901320867468
+          },
+          {
+            "reaction_id": "S66-50",
+            "delta_contribution": 0.1634731858166773
+          },
+          {
+            "reaction_id": "S66-6",
+            "delta_contribution": -0.6345969116587948
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "delta_contribution": -0.5135936923766735
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "delta_contribution": -0.37213181095443026
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "delta_contribution": 0.010878681495173625
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "delta_contribution": -0.27658661493014425
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "delta_contribution": -0.5706604000876006
+          }
+        ],
+        "improved": 21,
+        "worsened": 7,
+        "unchanged": 0
+      },
+      "focus_delta_vs_p536": {
+        "ABDE4": 1.664110151489588,
+        "pTC13": 0.7777597184295431,
+        "PA8": 0.4949862230640867
+      },
+      "clean28_minus_iid": 0.3590807911618157,
+      "clean28_minus_j251": -0.358019637496227,
+      "clean28_minus_historical_best": 0.369046849217888
+    },
+    {
+      "alpha": 0.75,
+      "complete": true,
+      "status": "complete",
+      "model_sha256": "c4809c43eecea209bc0d6e4fd69d76df9679f3de4ec3cd2e2a32efaf36347cea",
+      "clean28": 9.168650862151432,
+      "objectives": {
+        "relchem": 1.2248835461042809,
+        "ae17": 3.0447249886913617,
+        "exc": 5.034064218951889,
+        "op": 0.030802570913394813
+      },
+      "ratios": {
+        "relchem": 0.9914303525186166,
+        "ae17": 0.12227297012743718,
+        "exc": 0.05461431915000311,
+        "op": 0.9292376444960166
+      },
+      "eligible": true,
+      "databases": {
+        "ABDE4": {
+          "count": 4,
+          "singleton_mean": 6.66223526757349,
+          "contribution": 0.10617107996133053
+        },
+        "DBH76": {
+          "count": 70,
+          "singleton_mean": 0.9462306793594044,
+          "contribution": 0.26388903408429604
+        },
+        "EA13": {
+          "count": 11,
+          "singleton_mean": 1.742078064737463,
+          "contribution": 0.07634605064586492
+        },
+        "IP13": {
+          "count": 13,
+          "singleton_mean": 2.5879273528630495,
+          "contribution": 0.13403607803673165
+        },
+        "MGAE109": {
+          "count": 104,
+          "singleton_mean": 0.24343275313342028,
+          "contribution": 0.1008645670353614
+        },
+        "NCCE31": {
+          "count": 28,
+          "singleton_mean": 2.203564198120891,
+          "contribution": 0.24581592648360534
+        },
+        "PA8": {
+          "count": 8,
+          "singleton_mean": 1.9043964939612978,
+          "contribution": 0.060697896221874034
+        },
+        "pTC13": {
+          "count": 13,
+          "singleton_mean": 4.577137794033799,
+          "contribution": 0.2370629136352167
+        }
+      },
+      "reactions": [
+        {
+          "reaction_id": "ACONF-10",
+          "predicted_energy_kcal_mol": 1.6239361240440535,
+          "signed_error_kcal_mol": 0.3739361240440535,
+          "absolute_error_kcal_mol": 0.3739361240440535,
+          "diet_weight": 30.99,
+          "contribution": 11.588280484125217
+        },
+        {
+          "reaction_id": "Amino20x4-28",
+          "predicted_energy_kcal_mol": 5.887268625149458,
+          "signed_error_kcal_mol": 0.671268625149458,
+          "absolute_error_kcal_mol": 0.671268625149458,
+          "diet_weight": 23.31,
+          "contribution": 15.647271652233863
+        },
+        {
+          "reaction_id": "Amino20x4-54",
+          "predicted_energy_kcal_mol": 1.6629918594141002,
+          "signed_error_kcal_mol": -0.05600814058589987,
+          "absolute_error_kcal_mol": 0.05600814058589987,
+          "diet_weight": 23.31,
+          "contribution": 1.3055497570573258
+        },
+        {
+          "reaction_id": "BHPERI-11",
+          "predicted_energy_kcal_mol": 20.30591573020363,
+          "signed_error_kcal_mol": -7.294084269796372,
+          "absolute_error_kcal_mol": 7.294084269796372,
+          "diet_weight": 2.72,
+          "contribution": 19.839909213846134
+        },
+        {
+          "reaction_id": "BHROT27-16",
+          "predicted_energy_kcal_mol": 16.198474368424865,
+          "signed_error_kcal_mol": 1.6784743684248653,
+          "absolute_error_kcal_mol": 1.6784743684248653,
+          "diet_weight": 9.06,
+          "contribution": 15.20697777792928
+        },
+        {
+          "reaction_id": "BHROT27-26",
+          "predicted_energy_kcal_mol": 17.46776418630446,
+          "signed_error_kcal_mol": 0.2677641863044613,
+          "absolute_error_kcal_mol": 0.2677641863044613,
+          "diet_weight": 9.06,
+          "contribution": 2.4259435279184194
+        },
+        {
+          "reaction_id": "BSR36-31",
+          "predicted_energy_kcal_mol": 19.771870562849692,
+          "signed_error_kcal_mol": -5.188129437150309,
+          "absolute_error_kcal_mol": 5.188129437150309,
+          "diet_weight": 3.51,
+          "contribution": 18.210334324397582
+        },
+        {
+          "reaction_id": "BUT14DIOL-13",
+          "predicted_energy_kcal_mol": 2.360864874644046,
+          "signed_error_kcal_mol": 0.14086487464404573,
+          "absolute_error_kcal_mol": 0.14086487464404573,
+          "diet_weight": 20.3,
+          "contribution": 2.8595569552741287
+        },
+        {
+          "reaction_id": "CDIE20-9",
+          "predicted_energy_kcal_mol": 3.5231586940127726,
+          "signed_error_kcal_mol": 0.6231586940127727,
+          "absolute_error_kcal_mol": 0.6231586940127727,
+          "diet_weight": 14.02,
+          "contribution": 8.736684890059072
+        },
+        {
+          "reaction_id": "DC13-1",
+          "predicted_energy_kcal_mol": 1.4675248065037692,
+          "signed_error_kcal_mol": 2.467524806503769,
+          "absolute_error_kcal_mol": 2.467524806503769,
+          "diet_weight": 1.03,
+          "contribution": 2.5415505506988825
+        },
+        {
+          "reaction_id": "DIPCS10-7",
+          "predicted_energy_kcal_mol": 734.0272952588484,
+          "signed_error_kcal_mol": 1.0272952588484259,
+          "absolute_error_kcal_mol": 1.0272952588484259,
+          "diet_weight": 0.09,
+          "contribution": 0.09245657329635833
+        },
+        {
+          "reaction_id": "FH51-24",
+          "predicted_energy_kcal_mol": -18.7477067938981,
+          "signed_error_kcal_mol": 3.702293206101899,
+          "absolute_error_kcal_mol": 3.702293206101899,
+          "diet_weight": 1.83,
+          "contribution": 6.775196567166476
+        },
+        {
+          "reaction_id": "FH51-30",
+          "predicted_energy_kcal_mol": -15.761008916515749,
+          "signed_error_kcal_mol": 1.2189910834842514,
+          "absolute_error_kcal_mol": 1.2189910834842514,
+          "diet_weight": 1.83,
+          "contribution": 2.23075368277618
+        },
+        {
+          "reaction_id": "G21EA-14",
+          "predicted_energy_kcal_mol": 29.671235578490172,
+          "signed_error_kcal_mol": 0.37123557849017175,
+          "absolute_error_kcal_mol": 0.37123557849017175,
+          "diet_weight": 1.69,
+          "contribution": 0.6273881276483902
+        },
+        {
+          "reaction_id": "HAL59-40",
+          "predicted_energy_kcal_mol": 3.6175842547800214,
+          "signed_error_kcal_mol": 0.2775842547800216,
+          "absolute_error_kcal_mol": 0.2775842547800216,
+          "diet_weight": 12.38,
+          "contribution": 3.4364930741766675
+        },
+        {
+          "reaction_id": "HAL59-57",
+          "predicted_energy_kcal_mol": 2.471901079432427,
+          "signed_error_kcal_mol": -0.008098920567572776,
+          "absolute_error_kcal_mol": 0.008098920567572776,
+          "diet_weight": 12.38,
+          "contribution": 0.10026463662655097
+        },
+        {
+          "reaction_id": "HEAVY28-16",
+          "predicted_energy_kcal_mol": 2.136574109912536,
+          "signed_error_kcal_mol": 0.5665741099125359,
+          "absolute_error_kcal_mol": 0.5665741099125359,
+          "diet_weight": 45.79,
+          "contribution": 25.943428492895016
+        },
+        {
+          "reaction_id": "MB16-43-10",
+          "predicted_energy_kcal_mol": 56.10357360175014,
+          "signed_error_kcal_mol": 9.796273601750144,
+          "absolute_error_kcal_mol": 9.796273601750144,
+          "diet_weight": 0.12,
+          "contribution": 1.1755528322100173
+        },
+        {
+          "reaction_id": "MCONF-1",
+          "predicted_energy_kcal_mol": 0.3051680184960677,
+          "signed_error_kcal_mol": -0.08483198150393234,
+          "absolute_error_kcal_mol": 0.08483198150393234,
+          "diet_weight": 11.43,
+          "contribution": 0.9696295485899467
+        },
+        {
+          "reaction_id": "PNICO23-16",
+          "predicted_energy_kcal_mol": 1.9770927820383744,
+          "signed_error_kcal_mol": 0.19709278203837433,
+          "absolute_error_kcal_mol": 0.19709278203837433,
+          "diet_weight": 13.3,
+          "contribution": 2.6213340011103785
+        },
+        {
+          "reaction_id": "PX13-9",
+          "predicted_energy_kcal_mol": 32.82895354777096,
+          "signed_error_kcal_mol": -9.47104645222904,
+          "absolute_error_kcal_mol": 9.47104645222904,
+          "diet_weight": 1.7,
+          "contribution": 16.100778968789367
+        },
+        {
+          "reaction_id": "S66-6",
+          "predicted_energy_kcal_mol": 8.44352349268049,
+          "signed_error_kcal_mol": 0.8935234926804894,
+          "absolute_error_kcal_mol": 0.8935234926804894,
+          "diet_weight": 10.4,
+          "contribution": 9.29264432387709
+        },
+        {
+          "reaction_id": "S66-50",
+          "predicted_energy_kcal_mol": 2.8243008641885092,
+          "signed_error_kcal_mol": -0.045699135811490876,
+          "absolute_error_kcal_mol": 0.045699135811490876,
+          "diet_weight": 10.4,
+          "contribution": 0.47527101243950515
+        },
+        {
+          "reaction_id": "SIE4x4-15",
+          "predicted_energy_kcal_mol": 50.03150513443778,
+          "signed_error_kcal_mol": 33.13150513443778,
+          "absolute_error_kcal_mol": 33.13150513443778,
+          "diet_weight": 1.69,
+          "contribution": 55.992243677199845
+        },
+        {
+          "reaction_id": "W4-11-30",
+          "predicted_energy_kcal_mol": 106.03265018104715,
+          "signed_error_kcal_mol": -1.4663498189528497,
+          "absolute_error_kcal_mol": 1.4663498189528497,
+          "diet_weight": 0.19,
+          "contribution": 0.27860646560104146
+        },
+        {
+          "reaction_id": "W4-11-57",
+          "predicted_energy_kcal_mol": 185.81128295827148,
+          "signed_error_kcal_mol": 3.2942829582714808,
+          "absolute_error_kcal_mol": 3.2942829582714808,
+          "diet_weight": 0.19,
+          "contribution": 0.6259137620715813
+        },
+        {
+          "reaction_id": "W4-11-132",
+          "predicted_energy_kcal_mol": 159.2342123290358,
+          "signed_error_kcal_mol": 31.11421232903581,
+          "absolute_error_kcal_mol": 31.11421232903581,
+          "diet_weight": 0.19,
+          "contribution": 5.911700342516804
+        },
+        {
+          "reaction_id": "WCPT18-15",
+          "predicted_energy_kcal_mol": 43.75931548289569,
+          "signed_error_kcal_mol": -15.870684517104316,
+          "absolute_error_kcal_mol": 15.870684517104316,
+          "diet_weight": 1.62,
+          "contribution": 25.710508917708992
+        }
+      ],
+      "seconds": 349.1044837000154,
+      "changes_vs_iid_t70": {
+        "rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "delta_contribution": -0.4558301606550472
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "delta_contribution": 2.3692285168553155
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "delta_contribution": 1.2259372623156402
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "delta_contribution": 1.0426360622172588
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "delta_contribution": 1.5181754189111327
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "delta_contribution": 0.43811743461883323
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "delta_contribution": -0.39348451566496223
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "delta_contribution": 1.4139400216029834
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "delta_contribution": 0.19406206717207297
+          },
+          {
+            "reaction_id": "DC13-1",
+            "delta_contribution": -0.14056354186613929
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "delta_contribution": -0.005388271766752273
+          },
+          {
+            "reaction_id": "FH51-24",
+            "delta_contribution": 0.5855635969057431
+          },
+          {
+            "reaction_id": "FH51-30",
+            "delta_contribution": 0.7941320588520144
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "delta_contribution": 0.17273386998716161
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "delta_contribution": -0.16606642073963718
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "delta_contribution": 0.10022196134442748
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "delta_contribution": 0.6965089295998226
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "delta_contribution": 0.41342245096035013
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "delta_contribution": 0.11860763352582182
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "delta_contribution": 0.10026283355802823
+          },
+          {
+            "reaction_id": "PX13-9",
+            "delta_contribution": 1.6950702504015869
+          },
+          {
+            "reaction_id": "S66-50",
+            "delta_contribution": -0.24044747507857417
+          },
+          {
+            "reaction_id": "S66-6",
+            "delta_contribution": 0.9809251060633724
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "delta_contribution": 0.7707876758469538
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "delta_contribution": 0.5761780583807479
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "delta_contribution": -0.019482822572581104
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "delta_contribution": 0.4277905449772248
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "delta_contribution": 0.8786991529172639
+          }
+        ],
+        "improved": 7,
+        "worsened": 21,
+        "unchanged": 0
+      },
+      "changes_vs_j251": {
+        "rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "delta_contribution": 0.12901293013015902
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "delta_contribution": -0.7693937617131166
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "delta_contribution": -0.43022767917028726
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "delta_contribution": -0.3673753504889561
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "delta_contribution": -0.4859999517867557
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "delta_contribution": -0.1411305211302758
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "delta_contribution": 0.12559632815465704
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "delta_contribution": -0.4512981121609281
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "delta_contribution": -0.06714715099493063
+          },
+          {
+            "reaction_id": "DC13-1",
+            "delta_contribution": 0.04534218024091352
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "delta_contribution": 0.004368662526010217
+          },
+          {
+            "reaction_id": "FH51-24",
+            "delta_contribution": -0.19649507060472882
+          },
+          {
+            "reaction_id": "FH51-30",
+            "delta_contribution": -0.2546917940933615
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "delta_contribution": -0.050705196400315566
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "delta_contribution": 0.0457706665914519
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "delta_contribution": -0.027561304450389124
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "delta_contribution": -0.22767814341451853
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "delta_contribution": -0.13286789764778595
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "delta_contribution": -0.036271611122445924
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "delta_contribution": -0.03899447354144803
+          },
+          {
+            "reaction_id": "PX13-9",
+            "delta_contribution": -0.5723766353729687
+          },
+          {
+            "reaction_id": "S66-50",
+            "delta_contribution": 0.08226588881314179
+          },
+          {
+            "reaction_id": "S66-6",
+            "delta_contribution": -0.3140311362043171
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "delta_contribution": -0.25667336328162094
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "delta_contribution": -0.18398958599127546
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "delta_contribution": 0.00507411687587267
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "delta_contribution": -0.13681321909194855
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "delta_contribution": -0.28278311842499804
+          }
+        ],
+        "improved": 21,
+        "worsened": 7,
+        "unchanged": 0
+      },
+      "focus_delta_vs_p536": {
+        "ABDE4": 1.0517798625078436,
+        "pTC13": 0.6016611386156159,
+        "PA8": 0.2784866912099071
+      },
+      "clean28_minus_iid": 0.5389906320953592,
+      "clean28_minus_j251": -0.17810979656268344,
+      "clean28_minus_historical_best": 0.5489566901514316
+    }
+  ],
+  "frozen": [
+    {
+      "alpha": 0.25,
+      "model_sha256": "0819d45b226ff8aa8c8634c5a62ea4fb427152b5f30334bcb0bb30a700a85675",
+      "directory": "C:\\Dev\\readWFN_share_ms\\lap_checkpoint_interpolation_20261009\\alpha_0p25"
+    },
+    {
+      "alpha": 0.5,
+      "model_sha256": "ef04ade6acec9a409d642396ce1c39ce7bbcc9b9228c61e9c66381a8d153eb18",
+      "directory": "C:\\Dev\\readWFN_share_ms\\lap_checkpoint_interpolation_20261009\\alpha_0p50"
+    },
+    {
+      "alpha": 0.75,
+      "model_sha256": "c4809c43eecea209bc0d6e4fd69d76df9679f3de4ec3cd2e2a32efaf36347cea",
+      "directory": "C:\\Dev\\readWFN_share_ms\\lap_checkpoint_interpolation_20261009\\alpha_0p75"
+    }
+  ],
+  "references": {
+    "t0_databases": {
+      "ABDE4": {
+        "count": 4,
+        "singleton_mean": 5.610455405065647,
+        "contribution": 0.08940964788949238
+      },
+      "DBH76": {
+        "count": 70,
+        "singleton_mean": 1.0114350638058671,
+        "contribution": 0.28207352377056055
+      },
+      "EA13": {
+        "count": 11,
+        "singleton_mean": 1.7142994357900412,
+        "contribution": 0.07512866053263129
+      },
+      "IP13": {
+        "count": 13,
+        "singleton_mean": 2.3610883801381477,
+        "contribution": 0.12228744598325067
+      },
+      "MGAE109": {
+        "count": 104,
+        "singleton_mean": 0.28201142670167834,
+        "contribution": 0.11684935608356395
+      },
+      "NCCE31": {
+        "count": 28,
+        "singleton_mean": 2.617566550998449,
+        "contribution": 0.2919994558882732
+      },
+      "PA8": {
+        "count": 8,
+        "singleton_mean": 1.6259098027513907,
+        "contribution": 0.051821826382514445
+      },
+      "pTC13": {
+        "count": 13,
+        "singleton_mean": 3.9754766554181833,
+        "contribution": 0.20590118135632024
+      }
+    },
+    "iid_t70_databases": {
+      "ABDE4": {
+        "count": 4,
+        "singleton_mean": 9.326407654749048,
+        "contribution": 0.14862801043424778
+      },
+      "DBH76": {
+        "count": 70,
+        "singleton_mean": 0.9309985658559431,
+        "contribution": 0.2596410343024542
+      },
+      "EA13": {
+        "count": 11,
+        "singleton_mean": 1.8706108913509067,
+        "contribution": 0.08197896336597599
+      },
+      "IP13": {
+        "count": 13,
+        "singleton_mean": 2.5805583782101515,
+        "contribution": 0.1336544179949481
+      },
+      "MGAE109": {
+        "count": 104,
+        "singleton_mean": 0.20781092543997165,
+        "contribution": 0.08610492528190061
+      },
+      "NCCE31": {
+        "count": 28,
+        "singleton_mean": 2.104050291307192,
+        "contribution": 0.2347147735322764
+      },
+      "PA8": {
+        "count": 8,
+        "singleton_mean": 2.5528814207068806,
+        "contribution": 0.08136673850858583
+      },
+      "pTC13": {
+        "count": 13,
+        "singleton_mean": 5.106770765596116,
+        "contribution": 0.2644941033974084
+      }
+    },
+    "j251_databases": {
+      "ABDE4": {
+        "count": 4,
+        "singleton_mean": 6.1566574646186085,
+        "contribution": 0.09811406318117305
+      },
+      "DBH76": {
+        "count": 70,
+        "singleton_mean": 0.951690373303205,
+        "contribution": 0.2654116578933241
+      },
+      "EA13": {
+        "count": 11,
+        "singleton_mean": 1.7017741226844656,
+        "contribution": 0.07457974242840287
+      },
+      "IP13": {
+        "count": 13,
+        "singleton_mean": 2.586206311469475,
+        "contribution": 0.133946940434674
+      },
+      "MGAE109": {
+        "count": 104,
+        "singleton_mean": 0.25507630059795566,
+        "contribution": 0.1056889851083163
+      },
+      "NCCE31": {
+        "count": 28,
+        "singleton_mean": 2.2361824789219082,
+        "contribution": 0.24945461916260328
+      },
+      "PA8": {
+        "count": 8,
+        "singleton_mean": 1.7330279666657982,
+        "contribution": 0.05523595112879038
+      },
+      "pTC13": {
+        "count": 13,
+        "singleton_mean": 4.401548119606141,
+        "contribution": 0.22796862770868462
+      }
+    },
+    "iid_clean28": 8.629660230056073,
+    "j251_clean28": 9.346760658714116
+  },
+  "parents": {
+    "iid_file_sha256": "04b8e549c17375988be576e2878881d13f55b217b42ec16a7e6101fdddd05443",
+    "iid_tensor_sha256": "59ab4b98550805b13852e13745281fb1d072efcbed5c2c8622bf3a6840c3ff51",
+    "j_file_sha256": "11cee17f61c017e26902c905b6d9ace0b576ab7eaacf5d5f93f5172a49e3257a",
+    "j_tensor_sha256": "d1b1372997199331b4b332b7f98dfa4e791617ea9a453d4e9cdb999c16aafff5",
+    "p536_tensor_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6"
+  },
+  "dataset_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "evaluation_manifest_sha256": "132bd550161be6bc6761f8df1de8d3755c0b0debab53663208c3a9bbf56cb805",
+  "source_commit": "66c442ec22c2c546d275d73cc24334169e600a18",
+  "source_sha256": {
+    "train_lap_microbatch.py": "2e837c3a88ca3d4737c3c3397dcfbb98adeb7f6917adc8c693cecf205dc37e9e",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/lap_checkpoint.py": "5ce857c565d94f7538a56104f68894ee59147e0caa3f9f4f098f7ec3abdc418d",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "tools/evaluate_microbatch_endpoint.py": "b92a00bc8f51149e29be846bbadbedc74c47fd172b975f1fd0888fd4caf6da3f"
+  },
+  "gpu_seconds": 973.5420860000086,
+  "peak_allocated_bytes": 14070156800,
+  "peak_reserved_bytes": 14210301952,
+  "baseline": {
+    "relchem": 1.2354710978866068,
+    "ae17": 24.901047104016875,
+    "exc": 92.17480502000551,
+    "op": 0.03314821681605566
+  },
+  "optimizer_updates": 0
+}
