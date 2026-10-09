@@ -18,7 +18,7 @@ K1 raw gradients for all four tasks are bitwise equal to the historical initial 
 
 F64 sequential means versus independent NumPy reference: maximum relative error 1e-16 (frozen gate1e-12). Large DBH76 reaction33, level3_delley:263320 points. Loss is exactly equal for qualified16384 versus32768 chunks; gradient relative disagreement 1.06e-12 (gate1e-10). Model remains unchanged during qualification.
 
-30 focused/relevant tests pass, including exact1/K normalization, detached means, nested sampling, one other-task evaluation per update, actual native AdamW state/resume equivalence, and paired-bootstrap arithmetic. Model, optimizer moments, RNG, cursor, manifest and source hashes remain resumable. Ruff, compileall and diff-check PASS. All60 new updates completed; no nonfinite state, OOM, retry or recovery occurred. Historical cursor59 SHA remains unchanged.
+30 focused/relevant tests pass, including exact1/K normalization, detached means, nested sampling, one other-task evaluation per update, actual native AdamW state/resume equivalence, and paired-bootstrap arithmetic. Model, optimizer moments, RNG, cursor, manifest and source hashes remain resumable. Ruff and compileall PASS. Diff-check passes with a blank-at-eof exemption: two frozen tool files retain a trailing blank line; no other whitespace errors. Their source hashes are preserved. All60 new updates completed; no nonfinite state, OOM, retry or recovery occurred. Historical cursor59 SHA remains unchanged.
 
 ## Frozen training-only probe
 

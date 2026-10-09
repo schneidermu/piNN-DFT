@@ -912,7 +912,7 @@
     "passed": 30,
     "ruff": "PASS",
     "compileall": "PASS",
-    "diff_check": "PASS",
+    "diff_check": "PASS with blank-at-eof exemption: two frozen tool files retain a trailing blank line; no other whitespace errors",
     "native_adamw_resume_model_optimizer_rng_exact": true
   },
   "recommendation": "Retain K1. Separately approve completing the existing constant-LR1e-4 K1 control from preserved t59 to t90 with exact four-objective endpoints and clean28. No larger-K continuation is justified by this chemistry screen.",
