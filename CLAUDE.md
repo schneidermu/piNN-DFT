@@ -1,127 +1,77 @@
-# CLAUDE.md
+# CLAUDE.md — piNN-DFT / lap_full_vxc
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> CURRENT AGENT INSTRUCTIONS (2026-10-09). Scientific validity, reproducibility, and preservation of existing research outrank development speed. These instructions describe the four-task Laplacian research branch, NOT the historical NN-PBE training pipeline. The GSD-generated reference material below is legacy unless independently confirmed by current code.
 
-## Project Overview
+## Mandatory agent behavior
 
-**piNN-DFT** trains neural networks to locally modify parameters of the Perdew-Burke-Ernzerhof (PBE) DFT functional, producing **NN-PBE-D3(BJ)** — a physics-informed functional that reduces thermochemical error by ~30% over PBE. The key idea: the NN outputs modified PBE constants (not a raw energy), so exact physical constraints are preserved by design.
+1. **Inspect first**: check `git status`, current HEAD/branch, requested source files, actual CLI entry points, referenced checkpoint/configuration, frozen manifests, and relevant tests. Do not assume a historical command is current.
+2. **Stay inside authorization**: do only the explicitly requested investigation or change. Do NOT autonomously run a training update, evaluation, GPU-intensive test, Slurm job, SCF, future-test benchmark, architecture change, parameter sweep, or experiment continuation.
+3. **Fail closed**: STOP and report a mismatch if any required file/checkpoint, digest, optimizer state, scientific convention, dataset split, source revision, manifest, or result is missing or ambiguous. Never invent it or silently substitute a similar artifact.
+4. **Protect prior work**: do not overwrite historical checkpoints, datasets, manifests, reports, receipts, plots, issue tickets, managed agent files, or another agent's uncommitted changes. No force pushes. For concurrent edits use an isolated branch/PR; recheck HEAD before write.
+5. **Minimal diff**: reuse qualified code and numerical paths; do not "simplify" the operator, redesign the trainer, change physical math, change precision, or refactor unrelated files. Do not execute commands copied from legacy docs without validating them.
+6. **Explicit experiment contract**: before executing an approved experiment, record precise scientific question, source commit, fixed samples, training/evaluation manifests, initial checkpoint tensor/file SHA, optimizer state, coefficients, update limit, evaluation checkpoints, resource budget, outputs, and stop gates.
+7. **Check then report**: verify finite parameters, objective definitions, exact evaluation populations, provenance integrity, checkpoint/resume state, and appropriate focused tests. Report units, measured runtime/memory, per-task values, known unknowns, and what was not run. Never claim a test passed if it was not executed.
 
-## Common Commands
+## Active code and data — verify, do not guess
 
-### Training Pipeline
+| Concern | Canonical starting points |
+| --- | --- |
+| Tau-free Lap model | `train_models/NN_models_lap.py` (`pcPBELMLOptimizerV2Lap`) |
+| Chemistry and mRKS objectives | `train_models/lap_training.py`; `train_models/lap_moo_training.py` |
+| Full variational XC AO operator | `train_models/lap_operator.py`; `train_models/lap_operator_data.py` |
+| Lap XC energy and derivatives | `train_models/lap_vxc.py`; `dft_functionals/PBE.py` |
+| Native four-task AdamW | `train_models/lap_fixed_adamw.py`; `train_lap_microbatch.py` and experiment-specific wrappers |
+| Chemistry variant policy | `train_models/lap_chemistry_sampling.py`; `relchem_joint_epoch_report.md` |
+| Current evidence | `relchem_joint_epoch_report.md`; `relchem_joint_clean28_report.md`; `iid_adamw_t59_t90_report.md`; `iid_adamw_lr_stabilization_report.md` |
 
-```bash
-# Step 1: Preprocess .h5 dataset files → pickled train/test splits (run from train_models/)
-python train_models/prepare_data.py
+- Raw Lap model input uses nine columns; tau columns are **not** used by the tau-free model. Correlation and tied spin-exchange descriptors, PBE physical anchors and spin symmetry are scientifically required.
+- Logical publication dataset SHA256: `61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef`. Validate the actual immutable dataset manifest before use; this SHA is not permission to reconstruct missing datasets.
+- `train_models/predopt_train.py`, `train_models/optuna_joint.py`, `train_models/replay_trial_19_bridge.py` and the older `test_models` scripts contain historical/legacy workflows or shared utilities. Do NOT treat their optimizer, epoch schedule, data layout or old H5 description as the current Lap protocol.
 
-# Step 2: Submit SLURM hyperparameter sweep jobs (trains all omega variants)
-python train_models/calculations.py
-```
-Checkpoints save to `train_models/best_models/`, logs to `train_models/logs/`.
-Training requires 2× V100 GPUs, ~10h per functional.
+## Four independently required scientific objectives
 
-### Benchmarking (Diet-GMTKN55)
+| Objective | Frozen scientific evaluation | Interpretation |
+| --- | --- | --- |
+| `relchem` | 251 reaction identities | Minnesota relative chemical energies, AE17 excluded |
+| `ae17` | 17 identities | Atomicization, separate from relchem |
+| `exc` | all 90 mRKS systems | Integrated E_xc |
+| `op` | all 90 mRKS systems | Complete weak-form variational AO XC operator |
 
-```bash
-# From test_models/ — requires DietGMTKN55 repo files (InterfaceG16.py, GIF/, GoodSamples/)
+- All four are independent scientific requirements. Never quietly merge relchem with AE17, remove one from a claimed joint experiment, or replace the full AO operator with local `v_rho`, a stencil potential, energy fitting, or a subsampled operator.
+- **PERMANENT CHEMISTRY EVALUATION POLICY**: exactly **ONE fixed quadrature variant per chemical identity**, using the independent frozen evaluation manifest. **NEVER evaluate or average all eight variants** for any purpose, including final qualification. Available variants may be used only for explicitly approved stochastic training augmentation. Identity count does not multiply by number of grids.
+- Preserve inherited chemical database/frequency factors from the existing qualified `batch_fchem`-based singleton loss. Do not double-weight or remove database weights. For full chemistry endpoints reuse the same selected reaction variant at every checkpoint.
+- Full90 mRKS objectives use the same complete physical systems and same immutable targets. Preserve gauge, spin and overlap conventions. AO-operator matrices use AO values and derivatives in the complete weak-form operator; never approximate the operator with spatial finite differences.
+- **Precision boundary**: preserve the qualified F64 learned descriptor/model-local derivative/partials and F64 AO assembly path; keep the qualified F32 PBE arithmetic and native F32 AdamW parameter state. Compute/aggregate task gradients in F64 and cast ONCE at the optimizer boundary. Do not "fix" numerical behavior by globally changing tensor dtypes or reverting local derivatives to F32.
+- **Scientific eligibility**: every exact objective must be finite and **each of the four ratios to the same frozen reference checkpoint must be strictly < 1**. A good external validation metric alone NEVER establishes eligibility. Report all four objective values/ratios explicitly.
+- Historical S5 nine-database `train_fchem` INCLUDES AE17 and aggregates online epoch errors. It is not interchangeable with current fixed-model relchem on eight databases. Compare historical runs only with explicitly matched metric definitions, datasets and optimizer-update counts.
 
-# Generate geometry/job files
-python InterfaceG16.py --Mode GE
-python calculate_system_energies.py --Mode GE
+## Clean28 external validation and holdout protection
 
-# Submit energy calculation jobs
-python calculate_system_energies.py --Mode CE --Functional NN_PBE_067
-python calculate_system_energies.py --Mode CE --Functional PBE
+- **Clean28** is the leakage-clean Diet-GMTKN55-30-derived **mean of 28 Diet-weighted absolute reaction errors**, kcal/mol, on frozen PBE0 densities using the qualified PBE0-D3(BJ) correction. It is **NOT canonical Full30 WTMAD-2**, and it is not an SCF result.
+- Use the already qualified evaluator and exact same 28 identities, references, weights, density files, dispersion, and leakage exclusions. No Full30 selection, future holdout, Diet100, new SCF calculation, or density regeneration without a separate explicit instruction.
+- Checkpoint selection should consider Clean28 AND all four scientific eligibility requirements. Save signed/absolute errors and per-reaction score contributions. Do not claim independent validation from multiple checkpoints of the same 28 reactions.
+- Evidence only, **not optimization targets or defaults**: corrected P536 initial `Clean28=9.553190636`, IID t70 `8.629660230`, LR=3e-5/t80 `8.619694172`; the latter has relchem/t0 `1.034869578` and therefore fails scientific eligibility. Do not automatically resume any of these.
 
-# Analyze results and generate CSV
-python InterfaceG16.py --Functional NN_PBE_067 > Results/NN_PBE.txt
-cd Results/ && python txt_to_csv.py
-```
+## Training, resuming, distributed work
 
-### Other Analysis
+- Native AdamW diagnostic reference used `LR=1e-4`, betas `(0.9,0.999)`, epsilon `1e-8`, weight decay `0.01`, and fixed task coefficients `relchem=0.017015480965588553`; `ae17=5.141254618347414e-05`; `exc=1.5094644512009712e-05`; `op=0.33597561607048215`. These are **experiment-specific recorded settings**, not automatic defaults for new research.
+- The training variant sampler and fixed evaluation manifest are different protocols. Do not evaluate all variants, repeat a sampling draw, change the number of examples per update, introduce phases/curriculum, or reset AdamW moments when continuing a fixed experiment, unless expressly authorized.
+- Resume requires byte-verified starting checkpoint plus model/buffers, optimizer moments and step counters, RNG, cursor, manifest and scientific hashes. Checkpoint filename alone is not evidence of identity.
+- Distinguish updates, microbatches, identities, and epochs. In two-rank runs, a logger may sum step counts over ranks. Distributed operators/gradients require verified correct global task normalization. Two V100 GPUs may be more useful for independent replicas; do not assume DDP speedup.
+- Stop on nonfinite gradients/parameters/state, dataset or hash mismatch, OOM, or the fixed step/time budget. No silent retries with changed precision, coefficient, grid, batch size or source code. Do not submit Slurm or launch 2xV100 without explicit user authorization.
+- Use small appropriate focused tests, Ruff and compileall when relevant; distinguish CPU tests from actual GPU parity tests.
 
-```bash
-# Enhancement factor plots (Fig. 4) — generates Results/exc.npy
-python test_models/plot_exc.py
+## Skills, issue tracker and GSD
 
-# Molecular density accuracy (avRANE) — run from test_models/
-python run_molden.py --Functional NN_PBE_067
-# Then from den_mol_or/:
-python calcden.py && python dniad
+- Preserve the Matt Pocock `## Agent skills` configuration and `docs/agents/*.md` once installed. Do not overwrite installer outputs or change its tracker's conventions. Existing tickets use `.scratch/<feature>/issues/NN.md` and must not be migrated without approval.
+- When the user **explicitly invokes** Matt Pocock engineering skills, run their workflow directly; they are an exception to the general "run GSD first" requirement below. Other file-changing tasks follow the existing GSD instructions unless the user explicitly requests a bypass.
+- Do not modify GSD-managed sections below by hand. If a GSD-generated STACK/PROJECT/ARCHITECTURE section conflicts with the current verified Lap code or the rules above, consider that snapshot historical and report the conflict rather than changing science to match it.
 
-# Atomic density accuracy (MaxNE) — from denrho/dtestin/NN_PBE_067/:
-./swfn
-# Then from denrho/:
-./krms NN_PBE_067 CCSD
-```
+---
 
-### Dependencies
+## Preserved GSD-managed historical snapshot
 
-```bash
-pip install -r test_models/requirements.txt   # for inference/benchmarking
-pip install -r train_models/requirements.txt  # additionally for training
-```
-
-## Architecture
-
-### Module Layout
-
-```
-dft_functionals/   — PyTorch implementations of PBE and SVWN3 (LDA); shared constants
-train_models/      — data prep, NN architectures, training loop, SLURM launcher
-test_models/       — pre-trained model loading, PySCF integration, benchmarking scripts
-den_mol_or/        — molecular electron density accuracy (avRANE)
-denrho/            — atomic electron density accuracy (MaxNE)
-MN_dataset/        — dataset download instructions and format docs
-```
-
-### Data Flow
-
-```
-Raw .h5 files (MN dataset)
-  → prepare_data.py              (stratified 80/20 split + grid augmentation)
-  → train_models/checkpoints/data_{train,test}.pickle
-  → predopt_train.py + DDP       (core training loop)
-  → best_models/state_dict_{omega}.pth
-  → test_models/DFT/functional.py (NN_FUNCTIONAL loads checkpoint)
-  → script.py / PySCF integration → benchmarking
-```
-
-### Key Files
-
-**`train_models/NN_models.py`** — All NN architectures:
-- `ResBlock` — residual block with LayerNorm + GELU + dropout
-- `MLOptimizer` — base class; computes 7-dim MGGA density descriptors (ρ^(1/3), reduced gradients sα/sβ/s_total, normalized τα/τβ); uses dm21-like sigmoid activation outputting [0, 2]
-- `pcPBEMLOptimizer` — primary model (6 layers, 32 hidden); enforces PBE constraints (all-sigma-zero, all-sigma-inf, all-rho-inf via hard-coded boundary conditions); outputs 21 modified PBE constants
-- `pcPBELMLOptimizer` / `V2` — extended variants with Laplacian (9-dim) or zeta descriptors
-- `pcPBEstar` / `pcPBEdoublestar` — ablation variants (no constraints / Nagai et al. approach)
-
-**`train_models/predopt_train.py`** — Training loop: DDP multi-GPU, LinearLR warmup → CosineAnnealingLR, log-scaled density/gradient/tau for numerical stability, D3(BJ) dispersion integration.
-
-**`train_models/dataset.py`** — Stratified splitting with hardcoded molecule overrides; `group_and_augment_reactions()` creates multiple augmentations per reaction using different grid types.
-
-**`dft_functionals/PBE.py`** — Pure PyTorch PBE; functions `rs_z_calc`, `xs_xt_calc`, `f_zeta`, `g_aux` are reused during training to evaluate the energy given NN-modified constants.
-
-**`dft_functionals/constants.py`** — Defines `true_constants_PBE` (27 params), `true_constants_SVWN3` (21 params), descriptor index mappings, and spin-scaling multipliers.
-
-**`test_models/DFT/functional.py`** — `NN_FUNCTIONAL` class: loads `.pth` checkpoint, wraps `eval_xc()` for PySCF DFT interface, supports all omega variants (0, 0.067, 0.18, 0.33, 0.50, 0.67, 0.82, 0.93, 0.99).
-
-**`test_models/DFT/numint.py`** — `RKS_with_Laplacian` / `UKS_with_Laplacian`: extended PySCF numerical integration for Laplacian-based models.
-
-### H5 Data Format
-
-Each `.h5` file contains one molecule with two datasets:
-- `ener` (3 floats): kinetic+potential energy, HF exchange, total PBE0 energy
-- `grid` (N×12): columns are [x, y, z, weight, ρα, ρβ, σαα, σαβ, σββ, τα, τβ, local HF exchange]
-
-### Pre-trained Checkpoints
-
-Located in `test_models/DFT/checkpoints/NN_PBE/`:
-- `state_dict_0.067.pth` — primary NN-PBE model
-- `state_dict_star_0.067.pth` — ablation (no constraints)
-- `state_dict_star_star_0.18.pth` — ablation (Nagai et al. approach)
-
-The omega (Ω) parameter controls the balance between exchange and correlation fitting; Chebyshev polynomial roots are used as the sweep grid in `calculations.py`.
+All managed material below is preserved **verbatim** for workflow compatibility. It describes older NN-PBE/evaluation-automation work and must not override current four-task `lap_full_vxc` scientific rules.
 
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project
