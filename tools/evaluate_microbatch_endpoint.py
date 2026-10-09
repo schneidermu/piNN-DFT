@@ -11,6 +11,7 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import train_lap_microbatch as run
+from train_models.lap_chemistry_sampling import POLICY, validate_evaluation
 from train_models.lap_vxc import LapEnergy, sigma_from_gradients
 
 
@@ -45,12 +46,16 @@ def validation(model, bundle):
 def evaluate(folder, cursor, stage, seconds):
     checkpoint = folder / 'ordinary_sgd_adamw' / f'checkpoint_{cursor}.pt'
     protocol = run.read(folder / 'protocol.json')
+    evaluation = run.read(folder / 'evaluation_manifest.json') if stage == 'chemistry' else None
+    if evaluation is not None and evaluation['policy'] != POLICY:
+        raise ValueError('Obsolete exhaustive chemistry evaluation protocol')
     model, shadow = run.model_at(protocol['initial_state'])
     model.load_state_dict(torch.load(checkpoint, map_location='cpu', weights_only=False)['model'])
     before = run.existing.digest(model)
     bundle = run.PublicationDataset(run.DATA)
     assert bundle.manifest['logical_sha256'] == run.DATA_SHA
-    path = folder / f'endpoint_{cursor}_{stage}.json'
+    suffix = '_one_variant' if stage == 'chemistry' else ''
+    path = folder / f'endpoint_{cursor}_{stage}{suffix}.json'
     result = run.read(path) if path.exists() else {'checkpoint_sha256': run.file_sha256(checkpoint), 'rows': {}}
     assert result['checkpoint_sha256'] == run.file_sha256(checkpoint)
     began = time.perf_counter()
@@ -80,35 +85,33 @@ def evaluate(folder, cursor, stage, seconds):
                 result['objectives'] = {t: float(np.mean([r[t] for r in result['rows'].values()])) for t in ('exc', 'op')}
         elif stage == 'chemistry':
             dispersion = bundle.chemistry_dispersions()
-            for task in ('relchem', 'ae17'):
-                data = bundle.chemistry('train_' + task)
-                for identity, row in sorted(bundle.reactions.items()):
-                    if row['task'] != task:
-                        continue
-                    for variant in sorted(row['variants']):
-                        key = identity + '/' + variant
-                        if key in result['rows']:
-                            continue
-                        if time.perf_counter() - began > seconds:
-                            break
-                        reaction = data.load_variant(identity, variant)
-                        reaction = run.existing.lap_training.tensor_record(reaction, 'cuda', torch.float64)
-                        if len(reaction['Grid']) > 131072:
-                            reaction['model_point_chunk_size'] = 16384
-                        with torch.no_grad():
-                            value = float(run.chemistry(model, shadow, reaction, dispersion)())
-                        assert math.isfinite(value)
-                        result['rows'][key] = {'task': task, 'loss': value}
-                        run.write(path, result)
-                        del reaction
-                    if time.perf_counter() - began > seconds:
-                        break
-                print('ENDPOINT', cursor, stage, task, len(result['rows']), flush=True)
-            result['complete'] = len(result['rows']) == 268 * 8
+            validate_evaluation(evaluation['rows'], bundle.reactions)
+            manifest_sha = run.file_sha256(folder / 'evaluation_manifest.json')
+            if result.get('evaluation_manifest_sha256', manifest_sha) != manifest_sha:
+                raise ValueError('Evaluation variant manifest changed')
+            result['evaluation_manifest_sha256'] = manifest_sha
+            for selected in evaluation['rows']:
+                identity, variant, task = (selected[k] for k in ('identity', 'variant', 'task'))
+                if identity in result['rows']:
+                    continue
+                if time.perf_counter() - began > seconds:
+                    break
+                reaction = bundle.chemistry('train_' + task).load_variant(identity, variant)
+                reaction = run.existing.lap_training.tensor_record(reaction, 'cuda', torch.float64)
+                if len(reaction['Grid']) > 131072:
+                    reaction['model_point_chunk_size'] = 16384
+                with torch.no_grad():
+                    value = float(run.chemistry(model, shadow, reaction, dispersion)())
+                assert math.isfinite(value)
+                result['rows'][identity] = {'task': task, 'variant': variant,
+                                            'database': bundle.reactions[identity]['database'], 'loss': value}
+                run.write(path, result)
+                del reaction
+            result['complete'] = len(result['rows']) == 268
             if result['complete']:
                 result['objectives'] = {t: float(np.mean([r['loss'] for r in result['rows'].values() if r['task'] == t]))
                                         for t in ('relchem', 'ae17')}
-            result['definition'] = 'Exact uniform identity/eight-variant mean of qualified singleton losses'
+            result['definition'] = 'Fixed one-variant-per-identity mean of qualified singleton losses'
         assert run.existing.digest(model) == before
         result['elapsed_seconds_this_invocation'] = time.perf_counter() - began
         result['model_unchanged'] = True
@@ -120,7 +123,7 @@ def evaluate(folder, cursor, stage, seconds):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--folder', type=Path, required=True)
-    parser.add_argument('--cursor', type=int, choices=(0, 90), required=True)
+    parser.add_argument('--cursor', type=int, required=True)
     parser.add_argument('--stage', choices=('validation', 'mrks', 'chemistry'), required=True)
     parser.add_argument('--seconds', type=int, default=1800)
     args = parser.parse_args()

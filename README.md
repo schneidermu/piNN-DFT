@@ -1,5 +1,9 @@
 # Incorporating Scientific Knowledge into Neural Network Density Functionals
 
+On `lap_full_vxc`, the permanent [chemistry evaluation policy](CHEMISTRY_EVALUATION_POLICY.md)
+requires one selected quadrature variant per identity. Exhaustive eight-variant
+objective evaluation is forbidden, including final qualification.
+
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 [![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python)](https://www.python.org/)

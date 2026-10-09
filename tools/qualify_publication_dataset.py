@@ -137,11 +137,17 @@ def chemistry_parity(bundle, source, model, device):
     for db, row in sorted(selected.items()):
         data = bundle.chemistry("train_ae17" if db == "AE17" else "train_relchem")
         legacy = store.load_group((db, row["reaction_id"]))
+        from train_models.lap_chemistry_sampling import stream
+        chosen = stream(202610091, 'evaluation:' + row['id']).choice(sorted(row['variants']))
         for variant, old in zip(VARIANTS, legacy):
             new = data.load_variant(row["id"], variant)
             for key in ("Components", "Coefficients", "Energy", "HF_energies", "backsplit_ind",
                         "Grid", "Weights", "Densities", "Gradients", "PBE_local_energies"):
                 exact(old[key], new[key], f"{db}/{variant}/{key}")
+            # Storage parity may inspect every array. Scientific objectives must
+            # consume exactly one preselected variant for this identity.
+            if variant != chosen:
+                continue
             factories = [make_reaction_objective(model, r, device=device, dtype=torch.float64,
                                                 dispersions=disp) for r, disp in
                          ((old, old_dispersions), (new, new_dispersions))]

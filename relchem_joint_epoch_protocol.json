@@ -1,0 +1,54 @@
+{
+  "initial_state": {
+    "seed": 11,
+    "regime": "P536",
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_init_landscape_runs_20261005\\states\\seed11_P536.pt",
+    "file_sha256": "0ca0f77367214c171e6edf0576bdb043d64479245ad1a0e539fa11fb0cee542d",
+    "state_sha256": "3c2e45d6a86cccf80d7b4dc458e67f9b406935ed60d4e57433bb441a6df88da6"
+  },
+  "dataset_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "adamw": {
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "foreach": false
+  },
+  "lr": 0.0001,
+  "scheduler": null,
+  "total_updates": 251,
+  "exc_chunk_size": 4096,
+  "operator_chunk_size": 256,
+  "chemistry_chunk": 16384,
+  "sampling_seed": 202610092,
+  "evaluation_seed": 202610091,
+  "sampling_manifest_sha256": "72b827655ce4421f2fc933c082cda1c2dc3e5d9903ec29e0c5e3d62e82ac37f6",
+  "evaluation_manifest_sha256": "132bd550161be6bc6761f8df1de8d3755c0b0debab53663208c3a9bbf56cb805",
+  "source_commit": "9abd2621484f38d0c291b1a9608936a93d6eb67d",
+  "source_hashes": {
+    "train_lap_microbatch.py": "2e837c3a88ca3d4737c3c3397dcfbb98adeb7f6917adc8c693cecf205dc37e9e",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "train_models/lap_chemistry_sampling.py": "313f90bcd0fe438f3e82ca00e7625c7bee502797b772532fef16adb2adad9fad",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "tools/relchem_joint_epoch.py": "3ed79ce4591d62d6a6c22c4b9da28a932fcf13af926d95c4e843a94ee0d71c00",
+    "tools/evaluate_microbatch_endpoint.py": "b92a00bc8f51149e29be846bbadbedc74c47fd172b975f1fd0888fd4caf6da3f"
+  },
+  "arms": {
+    "R": [
+      "relchem"
+    ],
+    "J": [
+      "relchem",
+      "ae17",
+      "exc",
+      "op"
+    ]
+  },
+  "evaluation": "251 relchem +17 AE17; one fixed variant each; all90 mRKS",
+  "stop": "Exactly one chemistry epoch; no automatic continuation"
+}

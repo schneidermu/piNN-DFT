@@ -73,7 +73,7 @@ def freeze():
             'persistent_destructive': 'A task has negative actual-step progress in >=8 of last10 updates AND its probe ratio>1.10',
             'ranking': 'Relchem improvement first; lower relchem ratio; more improved tasks; lower maximum ratio; lower LR',
             'max_selected': 3, 'clean28_used': False},
-        'endpoint': 'Reuse exact t0; selected arms exact251x8/17x8/full90 before any clean28 evaluation',
+        'endpoint': 'New fixed one-variant-per-identity t0 and endpoints: 251 relchem, 17 AE17, full90; historical exhaustive baselines must not be reused',
         'per_arm_runtime_cap_seconds': 1800}
     run.write(OUT / 'frozen_protocol.json', protocol)
     for lr in LRS:

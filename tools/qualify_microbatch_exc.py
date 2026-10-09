@@ -127,7 +127,7 @@ def main():
                 'scheduler': 'CosineAnnealingLR T_max=90', 'no_svrg': True,
                 'calibration_manifest_sha256': calibration['calibration_manifest_sha256'],
                 'sampling': 'Independent uniform chemistry identity and variant; balanced shuffled mRKS90 cycle',
-                'chemistry_objective': 'Uniform identity/eight-variant mean of existing singleton losses',
+                'chemistry_objective': 'Stochastic singleton objective; evaluation: fixed one variant per identity, never exhaustive',
                 'task_order': list(run.TASKS), 'checkpoints': [0, 10, 45, 90]}
     run.write(OUT / 'protocol.json', protocol)
     bundle.close()

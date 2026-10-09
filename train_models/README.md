@@ -1,5 +1,10 @@
 # Training the Neural Network Functionals
 
+Corrected `lap_full_vxc` experiments follow the permanent
+[one-variant chemistry policy](../CHEMISTRY_EVALUATION_POLICY.md): fixed evaluation
+populations are 251 relchem and 17 AE17 identities, not eight times those counts.
+Historical experiment reports retain their original definitions.
+
 The current `vxc_training` protocol trains on Diet-cleaned Minnesota reaction
 energies and **all available valid mRKS E_xc and v_xc systems**. There is no
 internal fixed-density validation dataset and no random train/validation split.
