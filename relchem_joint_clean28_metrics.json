@@ -1,0 +1,800 @@
+{
+  "dataset_logical_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "protocol": "Frozen PBE0 density; F64 existing LapEnergy inference; PBE0-D3(BJ); no SCF; full30 diagnostic only",
+  "rows": [
+    {
+      "name": "P536 t0",
+      "updates": 0,
+      "checkpoint_sha256": "598dde8ed2b35c158ce715998617c77506bac47425ed27f378cde5aafce87896",
+      "receipt_sha256": "dc8cc833ee30dc2771b8aed4e8445cf0b77b74bf64882d04be7bf8d8a33ca615",
+      "metrics": {
+        "clean28": 9.553190635871177,
+        "full30": 9.865316993468436,
+        "full30_selection_allowed": false,
+        "dispersion": "PBE0-D3(BJ)",
+        "reaction_rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "signed_error_kcal_mol": 0.2644616306339007,
+            "weighted_absolute_error": 8.195665933344582,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "signed_error_kcal_mol": 0.5821722629155728,
+            "weighted_absolute_error": 13.570435448562002,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "signed_error_kcal_mol": -0.09042558167122872,
+            "weighted_absolute_error": 2.107820308756341,
+            "clean": true
+          },
+          {
+            "reaction_id": "BH76-5",
+            "signed_error_kcal_mol": -7.866574347602464,
+            "weighted_absolute_error": 23.993051760187512,
+            "clean": false
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "signed_error_kcal_mol": -8.28503552492893,
+            "weighted_absolute_error": 22.53529662780669,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "signed_error_kcal_mol": 1.6379910416033,
+            "weighted_absolute_error": 14.840198836925898,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "signed_error_kcal_mol": 0.22157377497603292,
+            "weighted_absolute_error": 2.0074584012828582,
+            "clean": true
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "signed_error_kcal_mol": -4.416748206321444,
+            "weighted_absolute_error": 15.502786204188267,
+            "clean": true
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "signed_error_kcal_mol": 0.24345048584505813,
+            "weighted_absolute_error": 4.94204486265468,
+            "clean": true
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "signed_error_kcal_mol": 0.5930684474185819,
+            "weighted_absolute_error": 8.314819632808518,
+            "clean": true
+          },
+          {
+            "reaction_id": "DC13-1",
+            "signed_error_kcal_mol": 2.3565516535184665,
+            "weighted_absolute_error": 2.427248203124021,
+            "clean": true
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "signed_error_kcal_mol": -0.49651619973406014,
+            "weighted_absolute_error": 0.04468645797606541,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-24",
+            "signed_error_kcal_mol": 3.3588262364199437,
+            "weighted_absolute_error": 6.146652012648497,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-30",
+            "signed_error_kcal_mol": 1.417282212854925,
+            "weighted_absolute_error": 2.5936264495245127,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "signed_error_kcal_mol": 0.04936828698979667,
+            "weighted_absolute_error": 0.08343240501275638,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-25",
+            "signed_error_kcal_mol": 2.6491835736524294,
+            "weighted_absolute_error": 4.4771202394726055,
+            "clean": false
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "signed_error_kcal_mol": 0.5139637717425836,
+            "weighted_absolute_error": 6.362871494173185,
+            "clean": true
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "signed_error_kcal_mol": 0.17880585280512928,
+            "weighted_absolute_error": 2.213616457727501,
+            "clean": true
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "signed_error_kcal_mol": 0.6479068450417442,
+            "weighted_absolute_error": 29.66765443446147,
+            "clean": true
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "signed_error_kcal_mol": 13.447062512386893,
+            "weighted_absolute_error": 1.613647501486427,
+            "clean": true
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "signed_error_kcal_mol": 0.007526804716233515,
+            "weighted_absolute_error": 0.08603137790654908,
+            "clean": true
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "signed_error_kcal_mol": 0.3134241805199667,
+            "weighted_absolute_error": 4.168541600915557,
+            "clean": true
+          },
+          {
+            "reaction_id": "PX13-9",
+            "signed_error_kcal_mol": -10.162639536329657,
+            "weighted_absolute_error": 17.276487211760415,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-6",
+            "signed_error_kcal_mol": 1.0645214280331468,
+            "weighted_absolute_error": 11.071022851544727,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-50",
+            "signed_error_kcal_mol": 0.07580017784792936,
+            "weighted_absolute_error": 0.7883218496184654,
+            "clean": true
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "signed_error_kcal_mol": 33.63143339011578,
+            "weighted_absolute_error": 56.83712242929567,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "signed_error_kcal_mol": -0.8538747174213341,
+            "weighted_absolute_error": 0.16223619631005348,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "signed_error_kcal_mol": 4.571763962548744,
+            "weighted_absolute_error": 0.8686351528842613,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "signed_error_kcal_mol": 32.99559455083323,
+            "weighted_absolute_error": 6.269162964658314,
+            "clean": true
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "signed_error_kcal_mol": -16.538157096934974,
+            "weighted_absolute_error": 26.79181449703466,
+            "clean": true
+          }
+        ]
+      },
+      "model_unchanged": true,
+      "evaluation_seconds": 38.61042079998879,
+      "clean28_change_from_t0": 0.0
+    },
+    {
+      "name": "R251",
+      "updates": 251,
+      "checkpoint_sha256": "6601b4e0949862fb428429a6b1090d21fb23df0eefdce76ba482c66cfd8524c7",
+      "receipt_sha256": "cd5c1e421d90838d93c394b1752d9f00fc2732014d5f06a89bb947322cb9d646",
+      "metrics": {
+        "clean28": 9.195173319114591,
+        "full30": 9.380093770711179,
+        "full30_selection_allowed": false,
+        "dispersion": "PBE0-D3(BJ)",
+        "reaction_rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "signed_error_kcal_mol": 0.4152133891797425,
+            "weighted_absolute_error": 12.867462930680219,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "signed_error_kcal_mol": 0.593546775189358,
+            "weighted_absolute_error": 13.835575329663932,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "signed_error_kcal_mol": -0.06592507264251934,
+            "weighted_absolute_error": 1.536713443297126,
+            "clean": true
+          },
+          {
+            "reaction_id": "BH76-5",
+            "signed_error_kcal_mol": -7.818916608344866,
+            "weighted_absolute_error": 23.84769565545184,
+            "clean": false
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "signed_error_kcal_mol": -7.576625148667681,
+            "weighted_absolute_error": 20.608420404376094,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "signed_error_kcal_mol": 1.3873602126822444,
+            "weighted_absolute_error": 12.569483526901134,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "signed_error_kcal_mol": 0.04824545613301723,
+            "weighted_absolute_error": 0.43710383256513613,
+            "clean": true
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "signed_error_kcal_mol": -4.883348855159259,
+            "weighted_absolute_error": 17.140554481608998,
+            "clean": true
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "signed_error_kcal_mol": 0.15538911143257073,
+            "weighted_absolute_error": 3.154398962081186,
+            "clean": true
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "signed_error_kcal_mol": 0.5253263738627094,
+            "weighted_absolute_error": 7.365075761555186,
+            "clean": true
+          },
+          {
+            "reaction_id": "DC13-1",
+            "signed_error_kcal_mol": 2.3024657872812258,
+            "weighted_absolute_error": 2.3715397608996627,
+            "clean": true
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "signed_error_kcal_mol": -6.34643386444634,
+            "weighted_absolute_error": 0.5711790478001706,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-24",
+            "signed_error_kcal_mol": 4.450963701686234,
+            "weighted_absolute_error": 8.145263574085808,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-30",
+            "signed_error_kcal_mol": 1.6281563502690979,
+            "weighted_absolute_error": 2.9795261209924493,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "signed_error_kcal_mol": -1.4359095084394475,
+            "weighted_absolute_error": 2.426687069262666,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-25",
+            "signed_error_kcal_mol": -0.05341096489643604,
+            "weighted_absolute_error": 0.0902645306749769,
+            "clean": false
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "signed_error_kcal_mol": 0.1683568751865261,
+            "weighted_absolute_error": 2.084258114809193,
+            "clean": true
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "signed_error_kcal_mol": -0.1213829931203807,
+            "weighted_absolute_error": 1.5027214548303132,
+            "clean": true
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "signed_error_kcal_mol": 0.5033894803912313,
+            "weighted_absolute_error": 23.05020430711448,
+            "clean": true
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "signed_error_kcal_mol": 17.18155191253622,
+            "weighted_absolute_error": 2.0617862295043463,
+            "clean": true
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "signed_error_kcal_mol": -0.13562745914255625,
+            "weighted_absolute_error": 1.5502218579994178,
+            "clean": true
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "signed_error_kcal_mol": 0.12634585977046076,
+            "weighted_absolute_error": 1.6803999349471281,
+            "clean": true
+          },
+          {
+            "reaction_id": "PX13-9",
+            "signed_error_kcal_mol": -10.140099801304856,
+            "weighted_absolute_error": 17.238169662218255,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-6",
+            "signed_error_kcal_mol": 0.7699087492192094,
+            "weighted_absolute_error": 8.007050991879778,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-50",
+            "signed_error_kcal_mol": -0.15995607273336798,
+            "weighted_absolute_error": 1.663543156427027,
+            "clean": true
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "signed_error_kcal_mol": 33.796976353104995,
+            "weighted_absolute_error": 57.11689003674744,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "signed_error_kcal_mol": -1.8809655191989378,
+            "weighted_absolute_error": 0.3573834486477982,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "signed_error_kcal_mol": 3.886623304958647,
+            "weighted_absolute_error": 0.7384584279421429,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "signed_error_kcal_mol": 31.618109917098593,
+            "weighted_absolute_error": 6.007440884248733,
+            "clean": true
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "signed_error_kcal_mol": -17.52922233464367,
+            "weighted_absolute_error": 28.397340182122747,
+            "clean": true
+          }
+        ]
+      },
+      "model_unchanged": true,
+      "evaluation_seconds": 41.47785720000684,
+      "clean28_change_from_t0": -0.35801731675658566
+    },
+    {
+      "name": "J251",
+      "updates": 251,
+      "checkpoint_sha256": "11cee17f61c017e26902c905b6d9ace0b576ab7eaacf5d5f93f5172a49e3257a",
+      "receipt_sha256": "b937c1d37e403f95d7db3a93decd9bf354d015e4061f4f9bbd7b120eafcb0075",
+      "metrics": {
+        "clean28": 9.346760658714116,
+        "full30": 9.612715555710317,
+        "full30_selection_allowed": false,
+        "dispersion": "PBE0-D3(BJ)",
+        "reaction_rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "signed_error_kcal_mol": 0.3697730737010345,
+            "weighted_absolute_error": 11.459267553995058,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "signed_error_kcal_mol": 0.704275650533976,
+            "weighted_absolute_error": 16.41666541394698,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "signed_error_kcal_mol": -0.07446492647909109,
+            "weighted_absolute_error": 1.735777436227613,
+            "clean": true
+          },
+          {
+            "reaction_id": "BH76-5",
+            "signed_error_kcal_mol": -7.197426146538165,
+            "weighted_absolute_error": 21.9521497469414,
+            "clean": false
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "signed_error_kcal_mol": -7.4291487368879,
+            "weighted_absolute_error": 20.20728456433509,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "signed_error_kcal_mol": 1.7321167472092753,
+            "weighted_absolute_error": 15.692977729716036,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "signed_error_kcal_mol": 0.283341506517516,
+            "weighted_absolute_error": 2.567074049048695,
+            "clean": true
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "signed_error_kcal_mol": -5.152347007476617,
+            "weighted_absolute_error": 18.084737996242925,
+            "clean": true
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "signed_error_kcal_mol": 0.16309630874064318,
+            "weighted_absolute_error": 3.3108550674350568,
+            "clean": true
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "signed_error_kcal_mol": 0.6279480771079888,
+            "weighted_absolute_error": 8.803832041054003,
+            "clean": true
+          },
+          {
+            "reaction_id": "DC13-1",
+            "signed_error_kcal_mol": 2.42350327228929,
+            "weighted_absolute_error": 2.496208370457969,
+            "clean": true
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "signed_error_kcal_mol": 0.9787545641149791,
+            "weighted_absolute_error": 0.08808791077034811,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-24",
+            "signed_error_kcal_mol": 3.809667561623609,
+            "weighted_absolute_error": 6.971691637771205,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-30",
+            "signed_error_kcal_mol": 1.3581669272511157,
+            "weighted_absolute_error": 2.4854454768695415,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "signed_error_kcal_mol": 0.4012386532832579,
+            "weighted_absolute_error": 0.6780933240487058,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-25",
+            "signed_error_kcal_mol": 2.7929103434158904,
+            "weighted_absolute_error": 4.720018480372855,
+            "clean": false
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "signed_error_kcal_mol": 0.27388710885179446,
+            "weighted_absolute_error": 3.3907224075852156,
+            "clean": true
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "signed_error_kcal_mol": -0.010325197179074319,
+            "weighted_absolute_error": 0.1278259410769401,
+            "clean": true
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "signed_error_kcal_mol": 0.571546334053495,
+            "weighted_absolute_error": 26.171106636309535,
+            "clean": true
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "signed_error_kcal_mol": 10.903506082148361,
+            "weighted_absolute_error": 1.3084207298578032,
+            "clean": true
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "signed_error_kcal_mol": -0.0880053508059836,
+            "weighted_absolute_error": 1.0059011597123926,
+            "clean": true
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "signed_error_kcal_mol": 0.2000246973422426,
+            "weighted_absolute_error": 2.6603284746518265,
+            "clean": true
+          },
+          {
+            "reaction_id": "PX13-9",
+            "signed_error_kcal_mol": -9.807738590683726,
+            "weighted_absolute_error": 16.673155604162336,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-6",
+            "signed_error_kcal_mol": 0.9237187942385967,
+            "weighted_absolute_error": 9.606675460081407,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-50",
+            "signed_error_kcal_mol": -0.03778895419484263,
+            "weighted_absolute_error": 0.39300512362636336,
+            "clean": true
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "signed_error_kcal_mol": 33.283382864190216,
+            "weighted_absolute_error": 56.248917040481466,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "signed_error_kcal_mol": -1.439643940658783,
+            "weighted_absolute_error": 0.2735323487251688,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "signed_error_kcal_mol": 4.014352532439631,
+            "weighted_absolute_error": 0.7627269811635299,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "signed_error_kcal_mol": 32.082578571095155,
+            "weighted_absolute_error": 6.0956899285080794,
+            "clean": true
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "signed_error_kcal_mol": -16.045241997613573,
+            "weighted_absolute_error": 25.99329203613399,
+            "clean": true
+          }
+        ]
+      },
+      "model_unchanged": true,
+      "evaluation_seconds": 41.59537690000434,
+      "clean28_change_from_t0": -0.20642997715706102
+    },
+    {
+      "name": "IID LR=1e-4 t59",
+      "updates": 59,
+      "checkpoint_sha256": "8938753bee6cfcb55ccdac9c02a15cbb3e3b2093290c9122e5e00ad400a966aa",
+      "receipt_sha256": "2bf988de121578cb58a35eaefb1315c7ff508b2a6d967ff7025b992ca6a5797a",
+      "metrics": {
+        "clean28": 8.868473327174888,
+        "full30": 9.192675302917511,
+        "full30_selection_allowed": false,
+        "dispersion": "PBE0-D3(BJ)",
+        "reaction_rows": [
+          {
+            "reaction_id": "ACONF-10",
+            "signed_error_kcal_mol": 0.35423502438784427,
+            "weighted_absolute_error": 10.977743405779293,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-28",
+            "signed_error_kcal_mol": 0.5819492810284856,
+            "weighted_absolute_error": 13.565237740774,
+            "clean": true
+          },
+          {
+            "reaction_id": "Amino20x4-54",
+            "signed_error_kcal_mol": -0.035391612610787604,
+            "weighted_absolute_error": 0.824978489957459,
+            "clean": true
+          },
+          {
+            "reaction_id": "BH76-5",
+            "signed_error_kcal_mol": -7.634749646665414,
+            "weighted_absolute_error": 23.28598642232951,
+            "clean": false
+          },
+          {
+            "reaction_id": "BHPERI-11",
+            "signed_error_kcal_mol": -7.2504133120454135,
+            "weighted_absolute_error": 19.721124208763527,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-16",
+            "signed_error_kcal_mol": 1.5491363738042452,
+            "weighted_absolute_error": 14.035175546666462,
+            "clean": true
+          },
+          {
+            "reaction_id": "BHROT27-26",
+            "signed_error_kcal_mol": 0.2156597051610305,
+            "weighted_absolute_error": 1.9538769287589364,
+            "clean": true
+          },
+          {
+            "reaction_id": "BSR36-31",
+            "signed_error_kcal_mol": -4.99305746039261,
+            "weighted_absolute_error": 17.52563168597806,
+            "clean": true
+          },
+          {
+            "reaction_id": "BUT14DIOL-13",
+            "signed_error_kcal_mol": 0.1266692797106712,
+            "weighted_absolute_error": 2.5713863781266255,
+            "clean": true
+          },
+          {
+            "reaction_id": "CDIE20-9",
+            "signed_error_kcal_mol": 0.5895424246459964,
+            "weighted_absolute_error": 8.26538479353687,
+            "clean": true
+          },
+          {
+            "reaction_id": "DC13-1",
+            "signed_error_kcal_mol": 2.5174213424161125,
+            "weighted_absolute_error": 2.592943982688596,
+            "clean": true
+          },
+          {
+            "reaction_id": "DIPCS10-7",
+            "signed_error_kcal_mol": 0.3077882170387056,
+            "weighted_absolute_error": 0.027700939533483505,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-24",
+            "signed_error_kcal_mol": 3.459591041703156,
+            "weighted_absolute_error": 6.331051606316776,
+            "clean": true
+          },
+          {
+            "reaction_id": "FH51-30",
+            "signed_error_kcal_mol": 1.0467604046036012,
+            "weighted_absolute_error": 1.9155715404245903,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-14",
+            "signed_error_kcal_mol": 0.2047238753705578,
+            "weighted_absolute_error": 0.3459833493762427,
+            "clean": true
+          },
+          {
+            "reaction_id": "G21EA-25",
+            "signed_error_kcal_mol": 2.471609174141385,
+            "weighted_absolute_error": 4.17701950429894,
+            "clean": false
+          },
+          {
+            "reaction_id": "HAL59-40",
+            "signed_error_kcal_mol": 0.3294715379990665,
+            "weighted_absolute_error": 4.078857640428443,
+            "clean": true
+          },
+          {
+            "reaction_id": "HAL59-57",
+            "signed_error_kcal_mol": 0.02971415317473891,
+            "weighted_absolute_error": 0.36786121630326774,
+            "clean": true
+          },
+          {
+            "reaction_id": "HEAVY28-16",
+            "signed_error_kcal_mol": 0.5702606851087924,
+            "weighted_absolute_error": 26.112236771131602,
+            "clean": true
+          },
+          {
+            "reaction_id": "MB16-43-10",
+            "signed_error_kcal_mol": 9.78804894331413,
+            "weighted_absolute_error": 1.1745658731976956,
+            "clean": true
+          },
+          {
+            "reaction_id": "MCONF-1",
+            "signed_error_kcal_mol": -0.05434637569952516,
+            "weighted_absolute_error": 0.6211790742455726,
+            "clean": true
+          },
+          {
+            "reaction_id": "PNICO23-16",
+            "signed_error_kcal_mol": 0.2098619344306376,
+            "weighted_absolute_error": 2.79116372792748,
+            "clean": true
+          },
+          {
+            "reaction_id": "PX13-9",
+            "signed_error_kcal_mol": -8.98819838433058,
+            "weighted_absolute_error": 15.279937253361986,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-6",
+            "signed_error_kcal_mol": 0.8702166685062105,
+            "weighted_absolute_error": 9.050253352464589,
+            "clean": true
+          },
+          {
+            "reaction_id": "S66-50",
+            "signed_error_kcal_mol": -0.04308048031626521,
+            "weighted_absolute_error": 0.44803699528915825,
+            "clean": true
+          },
+          {
+            "reaction_id": "SIE4x4-15",
+            "signed_error_kcal_mol": 32.965241298534195,
+            "weighted_absolute_error": 55.71125779452279,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-30",
+            "signed_error_kcal_mol": -1.4924036279891908,
+            "weighted_absolute_error": 0.28355668931794625,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-57",
+            "signed_error_kcal_mol": 2.169179850497329,
+            "weighted_absolute_error": 0.41214417159449257,
+            "clean": true
+          },
+          {
+            "reaction_id": "W4-11-132",
+            "signed_error_kcal_mol": 29.491527879571663,
+            "weighted_absolute_error": 5.603390297118616,
+            "clean": true
+          },
+          {
+            "reaction_id": "WCPT18-15",
+            "signed_error_kcal_mol": -15.882112165007605,
+            "weighted_absolute_error": 25.729021707312324,
+            "clean": true
+          }
+        ]
+      },
+      "model_unchanged": true,
+      "evaluation_seconds": 37.929287599996314,
+      "clean28_change_from_t0": -0.684717308696289
+    }
+  ],
+  "review": {
+    "ponytail": "Existing evaluator reused; only four requested checkpoints",
+    "pocock": "Exact endpoint hashes; identical 28-reaction split/stoichiometry/dispersion; model digest unchanged; t59 uses preserved latest.pt cursor59; update counts unequal; R is diagnostic, not four-task eligible"
+  },
+  "no_training": true,
+  "no_future_test": true
+}
