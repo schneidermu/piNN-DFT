@@ -242,3 +242,21 @@ Do not make direct repo edits outside a GSD workflow unless the user explicitly 
 > Profile not yet configured. Run `/gsd:profile-user` to generate your developer profile.
 > This section is managed by `generate-claude-profile` -- do not edit manually.
 <!-- GSD:profile-end -->
+
+## Matt Pocock skills
+
+When the user explicitly invokes a Matt Pocock engineering skill (including setup-matt-pocock-skills, wayfinder, to-spec, to-tickets, triage, or domain-modeling), follow that skill's workflow directly. Do not require a GSD command as a prerequisite. For unrelated tasks, preserve the existing GSD workflow instructions.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as markdown files under `.scratch/<feature-slug>/`, with tickets at `issues/<NN>.md`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Ordinary implementation issues use five roles: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
