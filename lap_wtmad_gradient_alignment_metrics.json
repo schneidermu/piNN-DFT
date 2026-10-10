@@ -1,0 +1,1314 @@
+{
+  "protocol_id": "wtmad-gradient-alignment-v1",
+  "optimizer_updates": 0,
+  "s5_included": false,
+  "results": [
+    {
+      "name": "b8_t128",
+      "checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+      "model_sha256": "c1c6ecee465decf386f6b6b33523c414bca7c1c5a4f93c1df15a9290a4f0760a",
+      "clean28": 9.096700111609751,
+      "objectives": {
+        "relchem": 1.195939284232437,
+        "ae17": 3.27546495584018,
+        "exc": 14.679044990002591,
+        "op": 0.030933124717599843
+      },
+      "disconnected": {
+        "relchem": [],
+        "ae17": [],
+        "exc": [],
+        "op": []
+      },
+      "coordinates": 9446,
+      "parameter_names": [
+        "c_input_layers.0.weight",
+        "c_input_layers.1.bias",
+        "c_input_layers.1.weight",
+        "c_output_layer.bias",
+        "c_output_layer.weight",
+        "c_post_symm_blocks.0.fc.0.weight",
+        "c_post_symm_blocks.0.fc.1.bias",
+        "c_post_symm_blocks.0.fc.1.weight",
+        "c_post_symm_blocks.0.fc.3.weight",
+        "c_post_symm_blocks.0.fc.4.bias",
+        "c_post_symm_blocks.0.fc.4.weight",
+        "c_symmetrization_blocks.0.fc.0.weight",
+        "c_symmetrization_blocks.0.fc.1.bias",
+        "c_symmetrization_blocks.0.fc.1.weight",
+        "c_symmetrization_blocks.0.fc.3.weight",
+        "c_symmetrization_blocks.0.fc.4.bias",
+        "c_symmetrization_blocks.0.fc.4.weight",
+        "x_feature_extractor.0.weight",
+        "x_feature_extractor.1.bias",
+        "x_feature_extractor.1.weight",
+        "x_feature_extractor.3.fc.0.weight",
+        "x_feature_extractor.3.fc.1.bias",
+        "x_feature_extractor.3.fc.1.weight",
+        "x_feature_extractor.3.fc.3.weight",
+        "x_feature_extractor.3.fc.4.bias",
+        "x_feature_extractor.3.fc.4.weight",
+        "x_feature_extractor.4.fc.0.weight",
+        "x_feature_extractor.4.fc.1.bias",
+        "x_feature_extractor.4.fc.1.weight",
+        "x_feature_extractor.4.fc.3.weight",
+        "x_feature_extractor.4.fc.4.bias",
+        "x_feature_extractor.4.fc.4.weight",
+        "x_output_layer.bias",
+        "x_output_layer.weight"
+      ],
+      "parameter_numels": [
+        256,
+        32,
+        32,
+        3,
+        192,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        64,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        3,
+        96
+      ],
+      "blocks": {
+        "c_input_layers.0.weight": "correlation",
+        "c_input_layers.1.bias": "normalization",
+        "c_input_layers.1.weight": "normalization",
+        "c_output_layer.bias": "correlation",
+        "c_output_layer.weight": "correlation",
+        "c_post_symm_blocks.0.fc.0.weight": "correlation",
+        "c_post_symm_blocks.0.fc.1.bias": "normalization",
+        "c_post_symm_blocks.0.fc.1.weight": "normalization",
+        "c_post_symm_blocks.0.fc.3.weight": "correlation",
+        "c_post_symm_blocks.0.fc.4.bias": "normalization",
+        "c_post_symm_blocks.0.fc.4.weight": "normalization",
+        "c_symmetrization_blocks.0.fc.0.weight": "correlation",
+        "c_symmetrization_blocks.0.fc.1.bias": "normalization",
+        "c_symmetrization_blocks.0.fc.1.weight": "normalization",
+        "c_symmetrization_blocks.0.fc.3.weight": "correlation",
+        "c_symmetrization_blocks.0.fc.4.bias": "normalization",
+        "c_symmetrization_blocks.0.fc.4.weight": "normalization",
+        "x_feature_extractor.0.weight": "exchange",
+        "x_feature_extractor.1.bias": "normalization",
+        "x_feature_extractor.1.weight": "normalization",
+        "x_feature_extractor.3.fc.0.weight": "exchange",
+        "x_feature_extractor.3.fc.1.bias": "normalization",
+        "x_feature_extractor.3.fc.1.weight": "normalization",
+        "x_feature_extractor.3.fc.3.weight": "exchange",
+        "x_feature_extractor.3.fc.4.bias": "normalization",
+        "x_feature_extractor.3.fc.4.weight": "normalization",
+        "x_feature_extractor.4.fc.0.weight": "exchange",
+        "x_feature_extractor.4.fc.1.bias": "normalization",
+        "x_feature_extractor.4.fc.1.weight": "normalization",
+        "x_feature_extractor.4.fc.3.weight": "exchange",
+        "x_feature_extractor.4.fc.4.bias": "normalization",
+        "x_feature_extractor.4.fc.4.weight": "normalization",
+        "x_output_layer.bias": "exchange",
+        "x_output_layer.weight": "exchange"
+      },
+      "geometry": {
+        "cosine": {
+          "wtmad": {
+            "wtmad": 1.0000000000000002,
+            "relchem": -0.5598283278697568,
+            "ae17": -0.008928902063864987,
+            "exc": -0.0016484769495754203,
+            "op": 0.643602614672728,
+            "combined": -0.026092456871905464
+          },
+          "relchem": {
+            "wtmad": -0.5598283278697568,
+            "relchem": 0.9999999999999999,
+            "ae17": -0.7702857897275828,
+            "exc": -0.7752730994273331,
+            "op": -0.9844090098469372,
+            "combined": -0.7483048523909852
+          },
+          "ae17": {
+            "wtmad": -0.008928902063864987,
+            "relchem": -0.7702857897275828,
+            "ae17": 1.0,
+            "exc": 0.9999659819197443,
+            "op": 0.6993759015638693,
+            "combined": 0.9978620967438411
+          },
+          "exc": {
+            "wtmad": -0.0016484769495754203,
+            "relchem": -0.7752730994273331,
+            "ae17": 0.9999659819197443,
+            "exc": 1.0,
+            "op": 0.7047978909699749,
+            "combined": 0.9975622731264056
+          },
+          "op": {
+            "wtmad": 0.643602614672728,
+            "relchem": -0.9844090098469372,
+            "ae17": 0.6993759015638693,
+            "exc": 0.7047978909699749,
+            "op": 0.9999999999999999,
+            "combined": 0.684132056360989
+          },
+          "combined": {
+            "wtmad": -0.026092456871905464,
+            "relchem": -0.7483048523909852,
+            "ae17": 0.9978620967438411,
+            "exc": 0.9975622731264056,
+            "op": 0.684132056360989,
+            "combined": 1.0
+          }
+        },
+        "tasks": {
+          "relchem": {
+            "raw_norm": 15.077668087996994,
+            "weighted_norm": 0.25655377435677484,
+            "dot": -1010.2368407189078,
+            "weighted_dot": -17.189665733988896,
+            "predicted_change": 1010.2368407189078,
+            "weighted_predicted_change": 17.189665733988896,
+            "normalized_predicted_change": 67.00219389516447,
+            "weighted_normalized_predicted_change": 67.00219389516445
+          },
+          "ae17": {
+            "raw_norm": 5597.740971893248,
+            "weighted_norm": 0.2877941162405871,
+            "dot": -5981.980741747627,
+            "weighted_dot": -0.3075488611537524,
+            "predicted_change": 5981.980741747627,
+            "weighted_predicted_change": 0.3075488611537524,
+            "normalized_predicted_change": 1.0686419346275053,
+            "weighted_normalized_predicted_change": 1.0686419346275018
+          },
+          "exc": {
+            "raw_norm": 20120.43676933683,
+            "weighted_norm": 0.30371084045950864,
+            "dot": -3969.6702793236595,
+            "weighted_dot": -0.05992076169627962,
+            "predicted_change": 3969.6702793236595,
+            "weighted_predicted_change": 0.05992076169627962,
+            "normalized_predicted_change": 0.19729543273997469,
+            "weighted_normalized_predicted_change": 0.19729543273996758
+          },
+          "op": {
+            "raw_norm": 0.6133549684729634,
+            "weighted_norm": 0.20607231340259502,
+            "dot": 47.2458688750872,
+            "weighted_dot": 15.873459902092634,
+            "predicted_change": -47.2458688750872,
+            "weighted_predicted_change": -15.873459902092634,
+            "normalized_predicted_change": -77.02859078929885,
+            "weighted_normalized_predicted_change": -77.02859078929885
+          }
+        },
+        "wtmad_norm": 119.68346466160318,
+        "combined_norm": 0.5391495579210783,
+        "combined_cosine": -0.026092456871905464,
+        "combined_predicted_change": 1.6836754547462947,
+        "combined_normalized_predicted_change": 3.1228356399630957,
+        "cancellation_ratio": 0.4885364957660061,
+        "blocks": {
+          "wtmad": {
+            "share": {
+              "exchange": 0.9765511328082571,
+              "correlation": 0.0021906099021090485,
+              "normalization": 0.021258257289633924,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.9999999999999999,
+              "correlation": 0.9999999999999999,
+              "normalization": 1.0000000000000002,
+              "remaining": null
+            }
+          },
+          "relchem": {
+            "share": {
+              "exchange": 0.9664750201066737,
+              "correlation": 0.003828098954821608,
+              "normalization": 0.029696880938504738,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": -0.5888226946733931,
+              "correlation": 0.7175562136353492,
+              "normalization": 0.4033709252061606,
+              "remaining": null
+            }
+          },
+          "ae17": {
+            "share": {
+              "exchange": 0.9245720674383711,
+              "correlation": 0.00027335780566973937,
+              "normalization": 0.07515457475595964,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.02096008371199747,
+              "correlation": -0.5876081014789856,
+              "normalization": -0.7102854534288158,
+              "remaining": null
+            }
+          },
+          "exc": {
+            "share": {
+              "exchange": 0.9250084903798227,
+              "correlation": 0.00033254163172011014,
+              "normalization": 0.07465896798845727,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.028497485060113324,
+              "correlation": -0.6032588670317316,
+              "normalization": -0.708318628348734,
+              "remaining": null
+            }
+          },
+          "op": {
+            "share": {
+              "exchange": 0.9760355453954084,
+              "correlation": 0.00026674862918060267,
+              "normalization": 0.02369770597541097,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.6681003992002028,
+              "correlation": -0.557354565457048,
+              "normalization": -0.36682234131518454,
+              "remaining": null
+            }
+          },
+          "combined": {
+            "share": {
+              "exchange": 0.9225988586791246,
+              "correlation": 0.00030010120184490656,
+              "normalization": 0.07710104011903066,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.003149115386809189,
+              "correlation": 0.3615790830769763,
+              "normalization": -0.7255713111365738,
+              "remaining": null
+            }
+          }
+        },
+        "hidden_opposition": [
+          {
+            "task": "relchem",
+            "block": "normalization",
+            "block_cosine": 0.4033709252061606,
+            "full_cosine": -0.5598283278697568,
+            "wtmad_share": 0.021258257289633924
+          },
+          {
+            "task": "ae17",
+            "block": "exchange",
+            "block_cosine": 0.02096008371199747,
+            "full_cosine": -0.008928902063864987,
+            "wtmad_share": 0.9765511328082571
+          },
+          {
+            "task": "exc",
+            "block": "exchange",
+            "block_cosine": 0.028497485060113324,
+            "full_cosine": -0.0016484769495754203,
+            "wtmad_share": 0.9765511328082571
+          },
+          {
+            "task": "op",
+            "block": "normalization",
+            "block_cosine": -0.36682234131518454,
+            "full_cosine": 0.643602614672728,
+            "wtmad_share": 0.021258257289633924
+          }
+        ],
+        "sie_exclusion": {
+          "cosine_with_wtmad": 0.9994984413551,
+          "cosine_with_tasks": {
+            "relchem": -0.5367412730367827,
+            "ae17": -0.039173040031211075,
+            "exc": -0.03188426659797262,
+            "op": 0.6217552363803628
+          },
+          "cosine_with_combined": -0.05663331614227637,
+          "predicted_changes": {
+            "relchem": 926.4886540114079,
+            "ae17": 25103.889182769366,
+            "exc": 73443.73762026797,
+            "op": -43.6588481701844
+          }
+        }
+      },
+      "reactions": [
+        {
+          "reaction_id": "ACONF-10",
+          "signed_error_kcal_mol": 0.42924109706308156,
+          "absolute_error_kcal_mol": 0.42924109706308156,
+          "scalar_contribution": 0.4750779142137463,
+          "gradient_norm": 17.781600550031335,
+          "cosine_with_wtmad": -0.7483353380778307,
+          "diet_weight": 30.99
+        },
+        {
+          "reaction_id": "Amino20x4-28",
+          "signed_error_kcal_mol": 0.6988143646987872,
+          "absolute_error_kcal_mol": 0.6988143646987872,
+          "scalar_contribution": 0.5817629586117403,
+          "gradient_norm": 12.177750806662294,
+          "cosine_with_wtmad": 0.9021715975407564,
+          "diet_weight": 23.31
+        },
+        {
+          "reaction_id": "Amino20x4-54",
+          "signed_error_kcal_mol": -0.021761671202303656,
+          "absolute_error_kcal_mol": 0.021761671202303656,
+          "scalar_contribution": 0.018116591275917793,
+          "gradient_norm": 18.96500166063302,
+          "cosine_with_wtmad": 0.7026087901641043,
+          "diet_weight": 23.31
+        },
+        {
+          "reaction_id": "BHPERI-11",
+          "signed_error_kcal_mol": -7.014505091529664,
+          "absolute_error_kcal_mol": 7.014505091529664,
+          "scalar_contribution": 0.6814090660343102,
+          "gradient_norm": 12.819646763714497,
+          "cosine_with_wtmad": 0.68962652136417,
+          "diet_weight": 2.72
+        },
+        {
+          "reaction_id": "BHROT27-16",
+          "signed_error_kcal_mol": 1.6664974619803843,
+          "absolute_error_kcal_mol": 1.6664974619803843,
+          "scalar_contribution": 0.5392309644836529,
+          "gradient_norm": 10.653891617933771,
+          "cosine_with_wtmad": 0.9021755404788657,
+          "diet_weight": 9.06
+        },
+        {
+          "reaction_id": "BHROT27-26",
+          "signed_error_kcal_mol": 0.24042593104789844,
+          "absolute_error_kcal_mol": 0.24042593104789844,
+          "scalar_contribution": 0.07779496197478429,
+          "gradient_norm": 6.835444254475548,
+          "cosine_with_wtmad": 0.7220723551881232,
+          "diet_weight": 9.06
+        },
+        {
+          "reaction_id": "BSR36-31",
+          "signed_error_kcal_mol": -5.468163877626505,
+          "absolute_error_kcal_mol": 5.468163877626505,
+          "scalar_contribution": 0.685473400373894,
+          "gradient_norm": 15.12022099595991,
+          "cosine_with_wtmad": -0.7474765249880718,
+          "diet_weight": 3.51
+        },
+        {
+          "reaction_id": "BUT14DIOL-13",
+          "signed_error_kcal_mol": 0.09593444262413886,
+          "absolute_error_kcal_mol": 0.09593444262413886,
+          "scalar_contribution": 0.06955247090250068,
+          "gradient_norm": 19.076303146466895,
+          "cosine_with_wtmad": 0.9741107026519668,
+          "diet_weight": 20.3
+        },
+        {
+          "reaction_id": "CDIE20-9",
+          "signed_error_kcal_mol": 0.6234038046142847,
+          "absolute_error_kcal_mol": 0.6234038046142847,
+          "scalar_contribution": 0.3121471907390097,
+          "gradient_norm": 5.675166311657644,
+          "cosine_with_wtmad": -0.6531094146511758,
+          "diet_weight": 14.02
+        },
+        {
+          "reaction_id": "DC13-1",
+          "signed_error_kcal_mol": 2.456441961820067,
+          "absolute_error_kcal_mol": 2.456441961820067,
+          "scalar_contribution": 0.09036197216695248,
+          "gradient_norm": 1.074596232574932,
+          "cosine_with_wtmad": -0.8111602603968795,
+          "diet_weight": 1.03
+        },
+        {
+          "reaction_id": "DIPCS10-7",
+          "signed_error_kcal_mol": 0.35386885470973084,
+          "absolute_error_kcal_mol": 0.35386885470973084,
+          "scalar_contribution": 0.0011374356044241349,
+          "gradient_norm": 1.8757947139880027,
+          "cosine_with_wtmad": 0.2780395608333221,
+          "diet_weight": 0.09
+        },
+        {
+          "reaction_id": "FH51-24",
+          "signed_error_kcal_mol": 3.952600097709297,
+          "absolute_error_kcal_mol": 3.952600097709297,
+          "scalar_contribution": 0.25833064924314336,
+          "gradient_norm": 4.447467480511089,
+          "cosine_with_wtmad": 0.4415451132142479,
+          "diet_weight": 1.83
+        },
+        {
+          "reaction_id": "FH51-30",
+          "signed_error_kcal_mol": 1.2203881094164508,
+          "absolute_error_kcal_mol": 1.2203881094164508,
+          "scalar_contribution": 0.07976108000828948,
+          "gradient_norm": 8.101284706377688,
+          "cosine_with_wtmad": 0.9585937734516187,
+          "diet_weight": 1.83
+        },
+        {
+          "reaction_id": "G21EA-14",
+          "signed_error_kcal_mol": 0.09127971141714042,
+          "absolute_error_kcal_mol": 0.09127971141714042,
+          "scalar_contribution": 0.005509382581963118,
+          "gradient_norm": 9.94125534653503,
+          "cosine_with_wtmad": 0.6498195036898033,
+          "diet_weight": 1.69
+        },
+        {
+          "reaction_id": "HAL59-40",
+          "signed_error_kcal_mol": 0.18904025750651465,
+          "absolute_error_kcal_mol": 0.18904025750651465,
+          "scalar_contribution": 0.08358279956895184,
+          "gradient_norm": 7.122621152464865,
+          "cosine_with_wtmad": 0.5442851656871607,
+          "diet_weight": 12.38
+        },
+        {
+          "reaction_id": "HAL59-57",
+          "signed_error_kcal_mol": -0.081362325654883,
+          "absolute_error_kcal_mol": 0.081362325654883,
+          "scalar_contribution": 0.03597377112883755,
+          "gradient_norm": 5.979575265857143,
+          "cosine_with_wtmad": -0.5775838399924287,
+          "diet_weight": 12.38
+        },
+        {
+          "reaction_id": "HEAVY28-16",
+          "signed_error_kcal_mol": 0.5352807940555,
+          "absolute_error_kcal_mol": 0.5352807940555,
+          "scalar_contribution": 0.8753752699929052,
+          "gradient_norm": 13.799854442497274,
+          "cosine_with_wtmad": 0.7814403717836242,
+          "diet_weight": 45.79
+        },
+        {
+          "reaction_id": "MB16-43-10",
+          "signed_error_kcal_mol": 8.60746872887595,
+          "absolute_error_kcal_mol": 8.60746872887595,
+          "scalar_contribution": 0.03688915169518264,
+          "gradient_norm": 7.990483016910404,
+          "cosine_with_wtmad": 0.9445012909487807,
+          "diet_weight": 0.12
+        },
+        {
+          "reaction_id": "MCONF-1",
+          "signed_error_kcal_mol": -0.13153712367231135,
+          "absolute_error_kcal_mol": 0.13153712367231135,
+          "scalar_contribution": 0.05369533298480424,
+          "gradient_norm": 4.3701577446022,
+          "cosine_with_wtmad": -0.3597613183517936,
+          "diet_weight": 11.43
+        },
+        {
+          "reaction_id": "PNICO23-16",
+          "signed_error_kcal_mol": 0.15580084390462878,
+          "absolute_error_kcal_mol": 0.15580084390462878,
+          "scalar_contribution": 0.07400540085469867,
+          "gradient_norm": 3.6821221907102455,
+          "cosine_with_wtmad": 0.5593013727569321,
+          "diet_weight": 13.3
+        },
+        {
+          "reaction_id": "PX13-9",
+          "signed_error_kcal_mol": -9.40399648761531,
+          "absolute_error_kcal_mol": 9.40399648761531,
+          "scalar_contribution": 0.5709569296052152,
+          "gradient_norm": 12.39567150997444,
+          "cosine_with_wtmad": 0.7973308681446021,
+          "diet_weight": 1.7
+        },
+        {
+          "reaction_id": "S66-6",
+          "signed_error_kcal_mol": 0.8147958479163124,
+          "absolute_error_kcal_mol": 0.8147958479163124,
+          "scalar_contribution": 0.3026384577974875,
+          "gradient_norm": 13.895294530431705,
+          "cosine_with_wtmad": 0.962607859485352,
+          "diet_weight": 10.4
+        },
+        {
+          "reaction_id": "S66-50",
+          "signed_error_kcal_mol": -0.09698756733322922,
+          "absolute_error_kcal_mol": 0.09698756733322922,
+          "scalar_contribution": 0.03602395358091371,
+          "gradient_norm": 4.641929527005719,
+          "cosine_with_wtmad": -0.7525188122016297,
+          "diet_weight": 10.4
+        },
+        {
+          "reaction_id": "SIE4x4-15",
+          "signed_error_kcal_mol": 33.13824586681272,
+          "absolute_error_kcal_mol": 33.13824586681272,
+          "scalar_contribution": 2.000129839818339,
+          "gradient_norm": 6.386661754358643,
+          "cosine_with_wtmad": 0.8232629865695177,
+          "diet_weight": 1.69
+        },
+        {
+          "reaction_id": "W4-11-30",
+          "signed_error_kcal_mol": -1.6155403799713781,
+          "absolute_error_kcal_mol": 1.6155403799713781,
+          "scalar_contribution": 0.010962595435520067,
+          "gradient_norm": 0.5510813001849167,
+          "cosine_with_wtmad": -0.3781270406039083,
+          "diet_weight": 0.19
+        },
+        {
+          "reaction_id": "W4-11-57",
+          "signed_error_kcal_mol": 3.161736856193613,
+          "absolute_error_kcal_mol": 3.161736856193613,
+          "scalar_contribution": 0.021454642952742378,
+          "gradient_norm": 3.8186741244195903,
+          "cosine_with_wtmad": 0.9818530609193635,
+          "diet_weight": 0.19
+        },
+        {
+          "reaction_id": "W4-11-132",
+          "signed_error_kcal_mol": 31.040559021145356,
+          "absolute_error_kcal_mol": 31.040559021145356,
+          "scalar_contribution": 0.21063236478634348,
+          "gradient_norm": 4.455823855329164,
+          "cosine_with_wtmad": 0.9727862070688984,
+          "diet_weight": 0.19
+        },
+        {
+          "reaction_id": "WCPT18-15",
+          "signed_error_kcal_mol": -15.706160351492265,
+          "absolute_error_kcal_mol": 15.706160351492265,
+          "scalar_contribution": 0.9087135631934811,
+          "gradient_norm": 15.071808058004352,
+          "cosine_with_wtmad": 0.9114106526674335,
+          "diet_weight": 1.62
+        }
+      ],
+      "finite_difference": {
+        "label": "wtmad",
+        "skipped": false,
+        "scales": [
+          {
+            "target_change": 0.01,
+            "epsilon": 8.355373090405026e-05,
+            "finite_difference": 119.67977360970241,
+            "autodiff": 119.68346466160318,
+            "relative_gap": 3.084011572700993e-05,
+            "plus": 9.106699658492722,
+            "minus": 9.086700275295037
+          },
+          {
+            "target_change": 0.001,
+            "epsilon": 8.355373090405025e-06,
+            "finite_difference": 119.60730299440831,
+            "autodiff": 119.68346466160318,
+            "relative_gap": 0.0006363591446003772,
+            "plus": 9.097699473714922,
+            "minus": 9.095700746433211
+          },
+          {
+            "target_change": 0.0001,
+            "epsilon": 8.355373090405026e-07,
+            "finite_difference": 117.52833460238878,
+            "autodiff": 119.68346466160318,
+            "relative_gap": 0.01800691570308299,
+            "plus": 9.096798310929142,
+            "minus": 9.096601912312282
+          }
+        ]
+      },
+      "adamw": {
+        "available": true,
+        "executed": false,
+        "step": 128,
+        "lr": 0.0001,
+        "momentum_cosine": 0.15421770368348806,
+        "hypothetical_full_objective_cosine": -0.038539935352043725,
+        "note": "The hypothetical displacement inserts the full four-task gradient into the frozen moments. It was not applied, and it is not the next training minibatch."
+      },
+      "zero_residuals": [],
+      "optimizer_updates": 0
+    },
+    {
+      "name": "continuation_raw_t251",
+      "checkpoint_sha256": "63d72b83dbc2ee49b466d366454ded341086547ddf1594893e15547c6410adf5",
+      "model_sha256": "491b6b1e02682c6fdc7ca7b4f3cb9808dd210395de29b253d98806a494b7c87a",
+      "clean28": 9.087061815607186,
+      "objectives": {
+        "relchem": 1.1706491841330284,
+        "ae17": 2.0773448676880237,
+        "exc": 9.88361184272508,
+        "op": 0.030792179300659302
+      },
+      "disconnected": {
+        "relchem": [],
+        "ae17": [],
+        "exc": [],
+        "op": []
+      },
+      "coordinates": 9446,
+      "parameter_names": [
+        "c_input_layers.0.weight",
+        "c_input_layers.1.bias",
+        "c_input_layers.1.weight",
+        "c_output_layer.bias",
+        "c_output_layer.weight",
+        "c_post_symm_blocks.0.fc.0.weight",
+        "c_post_symm_blocks.0.fc.1.bias",
+        "c_post_symm_blocks.0.fc.1.weight",
+        "c_post_symm_blocks.0.fc.3.weight",
+        "c_post_symm_blocks.0.fc.4.bias",
+        "c_post_symm_blocks.0.fc.4.weight",
+        "c_symmetrization_blocks.0.fc.0.weight",
+        "c_symmetrization_blocks.0.fc.1.bias",
+        "c_symmetrization_blocks.0.fc.1.weight",
+        "c_symmetrization_blocks.0.fc.3.weight",
+        "c_symmetrization_blocks.0.fc.4.bias",
+        "c_symmetrization_blocks.0.fc.4.weight",
+        "x_feature_extractor.0.weight",
+        "x_feature_extractor.1.bias",
+        "x_feature_extractor.1.weight",
+        "x_feature_extractor.3.fc.0.weight",
+        "x_feature_extractor.3.fc.1.bias",
+        "x_feature_extractor.3.fc.1.weight",
+        "x_feature_extractor.3.fc.3.weight",
+        "x_feature_extractor.3.fc.4.bias",
+        "x_feature_extractor.3.fc.4.weight",
+        "x_feature_extractor.4.fc.0.weight",
+        "x_feature_extractor.4.fc.1.bias",
+        "x_feature_extractor.4.fc.1.weight",
+        "x_feature_extractor.4.fc.3.weight",
+        "x_feature_extractor.4.fc.4.bias",
+        "x_feature_extractor.4.fc.4.weight",
+        "x_output_layer.bias",
+        "x_output_layer.weight"
+      ],
+      "parameter_numels": [
+        256,
+        32,
+        32,
+        3,
+        192,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        64,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        1024,
+        32,
+        32,
+        3,
+        96
+      ],
+      "blocks": {
+        "c_input_layers.0.weight": "correlation",
+        "c_input_layers.1.bias": "normalization",
+        "c_input_layers.1.weight": "normalization",
+        "c_output_layer.bias": "correlation",
+        "c_output_layer.weight": "correlation",
+        "c_post_symm_blocks.0.fc.0.weight": "correlation",
+        "c_post_symm_blocks.0.fc.1.bias": "normalization",
+        "c_post_symm_blocks.0.fc.1.weight": "normalization",
+        "c_post_symm_blocks.0.fc.3.weight": "correlation",
+        "c_post_symm_blocks.0.fc.4.bias": "normalization",
+        "c_post_symm_blocks.0.fc.4.weight": "normalization",
+        "c_symmetrization_blocks.0.fc.0.weight": "correlation",
+        "c_symmetrization_blocks.0.fc.1.bias": "normalization",
+        "c_symmetrization_blocks.0.fc.1.weight": "normalization",
+        "c_symmetrization_blocks.0.fc.3.weight": "correlation",
+        "c_symmetrization_blocks.0.fc.4.bias": "normalization",
+        "c_symmetrization_blocks.0.fc.4.weight": "normalization",
+        "x_feature_extractor.0.weight": "exchange",
+        "x_feature_extractor.1.bias": "normalization",
+        "x_feature_extractor.1.weight": "normalization",
+        "x_feature_extractor.3.fc.0.weight": "exchange",
+        "x_feature_extractor.3.fc.1.bias": "normalization",
+        "x_feature_extractor.3.fc.1.weight": "normalization",
+        "x_feature_extractor.3.fc.3.weight": "exchange",
+        "x_feature_extractor.3.fc.4.bias": "normalization",
+        "x_feature_extractor.3.fc.4.weight": "normalization",
+        "x_feature_extractor.4.fc.0.weight": "exchange",
+        "x_feature_extractor.4.fc.1.bias": "normalization",
+        "x_feature_extractor.4.fc.1.weight": "normalization",
+        "x_feature_extractor.4.fc.3.weight": "exchange",
+        "x_feature_extractor.4.fc.4.bias": "normalization",
+        "x_feature_extractor.4.fc.4.weight": "normalization",
+        "x_output_layer.bias": "exchange",
+        "x_output_layer.weight": "exchange"
+      },
+      "geometry": {
+        "cosine": {
+          "wtmad": {
+            "wtmad": 1.0000000000000002,
+            "relchem": -0.5935761317749806,
+            "ae17": 0.29290604047970875,
+            "exc": 0.06815188607392168,
+            "op": 0.6656690022217485,
+            "combined": 0.06249014158507127
+          },
+          "relchem": {
+            "wtmad": -0.5935761317749806,
+            "relchem": 1.0,
+            "ae17": 0.4782362029188536,
+            "exc": -0.7806903382893267,
+            "op": -0.9868539772142807,
+            "combined": -0.7493477418963411
+          },
+          "ae17": {
+            "wtmad": 0.29290604047970875,
+            "relchem": 0.4782362029188536,
+            "ae17": 1.0000000000000002,
+            "exc": -0.9184791659146136,
+            "op": -0.3930152926849694,
+            "combined": -0.9164021184195283
+          },
+          "exc": {
+            "wtmad": 0.06815188607392168,
+            "relchem": -0.7806903382893267,
+            "ae17": -0.9184791659146136,
+            "exc": 1.0,
+            "op": 0.7193689058872392,
+            "combined": 0.9905194702552546
+          },
+          "op": {
+            "wtmad": 0.6656690022217485,
+            "relchem": -0.9868539772142807,
+            "ae17": -0.3930152926849694,
+            "exc": 0.7193689058872392,
+            "op": 0.9999999999999999,
+            "combined": 0.7048303536780839
+          },
+          "combined": {
+            "wtmad": 0.06249014158507127,
+            "relchem": -0.7493477418963411,
+            "ae17": -0.9164021184195283,
+            "exc": 0.9905194702552546,
+            "op": 0.7048303536780839,
+            "combined": 1.0000000000000002
+          }
+        },
+        "tasks": {
+          "relchem": {
+            "raw_norm": 15.030243664736169,
+            "weighted_norm": 0.25574682498547624,
+            "dot": -751.4486318447224,
+            "weighted_dot": -12.78625989177143,
+            "predicted_change": 751.4486318447224,
+            "weighted_predicted_change": 12.78625989177143,
+            "normalized_predicted_change": 49.99577176568099,
+            "weighted_normalized_predicted_change": 49.99577176568099
+          },
+          "ae17": {
+            "raw_norm": 475.7341976055442,
+            "weighted_norm": 0.024458706405453053,
+            "dot": 11736.795752132659,
+            "weighted_dot": 0.6034185536525234,
+            "predicted_change": -11736.795752132659,
+            "weighted_predicted_change": -0.6034185536525234,
+            "normalized_predicted_change": -24.670910376437227,
+            "weighted_normalized_predicted_change": -24.670910376437227
+          },
+          "exc": {
+            "raw_norm": 19937.067304420103,
+            "weighted_norm": 0.3009429435722332,
+            "dot": 114444.78346485824,
+            "weighted_dot": 1.72750332265596,
+            "predicted_change": -114444.78346485824,
+            "weighted_predicted_change": -1.72750332265596,
+            "normalized_predicted_change": -5.740301806549317,
+            "weighted_normalized_predicted_change": -5.7403018065493185
+          },
+          "op": {
+            "raw_norm": 0.6194980072263246,
+            "weighted_norm": 0.20813622463230042,
+            "dot": 34.73402361023478,
+            "weighted_dot": 11.669784981055301,
+            "predicted_change": -34.73402361023478,
+            "weighted_predicted_change": -11.669784981055301,
+            "normalized_predicted_change": -56.06801507844916,
+            "weighted_normalized_predicted_change": -56.06801507844916
+          }
+        },
+        "wtmad_norm": 84.2280696431944,
+        "combined_norm": 0.2307332577012469,
+        "combined_cosine": 0.06249014158507127,
+        "combined_predicted_change": -1.214446965592357,
+        "combined_normalized_predicted_change": -5.263423997440462,
+        "cancellation_ratio": 0.7076678949693234,
+        "blocks": {
+          "wtmad": {
+            "share": {
+              "exchange": 0.9742554288081076,
+              "correlation": 0.0012842116148671647,
+              "normalization": 0.024460359577025286,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.9999999999999999,
+              "correlation": 1.0,
+              "normalization": 1.0,
+              "remaining": null
+            }
+          },
+          "relchem": {
+            "share": {
+              "exchange": 0.9673983420412483,
+              "correlation": 0.003070612406197607,
+              "normalization": 0.029531045552553942,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": -0.6187436047237543,
+              "correlation": 0.25614486432024774,
+              "normalization": 0.24573253976552586,
+              "remaining": null
+            }
+          },
+          "ae17": {
+            "share": {
+              "exchange": 0.925266901842431,
+              "correlation": 0.00012098238296363528,
+              "normalization": 0.07461211577460555,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.2773842240198389,
+              "correlation": 0.25089605918082397,
+              "normalization": 0.6892715352089649,
+              "remaining": null
+            }
+          },
+          "exc": {
+            "share": {
+              "exchange": 0.925643041268885,
+              "correlation": 0.0002869588513026804,
+              "normalization": 0.07406999987981235,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.0977520411622135,
+              "correlation": -0.2429200765442319,
+              "normalization": -0.5762886307521764,
+              "remaining": null
+            }
+          },
+          "op": {
+            "share": {
+              "exchange": 0.9767023393321951,
+              "correlation": 0.00023735764110906387,
+              "normalization": 0.02306030302669594,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.68776511365488,
+              "correlation": -0.15661889928464873,
+              "normalization": -0.21660388551025292,
+              "remaining": null
+            }
+          },
+          "combined": {
+            "share": {
+              "exchange": 0.9227261506709004,
+              "correlation": 0.00158964247290422,
+              "normalization": 0.07568420685619541,
+              "remaining": 0.0
+            },
+            "cosine_with_wtmad": {
+              "exchange": 0.09321275594459573,
+              "correlation": 0.21272054151525882,
+              "normalization": -0.6087580014846837,
+              "remaining": null
+            }
+          }
+        },
+        "hidden_opposition": [
+          {
+            "task": "relchem",
+            "block": "normalization",
+            "block_cosine": 0.24573253976552586,
+            "full_cosine": -0.5935761317749806,
+            "wtmad_share": 0.024460359577025286
+          },
+          {
+            "task": "exc",
+            "block": "normalization",
+            "block_cosine": -0.5762886307521764,
+            "full_cosine": 0.06815188607392168,
+            "wtmad_share": 0.024460359577025286
+          },
+          {
+            "task": "op",
+            "block": "normalization",
+            "block_cosine": -0.21660388551025292,
+            "full_cosine": 0.6656690022217485,
+            "wtmad_share": 0.024460359577025286
+          }
+        ],
+        "sie_exclusion": {
+          "cosine_with_wtmad": 0.9989432190080983,
+          "cosine_with_tasks": {
+            "relchem": -0.5618349393982393,
+            "ae17": 0.32871849320875224,
+            "exc": 0.02822464798410165,
+            "op": 0.6346016813068015
+          },
+          "cosine_with_combined": 0.021367244521575835,
+          "predicted_changes": {
+            "relchem": 667.0618958028182,
+            "ae17": -12353.211508144066,
+            "exc": -44450.96336218538,
+            "op": -31.055069148415708
+          }
+        }
+      },
+      "reactions": [
+        {
+          "reaction_id": "ACONF-10",
+          "signed_error_kcal_mol": 0.5056834796522793,
+          "absolute_error_kcal_mol": 0.5056834796522793,
+          "scalar_contribution": 0.5596832512294334,
+          "gradient_norm": 17.951566461805886,
+          "cosine_with_wtmad": -0.5873429113494746,
+          "diet_weight": 30.99
+        },
+        {
+          "reaction_id": "Amino20x4-28",
+          "signed_error_kcal_mol": 0.7417306241008701,
+          "absolute_error_kcal_mol": 0.7417306241008701,
+          "scalar_contribution": 0.6174907445639743,
+          "gradient_norm": 12.244002771216389,
+          "cosine_with_wtmad": 0.846633768980325,
+          "diet_weight": 23.31
+        },
+        {
+          "reaction_id": "Amino20x4-54",
+          "signed_error_kcal_mol": 0.02274998277033058,
+          "absolute_error_kcal_mol": 0.02274998277033058,
+          "scalar_contribution": 0.018939360656300204,
+          "gradient_norm": 19.12013157427809,
+          "cosine_with_wtmad": -0.497736508951257,
+          "diet_weight": 23.31
+        },
+        {
+          "reaction_id": "BHPERI-11",
+          "signed_error_kcal_mol": -6.576759910110148,
+          "absolute_error_kcal_mol": 6.576759910110148,
+          "scalar_contribution": 0.6388852484107002,
+          "gradient_norm": 12.94988438272982,
+          "cosine_with_wtmad": 0.6921208098128917,
+          "diet_weight": 2.72
+        },
+        {
+          "reaction_id": "BHROT27-16",
+          "signed_error_kcal_mol": 1.656359882356604,
+          "absolute_error_kcal_mol": 1.656359882356604,
+          "scalar_contribution": 0.5359507333625297,
+          "gradient_norm": 10.751263323235795,
+          "cosine_with_wtmad": 0.811884303984866,
+          "diet_weight": 9.06
+        },
+        {
+          "reaction_id": "BHROT27-26",
+          "signed_error_kcal_mol": 0.230482947848909,
+          "absolute_error_kcal_mol": 0.230482947848909,
+          "scalar_contribution": 0.07457769669682555,
+          "gradient_norm": 6.83703612759068,
+          "cosine_with_wtmad": 0.6265009197705871,
+          "diet_weight": 9.06
+        },
+        {
+          "reaction_id": "BSR36-31",
+          "signed_error_kcal_mol": -5.913828995822829,
+          "absolute_error_kcal_mol": 5.913828995822829,
+          "scalar_contribution": 0.7413407062620759,
+          "gradient_norm": 15.188076201241683,
+          "cosine_with_wtmad": -0.6366983730646176,
+          "diet_weight": 3.51
+        },
+        {
+          "reaction_id": "BUT14DIOL-13",
+          "signed_error_kcal_mol": 0.046494157759074284,
+          "absolute_error_kcal_mol": 0.046494157759074284,
+          "scalar_contribution": 0.03370826437532885,
+          "gradient_norm": 19.131360405829014,
+          "cosine_with_wtmad": 0.907967880147535,
+          "diet_weight": 20.3
+        },
+        {
+          "reaction_id": "CDIE20-9",
+          "signed_error_kcal_mol": 0.6335931895183373,
+          "absolute_error_kcal_mol": 0.6335931895183373,
+          "scalar_contribution": 0.3172491613231103,
+          "gradient_norm": 5.609103103342519,
+          "cosine_with_wtmad": -0.6818292288504744,
+          "diet_weight": 14.02
+        },
+        {
+          "reaction_id": "DC13-1",
+          "signed_error_kcal_mol": 2.4746712208177915,
+          "absolute_error_kcal_mol": 2.4746712208177915,
+          "scalar_contribution": 0.09103254848008305,
+          "gradient_norm": 1.0845345227875962,
+          "cosine_with_wtmad": -0.8282629928383998,
+          "diet_weight": 1.03
+        },
+        {
+          "reaction_id": "DIPCS10-7",
+          "signed_error_kcal_mol": 0.15640423574950546,
+          "absolute_error_kcal_mol": 0.15640423574950546,
+          "scalar_contribution": 0.0005027279006234104,
+          "gradient_norm": 1.8829559103153066,
+          "cosine_with_wtmad": 0.19606161469658795,
+          "diet_weight": 0.09
+        },
+        {
+          "reaction_id": "FH51-24",
+          "signed_error_kcal_mol": 4.243666700946392,
+          "absolute_error_kcal_mol": 4.243666700946392,
+          "scalar_contribution": 0.27735393081185344,
+          "gradient_norm": 4.478107989870187,
+          "cosine_with_wtmad": 0.47837807529265813,
+          "diet_weight": 1.83
+        },
+        {
+          "reaction_id": "FH51-30",
+          "signed_error_kcal_mol": 1.203418882143998,
+          "absolute_error_kcal_mol": 1.203418882143998,
+          "scalar_contribution": 0.07865201979726844,
+          "gradient_norm": 8.115644864586553,
+          "cosine_with_wtmad": 0.9279759324210122,
+          "diet_weight": 1.83
+        },
+        {
+          "reaction_id": "G21EA-14",
+          "signed_error_kcal_mol": -0.001276164920344769,
+          "absolute_error_kcal_mol": 0.001276164920344769,
+          "scalar_contribution": 7.702566840652356e-05,
+          "gradient_norm": 9.940119264930745,
+          "cosine_with_wtmad": -0.568915077720666,
+          "diet_weight": 1.69
+        },
+        {
+          "reaction_id": "HAL59-40",
+          "signed_error_kcal_mol": 0.07328542176575192,
+          "absolute_error_kcal_mol": 0.07328542176575192,
+          "scalar_contribution": 0.03240262576642889,
+          "gradient_norm": 7.1102368541494245,
+          "cosine_with_wtmad": 0.5135539484326641,
+          "diet_weight": 12.38
+        },
+        {
+          "reaction_id": "HAL59-57",
+          "signed_error_kcal_mol": -0.17476092788725106,
+          "absolute_error_kcal_mol": 0.17476092788725106,
+          "scalar_contribution": 0.07726929597300601,
+          "gradient_norm": 5.964807742271582,
+          "cosine_with_wtmad": -0.5227546198996428,
+          "diet_weight": 12.38
+        },
+        {
+          "reaction_id": "HEAVY28-16",
+          "signed_error_kcal_mol": 0.495119889767732,
+          "absolute_error_kcal_mol": 0.495119889767732,
+          "scalar_contribution": 0.8096978483023017,
+          "gradient_norm": 13.835896229398674,
+          "cosine_with_wtmad": 0.7194096483992121,
+          "diet_weight": 45.79
+        },
+        {
+          "reaction_id": "MB16-43-10",
+          "signed_error_kcal_mol": 7.346217921751922,
+          "absolute_error_kcal_mol": 7.346217921751922,
+          "scalar_contribution": 0.031483791093222524,
+          "gradient_norm": 7.960717510335155,
+          "cosine_with_wtmad": 0.919368983557691,
+          "diet_weight": 0.12
+        },
+        {
+          "reaction_id": "MCONF-1",
+          "signed_error_kcal_mol": -0.19514751066753014,
+          "absolute_error_kcal_mol": 0.19514751066753014,
+          "scalar_contribution": 0.07966200167606677,
+          "gradient_norm": 4.30020495311232,
+          "cosine_with_wtmad": -0.16395897867746884,
+          "diet_weight": 11.43
+        },
+        {
+          "reaction_id": "PNICO23-16",
+          "signed_error_kcal_mol": 0.10211635607808378,
+          "absolute_error_kcal_mol": 0.10211635607808378,
+          "scalar_contribution": 0.0485052691370898,
+          "gradient_norm": 3.6702190342482006,
+          "cosine_with_wtmad": 0.5173641897723376,
+          "diet_weight": 13.3
+        },
+        {
+          "reaction_id": "PX13-9",
+          "signed_error_kcal_mol": -9.251275980532164,
+          "absolute_error_kcal_mol": 9.251275980532164,
+          "scalar_contribution": 0.5616846131037385,
+          "gradient_norm": 12.531133838808831,
+          "cosine_with_wtmad": 0.7960375981028411,
+          "diet_weight": 1.7
+        },
+        {
+          "reaction_id": "S66-6",
+          "signed_error_kcal_mol": 0.7254810199201112,
+          "absolute_error_kcal_mol": 0.7254810199201112,
+          "scalar_contribution": 0.2694643788274699,
+          "gradient_norm": 13.917324891185727,
+          "cosine_with_wtmad": 0.9011552295996116,
+          "diet_weight": 10.4
+        },
+        {
+          "reaction_id": "S66-50",
+          "signed_error_kcal_mol": -0.1596011487472344,
+          "absolute_error_kcal_mol": 0.1596011487472344,
+          "scalar_contribution": 0.059280426677544205,
+          "gradient_norm": 4.654688169691183,
+          "cosine_with_wtmad": -0.6883612864205388,
+          "diet_weight": 10.4
+        },
+        {
+          "reaction_id": "SIE4x4-15",
+          "signed_error_kcal_mol": 33.06308827443598,
+          "absolute_error_kcal_mol": 33.06308827443598,
+          "scalar_contribution": 1.995593542278457,
+          "gradient_norm": 6.439193937712804,
+          "cosine_with_wtmad": 0.8258869636646122,
+          "diet_weight": 1.69
+        },
+        {
+          "reaction_id": "W4-11-30",
+          "signed_error_kcal_mol": -1.870373871829571,
+          "absolute_error_kcal_mol": 1.870373871829571,
+          "scalar_contribution": 0.012691822701700661,
+          "gradient_norm": 0.5493007886314895,
+          "cosine_with_wtmad": -0.33165954525566704,
+          "diet_weight": 0.19
+        },
+        {
+          "reaction_id": "W4-11-57",
+          "signed_error_kcal_mol": 2.8374095623728124,
+          "absolute_error_kcal_mol": 2.8374095623728124,
+          "scalar_contribution": 0.01925385060181551,
+          "gradient_norm": 3.8229313645224514,
+          "cosine_with_wtmad": 0.9397818998097198,
+          "diet_weight": 0.19
+        },
+        {
+          "reaction_id": "W4-11-132",
+          "signed_error_kcal_mol": 30.5555499479552,
+          "absolute_error_kcal_mol": 30.5555499479552,
+          "scalar_contribution": 0.20734123178969602,
+          "gradient_norm": 4.458843652332171,
+          "cosine_with_wtmad": 0.9326011444760428,
+          "diet_weight": 0.19
+        },
+        {
+          "reaction_id": "WCPT18-15",
+          "signed_error_kcal_mol": -15.50867626415048,
+          "absolute_error_kcal_mol": 15.50867626415048,
+          "scalar_contribution": 0.8972876981401351,
+          "gradient_norm": 15.062723102780653,
+          "cosine_with_wtmad": 0.8884706435568963,
+          "diet_weight": 1.62
+        }
+      ],
+      "finite_difference": {
+        "label": "wtmad",
+        "skipped": false,
+        "scales": [
+          {
+            "target_change": 0.01,
+            "epsilon": 0.00011872526631990784,
+            "finite_difference": 89.23195146921562,
+            "autodiff": 84.2280696431944,
+            "relative_gap": 0.05940872024277154,
+            "plus": 9.09824988843054,
+            "minus": 9.077061714025685
+          },
+          {
+            "target_change": 0.001,
+            "epsilon": 1.1872526631990784e-05,
+            "finite_difference": 84.1696848772254,
+            "autodiff": 84.2280696431944,
+            "relative_gap": 0.0006931746888696124,
+            "plus": 9.088061119655814,
+            "minus": 9.086062506005192
+          },
+          {
+            "target_change": 0.0001,
+            "epsilon": 1.1872526631990783e-06,
+            "finite_difference": 83.6605844909684,
+            "autodiff": 84.2280696431944,
+            "relative_gap": 0.006737482583062511,
+            "plus": 9.08716114176352,
+            "minus": 9.086962489260037
+          }
+        ]
+      },
+      "adamw": {
+        "available": true,
+        "executed": false,
+        "step": 379,
+        "lr": 2.5e-05,
+        "momentum_cosine": -0.05486824439100326,
+        "hypothetical_full_objective_cosine": 0.0702826526902469,
+        "note": "The hypothetical displacement inserts the full four-task gradient into the frozen moments. It was not applied, and it is not the next training minibatch."
+      },
+      "zero_residuals": [],
+      "optimizer_updates": 0
+    }
+  ]
+}
