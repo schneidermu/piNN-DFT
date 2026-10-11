@@ -1,0 +1,17 @@
+{
+  "protocol_id": "f011-trajectory-gradient-audit-v1",
+  "c": 9.705596345234895,
+  "f010_definition": "identical to JW",
+  "clean28_recomputed": false,
+  "optimizer_updates": 0,
+  "finite_difference_relative_gap": 4.5472357158225e-05,
+  "checkpoints": {
+    "t0": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+    "t64": "31aad5509924d7a61a641a85b4127cb52070dbb5761d64a5c2f817db134abc7a",
+    "t128": "acab3005f56d178aadeac3e7db54707b41cb32710e826f2d559f4cc78e98531c",
+    "t192": "c20bed8b1339d3747fd74e997f68d1d7919a712256e6bb3a523814fab3744548",
+    "t251": "8be1fd6de97455f76575a1b353383dd276e7abda3f67e5a08e7eece48a753486"
+  },
+  "seconds": 5374.3064479,
+  "peak_allocated_bytes": 14091718144
+}
