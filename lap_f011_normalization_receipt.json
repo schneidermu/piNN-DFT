@@ -1,0 +1,67 @@
+{
+  "protocol_id": "f011-normalized-chemistry-v1",
+  "c": 9.705596345234895,
+  "old_norm": 15.077668087998093,
+  "f011_norm": 1.553502489870259,
+  "scaled_norm": 15.077668087998093,
+  "relative_norm_error": 0.0,
+  "cosine_old_f011": -0.6319573029592472,
+  "cosine_jw_f011": 0.9804096817218224,
+  "factorial_cosine_jw_f011": 0.9804096817218223,
+  "cosine_jw_old": -0.662493920305692,
+  "cosine_jw_operator": 0.7524215614829644,
+  "cosine_jw_total_new": 0.6601159512182893,
+  "cosine_total_new_total_old": 0.8898533731495545,
+  "jw_predicted_change": -0.8706936903976693,
+  "jw_unit_predicted_change": -0.9978131075028916,
+  "jw_contributions": {
+    "relchem": -0.3802025076511567,
+    "ae17": -0.12334861330786966,
+    "exc": -0.13276834056237485,
+    "op": -0.2343742288762681
+  },
+  "scales": {
+    "MGAE109": 504.44701943030725,
+    "DBH76": 18.83600008572851,
+    "NCCE31": 3.5367856718865887,
+    "EA13": 38.680000045082785,
+    "IP13": 253.82846069335938,
+    "pTC13": 168.7876915840002,
+    "ABDE4": 93.42250061035156,
+    "PA8": 163.32500171661377
+  },
+  "counts": {
+    "MGAE109": 104,
+    "DBH76": 70,
+    "NCCE31": 28,
+    "EA13": 11,
+    "IP13": 13,
+    "pTC13": 13,
+    "ABDE4": 4,
+    "PA8": 8
+  },
+  "scales_sha256": "3233a7b3194e68af447bb63edda0d154325da7d051e0df6fe60a7a788cebc73d",
+  "optimizer_updates": 0,
+  "adamw_moments": "retained from the original chemistry objective; not claimed to be optimal for F011",
+  "live": {
+    "passed": true,
+    "old_scalar": 1.195939284232437,
+    "new_scalar": 0.823824025356387,
+    "old_relative_l2": 2.7382253848518664e-12,
+    "new_relative_l2": 7.438592334374053e-12,
+    "other_task_relative_l2": {
+      "ae17": 0.0,
+      "exc": 0.0,
+      "op": 0.0
+    },
+    "other_losses": {
+      "ae17": 1.348148816610323,
+      "exc": 15.972519699713265,
+      "op": 0.011008867530251092
+    },
+    "parent_checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+    "optimizer_moment_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+    "loaded_model_sha256": "c1c6ecee465decf386f6b6b33523c414bca7c1c5a4f93c1df15a9290a4f0760a",
+    "optimizer_step": false
+  }
+}
