@@ -1,0 +1,27 @@
+{
+  "protocol_id": "relchem-factorial-gradient-audit-v1",
+  "optimizer_updates": 0,
+  "penalty_epsilon": 1e-20,
+  "formula": "L_relchem = mean_i factor_d(i) * sqrt(1e-20 + r_i^2)",
+  "factor": "FCHEM_DB_WEIGHTS[d] * FREQ_WEIGHTS[d] / MEAN_WEIGHT",
+  "f000": "equal-weight mean absolute error",
+  "f010": "J251-WTMAD-style, external 1/A_d, not literal GMTKN55 WTMAD-2",
+  "f101": "original penalty with legacy factors rescaled to mean 1; proportional to Full251 relchem",
+  "grouped_rmse_branch": "present in batch_fchem and inactive for the singleton Full251 objective",
+  "clean28_recomputed": false,
+  "s5_loaded": false,
+  "results": [
+    {
+      "name": "b8_t128",
+      "relchem_scalar": 1.195939284232437,
+      "relchem_gradient_relative_l2": 2.738225384852066e-12,
+      "checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b"
+    },
+    {
+      "name": "continuation_raw_t251",
+      "relchem_scalar": 1.1706491841330284,
+      "relchem_gradient_relative_l2": 3.1420754053003246e-12,
+      "checkpoint_sha256": "63d72b83dbc2ee49b466d366454ded341086547ddf1594893e15547c6410adf5"
+    }
+  ]
+}
