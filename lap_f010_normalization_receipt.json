@@ -1,0 +1,136 @@
+{
+  "protocol_id": "f010-uniform-normalized-chemistry-v1",
+  "c": 9.974823077811354,
+  "c011": 9.705596345234895,
+  "old_norm": 15.077668087998093,
+  "f010_raw_norm": 1.5115724830787063,
+  "scaled_norm": 15.077668087998093,
+  "relative_norm_error": 0.0,
+  "cosine_old_f010": -0.6624939203057824,
+  "cosine_jw_f010": 1.0,
+  "cosine_f010_f011": 0.9804096817218224,
+  "cosine_f010_operator": 0.7524215614829646,
+  "cosine_jw_operator": 0.7524215614829644,
+  "cosine_jw_total": 0.651326012134217,
+  "jw_predicted_change": -0.878290808494225,
+  "jw_contributions": {
+    "f010": -0.38779962574771243,
+    "ae17": -0.12334861330786966,
+    "exc": -0.13276834056237485,
+    "op": -0.2343742288762681
+  },
+  "cancellation_ratio": 0.15371560306187093,
+  "geometry": {
+    "checkpoint": "t0",
+    "local_update": 0,
+    "parameter_vector": "f010",
+    "cos_jw_f010": 1.0,
+    "cos_jw_op": 0.7524215614829644,
+    "cos_jw_ae17": 0.2835459074636772,
+    "cos_jw_exc": 0.2892046397893492,
+    "cos_jw_total": 0.651326012134217,
+    "cos_f010_f011": 0.9804096817218224,
+    "cos_f010_operator": 0.7524215614829646,
+    "cancellation_ratio": 0.15371560306187093,
+    "directional_f010": -0.38779962574771243,
+    "directional_ae17": -0.12334861330786966,
+    "directional_exc": -0.13276834056237485,
+    "directional_op": -0.2343742288762681,
+    "directional_total": -0.878290808494225,
+    "weighted_f010": 0.2565537743567935,
+    "weighted_ae17": 0.2877941162405871,
+    "weighted_exc": 0.30371084045950864,
+    "weighted_op": 0.20607231340259502,
+    "raw_f010": 15.077668087998093,
+    "raw_jw": 1.5115724830787063
+  },
+  "scales": {
+    "MGAE109": 504.44701943030725,
+    "DBH76": 18.83600008572851,
+    "NCCE31": 3.5367856718865887,
+    "EA13": 38.680000045082785,
+    "IP13": 253.82846069335938,
+    "pTC13": 168.7876915840002,
+    "ABDE4": 93.42250061035156,
+    "PA8": 163.32500171661377
+  },
+  "counts": {
+    "MGAE109": 104,
+    "DBH76": 70,
+    "NCCE31": 28,
+    "EA13": 11,
+    "IP13": 13,
+    "pTC13": 13,
+    "ABDE4": 4,
+    "PA8": 8
+  },
+  "scales_sha256": "3233a7b3194e68af447bb63edda0d154325da7d051e0df6fe60a7a788cebc73d",
+  "reference_scales_sha256": "77c442b70cebfc04e9121d377f733c37017976aa1460b6cd7e732fc148fd765f",
+  "jw_scalar": 0.1564146381387076,
+  "f010_raw_scalar": 0.1564146381387077,
+  "optimizer_updates": 0,
+  "adamw_moments": "retained from the original chemistry objective; shared with the F011 continuation",
+  "databases_t0": [
+    {
+      "database": "ABDE4",
+      "cosine_jw": -0.9200846199356859,
+      "jw_gradient_norm": 0.022845189499460884
+    },
+    {
+      "database": "DBH76",
+      "cosine_jw": 0.9424733021969478,
+      "jw_gradient_norm": 1.0424944291371474
+    },
+    {
+      "database": "EA13",
+      "cosine_jw": -0.6092937141536247,
+      "jw_gradient_norm": 0.06184311596237286
+    },
+    {
+      "database": "IP13",
+      "cosine_jw": 0.13287816793372537,
+      "jw_gradient_norm": 0.02836280740816683
+    },
+    {
+      "database": "MGAE109",
+      "cosine_jw": 0.47227090958821544,
+      "jw_gradient_norm": 0.3169260498164705
+    },
+    {
+      "database": "NCCE31",
+      "cosine_jw": 0.974918202763686,
+      "jw_gradient_norm": 0.5526102060034281
+    },
+    {
+      "database": "PA8",
+      "cosine_jw": -0.8943568081863909,
+      "jw_gradient_norm": 0.034808713905612715
+    },
+    {
+      "database": "pTC13",
+      "cosine_jw": -0.8781775042523575,
+      "jw_gradient_norm": 0.08348271813443373
+    }
+  ],
+  "live": {
+    "passed": true,
+    "old_scalar": 1.195939284232437,
+    "new_scalar": 1.5602083422134927,
+    "old_relative_l2": 2.7382253848518664e-12,
+    "new_relative_l2": 2.6670348647384596e-12,
+    "other_task_relative_l2": {
+      "ae17": 0.0,
+      "exc": 0.0,
+      "op": 0.0
+    },
+    "other_losses": {
+      "ae17": 1.348148816610323,
+      "exc": 15.972519699713265,
+      "op": 0.011008867530251092
+    },
+    "parent_checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+    "optimizer_moment_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+    "loaded_model_sha256": "c1c6ecee465decf386f6b6b33523c414bca7c1c5a4f93c1df15a9290a4f0760a",
+    "optimizer_step": false
+  }
+}
