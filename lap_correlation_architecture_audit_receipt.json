@@ -1,0 +1,35 @@
+{
+  "protocol_id": "lap-correlation-architecture-audit-v1",
+  "parent_commit": "18987c548080dc6ce91266a4ab8b24107f5764d6",
+  "outcome": "C",
+  "recommendation": "KEEP CURRENT CORRELATION ARCHITECTURE",
+  "optimizer_updates": 0,
+  "checkpoints": {
+    "b8_t128": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+    "f010_t128": "bd5ecc45fa44793e95d82492e2666d1c40c6fa6068b4f2e266824d3774fbc822",
+    "f010_t251": "1dba8af1a11d5f98fdc5b40d8be6b137d9773af3a6f2bc9eb1482750b3a5feb3",
+    "f011_t64": "31aad5509924d7a61a641a85b4127cb52070dbb5761d64a5c2f817db134abc7a",
+    "f011_t251": "8be1fd6de97455f76575a1b353383dd276e7abda3f67e5a08e7eece48a753486"
+  },
+  "precision": "float32 checkpoints widened to float64 for grid diagnostics; operator scalars evaluated in float32; widening does not restore pre-quantization precision",
+  "sign_threshold_Ha_per_particle": 1e-08,
+  "positive_points": 0,
+  "artifact_sha256": {
+    "lap_correlation_activation_comparison.png": "6ef73eeff6e06561090ea182b11d06819cac409c20edf1cf2d3db443e98d7965",
+    "lap_correlation_activation_derivatives.png": "151def2970883b0c40fcaaf09b0ad39085c02c43ee5880c35e692693769d0409",
+    "lap_correlation_activation_saturation.csv": "1de6c2596340dc58e8998be53511de97a1f3cb37d6735d88063f7aa1bb7ee650",
+    "lap_correlation_architecture_audit_report.md": "b8e6de77957aecbd6076af7f386e27a11210bb8b3d0a9d1b03900e9a3d2356cc",
+    "lap_correlation_energy_decomposition.csv": "762cd42e0b613180232365675e0dc03065c33a18cb9dce962e1c4889815bc914",
+    "lap_correlation_exchange_response.png": "e57a20cf7f82cc16e24bb91acf291c738d82d8333dab47b30533752273757a8e",
+    "lap_correlation_gc_distribution.csv": "e5027880bf0a0246ae6f718f5ec402f5a89810441442809a933d263f68b18e4a",
+    "lap_correlation_gc_distribution.png": "91daf013b4f1ad72fa453ed2af18e79f51b5088772f0adaedc392bd3161e2f8f",
+    "lap_correlation_gc_versus_critical.png": "2511928e1a4f5464e334291a5d6a01a12ecdf0a93ec5ee8122520a24b2eec3e3",
+    "lap_correlation_local_energy.png": "237e32ebe9e2e1735ad107832d7040982db81928aeb983f175f91edd02472443",
+    "lap_correlation_operator_sensitivity.csv": "c96a2a2cae7c570d299807523cc5bd2c4ddab7c34d2ca0e2078bb97c536111ad",
+    "lap_correlation_parameter_sensitivity.csv": "0893410160b151a991d200cf5b2252c89e9b22fe39cf11ca6a70d6c492ed0736",
+    "lap_correlation_physical_constraints.csv": "4dbed9a8c7e437332afe80631ae4a2ee880b5cd41830dd7df81390160b4767be",
+    "lap_correlation_positive_energy.csv": "cea30fc47536e6ae36c4130daad2c90ee591d6dc9f3f151fc430f3fa7f69ca61",
+    "lap_correlation_positive_negative.png": "030c354ff506dce80871b89b41fd507a6704785d65549633764feeb1f1f316ee",
+    "lap_correlation_smooth_gc_counterfactual.csv": "fcfa3e0295d4b00db73ee0e08998733dff76caaac401230668545aec90bd5553"
+  }
+}

@@ -1,0 +1,11 @@
+checkpoint,precision,repeat_max_abs,tau_max_abs,spin_max_abs,spin_gc_max_abs,ueg_gnn_max_abs,ueg_gc_max_abs,ueg_beta_max_abs,rho_inf_gc_max_abs,rho_inf_gamma_max_abs,s_inf_gc_max_abs,passthrough_max_abs,passthrough_factor_max_abs,gc_slope_at_0p5_1_1p5,beta_finite,gamma_finite,gc_finite
+b8_t128,float64,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306597126334 1 1,True,True,True
+b8_t128,float32,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306663513184 1 1,True,True,True
+f010_t128,float64,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306597126334 1 1,True,True,True
+f010_t128,float32,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306663513184 1 1,True,True,True
+f010_t251,float64,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306597126334 1 1,True,True,True
+f010_t251,float32,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306663513184 1 1,True,True,True
+f011_t64,float64,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306597126334 1 1,True,True,True
+f011_t64,float32,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306663513184 1 1,True,True,True
+f011_t251,float64,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306597126334 1 1,True,True,True
+f011_t251,float32,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.6065306663513184 1 1,True,True,True
