@@ -1,0 +1,26 @@
+{
+  "protocol_id": "f012-operator-priority-v1",
+  "parent_commit": "d9cc0e84387af375c6f626b45245d04d6d2f2232",
+  "c010": 9.974823077811354,
+  "lambdas": {
+    "relchem": 0.017015480965588553,
+    "ae17": 5.141254618347414e-05,
+    "exc": 1.5094644512009712e-05,
+    "op": 0.6719512321409643
+  },
+  "lr": 2.5e-05,
+  "updates": 251,
+  "optimizer": "AdamW",
+  "betas": [
+    0.9,
+    0.999
+  ],
+  "eps": 1e-08,
+  "weight_decay": 0.01,
+  "foreach": false,
+  "scheduler": null,
+  "parent_checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+  "moment_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+  "manifest_sha256": "b249964d410f0db4a59867de53bb35c6442ec23aa81eefb0b96b50242d94f6bc",
+  "a_d_sha256": "3233a7b3194e68af447bb63edda0d154325da7d051e0df6fe60a7a788cebc73d"
+}
