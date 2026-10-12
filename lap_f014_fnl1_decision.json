@@ -1,0 +1,15 @@
+{
+  "classification": "E",
+  "label": "FIXED NONLINEAR SCALARIZATION NO-GO",
+  "training_authorized": false,
+  "gates": {
+    "A_mathematical_correctness": "pass",
+    "B_b8_inside_cone": "pass",
+    "B_later_checkpoints": "outside the cone at F010 t64, F010 t128, F010 t251, F012 t64 and F012 t128",
+    "C_b8_finite_step_four_tasks": "pass",
+    "C_problem_databases": "ABDE4, PA8 and pTC13 worsen at both B8 scales",
+    "D_historical_adamw": "preserves four-task descent at B8; reset moments are not required for that conclusion",
+    "E_stochastic_estimator": "naive minibatch product is not the declared full gradient",
+    "F_chemistry": "three of eight databases improve at B8; the small-database sacrifice remains"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "protocol_id": "f014-fnl1-v1",
+  "optimizer_updates": 0,
+  "scalarization": "0.5 * sum_i L_i(theta)^2 / (b_i * s_i)",
+  "tasks": ["jw", "ae17", "exc", "op"],
+  "baseline_losses": {
+    "jw": 0.1564146381387076,
+    "ae17": 3.27546495584018,
+    "exc": 14.679044990002591,
+    "op": 0.030933124717599843
+  },
+  "baseline_gradient_norms": {
+    "jw": 1.5115724830787063,
+    "ae17": 5597.740971893248,
+    "exc": 20120.43676933683,
+    "op": 0.6133549684729634
+  },
+  "tolerances": {
+    "b8_scale_abs": 1e-12,
+    "b8_unit_contribution": 1e-8,
+    "cone_margin": 1e-8
+  },
+  "minibatch_cursors": [0, 63, 64, 127, 128],
+  "finite_step_norms": {
+    "b8_t128": 0.0006498670299681904,
+    "f010_t128": 0.0009123532029559539,
+    "f012_t128": 0.0009340652217141161
+  },
+  "reset_adamw": "moments and step initialized at zero; bias correction then gives g/(|g|+eps) plus decoupled weight decay",
+  "not_used": ["Clean28", "Diet100", "MGDA training", "coefficient search"]
+}

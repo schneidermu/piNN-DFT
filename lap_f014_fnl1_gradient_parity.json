@@ -1,0 +1,14 @@
+{
+  "analytical_identity": "grad = sum_i L_i / (b_i s_i) * grad L_i",
+  "autograd_fixture": "passed",
+  "b8_equal_contribution_norms": true,
+  "b8_scale_abs_tolerance": 1e-12,
+  "finite_difference": "temporary steps at B8, F010 t128 and F012 t128; sign agreement is in lap_f014_fnl1_finite_step.csv",
+  "jw_population_product": {
+    "b8_t128": {"cosine": 0.9975529417127826, "relative_l2": 0.35349872599673693},
+    "f010_t128": {"cosine": 0.9729549976197378, "relative_l2": 0.7199073974921901},
+    "f012_t128": {"cosine": 0.9846496389298248, "relative_l2": 0.6672442395153262}
+  },
+  "parameter_mutations": 0,
+  "optimizer_mutations": 0
+}

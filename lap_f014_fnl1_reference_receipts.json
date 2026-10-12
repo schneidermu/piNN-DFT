@@ -1,0 +1,19 @@
+{
+  "optimizer_updates": 0,
+  "b8_losses_match_f013": true,
+  "b8_gradient_norms_match_f013": true,
+  "b8_moment_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+  "b8_optimizer_step": 128,
+  "manifest_sha256": "b249964d410f0db4a59867de53bb35c6442ec23aa81eefb0b96b50242d94f6bc",
+  "a_d_sha256": "3233a7b3194e68af447bb63edda0d154325da7d051e0df6fe60a7a788cebc73d",
+  "checkpoints": {
+    "b8_t128": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+    "f010_t64": "eeb9a3d5099c8db7b961b95ca11db08c4a037339c1037c3cf6ced900edc5e4dd",
+    "f010_t128": "bd5ecc45fa44793e95d82492e2666d1c40c6fa6068b4f2e266824d3774fbc822",
+    "f010_t251": "1dba8af1a11d5f98fdc5b40d8be6b137d9773af3a6f2bc9eb1482750b3a5feb3",
+    "f012_t64": "8a1efed0c4feae8dc75290800d5c255534ae23b557cdf2e35563a7a0c8158838",
+    "f012_t128": "100ce7f50ff6526c04e7747de2b2ba35466f6032ba3d28d789bca8c18f200996",
+    "f012_t251": "a4d3a91e1f8e49cd3d10eb146ccc9a031a78fd7191a6db0eb5a9c37b63342d8a"
+  },
+  "b8_contribution_norms": {"jw": 1.0, "ae17": 1.0, "exc": 1.0, "op": 1.0}
+}
