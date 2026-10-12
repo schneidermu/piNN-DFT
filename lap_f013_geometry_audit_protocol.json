@@ -1,0 +1,37 @@
+{
+  "protocol_id": "f013-geometry-audit-v1",
+  "optimizer_updates": 0,
+  "tolerances_declared_before_results": {
+    "margin_floor": 1e-8,
+    "slsqp_tol": 1e-14,
+    "active_multiplier": 1e-4,
+    "active_margin_equality": 1e-5,
+    "database_reconstruction_l2": 1e-8,
+    "identity_l2_expected": 1e-12,
+    "scalar_parity": "exact match to the published JW scalars"
+  },
+  "primary_objectives": ["unscaled JW", "AE17", "integrated Exc", "weak-form operator"],
+  "normalization": "each feasibility constraint is divided by its own Euclidean norm; a projected norm below 1e-10 is reported as insensitive and is not turned into a unit vector",
+  "database_rule": "individual database gradients are separate feasibility constraints and are not added again into JW",
+  "minibatch_indices_predeclared": [0, 63, 64, 127, 128],
+  "adamw": {
+    "lr": 2.5e-5,
+    "betas": [0.9, 0.999],
+    "eps": 1e-8,
+    "weight_decay": 0.01,
+    "diagonal_convention": "bias-corrected updated second moment preconditions the current gradient with no first-moment EMA; weight decay is kept; the vector is then rescaled to the exact AdamW norm for angle comparisons"
+  },
+  "finite_step_reference_norms": {
+    "b8_t128": 0.0006498670299681904,
+    "f010_t128": 0.0009123532029559539,
+    "f012_t128": 0.0009340652217141161,
+    "source": "executed update_norm of the next logged AdamW step; t251 was not finite-stepped"
+  },
+  "finite_step_directions": [
+    "common four-task max-min",
+    "negative F010 or F012 composite at that state",
+    "exact full-gradient AdamW of that state's own policy",
+    "B8 extended database-constrained direction at scale 1 only"
+  ],
+  "not_used": ["Clean28", "Diet100", "new mRKS", "new SCF", "optimizer.step"]
+}
