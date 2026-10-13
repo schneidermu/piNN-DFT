@@ -1,0 +1,4 @@
+block,relative_threshold,raw_new_residual_VJP_norm,orthogonal_new_residual_VJP_norm,old_projected_reference_fraction,status
+energy-only historical15,1e-06,0.1148232842158406,1.7742829131688018e-17,1.0,energy projection only; operator J_perp unavailable
+energy-only historical15,1e-08,0.1148232842158406,1.7742829131688018e-17,1.0,energy projection only; operator J_perp unavailable
+energy-only historical15,1e-10,0.1148232842158406,1.7742829131688018e-17,1.0,energy projection only; operator J_perp unavailable

@@ -1,0 +1,12 @@
+[
+  {
+    "system": "H2",
+    "method": "double-reverse full variational operator JVP;96 native-F32 additional weights",
+    "seconds": 5.01053589998628,
+    "FD_h": 0.0001,
+    "relative_gap": 0.016773490415147932,
+    "absolute_gap": 1.997472020236894e-05,
+    "passed": false,
+    "projected_15x96_seconds": 7215.171695980243
+  }
+]

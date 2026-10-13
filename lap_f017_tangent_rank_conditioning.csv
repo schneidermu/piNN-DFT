@@ -1,0 +1,4 @@
+block,relative_threshold,old_rank,observations,new_rank_above_same_absolute_threshold,old_sigma1,old_smallest_retained,new_projected_norm,status
+energy-only historical15,1e-06,15,15,0,125.84838571926998,0.0014784189351150442,7.292156299923285e-16,truncated SVD of stored native-gradient numbers; no operator-space conclusion
+energy-only historical15,1e-08,15,15,0,125.84838571926998,0.0014784189351150442,7.292156299923285e-16,truncated SVD of stored native-gradient numbers; no operator-space conclusion
+energy-only historical15,1e-10,15,15,0,125.84838571926998,0.0014784189351150442,7.292156299923285e-16,truncated SVD of stored native-gradient numbers; no operator-space conclusion

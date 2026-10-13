@@ -1,0 +1,19 @@
+{
+  "status": "PARTIAL \u2014 F017 completed with documented limitations",
+  "classification": "E \u2014 INCONCLUSIVE",
+  "reason": "Physical embedding and energy-only data available; operator JVP failed frozen FD tolerance and full15x96 projected runtime exceeds budget. No qualified operator J_perp, finite safety or chemistry transfer result.",
+  "unavailable_artifacts": {
+    "lap_f017_finite_step_validation.csv": "No qualified full operator tangent direction: first physical JVP failed its frozen FD gate. No finite parameter step accepted or retained.",
+    "lap_f017_operator_safety.csv": "Nonzero tangent finite probes stopped at numerical prerequisite; F016 zero-weight/synthetic checks not substituted.",
+    "lap_f017_chemistry_transfer.csv": "No new96 chemistry sensitivities computed after failed physical tangent prerequisite. Old251x9446 caches exist and are verified; R2 chemistry coverage0/251, so transfer is inconclusive."
+  },
+  "R2_training_authorized": false,
+  "next_experiment": "One bounded training-only operator-JVP precision verification on H2 at the same zero-weight embedding: independently bound F32 numerical-integration FD noise before any tangent projection or architectural training. Retain production R0 meanwhile.",
+  "optimizer_updates": 0,
+  "training": false,
+  "Clean28_accessed": false,
+  "operator_reference_coverage": 15,
+  "operator_full_new_jacobian_coverage": 0,
+  "energy_jacobian_systems": 15,
+  "new_chemistry_jacobian_reactions": 0
+}
