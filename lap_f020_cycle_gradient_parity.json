@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "JW_gradient_l2": 1.0038830853607491e-15,
+  "DB_gradient_l2": 5.001215722694449e-16,
+  "DB_database_reconstruction_l2": 4.259551767134696e-16,
+  "JW_scalar_gap": 0.0,
+  "DB_scalar_gap": 0.0
+}

@@ -1,0 +1,55 @@
+{
+  "profile": [
+    {
+      "row": 2,
+      "seconds": 7.661565900023561,
+      "peak_allocated": 5643536896,
+      "peak_reserved": 5821693952
+    },
+    {
+      "row": 3,
+      "seconds": 1.4818768999830354,
+      "peak_allocated": 3758213632,
+      "peak_reserved": 5821693952
+    },
+    {
+      "row": 7,
+      "seconds": 4.335592299990822,
+      "peak_allocated": 797157376,
+      "peak_reserved": 5821693952
+    },
+    {
+      "row": 9,
+      "seconds": 3.0755028999992646,
+      "peak_allocated": 771443712,
+      "peak_reserved": 5821693952
+    },
+    {
+      "row": 11,
+      "seconds": 2.9223003999795765,
+      "peak_allocated": 768816128,
+      "peak_reserved": 5821693952
+    },
+    {
+      "row": 12,
+      "seconds": 1.9831064000027254,
+      "peak_allocated": 5044376064,
+      "peak_reserved": 5821693952
+    },
+    {
+      "row": 13,
+      "seconds": 2.472536499990383,
+      "peak_allocated": 5282898432,
+      "peak_reserved": 5823791104
+    },
+    {
+      "row": 14,
+      "seconds": 2.1449241999944206,
+      "peak_allocated": 4764560896,
+      "peak_reserved": 5823791104
+    }
+  ],
+  "remaining_upper_projection_seconds": 1501.666916404618,
+  "elapsed": 81.03699940000661,
+  "budget": 1800
+}
