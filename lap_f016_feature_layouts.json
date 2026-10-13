@@ -1,0 +1,80 @@
+{
+  "raw": [
+    "rho_a",
+    "rho_b",
+    "sigma_a",
+    "sigma_total",
+    "sigma_b",
+    "tau_a_UNUSED",
+    "tau_b_UNUSED",
+    "lap_a",
+    "lap_b"
+  ],
+  "R0": [
+    "n_a",
+    "n_b",
+    "s_a",
+    "s_total",
+    "s_b",
+    "q_a",
+    "q_b",
+    "zeta"
+  ],
+  "R1": [
+    "n_a",
+    "n_b",
+    "s_a",
+    "s_total",
+    "s_b",
+    "q4_a",
+    "q4_b",
+    "zeta"
+  ],
+  "R2": [
+    "n_a",
+    "n_b",
+    "s_a",
+    "s_total",
+    "s_b",
+    "q_a",
+    "q_b",
+    "zeta",
+    "q4_a",
+    "q4_b"
+  ],
+  "exchange_consumed": {
+    "R0": [
+      [
+        2,
+        5
+      ],
+      [
+        4,
+        6
+      ]
+    ],
+    "R1": [
+      [
+        2,
+        5
+      ],
+      [
+        4,
+        6
+      ]
+    ],
+    "R2": [
+      [
+        2,
+        5,
+        8
+      ],
+      [
+        4,
+        6,
+        9
+      ]
+    ]
+  },
+  "R2_extra_parameters_h32": 96
+}

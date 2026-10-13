@@ -1,0 +1,9 @@
+{
+  "primary_classification": "B \u2014 RESOLUTION IMPROVES, CHEMICAL RELEVANCE UNRESOLVED",
+  "candidate_preference": "R2 for a separately authorized architecture experiment; not production promotion",
+  "reason": "Numerical resolution/anchors/zero-weight embedding pass. Signed chemistry associations exist, but no controlled evidence ties resolved pairs to reference errors; new-weight tail stability is not qualified.",
+  "next_experiment": "One bounded R0 versus zero-new-weight R2 matched training experiment, with original anchor metric, same initialization/data/optimizer and predeclared tail/operator safety checks. Do not run automatically.",
+  "training_updates": 0,
+  "WTMAD_claim": false,
+  "production_modified": false
+}

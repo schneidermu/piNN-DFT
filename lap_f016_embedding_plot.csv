@@ -1,0 +1,9 @@
+model,dtype,forward_gap,gradient_gap
+b8_t128,torch.float64,0.0,0.0
+b8_t128,torch.float32,0.0,0.0
+f010_t128,torch.float64,0.0,0.0
+f010_t128,torch.float32,0.0,0.0
+f010_t251,torch.float64,0.0,0.0
+f010_t251,torch.float32,0.0,0.0
+f012_t128,torch.float64,0.0,0.0
+f012_t128,torch.float32,0.0,0.0
