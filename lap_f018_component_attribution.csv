@@ -1,0 +1,8 @@
+component,measured_error_norm,status,interpretation
+F017 energy coordinate added to operator observation,1.7565770726636197e-05,measured; accounts for squared-error fraction 0.773344516790569,"original gate is joint E/V, not solely V; historical FAIL preserved"
+native F32 parameter-storage rounding,1.9327764191057182e-10,measured actual-direction analytical correction,far smaller than observed9.51e-6 operator error; midpoint zero
+native vs F64 PBE/arithmetic/chain counterfactual,9.50966807111284e-06,measured jointly; not an individual primitive attribution,"same source values, learnedF64 branch, AO/overlapF64; PBE and native gradient-chain arithmetic jointly differ"
+native operator repeated-forward variation,0.0,3repeat measurements,bitwise equal; deterministic roundoff is not stochastic forward noise
+independent AO density-map/mixed route vs native weak assembly,2.348093267516285e-11,measured complete-route agreement,does not isolate pure assembly error from all chain arithmetic
+fixed PW92/PBE contribution,unavailable,algebraic parameter independence; isolated matrix cancellation not measured before budget stop,passthrough2:22 independent of new96; cannot assign FD error to this component without measurement
+final F64 subtraction/metric alone,unavailable,scale estimate only,eps64*baseline/h≈9.28055344745889e-13; assumes perturbed norm of same order; not a rigorous bound

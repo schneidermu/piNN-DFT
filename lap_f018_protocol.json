@@ -1,0 +1,71 @@
+{
+  "experiment": "F018",
+  "parent": "072e98e6ef97f10328aa858aa068e4c938ca17ba",
+  "pins": {
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_decision.json": "43b457e5cbd695947d7611c118ff71c2ffc17be811c781f9d685c34697ecad68",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_local_attainability.csv": "113f12a54a236e85b411f37833b4388bf2930f0f4a9ff7670067003f90b81866",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_new_weight_jacobian_checks.json": "467caebbd171c806d5d73db4d5a1e39641ab3514dd5f320a4cc4da94533679a0",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_protocol.json": "b91650c82f719feacf738a92e67895e948cb7bc99a0f91d4cfac8a405470ed84",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_provenance.json": "8a3d9a71a18b86486979fe68bef1e39dbb24579eecab6a3f99c5858cf50fdc7a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_reference_observable_metrics.csv": "3a52946a44afda53f292030a3f953672231c2fca39df28de4d88c7daaeb7be56",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_reference_pair_analysis.csv": "c9fefe25c22452cdcf35bcac18ed5987c242bbdd9730a5eecef9a23c06c86543",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_reference_residual_alignment.csv": "bd8e987443aa27b1d71620c84c8179ffb55a9a866385203f8c439f8dde3d5b2b",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_representation_contract.md": "b37624e931c661b359cadf38f8365a62ee60ad0a7f7146a0cdb81bf34861f486",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_representation_sufficiency_report.md": "98f5b5a316c6ca234046e97b18d89257e9236d1d9615cb0a30cc7ccb0066f7f5",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\lap_f017_tangent_rank_conditioning.csv": "5165cb410ba6aa082215566368a351037af1485f301dff0382865552936797de",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\tools\\lap_f016_audit.py": "4ca155daa59a2df3e8869bf4909f2971878462aa05f2ccc046320acbcb1e8b1e",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\tools\\lap_f016_descriptors.py": "55690339edd8004643e4a6e833e08ccbcb5db8ce34a491c0ec7d8ed3cc71d3ca",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\tools\\lap_f016_models.py": "b6caf87e9383b3bcbdcc0718001715534d6086660d223207acd950d4d42d492a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\tools\\lap_f016_report.py": "24905b6dbccdfd75b9ee162be5ea20014817830d210bfa09cd9f9cdfe494dad3",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\tools\\lap_f016_sensitivity.py": "71f1c0ad580ee1cbbb69378897980692272807c2cc8a3b595a84fe5878ae239a",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\tools\\lap_f017_audit.py": "f9660d8f1f0851c4a9c0976cc0dfef5cde7256f46af2a8d3af630d349d2d07d4",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\tools\\lap_f017_report.py": "e85810d3aa974ba46a1a4d24017857633b3b8c108c4c0f79ad339a90aaff01d5",
+    "C:\\Dev\\readWFN_share_ms\\lap_operator_runs_20261001\\all90\\H2.h5": "3732c45228dc621a28bbe776cc207690b4f4397fa6f3d99806e3617fba697f59",
+    "C:\\Dev\\readWFN_share_ms\\lap_b8_adamw_20261010\\ordinary_sgd_adamw\\checkpoint_128.pt": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b"
+  },
+  "system": "H2",
+  "n_grid": 42508,
+  "n_ao": 60,
+  "checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+  "direction_sha256": "dc658111f2e7d78c4b9725c14427379bac3dc4d7d18b459514738d4653fd7a59",
+  "coordinate_order": "c_input_layers.0.weight[:,8:10] row-major64; x_feature_extractor.0.weight[:,2:3] row-major32",
+  "parameter_directions": 1,
+  "adjoint_probe_seeds": [
+    1801,
+    1802,
+    1803
+  ],
+  "FD_steps": [
+    0.01,
+    0.003,
+    0.001,
+    0.0003,
+    0.0001,
+    3e-05,
+    1e-05
+  ],
+  "F017_original_h": 0.0001,
+  "F017_gate": {
+    "absolute": 1e-06,
+    "relative": 0.005
+  },
+  "tolerances": {
+    "reproduce_scalar_abs": 1e-10,
+    "reproduce_scalar_rel": 1e-06,
+    "embedding_abs": 1e-10,
+    "embedding_rel": 1e-10,
+    "adjoint_abs": 1e-12,
+    "adjoint_rel": 1e-08,
+    "mixed_abs": 1e-08,
+    "mixed_rel": 1e-05
+  },
+  "native_repeats": 3,
+  "budget_seconds": 1800,
+  "updates": 0,
+  "training": false,
+  "counterfactual": "same widened F32 source values and same realized F32 new weights; isolated F64 model/PBE/chain arithmetic, sensitivity diagnostic not exact native oracle",
+  "mixed_method": "parameter-directional scalar energy derivative first, then anchored AO density-matrix derivative; no weak-form contraction or operator JVP called internally",
+  "density_anchor": "features(P)=stored features widened + AO feature map(P-P_source); preserves exact F017 baseline and source DM despite F32 AO caching",
+  "original_observable": "F017 concatenates energy and operator coordinates. Reproduce full vector, then report both blocks; never retrospectively replace F017 gate",
+  "no_validation_test_or_other_molecular_calculation": true
+}

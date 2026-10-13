@@ -1,0 +1,24 @@
+{
+  "full_F017_vector": {
+    "absolute_gap": 1.997472020236894e-05,
+    "relative_gap": 0.016773490415147932,
+    "cosine": 0.9998636142374511,
+    "max_coordinate_gap": 1.7565770726636197e-05,
+    "nonfinite_count": 0
+  },
+  "operator_only": {
+    "absolute_gap": 9.509634374789425e-06,
+    "relative_gap": 0.00801792438471888,
+    "cosine": 0.9999695400906672,
+    "max_coordinate_gap": 2.129490652813537e-06,
+    "nonfinite_count": 0
+  },
+  "energy_coordinate_absolute_gap": 1.7565770726636197e-05,
+  "full_vector_dimension": 1831,
+  "operator_dimension": 1830,
+  "direction_norm": 0.9999999999999999,
+  "energy_embedding_gap": 0.0,
+  "operator_embedding_gap": 0.0,
+  "analytical_seconds": 5.052978899999289,
+  "reproduced": true
+}

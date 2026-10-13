@@ -1,0 +1,3 @@
+method,absolute_gap,relative_gap,cosine,max_coordinate_gap,nonfinite_count,pass,shared_primitives
+energy-parameter-direction first; direct AO density-matrix derivative second,0.0009130759130683064,0.7698480656520446,0.7375038955579488,0.00017111608673720218,0,False,R2/PBE/casts/AO input tensors; no weak-form assembly or operator JVP in mixed route
+"explicit grad_theta(E) dot frozen v, then grad_DP; native PBE and parameter cast",2.348093267516285e-11,1.9797642606664295e-08,0.9999999999999997,4.610928663623809e-12,0,True,"R2/PBE/casts/AO factors; independent direct density map, no weak-form assembly"

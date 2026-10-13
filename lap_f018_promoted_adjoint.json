@@ -1,0 +1,49 @@
+{
+  "primal_native_parity_gap": 0.0,
+  "analytical_native_JVP_gap": {
+    "absolute_gap": 0.0,
+    "relative_gap": 0.0,
+    "cosine": 0.9999999999999999,
+    "max_coordinate_gap": 0.0,
+    "nonfinite_count": 0
+  },
+  "checks": [
+    {
+      "seed": 1801,
+      "left": 4.570857500827125e-06,
+      "right": 4.570857253028555e-06,
+      "absolute_gap": 2.4779857053553074e-13,
+      "relative_gap": 5.4212709648176525e-08,
+      "pass": true,
+      "native_absolute_gap": 6.701244719314924e-12,
+      "native_vs_promoted_pullback_triangle_bound": 2.4820827430157814e-11,
+      "native_gap_within_measured_bound": true,
+      "parameter_cotangent_rounding_single_cast_bound": 6.81399979812071e-12
+    },
+    {
+      "seed": 1802,
+      "left": 8.40429561847301e-05,
+      "right": 8.404295657709281e-05,
+      "absolute_gap": 3.9236271024735425e-13,
+      "relative_gap": 4.668597203850419e-09,
+      "pass": true,
+      "native_absolute_gap": 3.817433429911463e-12,
+      "native_vs_promoted_pullback_triangle_bound": 5.823456078610519e-11,
+      "native_gap_within_measured_bound": true,
+      "parameter_cotangent_rounding_single_cast_bound": 1.9184661527292864e-11
+    },
+    {
+      "seed": 1803,
+      "left": -6.121701506794853e-06,
+      "right": -6.121701958971572e-06,
+      "absolute_gap": 4.5217671939396225e-13,
+      "relative_gap": 7.386454875201993e-08,
+      "pass": true,
+      "native_absolute_gap": 5.183791535197488e-12,
+      "native_vs_promoted_pullback_triangle_bound": 3.9898074489394804e-11,
+      "native_gap_within_measured_bound": true,
+      "parameter_cotangent_rounding_single_cast_bound": 8.028689941064674e-12
+    }
+  ],
+  "interpretation": "Same F32 primal checkpoint/source values and F32 PBE; promoted F64 parameter-tangent coordinates, not production replacement. Native adjoint FAIL flags remain unchanged."
+}

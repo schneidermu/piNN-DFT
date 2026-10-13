@@ -1,0 +1,23 @@
+{
+  "status": "PARTIAL \u2014 F018 completed with documented limitations",
+  "classification": "A \u2014 ANALYTICAL JVP QUALIFIED; FD PRECISION LIMIT IDENTIFIED",
+  "original_F017_gate": "FAIL",
+  "independent_analytical_qualification": "PASS",
+  "scientific_scope": "H2 and original96-coordinate direction only; no R2 performance/tangent projection claim",
+  "limitations": [
+    "late wall-budget check2083.8s versus1800s; work stopped",
+    "no separately isolated fixed-PW92 cancellation measurement",
+    "no clean certified O(h\u00b2) interval",
+    "conditional numerical uncertainty, not global arithmetic proof"
+  ],
+  "next_experiment": "Freeze one bounded matrix-free JVP/VJP prototype using promoted tangent/cotangent arithmetic and qualified energy-first grad-dot checks, initially H2 only; estimate projection cost before any15-system expansion. No serial15x96 sweep or training.",
+  "updates": 0,
+  "training": false,
+  "systems": 1,
+  "parameter_directions": 1,
+  "native_adjoint_strict_flags_preserved": [
+    "False",
+    "False",
+    "False"
+  ]
+}

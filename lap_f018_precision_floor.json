@@ -1,0 +1,43 @@
+{
+  "repeat_max_coordinate_gap": 0.0,
+  "native_repeats": 3,
+  "all_repeat_bitwise_equal": true,
+  "high_precision_JVP_native_gap": {
+    "absolute_gap": 7.08255442223364e-11,
+    "relative_gap": 5.971563529158617e-08,
+    "cosine": 0.9999999999999982,
+    "max_coordinate_gap": 1.573909806738133e-11,
+    "nonfinite_count": 0
+  },
+  "mixed_energy_first_gap": {
+    "absolute_gap": 0.0009130759130683064,
+    "relative_gap": 0.7698480656520446,
+    "cosine": 0.7375038955579488,
+    "max_coordinate_gap": 0.00017111608673720218,
+    "nonfinite_count": 0
+  },
+  "elapsed_seconds": 93.7863072999753,
+  "uncertainty_status": "measured deterministic differences; no parameter-uniform rigorous rounding bound",
+  "source_dm_sha256": "220aba090d3b012a8e6d68caa75f7043d2ff27a6a7a57a70b1e0712f2dbc3641",
+  "anchored_density_variation": true,
+  "no_new_density_or_SCF": true,
+  "native_operator_error_at_original_h": 9.509634374789425e-06,
+  "joint_error_at_original_h": 1.997472020236894e-05,
+  "native_FD_error_power_fit": -0.9620005005371162,
+  "empirical_error_numerator_min": 1.901926874957885e-09,
+  "empirical_error_numerator_max": 3.2129972102658734e-09,
+  "conditional_saved_vector_error_interval": [
+    9.5092684075612e-06,
+    9.510085332297303e-06
+  ],
+  "interval_assumption": "triangle inequality over native/F64 sensitivity vectors; local to this source state/direction/h, not a uniform physical bound",
+  "original_FD_uncertainty": "native FD at1e-4 unreliable for the frozen gate; measured local error9.51e-6",
+  "strict_native_adjoint_checks": "3FAIL retained; promoted primal/JVP unchanged and3PASS under same tolerance, actual pullback discrepancies covered by measured triangle bounds",
+  "second_order_region": "not conclusively established from stored-realized F32 perturbations; native is rounding-limited",
+  "resource_limit": {
+    "allowed_seconds": 1800,
+    "observed_wall_seconds_at_stop": 2083.7927817949094,
+    "status": "wall budget exceeded before it was checked; scientific work stopped; no further model evaluations",
+    "first_unperformed": "isolated fixed-PW92 matrix cancellation; further clean F64 continuous-parameter O(h\u00b2) check also omitted"
+  }
+}

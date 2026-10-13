@@ -1,0 +1,30 @@
+{
+  "high_energy_first_vs_high_operator_first": {
+    "absolute_gap": 6.933702505531151e-11,
+    "relative_gap": 5.84606110337688e-08,
+    "cosine": 0.9999999999999983,
+    "max_coordinate_gap": 1.7773495891194868e-11,
+    "nonfinite_count": 0
+  },
+  "high_energy_first_vs_native_operator_first": {
+    "absolute_gap": 2.348093267516285e-11,
+    "relative_gap": 1.9797642606664295e-08,
+    "cosine": 0.9999999999999997,
+    "max_coordinate_gap": 4.610928663623809e-12,
+    "nonfinite_count": 0
+  },
+  "native_energy_first_vs_high_energy_first": {
+    "absolute_gap": 0.0009130759128989197,
+    "relative_gap": 0.7698480628860624,
+    "cosine": 0.7375038962221465,
+    "max_coordinate_gap": 0.00017111608731775428,
+    "nonfinite_count": 0
+  },
+  "overlap_eigen_min": 0.0003246754465682513,
+  "overlap_eigen_max": 5.0853530195823735,
+  "overlap_condition": 15662.881419994786,
+  "pass": true,
+  "native_parameter_cast": true,
+  "native_PBE_arithmetic": true,
+  "route": "explicit parameter-gradient dot original v, then direct AO density-matrix derivative; native PBE F32, learned F64, F32 parameter cast; no weak-form assembly or nested JVP"
+}

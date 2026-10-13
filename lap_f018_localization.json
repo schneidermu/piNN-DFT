@@ -1,0 +1,40 @@
+{
+  "points": "64 frozenH2 points at midpoint21254",
+  "baseline_direct_DP_vs_weak": {
+    "absolute_gap": 5.783934120358734e-21,
+    "relative_gap": 1.4780030177187786e-16,
+    "cosine": 1.0,
+    "max_coordinate_gap": 2.541098841762901e-21,
+    "nonfinite_count": 0
+  },
+  "operator_first_direct_DP_vs_weak_JVP": {
+    "absolute_gap": 1.3179731146815814e-22,
+    "relative_gap": 1.7375160263924543e-16,
+    "cosine": 1.0,
+    "max_coordinate_gap": 1.0587911840678754e-22,
+    "nonfinite_count": 0
+  },
+  "energy_first_vs_direct_DP_first": {
+    "absolute_gap": 4.004615263186915e-09,
+    "relative_gap": 0.005279381742930435,
+    "cosine": 0.9999896296847278,
+    "max_coordinate_gap": 2.0752137660154126e-09,
+    "nonfinite_count": 0
+  },
+  "energy_first_vs_weak_JVP": {
+    "absolute_gap": 4.004615263186903e-09,
+    "relative_gap": 0.00527938174293042,
+    "cosine": 0.999989629684728,
+    "max_coordinate_gap": 2.075213766015439e-09,
+    "nonfinite_count": 0
+  },
+  "custom_energy_first_vs_weak_JVP": {
+    "absolute_gap": 4.004615263186903e-09,
+    "relative_gap": 0.00527938174293042,
+    "cosine": 0.999989629684728,
+    "max_coordinate_gap": 2.075213766015439e-09,
+    "nonfinite_count": 0
+  },
+  "custom_parameter_energy_derivative": 2.670860297355524e-08,
+  "direct_parameter_energy_derivative": 2.670860297355524e-08
+}
