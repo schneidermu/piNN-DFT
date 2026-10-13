@@ -1,0 +1,99 @@
+{
+  "optimizer_moment_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+  "states": [
+    {
+      "checkpoint": "b8_t128",
+      "checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+      "reactions_sha256": "6a08dec5dc4d92a90947040c95d3110943dd389fb336defd20a1782212c165ae",
+      "physical_sha256": "2c80341c67c89c1a4aafd465f04a176fcf1404d77280b8d8391cda83bd270967",
+      "jw_scalar": 0.1564146381387076,
+      "jw_published": 0.1564146381387076,
+      "jw_abs_diff": 0.0,
+      "relchem_scalar": 1.1959392842324374,
+      "ae17_published": 3.27546495584018,
+      "exc_published": 14.679044990002591,
+      "op_published": 0.030933124717599843,
+      "f012_identity_l2": 5.386942887931988e-17,
+      "gamma": 0.8011073297204555,
+      "composite_margin_f010": 0.6513260121342171,
+      "composite_margin_f012": 0.6793721779870135,
+      "unit_eigenvalues": [
+        4.9412588408704375e-06,
+        0.11363350685685351,
+        0.9769682318522834,
+        2.909393320032023
+      ]
+    },
+    {
+      "checkpoint": "f010_t128",
+      "checkpoint_sha256": "bd5ecc45fa44793e95d82492e2666d1c40c6fa6068b4f2e266824d3774fbc822",
+      "reactions_sha256": "2fca973812668bcea0be4e1a6c0008851ef398f37c330ddb5e48dd5290bc93b5",
+      "physical_sha256": "0a54523680e39801b856bc873321fc723ef8a2de1fd253c1ff48b092813a5e87",
+      "jw_scalar": 0.14236986905644153,
+      "jw_published": 0.14236986905644153,
+      "jw_abs_diff": 0.0,
+      "relchem_scalar": 1.3064064240886157,
+      "ae17_published": 2.2512007100644498,
+      "exc_published": 4.879897803270238,
+      "op_published": 0.029448852920882538,
+      "f012_identity_l2": 7.550230184335025e-18,
+      "gamma": 0.1097101647714819,
+      "composite_margin_f010": -0.32199284612237405,
+      "composite_margin_f012": -0.6837048056659196,
+      "unit_eigenvalues": [
+        0.013420932848035567,
+        0.2999362688100705,
+        1.2157515976409403,
+        2.470891200700953
+      ]
+    },
+    {
+      "checkpoint": "f010_t251",
+      "checkpoint_sha256": "1dba8af1a11d5f98fdc5b40d8be6b137d9773af3a6f2bc9eb1482750b3a5feb3",
+      "reactions_sha256": "f18a8fdc60ec85c20ed34c8b076f39d576d9917c7aa4e55a86507a12b4d3f622",
+      "physical_sha256": "417c1762d768476e632622c68386988c4e6b407d913013c1e8d7b458b38b4369",
+      "jw_scalar": 0.13582209542516546,
+      "jw_published": 0.13582209542516546,
+      "jw_abs_diff": 0.0,
+      "relchem_scalar": 1.3424966117579304,
+      "ae17_published": 1.4194527798078582,
+      "exc_published": 6.065543632527309,
+      "op_published": 0.029510273039158826,
+      "f012_identity_l2": 1.669903349365036e-17,
+      "gamma": 0.008069829677597055,
+      "composite_margin_f010": -0.9356266632257462,
+      "composite_margin_f012": -0.9772660571803196,
+      "unit_eigenvalues": [
+        0.0001413549491298164,
+        0.02439820291323959,
+        0.6609141981687916,
+        3.314546243968844
+      ]
+    },
+    {
+      "checkpoint": "f012_t128",
+      "checkpoint_sha256": "100ce7f50ff6526c04e7747de2b2ba35466f6032ba3d28d789bca8c18f200996",
+      "reactions_sha256": "8d88f182a1c1930bf4ab12a36a5e588e3cef395cbded75add587679bdf918763",
+      "physical_sha256": "d195bb9d5d811f9becbb939c412286e9f16c7df17c7f6a3e6b54f864eb771bbd",
+      "jw_scalar": 0.14249476779865852,
+      "jw_published": 0.14249476779865852,
+      "jw_abs_diff": 0.0,
+      "relchem_scalar": 1.301020755480336,
+      "ae17_published": 5.407950311254037,
+      "exc_published": 15.14046524175436,
+      "op_published": 0.028969947544150682,
+      "f012_identity_l2": 1.2810797503863129e-17,
+      "gamma": 0.07661958370318399,
+      "composite_margin_f010": -0.9587026398842922,
+      "composite_margin_f012": -0.9082756008785176,
+      "unit_eigenvalues": [
+        4.7755137207518756e-05,
+        0.019320822095122155,
+        0.7180997712691959,
+        3.2625316514984757
+      ]
+    }
+  ],
+  "protocol_sha256": "38188f42e8fae6117bb2007e0df6e26352409bbf91fc50331fa951cef0c637b9",
+  "optimizer_updates": 0
+}

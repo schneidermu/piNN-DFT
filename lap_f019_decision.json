@@ -1,0 +1,27 @@
+{
+  "classification": "PARTIAL",
+  "preflight": "BLOCKED",
+  "reason": "Frozen full251 Jacobian and historical stream have different grid variants; required exact full-cycle reconstruction is not authenticated.",
+  "mismatched_presentations": 1696,
+  "total_cycle_presentations": 2008,
+  "unique_mismatched_identities": 212,
+  "stage_b": "NOT RUN",
+  "stage_c": "NOT RUN",
+  "training_launched": false,
+  "optimizer_updates": 0,
+  "chemistry_presentations": 0,
+  "clean28": "NOT EVALUATED",
+  "c019_status": "evaluation-manifest calibration only; not training-qualified",
+  "tests_passed": 25,
+  "ruff": "PASS",
+  "compileall": "PASS",
+  "diff_check": "PASS",
+  "artifacts": {
+    "lap_f019_database_gradient_geometry.csv": "6aaeb8e2d72b24f15349e70bc9950eb8317df533888b7d154e2e8572e41ef700",
+    "lap_f019_fixed_db_loss_report.md": "caaeaef79cf2e140a3bf6bb9790e7083261ea43cbdba1e158861ddc410a0c620",
+    "lap_f019_gradient_calibration.json": "fd0b383c80ba79db39be5a4d2115ed7ed0f3dd2453a9078070a51d0acc382781",
+    "lap_f019_preflight_decision.json": "178d41b9a2da5ef207652aa783325db4a24aff2ad63c4bdc14c30c2ae254829c",
+    "lap_f019_protocol.json": "38188f42e8fae6117bb2007e0df6e26352409bbf91fc50331fa951cef0c637b9",
+    "lap_f019_provenance.json": "45d3cd4460d6f306c3339f27d9a90e7507161665302437ad4cb0a81832c9bb87"
+  }
+}
