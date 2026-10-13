@@ -1,0 +1,19 @@
+{
+  "focused_tests_passed": 22,
+  "ruff": "PASS; E402 ignored for established script import bootstrap",
+  "compileall": "PASS",
+  "optimizer_updates": 0,
+  "training": false,
+  "cache_parameter_order_gradient_reproduction": "PASS",
+  "input_fd_checks": 24,
+  "live_parameter_jvps": 8,
+  "independent_F32_displacement_checks": 32,
+  "finite_probes": 8,
+  "restoration_parameters_buffers_rng": "BYTE EXACT PASS",
+  "historical_checkpoint_dataset_production_source_pins": "PASS",
+  "scientific_interpretation": "PARTIAL; do not promote any checkpoint",
+  "validation_metadata_initialization": "Initial canonical API initialized metadata; no evaluator/score use. Training-only guardrail added and tested.",
+  "git_diff_check": "PASS",
+  "git_cached_diff_check": "PASS",
+  "generated_artifact_hash_check": "PASS"
+}
