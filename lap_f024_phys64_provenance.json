@@ -1,0 +1,139 @@
+{
+  "protocol_sha256": "d7280b149fab5038e46aa61b7bc87d33b3efc0c1e355e37866e7ce3f7ae4b706",
+  "checkpoint_receipts": {
+    "0": "2b3399ccdbbe8977fcec9bb742c53ba975e552f739761503a83e691469f344fe",
+    "32": "b28dd2e74594c35685157b8bfe657f4ee514fd2935b1c1ac099bfe3fc113c504",
+    "64": "972d25e8482333c8cf5649172120ee013a2ad611c7c1d3806d5f1dbc2d4d7b81"
+  },
+  "control_sha256": "eeb9a3d5099c8db7b961b95ca11db08c4a037339c1037c3cf6ced900edc5e4dd",
+  "endpoint_receipt": {
+    "checkpoint_sha256": "972d25e8482333c8cf5649172120ee013a2ad611c7c1d3806d5f1dbc2d4d7b81",
+    "driver_sha256": "e35fff6af8f517ca1e372638453c164927d26e4d33bfb6f2ae67cfdcdee9e71d",
+    "protocol_sha256": "d7280b149fab5038e46aa61b7bc87d33b3efc0c1e355e37866e7ce3f7ae4b706",
+    "chemistry_count": 251,
+    "atomic_count": 17,
+    "mrks_count": 90,
+    "active_seconds": 1320.3094843,
+    "model_unchanged": true,
+    "RNG_restored": true,
+    "hashes": {
+      "atoms.pt": "8f7833db965038134bcda99c61e03e9f6a402d021a951335123fcafd68393a5d",
+      "physical.pt": "93ced5875c8161bff3b74bc5f8afd39fa73062b8aeca24e3701452a8c5211da7",
+      "reactions.json": "289f4bcc054773965d4bd8ca7fca651cf4036c308152dac803bd96bfc48bb29a",
+      "reactions.npz": "21e86d10652e2395451bc51275c1bbbc4b406904f6ae14bfda9a21d6ef99717f",
+      "vectors.npz": "317f5e8203924f4d6554215e93d2fecaa012407eda74994690469f9762cd9761"
+    }
+  },
+  "preflight": {
+    "passed": true,
+    "rows": [
+      {
+        "position": 0,
+        "task": "ae17",
+        "gradient_gap": 0.0,
+        "bound": 0.009395224199332936,
+        "loss": 1.348148816610323,
+        "source_cache_sha256": "19e79b7e9064442ff38f24057c8976c3c68c889d98181780f245e1cb2dc3bf93"
+      },
+      {
+        "position": 0,
+        "task": "exc",
+        "gradient_gap": 0.0,
+        "bound": 0.053391993567218535,
+        "loss": 15.972519699713265,
+        "source_cache_sha256": "7d4d1929caa1c8f5e4742efc7e6365a45e3c98f64ebd1d71a86cded8e863be1a"
+      },
+      {
+        "position": 0,
+        "task": "op",
+        "gradient_gap": 0.0,
+        "bound": 5.418372717474508e-07,
+        "loss": 0.011008867530251092,
+        "source_cache_sha256": "7d4d1929caa1c8f5e4742efc7e6365a45e3c98f64ebd1d71a86cded8e863be1a"
+      },
+      {
+        "position": 31,
+        "task": "ae17",
+        "gradient_gap": 0.0,
+        "bound": 0.003660600822858199,
+        "loss": 6.909769315107273,
+        "source_cache_sha256": "3a5a5d9c755607c5f16624b7c9090b781d69b252aaa918db06abf25649ee0151"
+      },
+      {
+        "position": 31,
+        "task": "exc",
+        "gradient_gap": 0.0,
+        "bound": 0.021046247609047726,
+        "loss": 11.768867242932128,
+        "source_cache_sha256": "c1bdf34b6bf2e51a8678008bf81a0cd7008ccee20700a3c191fe7c65565e4ad8"
+      },
+      {
+        "position": 31,
+        "task": "op",
+        "gradient_gap": 0.0,
+        "bound": 2.1561985198562275e-06,
+        "loss": 0.04417817345665216,
+        "source_cache_sha256": "c1bdf34b6bf2e51a8678008bf81a0cd7008ccee20700a3c191fe7c65565e4ad8"
+      }
+    ],
+    "relative_chemistry_training_calls": 0,
+    "model_restored": true,
+    "moments_restored": true,
+    "RNG_restored": true,
+    "counter": 128,
+    "constraints": {
+      "spin_max_abs": 0.0,
+      "passthrough_max_abs": 0.0,
+      "output_finite": true,
+      "ueg_beta_gap": 0.0,
+      "high_density_gamma_gap": 0.0,
+      "gc_anchor_gap": 0.0,
+      "tau_gap": 0.0,
+      "passed": true
+    },
+    "seconds": 24.481895200005965
+  },
+  "control_receipt": {
+    "checkpoint_sha256": "eeb9a3d5099c8db7b961b95ca11db08c4a037339c1037c3cf6ced900edc5e4dd",
+    "scalar_cache_sha256": "1f481b9caa17bc9d05d5a9b0a70fa82b18d799a21592278f871ed977fbc2f3e3",
+    "active_seconds": 269.88039740000386,
+    "model_unchanged": true
+  },
+  "source_hashes": {
+    "tools/lap_f024_phys64.py": "3b5a3c810573d70f5607d954b680bc72ab52bdd11c49061606fcccc3d1fa6986",
+    "tools/lap_f024_phys64_eval.py": "e35fff6af8f517ca1e372638453c164927d26e4d33bfb6f2ae67cfdcdee9e71d",
+    "tools/lap_f024_phys64_history.py": "1a7eb8d953fd23bea0c1c1d895ee6bf35675d9e4f53724afb96653ac2f092bc5",
+    "tools/lap_f024_phys64_report.py": "c713f88b8f5f552a189d92b7ece6f090f8eaafc1dbd139a38b904567ef078af0"
+  },
+  "historical_gradient_receipts_sha256": "672dc62546a9b15ac239e9d6fc10f28a8912e136efd149ff5f155409e87d1651",
+  "evaluation_manifest_sha256": "132bd550161be6bc6761f8df1de8d3755c0b0debab53663208c3a9bbf56cb805",
+  "dataset_manifest_sha256": "7150eb66a20f62ee5b9f784a6bfdc89827dd4e80776b5e14b69f176f8357a4a9",
+  "dataset_logical_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "native_trace": {
+    "milestones": {
+      "32": {
+        "weights_exact": true,
+        "first_moments_exact": true,
+        "second_moments_exact": true
+      },
+      "64": {
+        "weights_exact": true,
+        "first_moments_exact": true,
+        "second_moments_exact": true
+      }
+    },
+    "trace_only": true,
+    "optimizer_created": false,
+    "fresh_gradients_computed": false,
+    "retained_updates": 0,
+    "active_seconds": 0.8535020000126678,
+    "native_inputs_checkpoint_sha256": "972d25e8482333c8cf5649172120ee013a2ad611c7c1d3806d5f1dbc2d4d7b81",
+    "driver_sha256": "1a7eb8d953fd23bea0c1c1d895ee6bf35675d9e4f53724afb96653ac2f092bc5"
+  },
+  "handoff_proposal_sha256": "f6f6bf4bafddaa8a646614d2ec7928e2816fe7731a0555135ea2e3788c89c4d8",
+  "parent_unchanged": true,
+  "architecture_modified": false,
+  "Clean28_accessed": false,
+  "SCF_executed": false,
+  "second_stage": false
+}

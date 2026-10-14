@@ -1,0 +1,21 @@
+{
+  "milestones": {
+    "32": {
+      "weights_exact": true,
+      "first_moments_exact": true,
+      "second_moments_exact": true
+    },
+    "64": {
+      "weights_exact": true,
+      "first_moments_exact": true,
+      "second_moments_exact": true
+    }
+  },
+  "trace_only": true,
+  "optimizer_created": false,
+  "fresh_gradients_computed": false,
+  "retained_updates": 0,
+  "active_seconds": 0.8535020000126678,
+  "native_inputs_checkpoint_sha256": "972d25e8482333c8cf5649172120ee013a2ad611c7c1d3806d5f1dbc2d4d7b81",
+  "driver_sha256": "1a7eb8d953fd23bea0c1c1d895ee6bf35675d9e4f53724afb96653ac2f092bc5"
+}

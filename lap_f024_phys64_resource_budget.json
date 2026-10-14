@@ -1,0 +1,18 @@
+{
+  "wall_limit": 10800,
+  "wall_used": 35.28665494918823,
+  "GPU": "NVIDIA GeForce RTX 5070 Ti",
+  "physical_profile_seconds": [
+    9.94221129998914,
+    6.969887900020694
+  ],
+  "chemistry_profile_seconds": 1.4349731000256725,
+  "endpoint_reserve_seconds": 3169.8982797482895,
+  "projected_remaining_seconds": 4124.350564547247,
+  "resource_qualified": true,
+  "peak_allocated_GiB": 10.177134990692139,
+  "final_scientific_wall_seconds": 2676.89342212677,
+  "instrumented_active_GPU_CPU_seconds": 2205.791351200194,
+  "timing_note": "Instrumented synchronous phases; startup, checkpoint IO, reporting and idle remain in wall time",
+  "budget_respected": true
+}

@@ -1,0 +1,12 @@
+{
+  "passed": 40,
+  "failed": 0,
+  "test_seconds": 10.16,
+  "ruff": "PASS; E402 script bootstrap only",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "hash_integrity": "PASS",
+  "fixture_note": "Default sandbox temp unavailable; identical tests passed with a confined workspace basetemp",
+  "moment_trace": "exact weights/moments at32/64",
+  "historical_artifacts_unchanged": true
+}

@@ -1,0 +1,6 @@
+{
+  "prediction_kcal": -315.28536867212006,
+  "reference_kcal": -313.7547607421875,
+  "signed_error_kcal": -1.5306079299325575,
+  "absolute_error_kcal": 1.5306079299325575
+}

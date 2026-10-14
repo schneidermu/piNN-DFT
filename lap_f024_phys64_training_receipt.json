@@ -1,0 +1,12 @@
+{
+  "updates": 64,
+  "counter": 192,
+  "physical_exposures": 64,
+  "relative_chemistry_exposures": 0,
+  "training_active_seconds": 580.106072300172,
+  "checkpoints": {
+    "0": "2b3399ccdbbe8977fcec9bb742c53ba975e552f739761503a83e691469f344fe",
+    "32": "b28dd2e74594c35685157b8bfe657f4ee514fd2935b1c1ac099bfe3fc113c504",
+    "64": "972d25e8482333c8cf5649172120ee013a2ad611c7c1d3806d5f1dbc2d4d7b81"
+  }
+}

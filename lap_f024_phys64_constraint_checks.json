@@ -1,0 +1,13 @@
+{
+  "t64": {
+    "spin_max_abs": 0.0,
+    "passthrough_max_abs": 0.0,
+    "output_finite": true,
+    "ueg_beta_gap": 0.0,
+    "high_density_gamma_gap": 0.0,
+    "gc_anchor_gap": 0.0,
+    "tau_gap": 0.0,
+    "passed": true
+  },
+  "model_unchanged": true
+}

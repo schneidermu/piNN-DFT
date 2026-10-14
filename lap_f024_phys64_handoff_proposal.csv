@@ -1,0 +1,7 @@
+target,first_order_change,displacement_norm,population,retained_update
+JW,-4.6585779825217003e-05,0.0002869711143161836,"E251/E17/full90; full-population counterfactual, not a minibatch",False
+legacy,0.0002364757361859582,0.0002869711143161836,"E251/E17/full90; full-population counterfactual, not a minibatch",False
+ae17,-0.20757085647748916,0.0002869711143161836,"E251/E17/full90; full-population counterfactual, not a minibatch",False
+H,-0.008993104106074578,0.0002869711143161836,"E251/E17/full90; full-population counterfactual, not a minibatch",False
+exc,-0.21399479438901797,0.0002869711143161836,"E251/E17/full90; full-population counterfactual, not a minibatch",False
+op,5.46977780181373e-06,0.0002869711143161836,"E251/E17/full90; full-population counterfactual, not a minibatch",False
