@@ -1,0 +1,24 @@
+{
+  "primary_target_definition": "UNRESOLVED",
+  "dispersion_contract": "UNRESOLVED",
+  "gauge_provenance": "UNRESOLVED",
+  "variational_assembly": "PASS",
+  "reference_projection": "PASS",
+  "independent_PBE_oracle": "FAIL",
+  "scientific_verdict": [
+    "TARGET_PROVENANCE_UNRESOLVED",
+    "NUMERICAL_OR_METRIC_SENSITIVITY_IDENTIFIED"
+  ],
+  "stationary_condition": "NOT RUN: generator Fock/gauge convention not authenticated",
+  "trained_checkpoint_access": false,
+  "optimizer_access": false,
+  "original_fixture_FAIL_preserved": true,
+  "diagnostic_implementation_error": "symmetric DM graph fixed in independently recorded supplement, production unchanged",
+  "scope_limits": [
+    "original inversion/export and original gauge not authenticated",
+    "D3 parameter/geometry receipt missing",
+    "repository-F64 oracle gate fails H2/BeH2; regularization sensitivity measured",
+    "no trained model conclusions",
+    "no SCF stationary check"
+  ]
+}

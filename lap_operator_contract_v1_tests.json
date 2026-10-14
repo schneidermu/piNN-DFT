@@ -1,0 +1,25 @@
+{
+  "focused_tests": {
+    "passed": 30,
+    "seconds": 7.41,
+    "initial_test_failure": "fresh R0 default has 9381 coordinates; full-coordinate test now explicitly enables original Gc flag (9446), no assertion relaxed"
+  },
+  "ruff": "PASS",
+  "ruff_local_exception": "S102 only at exec of locally SHA-authenticated PBE source copy; no global ignore",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "source_hashes_match": true,
+  "driver_hash_match": true,
+  "current_audit_sources": {
+    "tools\\lap_operator_contract_v1_audit.py": "98d117b042f2458f14d896d618b85b00008cfa319ac399adcafae0b3ddb65a5c",
+    "tools\\lap_operator_contract_v1_followup.py": "f4748fd7039073583e2c96e24e89bffc0dc4e548a193be234c43cda54a91e425",
+    "tools\\lap_operator_contract_v1_report.py": "4a95eddcb4d745d9581862e56952695664eafa5c74b25369c57817e92e9f5f24"
+  },
+  "supplement_post_execution_edits": "removed unused imports, sorted imports, added local S102 comment; numerical function bodies unchanged",
+  "budget_seconds": 10800,
+  "scientific_wall_since_freeze_seconds": 1174.6529760360718,
+  "trained_checkpoints_loaded": 0,
+  "optimizer_states_loaded": 0,
+  "training_updates": 0,
+  "production_files_modified": false
+}

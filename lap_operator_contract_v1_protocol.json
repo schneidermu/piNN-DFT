@@ -1,0 +1,114 @@
+{
+  "namespace": "lap_operator_contract_v1_",
+  "head": "5a49427d81dde3431e3805072e3d64e81718cbce",
+  "branch": "lap_full_vxc",
+  "initial_worktree": "?? .planning/chem_precision_trace/\n?? .planning/quick/\n?? .planning/step_globalization/lap_step_globalization_report.md\n?? .planning/step_globalization/protocol.json\n?? .planning/step_globalization/results.json\n?? baseline_validation/\n?? four_objective_throughput_diagnosis_metrics.json\n?? four_objective_throughput_diagnosis_report.md\n?? full90_25update_qualification.py\n?? full90_25update_qualification_protocol.json\n?? lap_f025_aggregate_closure.csv\n?? lap_f025_analysis_receipt.json\n?? lap_f025_availability.csv\n?? lap_f025_availability_aggregates.csv\n?? lap_f025_decision.json\n?? lap_f025_direct_parity.csv\n?? lap_f025_final_integrity.json\n?? lap_f025_harmful_cumulative.csv\n?? lap_f025_harmful_cumulative.png\n?? lap_f025_native_directions.csv\n?? lap_f025_operator_vector_changes.csv\n?? lap_f025_pairwise_decomposition.csv\n?? lap_f025_pairwise_records.csv\n?? lap_f025_per_record_attribution.csv\n?? lap_f025_protocol.json\n?? lap_f025_provenance.json\n?? lap_f025_recomputation_receipt.json\n?? lap_f025_report.md\n?? lap_f025_source_provenance.json\n?? lap_f025_task_attribution.csv\n?? lap_f025_tests.json\n?? lap_f025_unchanged_database_metrics.csv\n?? lap_f025_unchanged_quality_metrics.csv\n?? test_full90_25update_qualification.py\n?? tests/test_lap_f025_attribution.py\n?? tests/test_publication_baselines.py\n?? tools/evaluate_publication_baselines.py\n?? tools/lap_f025_analyze.py\n?? tools/lap_f025_collect.py\n?? tools/lap_f025_report.py\n?? tools/lap_operator_contract_v1_audit.py\n?? tools/profile_four_objective_throughput.py\n?? train_lap_four_objective.py\n",
+  "wall_origin_unix": 1791985850.879631,
+  "budget_seconds": 10800,
+  "pilot": [
+    "H2",
+    "BeH2",
+    "CO"
+  ],
+  "sources": {
+    "train_models/build_lap_operator_data.py": "20cb445d5c926653a09a54b6e0854b6a2d170de19995eb444ba84064777696fe",
+    "train_models/lap_operator_data.py": "8d411952a579728dac395e38d1255e5e5bb412ea77d4e2fb8c9f6116e55f93c9",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "train_models/prepare_vxc.py": "8898a34214a099cd268caa8e3b40e01267aaffe79f97e6051f3e620374d7314f",
+    "train_models/build_mrks_stencils.py": "5af240591b1b7b5c6173035e938828fa8a8fa4967aacdd1d21504b8b707669d8",
+    "train_models/compute_mrks_pbe0_d3bj.py": "4475f2f8342637ca3f2126045a48ada66c8491530e58f0384f3403d88734993c",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "tools/build_publication_dataset.py": "5e84918c442be2d8625a278186c7d6c6707830a58fcfb8f62abed62b2f478bb5",
+    "train_models/mrks_source_audit_v2.json": "300d09095cca9c8e8809f9e45ba78d6a694c30542cf35a314cf6d74db7a7e131",
+    "lap_operator_corpus_manifest.json": "65aab3a084eb1a5ac6eb78d3a2d04d9744524b4ea58616f5e29768f8731b1bd7"
+  },
+  "driver_sha256": "98d117b042f2458f14d896d618b85b00008cfa319ac399adcafae0b3ddb65a5c",
+  "versions": {
+    "python": "3.10.12",
+    "torch": "2.14.1+cpu",
+    "pyscf": "2.14.0",
+    "libxc": "7.0.0"
+  },
+  "tolerances": {
+    "algebra_atol": 1e-10,
+    "algebra_rtol": 1e-09,
+    "projection_relative": 1e-10,
+    "independent_energy_atol_ha": 1e-06,
+    "independent_energy_rtol": 2e-06,
+    "independent_matrix_relative": 1e-05,
+    "mixed_energy_atol_ha": 2e-05,
+    "mixed_energy_rtol": 1e-05,
+    "mixed_matrix_relative": 0.0001,
+    "ideal_energy_atol_ha": 1e-09,
+    "ideal_matrix_relative": 1e-08,
+    "source_vxc_atol_ha": 1e-05
+  },
+  "tolerance_basis": "F64 operator unit tests 1e-10/1e-9; independent and mixed checks separately allow explicit source constant rounding/regularization budget, not historical model errors; FAILs retained",
+  "canonical_constants_stored_f32": [
+    [
+      0.06672455370426178,
+      0.031090691685676575,
+      1.7099210023880005,
+      7.595699787139893,
+      14.118900299072266,
+      10.357000350952148,
+      3.587599992752075,
+      6.197700023651123,
+      3.6231000423431396,
+      1.638200044631958,
+      3.3661999702453613,
+      0.8802599906921387,
+      0.4929400086402893,
+      0.6251699924468994,
+      0.49671000242233276,
+      0.031091000884771347,
+      0.015545000322163105,
+      0.0168869998306036,
+      0.21369999647140503,
+      0.20547999441623688,
+      0.11124999821186066,
+      -0.9305257201194763,
+      0.8040000200271606,
+      0.21951496601104736,
+      0.8040000200271606,
+      0.21951496601104736,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "production_regularization": {
+    "rs_density_add": 1e-07,
+    "xs_density_add": 1e-10,
+    "xs_sigma_add": 2.1544346900318913e-27,
+    "zeta_clip": "none; z_thr returns input",
+    "expm1_cap": 87
+  },
+  "oracle": "PySCF nr_rks(PBE), original dm/coords/weights; Libxc conventions inspected from installed source; no SCF",
+  "counterfactual": "IdealPBE analytical F64 PW_MOD coefficients, rho floor1e-30 only; numerical functional differs from production",
+  "no_checkpoint_or_optimizer_load": true,
+  "no_training_or_scf": true,
+  "corpus_root": "/mnt/c/Dev/readWFN_share_ms/lap_operator_runs_20261001/all90",
+  "pilot_files": {
+    "BeH2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_operator_runs_20261001/all90/BeH2.h5",
+      "sha256": "e3d3ac21d5d360a6d0633ba5eb68e69977e597800e288e71b8eb7594bb3e1633",
+      "npz_sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00"
+    },
+    "CO": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_operator_runs_20261001/all90/CO.h5",
+      "sha256": "ac7eef3c2731063c4fac7249c2e8b2b31511fe275d9a9ce92150215dba9b90aa",
+      "npz_sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e"
+    },
+    "H2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_operator_runs_20261001/all90/H2.h5",
+      "sha256": "3732c45228dc621a28bbe776cc207690b4f4397fa6f3d99806e3617fba697f59",
+      "npz_sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95"
+    }
+  }
+}

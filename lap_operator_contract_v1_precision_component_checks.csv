@@ -1,0 +1,13 @@
+system,component,Exc_ha,orth_absolute_fro,orth_relative,status,interpretation,AO_absolute_fro,candidate_Wxc_ha,exc_wf_ha,difference_ha,input_file
+H2,precise_constants,-0.6939371407348922,4.116828943293099e-05,1.2777808623661518e-05,PASS,"sensitivity counterfactual, numerical functional differs; not a production repair",,,,,
+H2,precise_no_floors,-0.6939350659923884,2.091845080567742e-13,6.492666194787638e-14,PASS,"sensitivity counterfactual, numerical functional differs; not a production repair",,,,,
+H2,legacy_F32_vxc_vs_source_NPZ_F64_projection,,1.0070056050888416e-08,,MEASURED,,1.3969529599012157e-08,,,,
+H2,exc_wf_vs_half_rho_vxc_hole_integral,,,,DEFINITION_UNRESOLVED,numeric identity cannot alone prove exporter definition or T_c inclusion,,-0.7346086554014271,-0.7346086554014271,0.0,/home/mmedvedev/lsvvt/chep/ready/H2/inp.orca.zst
+BeH2,precise_constants,-3.5380802078429734,0.00021862014513518218,2.674690130635476e-05,PASS,"sensitivity counterfactual, numerical functional differs; not a production repair",,,,,
+BeH2,precise_no_floors,-3.5380758277445064,8.977123574693904e-13,1.0982987780875275e-13,PASS,"sensitivity counterfactual, numerical functional differs; not a production repair",,,,,
+BeH2,legacy_F32_vxc_vs_source_NPZ_F64_projection,,2.4606989744209784e-08,,MEASURED,,2.673350243654079e-08,,,,
+BeH2,exc_wf_vs_half_rho_vxc_hole_integral,,,,DEFINITION_UNRESOLVED,numeric identity cannot alone prove exporter definition or T_c inclusion,,-3.6827429183469724,-3.6827429183469724,0.0,/home/mmedvedev/lsvvt/chep/ready/BeH2/inp.orca.zst
+CO,precise_constants,-13.77872736625446,3.400624037378902e-05,1.7819804427649474e-06,PASS,"sensitivity counterfactual, numerical functional differs; not a production repair",,,,,
+CO,precise_no_floors,-13.778723827802871,6.328243536811173e-12,3.316099073493291e-13,PASS,"sensitivity counterfactual, numerical functional differs; not a production repair",,,,,
+CO,legacy_F32_vxc_vs_source_NPZ_F64_projection,,8.697085242925855e-08,,MEASURED,,1.033339957730865e-07,,,,
+CO,exc_wf_vs_half_rho_vxc_hole_integral,,,,DEFINITION_UNRESOLVED,numeric identity cannot alone prove exporter definition or T_c inclusion,,-14.259911883062871,-14.259911883062871,0.0,/home/mmedvedev/lsvvt/chep/ready/CO/inp.orca.zst

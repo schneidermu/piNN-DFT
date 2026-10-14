@@ -1,0 +1,9 @@
+fixture,check,absolute_error,bound,status,meaning
+polynomial,energy_DM_gradient,34.09773253639955,3.864813953896428e-07,FAIL,
+polynomial,full_symmetric_trace_contraction,3.197442310920451e-14,,PASS,
+polynomial,operator_loss_parameter_gradient,3562.1570138306124,,FAIL,
+polynomial,extra_spin_factor,386.38139538964276,,PASS,PASS means deliberately wrong copy detected
+polynomial,missing_laplacian_AO_terms,52.16479289192284,,PASS,PASS means deliberately wrong copy detected
+polynomial,wrong_sigma_mapping,34.458857042210845,,PASS,PASS means deliberately wrong copy detected
+fresh_seed24019_R0,energy_DM_gradient,1.1110290855606573,1.3126367739508218e-08,FAIL,
+fresh_seed24019_R0,full_symmetric_trace_contraction,2.7755575615628914e-15,,PASS,

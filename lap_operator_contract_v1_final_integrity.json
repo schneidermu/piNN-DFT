@@ -1,0 +1,79 @@
+{
+  "sources_unchanged": true,
+  "publication_pilot_hashes": {
+    "BeH2": {
+      "file_sha256": "0e0bac52f99f327bd3ff69dbc24897c97707c0f4d9e5919777a64d679a4c52e7",
+      "source_id": "BeH2",
+      "source_metadata_sha256": "e521cc2d0cab046fee84bbe1d9194e2093af1f6eebacefa07097f28d0b18f6dc",
+      "phi_dtype": "float32",
+      "grad_phi_dtype": "float32",
+      "lap_phi_dtype": "float32"
+    },
+    "CO": {
+      "file_sha256": "90bc5aa238a701f663a04663f520f4083a58ee463b3633ae50e52ddb51ec58a9",
+      "source_id": "CO",
+      "source_metadata_sha256": "7e410157ac31af28a796df2993feed6895cad50d1fcf5d8d9c2443a1e8dc7a9c",
+      "phi_dtype": "float32",
+      "grad_phi_dtype": "float32",
+      "lap_phi_dtype": "float32"
+    },
+    "H2": {
+      "file_sha256": "71a50fe496f00ae46f378e72fe70a30252b4f55ae8358a21b5d295f880bac690",
+      "source_id": "H2",
+      "source_metadata_sha256": "895830f6b3d1a31bb4ebd4ef14886f6e815ae9323f993bb11d2aa1a93abc8206",
+      "phi_dtype": "float32",
+      "grad_phi_dtype": "float32",
+      "lap_phi_dtype": "float32"
+    }
+  },
+  "outputs_sha256": {
+    "lap_operator_contract_v1_decision.json": "dd520b3e7e93b4e700541790f15b41c674540d3ccb6eb00b33bf296277610a22",
+    "lap_operator_contract_v1_dispersion_contract.csv": "b0375e80d46c23cee38eac7ee46709ec3a1914c287de6ea6aed2c16904a11bdc",
+    "lap_operator_contract_v1_energy_reconstruction_checks.csv": "add68a6cf7b58afb058f7c26c364f1e1ca8b237872a437eb5175c156bb15617b",
+    "lap_operator_contract_v1_legacy_source_parity.csv": "a44ba398a8dc082d3d89db7f7cc038ae6688a92d0f49ae51d3c691248db3e6bf",
+    "lap_operator_contract_v1_metric_gauge_checks.csv": "708dd873d7b512780a386439d43416ac337117512674fd1e7e5f22062ad634d0",
+    "lap_operator_contract_v1_pbe_oracle_checks.csv": "4b125ab177d32dee1cebe36fd81b65588ef7e26fed62e41d36ac52e5bc51d244",
+    "lap_operator_contract_v1_precision_component_checks.csv": "2b2e6584b224f111fe9f39b6a5707f43bc5e643086e424a45d10ff81e6fdcab0",
+    "lap_operator_contract_v1_primary_source_availability.json": "7a4954b696b0828e652065a2bd328a7bbcf180c666f0c7dc098a016b4ecd2794",
+    "lap_operator_contract_v1_protocol.json": "1c5609dbfc6976f85fc98b427a049e6eef5ad89fa59da5aa893541332ac1b8a8",
+    "lap_operator_contract_v1_provenance.json": "f52255faad7ce95b2c9892c908323e7dccb647ec6c1f914e003c7ea990fdf6cd",
+    "lap_operator_contract_v1_reference_projection_checks.csv": "879ac47bae6b043fce577fcc3f87b3b1260cf0bcf37153ad94a307eedbc2349c",
+    "lap_operator_contract_v1_report.md": "d47b6b47a07894ba6b569522a2a2ab1e9fff6b20b24a8cfa115d191ce2b6a554",
+    "lap_operator_contract_v1_supplement_protocol.json": "6ae8ec26e4e35322c8916822c7b08a2e70f4853542544e633b30ce903159b10f",
+    "lap_operator_contract_v1_supplement_receipt.json": "15af688da811cced6e3b3e04ec8805e93648252f60fe91d83df90721d9b3794b",
+    "lap_operator_contract_v1_target_definitions.csv": "d1feba5eec61566d9fb1641f8410e85aba672eecc6686e8976aae6530075c3ca",
+    "lap_operator_contract_v1_tests.json": "09fbe94fe77875cae3fa33ec25874e8bbdc404df8ff383856ef29a597747c0ba",
+    "lap_operator_contract_v1_variational_checks.csv": "8e014654ae20fdb9f2ca8e302154444866336f478da901bd552b89836625f485",
+    "lap_operator_contract_v1_variational_corrected_checks.csv": "2548858cc84396728c385c95690f4e8e7facf8b547e08e9ac6d5628da785fa01"
+  },
+  "scientific_wall_seconds": 1094.6898448467255,
+  "budget_respected": true,
+  "trained_checkpoints_loaded": 0,
+  "optimizer_states_loaded": 0,
+  "training_updates": 0,
+  "validation": {
+    "focused_tests": {
+      "passed": 30,
+      "seconds": 7.41,
+      "initial_test_failure": "fresh R0 default has 9381 coordinates; full-coordinate test now explicitly enables original Gc flag (9446), no assertion relaxed"
+    },
+    "ruff": "PASS",
+    "ruff_local_exception": "S102 only at exec of locally SHA-authenticated PBE source copy; no global ignore",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "source_hashes_match": true,
+    "driver_hash_match": true,
+    "current_audit_sources": {
+      "tools\\lap_operator_contract_v1_audit.py": "98d117b042f2458f14d896d618b85b00008cfa319ac399adcafae0b3ddb65a5c",
+      "tools\\lap_operator_contract_v1_followup.py": "f4748fd7039073583e2c96e24e89bffc0dc4e548a193be234c43cda54a91e425",
+      "tools\\lap_operator_contract_v1_report.py": "4a95eddcb4d745d9581862e56952695664eafa5c74b25369c57817e92e9f5f24"
+    },
+    "supplement_post_execution_edits": "removed unused imports, sorted imports, added local S102 comment; numerical function bodies unchanged",
+    "budget_seconds": 10800,
+    "scientific_wall_since_freeze_seconds": 1174.6529760360718,
+    "trained_checkpoints_loaded": 0,
+    "optimizer_states_loaded": 0,
+    "training_updates": 0,
+    "production_files_modified": false
+  }
+}

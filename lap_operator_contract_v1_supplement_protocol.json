@@ -1,0 +1,27 @@
+{
+  "source_sha256": "ff5e8c7e7e1744f6bf28eaa9f5885fe4318e45d24c887d6d2f052952ef07e5c0",
+  "parent_protocol_sha256": "1c5609dbfc6976f85fc98b427a049e6eef5ad89fa59da5aa893541332ac1b8a8",
+  "original_fixture_results_sha256": "8e014654ae20fdb9f2ca8e302154444866336f478da901bd552b89836625f485",
+  "diagnostic_defect": "independent energy graph assumed symmetric DM while differentiating independent full-matrix entries; antisymmetric derivative is outside declared DM space",
+  "correction": "explicit symmetric DM parameterization in energy-first fixture only",
+  "tolerances": {
+    "algebra_atol": 1e-10,
+    "algebra_rtol": 1e-09,
+    "projection_relative": 1e-10,
+    "independent_energy_atol_ha": 1e-06,
+    "independent_energy_rtol": 2e-06,
+    "independent_matrix_relative": 1e-05,
+    "mixed_energy_atol_ha": 2e-05,
+    "mixed_energy_rtol": 1e-05,
+    "mixed_matrix_relative": 0.0001,
+    "ideal_energy_atol_ha": 1e-09,
+    "ideal_matrix_relative": 1e-08,
+    "source_vxc_atol_ha": 1e-05
+  },
+  "pilot": [
+    "H2",
+    "BeH2",
+    "CO"
+  ],
+  "no_production_mutation": true
+}

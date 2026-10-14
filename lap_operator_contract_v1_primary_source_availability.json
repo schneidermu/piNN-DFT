@@ -1,0 +1,83 @@
+{
+  "checked_locations": [
+    "current repository source and git history",
+    "Downloads/MRKS/bin exporters",
+    "Downloads/mrks_90_ccsd_pt frozen NPZ",
+    "workspace mrks_source_audit scripts",
+    "WSL PySCF 2.14.0/Libxc 7.0.0 installed sources"
+  ],
+  "external_sources_sha256": {
+    "C:\\Users\\schne\\Downloads\\data_vxc_train.pickle": "0ccc0cfb09814cadcc9e0537953cc324fe6ce5551654fe3254f310a25cc6ee49",
+    "C:\\Users\\schne\\Downloads\\extrapolation_e.csv": "4040c5ddd21cb73edcf6f54356114ff2cf216fe47346e227c5ca83180fde7e4e",
+    "C:\\Users\\schne\\Downloads\\MRKS\\bin\\gen_h5_with_vrho.py": "5bfacec7261b024f5a7d2a48cbaff8fc9c94b87d2d145f1ec891dddef19ccc8d",
+    "C:\\Users\\schne\\Downloads\\MRKS\\bin\\convert_vxc_data_with_wfn.py": "e3c63c5817dfc4f08ac34a9b89d765b47f524f0cb2fb4e3090f71f7061be5dfa",
+    "C:\\Users\\schne\\Downloads\\MRKS\\bin\\readWFN.py": "f5aaa2447a6fb594d9ff643c3f386f6ebe2447e3e546ecfb5b2f73f67a4a6166",
+    "C:\\Dev\\readWFN_share_ms\\mrks_source_audit\\check_energy_definition.py": "8519be13f7816d8d738867d084780033fef70f7efaf02abb0ce8e9acb779acc4",
+    "C:\\Dev\\readWFN_share_ms\\readWFN_share_ms\\mrks_pbe0_d3bj.json": "2686308ba07a83f4f06e500db70cc05a3e8539998db5bc91bb57e28f00b2b012",
+    "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\dispersions\\dispersions_mrks.pickle": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440"
+  },
+  "legacy_numeric_source_preservation": "PASS all90 E_xc/Vxc/weights/coordinates; raw reference-data pickle only",
+  "original_mRKS_inversion_exporter": "NOT FOUND in checked locations",
+  "original_legacy_E_xc_exporter": "NOT FOUND; available prepare_vxc only copies E_xc",
+  "current_publication_pilot_file_integrity": {
+    "BeH2": {
+      "file_sha256": "0e0bac52f99f327bd3ff69dbc24897c97707c0f4d9e5919777a64d679a4c52e7",
+      "source_id": "BeH2",
+      "source_metadata_sha256": "e521cc2d0cab046fee84bbe1d9194e2093af1f6eebacefa07097f28d0b18f6dc",
+      "phi_dtype": "float32",
+      "grad_phi_dtype": "float32",
+      "lap_phi_dtype": "float32"
+    },
+    "CO": {
+      "file_sha256": "90bc5aa238a701f663a04663f520f4083a58ee463b3633ae50e52ddb51ec58a9",
+      "source_id": "CO",
+      "source_metadata_sha256": "7e410157ac31af28a796df2993feed6895cad50d1fcf5d8d9c2443a1e8dc7a9c",
+      "phi_dtype": "float32",
+      "grad_phi_dtype": "float32",
+      "lap_phi_dtype": "float32"
+    },
+    "H2": {
+      "file_sha256": "71a50fe496f00ae46f378e72fe70a30252b4f55ae8358a21b5d295f880bac690",
+      "source_id": "H2",
+      "source_metadata_sha256": "895830f6b3d1a31bb4ebd4ef14886f6e815ae9323f993bb11d2aa1a93abc8206",
+      "phi_dtype": "float32",
+      "grad_phi_dtype": "float32",
+      "lap_phi_dtype": "float32"
+    }
+  },
+  "potential_numeric_gauge_evidence": [
+    {
+      "system": "H2",
+      "HOMO_ha": -0.6040175699671915,
+      "i_EKT_metadata_ha": 0.6040765500788634,
+      "HOMO_plus_i_EKT_ha": 5.898011167193573e-05,
+      "converged": 1.0,
+      "delta_rho_metadata": 0.000633753634355659,
+      "delta_evir_metadata": 0.0004192022283461272,
+      "gauge_interpretation": "numeric HOMO alignment evidence only; original exporter/gauge specification missing"
+    },
+    {
+      "system": "BeH2",
+      "HOMO_ha": -0.44748967365352454,
+      "i_EKT_metadata_ha": 0.44748658471069985,
+      "HOMO_plus_i_EKT_ha": -3.0889428246916317e-06,
+      "converged": 1.0,
+      "delta_rho_metadata": 0.0058919601563807815,
+      "delta_evir_metadata": 0.004681616950215517,
+      "gauge_interpretation": "numeric HOMO alignment evidence only; original exporter/gauge specification missing"
+    },
+    {
+      "system": "CO",
+      "HOMO_ha": -0.5177025208598809,
+      "i_EKT_metadata_ha": 0.5175935783321569,
+      "HOMO_plus_i_EKT_ha": -0.00010894252772397639,
+      "converged": 1.0,
+      "delta_rho_metadata": 0.011212536310079593,
+      "delta_evir_metadata": 0.016003168015476632,
+      "gauge_interpretation": "numeric HOMO alignment evidence only; original exporter/gauge specification missing"
+    }
+  ],
+  "dispersion_parameters": "PBE0/d3bj requested by producer; D3 package/parameter table and generating H5 geometry receipt unavailable",
+  "oracle_density_conventions": "NumInt CUTOFF=1e-15; Libxc cache density_threshold=None (compiled defaults); no override. Original Libxc per-functional compiled threshold not independently extracted.",
+  "historical_documentation_conflict": "tools/build_publication_dataset.py:127 calls potentials gauge-fixed; central builder records no gauge shift, with unresolved original gauge. Preservation does not qualify gauge."
+}

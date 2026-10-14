@@ -1,0 +1,392 @@
+{
+  "npz_sources": {
+    "AlBeH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlBeH/inp_mrks.npz",
+      "sha256": "16333b5c9338b6ede8c168cb7164a23bd2d72bb54aee254d501c27d52ef355b7"
+    },
+    "AlBeH_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlBeH_iso2/inp_mrks.npz",
+      "sha256": "d32e6c36d683d202af987b288d620cdb5b807f8eb071fd5ed7b5d4f244965330"
+    },
+    "AlCl": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlCl/inp_mrks.npz",
+      "sha256": "79d3a44b1058ee1036c491047fc7213ddd3effc0cc7b24086802fe4a04483d00"
+    },
+    "AlF": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlF/inp_mrks.npz",
+      "sha256": "ebbe64c17cae8efbce453be57b46feb305260b0e061469907924c3ead4a3f54d"
+    },
+    "AlH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlH/inp_mrks.npz",
+      "sha256": "6738dc7ea0791c688a01e7dc4195f3b2e66a21c0918fa66333b9295522368345"
+    },
+    "AlH3": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlH3/inp_mrks.npz",
+      "sha256": "5661aed69e6db60e8198bcb44a0d707a0a8d9e00c2b0a703506669d2c1a45e5d"
+    },
+    "AlHMg": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlHMg/inp_mrks.npz",
+      "sha256": "00cda83d4e121443ddd06f7714e4d980c9b2272fc76b21ced654d15a99d28ebf"
+    },
+    "AlHO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlHO/inp_mrks.npz",
+      "sha256": "f5404aacdb9f8269086e21aad3d9855aa6e3b8df3eb9a80220ed06b38cc76d6f"
+    },
+    "AlHO_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlHO_iso2/inp_mrks.npz",
+      "sha256": "14a60a22a1fed400124f42bb05a106d6d80699406b3450dca26b1799a6ebabf8"
+    },
+    "AlHS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlHS/inp_mrks.npz",
+      "sha256": "cf07a04dd4151658e49c95ad2573f2507fbdc5952330b0c26c5ef71a341f758e"
+    },
+    "AlHS_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/AlHS_iso2/inp_mrks.npz",
+      "sha256": "d8a994995cb039ed76e1f132f88e7cd95fb50b260fdecb5e8b6c096e5279d53d"
+    },
+    "BCl": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BCl/inp_mrks.npz",
+      "sha256": "0874b2cc7f470b37935fbac59608e9b3a2d53382e65a875467f280c126037b57"
+    },
+    "Be2H2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/Be2H2/inp_mrks.npz",
+      "sha256": "ca1388caae5d41ce6e27a0499832d41812d82dd1cb7ac9a83a6b7caf17c549be"
+    },
+    "BeClH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeClH/inp_mrks.npz",
+      "sha256": "9734643620e08f11521b610886a7ab5f717895d6b5b69272816287989811e662"
+    },
+    "BeFH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeFH/inp_mrks.npz",
+      "sha256": "de04042e978b3c9f249967b518eff759de56a8782282638565c68c05aaedeb8a"
+    },
+    "BeH2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+      "sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00"
+    },
+    "BeHLi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeHLi/inp_mrks.npz",
+      "sha256": "358095e5ad2926879055b05f5362b55982d73dfea6b2925467463a29e666d2e0"
+    },
+    "BeHN": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeHN/inp_mrks.npz",
+      "sha256": "62646852fc59336467e1bd0cba3fe1b02d9b9218018f647f57a37df0e1f9ea54"
+    },
+    "BeHNa": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeHNa/inp_mrks.npz",
+      "sha256": "e9358edf516cc12c5f4776ac751149ca724f2fdebc64debb10339b9f77ae54a3"
+    },
+    "BF": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BF/inp_mrks.npz",
+      "sha256": "b51158fbac705b625921efc55676a8fe06e28da80e88e7bc6b5f51d93027ac6a"
+    },
+    "BFH2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BFH2/inp_mrks.npz",
+      "sha256": "88609a20fab798ff1f9b8d64ae82f51a763fb32275f5bbfc471c5ace098e5414"
+    },
+    "BH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BH/inp_mrks.npz",
+      "sha256": "28a5dff1693c6051131be67bba67be62133cd9945bd349138660b27d3df01c27"
+    },
+    "BH2Li": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BH2Li/inp_mrks.npz",
+      "sha256": "30c2331f33597724195eb78c7086eb07ed56c57d7f70f37b11200f068f9491e4"
+    },
+    "BH2N": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BH2N/inp_mrks.npz",
+      "sha256": "49d69e3a7fca55e222cc75edf10d61e1cfa1fc089ddad06fba12ae420cbfc69d"
+    },
+    "BH2N_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BH2N_iso2/inp_mrks.npz",
+      "sha256": "2d505b51f89c5a28152dd029742bdb54b33579810c075b180e874625c5f2136f"
+    },
+    "BH3": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BH3/inp_mrks.npz",
+      "sha256": "5e4190aa7dc7bf7277804acc5f5bcd265709860d8796b13d08620462982740a4"
+    },
+    "BHMg": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BHMg/inp_mrks.npz",
+      "sha256": "dcf1302aa06171020f2c8c5909620be99c8a9cbb07a4846c80836fc875c8fbe6"
+    },
+    "BHO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BHO/inp_mrks.npz",
+      "sha256": "b3585781e6cc3e233da875c50a309390e137cf1fd3746f31b6f83d025616c1cc"
+    },
+    "BHS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BHS/inp_mrks.npz",
+      "sha256": "b9b0f042408fa53bc3c2722aef9527e9fa0301c9cdd0cc16acccb210941ddf59"
+    },
+    "BHS_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BHS_iso2/inp_mrks.npz",
+      "sha256": "878370664e89ca963f96fd429e3a32c9198c036a1e28cca7497fa8d0f5259d4f"
+    },
+    "C2H2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/C2H2/inp_mrks.npz",
+      "sha256": "77d69b7d9e158647aea049b5336033ea28c4422d9d754af9af18719f0e087ecf"
+    },
+    "C2H2_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/C2H2_iso2/inp_mrks.npz",
+      "sha256": "0f09780c710d5fef2af6890ffa024f7c9f1fa7c9180888ec62e3b7242e56a3eb"
+    },
+    "CClH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CClH/inp_mrks.npz",
+      "sha256": "7245609c6c7e6505d16c6088d41eb5ec1252a076c98e9012aca65f4784d42e09"
+    },
+    "CFH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CFH/inp_mrks.npz",
+      "sha256": "66a17ad4a4292e6d3cb9d5145f262c4869975a231036678f6ea1a7933af50d86"
+    },
+    "CH2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CH2/inp_mrks.npz",
+      "sha256": "8cec60225a090e86ea61de587eb6ec425c166d95404b2716820180cf0812787a"
+    },
+    "CH2O": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CH2O/inp_mrks.npz",
+      "sha256": "623f4f0db7e91deca8e639d26d4de474ac8345c6e153bf987682eec8e835d616"
+    },
+    "CH2O_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CH2O_iso2/inp_mrks.npz",
+      "sha256": "3645ffa7cc94a14d9d81d4a18bd1561decfcd35bac7f4272a1a1e2ea0c5775b4"
+    },
+    "CH4": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CH4/inp_mrks.npz",
+      "sha256": "6e0adfd59e698846080013b8aefa6a3835de0703e0296d770bc2f169339ad026"
+    },
+    "CHN": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CHN/inp_mrks.npz",
+      "sha256": "c13e80a4e3c210a43030bb052a85ccb66746a2d82aa6978ac4df49ccf80e681e"
+    },
+    "CHN_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CHN_iso2/inp_mrks.npz",
+      "sha256": "727d1e6a03edbf435a964e3c7301a028a810a69f7ec858872296090c49b90c47"
+    },
+    "CHP": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CHP/inp_mrks.npz",
+      "sha256": "bf6f36279c35861d76337e08c4634f4a4d19ac0353d0ff0efbc7e407a60e07ca"
+    },
+    "ClH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/ClH/inp_mrks.npz",
+      "sha256": "dfc82d6a9b79be07da7a54a5db8f0285e001b184d7166dec1dfb377dab86092f"
+    },
+    "ClHMg": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/ClHMg/inp_mrks.npz",
+      "sha256": "b717c2e2fb37d918558d9656bf827b9fdcbaaf78a2486d4fb7a21ad2a7fc687b"
+    },
+    "ClHO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/ClHO/inp_mrks.npz",
+      "sha256": "3ed5af816a946e522cdc70817bb219b48813f4c6e176c59ae853a3561500c001"
+    },
+    "ClHS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/ClHS/inp_mrks.npz",
+      "sha256": "197c0c6c3323d6d2dbcb4f6a65788d83d5287573dbc2fb3169ff42754b2fc33f"
+    },
+    "ClHSi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/ClHSi/inp_mrks.npz",
+      "sha256": "d574cf7ed0eaaaff5ee8c1009c33bb50c13ec6c6318cc45dffd392668e8d38e4"
+    },
+    "ClLi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/ClLi/inp_mrks.npz",
+      "sha256": "81e00c364105e7e7a2d19193183ed4eab9758d619df860e2c88838c3e34220f2"
+    },
+    "ClNa": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/ClNa/inp_mrks.npz",
+      "sha256": "27fa9d19028d1868cb7044e9ba6aeb15694229eb8280149f81695bd16e2afe29"
+    },
+    "CO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+      "sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e"
+    },
+    "CS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CS/inp_mrks.npz",
+      "sha256": "a3feda1747e72e09b1a3a57420f6b05a19e04fc81504fe1dae48162c42d8a521"
+    },
+    "FH": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FH/inp_mrks.npz",
+      "sha256": "6a3ed7f8bc4339a47bf689944f429796de70e02f86389db34491cdf699ad56d6"
+    },
+    "FH2N": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FH2N/inp_mrks.npz",
+      "sha256": "9604e97e313a254ad50f557a7b3bf7f7bbbb7cbc00387792252d26d6e30cf78e"
+    },
+    "FHMg": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FHMg/inp_mrks.npz",
+      "sha256": "ba11bb10a9c14fb3bf92cc7e71ec849a6f816d2ca21a72cfcd7bb822fca06b70"
+    },
+    "FHO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FHO/inp_mrks.npz",
+      "sha256": "c0f92e1de6e43d452c19fdc9c26ff10978208e0d70fa3ef6886b7c558be99070"
+    },
+    "FHS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FHS/inp_mrks.npz",
+      "sha256": "ef182c91bdb5a42052c1bc71b0cc64c76efd584bd7c59d63c891cfee698e63f8"
+    },
+    "FHSi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FHSi/inp_mrks.npz",
+      "sha256": "6b5b2e8a68c44bafc68cae5aad9d73630162918483c906e0897862a483ed19cc"
+    },
+    "FLi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FLi/inp_mrks.npz",
+      "sha256": "28abaad747c14db6f572974e932089eca26b0b361a07cd434617c5cd9a10cdfe"
+    },
+    "FNa": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/FNa/inp_mrks.npz",
+      "sha256": "455fa07310678190401d912014fce7ff0a30ac911fefb4e79623537335f46ba3"
+    },
+    "H2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+      "sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95"
+    },
+    "H2LiN": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2LiN/inp_mrks.npz",
+      "sha256": "f67f064a5c79465bcb7b313309f22ee654157993e1b4429f52c7e5ad9a2afcfb"
+    },
+    "H2Mg": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2Mg/inp_mrks.npz",
+      "sha256": "e1bd78965f1af926d3462d471ba8d9e2bc3825c4a199103a2e2f72b70dd66bfe"
+    },
+    "H2N2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2N2/inp_mrks.npz",
+      "sha256": "0d71abb167446d463767c56a1afac9157e7a42ad563c4adb7e8ba6c311cef429"
+    },
+    "H2N2_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2N2_iso2/inp_mrks.npz",
+      "sha256": "fa70cdce8f0f328cfe43d74f4375fb5c5dca1b2e00690402e9172499cb5b7c99"
+    },
+    "H2O": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2O/inp_mrks.npz",
+      "sha256": "436c43818af1b706fcd1e037a83151193be207268160db15a1a1eaace85198fb"
+    },
+    "H2O2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2O2/inp_mrks.npz",
+      "sha256": "0a5b930182c323814d585232ef1b17a33620ffd71af5b880cd83d4eacc3fe98d"
+    },
+    "H2S": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2S/inp_mrks.npz",
+      "sha256": "38f7e412b6ab2db5ff7d77475812a35ccfc556e7b5c00cc190f862f2376bff58"
+    },
+    "H2Si": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2Si/inp_mrks.npz",
+      "sha256": "b6498e123a8d69809a4f51a0c0d4f1d4f869e3ba3690d1abc2903049cc1ed460"
+    },
+    "H3N": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H3N/inp_mrks.npz",
+      "sha256": "9ff449462e33a89ac90a96e89dc12f769dc2c0101c90b248cb9c67f19d3b5617"
+    },
+    "H3P": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H3P/inp_mrks.npz",
+      "sha256": "a4de6005b7c032cef3ecac4907e36f5733342737631690ef424527ce2d977042"
+    },
+    "H4Si": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H4Si/inp_mrks.npz",
+      "sha256": "cc4b48347673cbabca1959869a8ecd25427402f5f4d5975d0a1697b37367e8d5"
+    },
+    "HLi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HLi/inp_mrks.npz",
+      "sha256": "975a46e81132abd3d983b78fea12a0f1ab117c69bc9d50ed1e95a12f724873c4"
+    },
+    "HLiMg": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HLiMg/inp_mrks.npz",
+      "sha256": "aa237515ac2a0a3c7a987e1e54c7264609850cb2a3f44a8c0aab1d45563596ef"
+    },
+    "HLiO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HLiO/inp_mrks.npz",
+      "sha256": "9c6dde08969b1b881202997f4d814b27f57cf2bf17e720e3a3f9fa58913cdf40"
+    },
+    "HLiS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HLiS/inp_mrks.npz",
+      "sha256": "77ff1de50a8b01f54b425acd3f10e31170cee0e3c8d0d1cdfd160e083b7b575d"
+    },
+    "HMgNa": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HMgNa/inp_mrks.npz",
+      "sha256": "aa89ef19d03c18e601b5a6eb4602ca98a8bfb9277a79a5ffc9fb8313bd2c10a4"
+    },
+    "HNa": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HNa/inp_mrks.npz",
+      "sha256": "47650a7b950a09c055bd7f11ed1b1ad5c59a1444134cdf19026073e8b1990a93"
+    },
+    "HNaO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HNaO/inp_mrks.npz",
+      "sha256": "cec1d3d84b72f36de85e9e3744375858e21571906abbcf5a2906945b6fba9811"
+    },
+    "HNaS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HNaS/inp_mrks.npz",
+      "sha256": "4ea092c7cf82ed56fbca19f6547cc51c53d546edfb63b0d464c183bc13e7c586"
+    },
+    "HNO": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HNO/inp_mrks.npz",
+      "sha256": "5a0c34e9c2e5d467315ad4a89761be1938fad2bf7247f33d0eb5f1884a0a83f3"
+    },
+    "HNS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HNS/inp_mrks.npz",
+      "sha256": "ceb9f28428a1dd630a4929d7cc2940b9ef12f01b0666938c36a757cb87376b8d"
+    },
+    "HNS_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HNS_iso2/inp_mrks.npz",
+      "sha256": "7bfdfd6e5e7851ee57a1b23e91717d707ffa31f0b879a1e913fe7b3f7746e270"
+    },
+    "HNSi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HNSi/inp_mrks.npz",
+      "sha256": "25e7554ab65db1ecfe620f193a5815fec3eab6bb6da60552263652184e19449b"
+    },
+    "HOP": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HOP/inp_mrks.npz",
+      "sha256": "f134b0222df81880b1734d87ce99534d700832a3e50003b92a77d0b6eba777cd"
+    },
+    "HPS": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HPS/inp_mrks.npz",
+      "sha256": "206e34c044a8fc9f167387e1322181f587b0a61e67686c31a0b26017841b4bf0"
+    },
+    "HPSi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HPSi/inp_mrks.npz",
+      "sha256": "4f5f4769ffd405e5822edf5d2342c0d33dead888a30d4db90830dc89762392f5"
+    },
+    "HPSi_iso2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/HPSi_iso2/inp_mrks.npz",
+      "sha256": "39ffef66ef74b8cf14481854128e8d094c6d47f3f897f887fce432849b64e07c"
+    },
+    "LiNa": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/LiNa/inp_mrks.npz",
+      "sha256": "0cbebff0bc88242d807fa0159592ab6a0246d3d93add05057429fca16cdced5e"
+    },
+    "N2": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/N2/inp_mrks.npz",
+      "sha256": "147737639dcf8dd806cb7b4681ba031c76da77dc891aafdc1f64b9cf9d71c542"
+    },
+    "OSi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/OSi/inp_mrks.npz",
+      "sha256": "9261e5df194f4bc830d813d9e3df10e8d5bdf8ca96761c84aa4da598a1b21e7a"
+    },
+    "SSi": {
+      "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/SSi/inp_mrks.npz",
+      "sha256": "3f72666f95fabdf8a93770fa68188ab2e7e64fe5a0a99342e710ae36adc6b1e8"
+    }
+  },
+  "dispersion_sha256": "c59bead0b5f49a7fc5e1914aaf3f7b8241c4d9f194b27a179c116ec9f5a5552e",
+  "conversion_sha256": "5c0b2e04ffa769c2c96fa2ea5a8e9e57e9d600cd3a84c18074835cd70acc1a45",
+  "census_count": 90,
+  "arrays": {
+    "H2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_operator_contract_v1_arrays_20261014/H2.npz",
+      "sha256": "4a376858e111bb6c8ed1fb383670c1058c2f0ae6b007b11c0d335bba4b8c9b7a",
+      "active_seconds": 3.3755664549999977
+    },
+    "BeH2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_operator_contract_v1_arrays_20261014/BeH2.npz",
+      "sha256": "2efe3a220324d7522f70c608c142d21f7da2869b2e3f9aa48f9b74a37aad552a",
+      "active_seconds": 10.499737705000001
+    },
+    "CO": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_operator_contract_v1_arrays_20261014/CO.npz",
+      "sha256": "7e19e2a61506c5bee6b47ca95ddecfc23112e9cb1f6369bb4f6f88e265f07cd2",
+      "active_seconds": 13.250189056999986
+    }
+  },
+  "sources_unchanged": true,
+  "trained_checkpoints_loaded": 0,
+  "optimizer_states_loaded": 0,
+  "training_updates": 0,
+  "SCF_executed": false,
+  "active_seconds": 45.716106921000005,
+  "scientific_wall_seconds": 47.46644067764282,
+  "budget_respected": true
+}
