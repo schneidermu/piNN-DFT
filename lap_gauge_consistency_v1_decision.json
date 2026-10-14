@@ -1,0 +1,80 @@
+{
+  "metadata_coverage": 90,
+  "EKT_available": 90,
+  "EKT_missing": 0,
+  "delta_IP_signed_median_ha": 0.00010220544517616781,
+  "delta_IP_absolute_median_ha": 0.00014476531844886953,
+  "delta_IP_absolute_max_ha": 0.000820202511447321,
+  "bands_counts": {
+    "1e-06": 0,
+    "1e-05": 3,
+    "0.0001": 32,
+    "0.001": 90
+  },
+  "pilot_results": [
+    {
+      "system": "H2",
+      "grid_path": "SOURCE",
+      "classification": "NUMERICALLY_CONSISTENT_AT_REPORTED_RESOLUTION",
+      "raw_max_orbital_ha": 5.93927305431511e-11
+    },
+    {
+      "system": "H2",
+      "grid_path": "CORPUS",
+      "classification": "NONCONSTANT_INCONSISTENCY",
+      "raw_max_orbital_ha": 0.0007572864685180202
+    },
+    {
+      "system": "BeH2",
+      "grid_path": "SOURCE",
+      "classification": "NUMERICALLY_CONSISTENT_AT_REPORTED_RESOLUTION",
+      "raw_max_orbital_ha": 1.886646240348093e-09
+    },
+    {
+      "system": "BeH2",
+      "grid_path": "CORPUS",
+      "classification": "NONCONSTANT_INCONSISTENCY",
+      "raw_max_orbital_ha": 0.0105239514825567
+    },
+    {
+      "system": "CO",
+      "grid_path": "SOURCE",
+      "classification": "NUMERICALLY_CONSISTENT_AT_REPORTED_RESOLUTION",
+      "raw_max_orbital_ha": 1.8495237940178613e-08
+    },
+    {
+      "system": "CO",
+      "grid_path": "CORPUS",
+      "classification": "NONCONSTANT_INCONSISTENCY",
+      "raw_max_orbital_ha": 0.0003901319719396667
+    }
+  ],
+  "historical_exporter_procedure": "NOT RECONSTRUCTED",
+  "wall_seconds": 945.3381085395813,
+  "active_compute_seconds": 11.920348349000001,
+  "immutable_receipts_pass": true,
+  "checkpoints_loaded": 0,
+  "optimizer_states_loaded": 0,
+  "training_updates": 0,
+  "SCF_executed": false,
+  "final_input_and_historical_receipt_integrity": "PASS",
+  "pilot_previously_published_metadata_parity": "PASS (source availability report section pilot metadata)",
+  "WF_counterfactual": "NOT RUN: all SOURCE eigenpairs passed",
+  "execution_accounting": {
+    "initial_complete_molecular_execution_seconds": 15.692865909,
+    "complete_integrity_validation_pass_seconds": 11.1168063,
+    "final_complete_molecular_execution_seconds": 11.920348349000001,
+    "interrupted_lineage_validation_execution_wall_upper_bound_seconds": 9.3529365,
+    "reason": "Diagnostic-only uniqueness assertion was inapplicable to preserved repeated coordinates; removed, repeat counts recorded. No input or result corrected.",
+    "scope": "CPU execution (one thread), not GPU; tests and report integrity checks additional to these process timings"
+  },
+  "budget_respected": true,
+  "validation": {
+    "focused_tests": "7 PASS",
+    "pytest_seconds": 0.41,
+    "Ruff": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "historical_tracked_files_changed": 0
+  }
+}

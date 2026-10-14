@@ -1,0 +1,60 @@
+{
+  "namespace": "lap_gauge_consistency_v1_",
+  "first_action_unix": 1792000732.743,
+  "budget_seconds": 5400,
+  "head": "f6635a5c7d487e62f73d89975c15a081ffb95dd0",
+  "worktree": "?? .planning/chem_precision_trace/\n?? .planning/quick/\n?? .planning/step_globalization/lap_step_globalization_report.md\n?? .planning/step_globalization/protocol.json\n?? .planning/step_globalization/results.json\n?? baseline_validation/\n?? four_objective_throughput_diagnosis_metrics.json\n?? four_objective_throughput_diagnosis_report.md\n?? full90_25update_qualification.py\n?? full90_25update_qualification_protocol.json\n?? lap_f025_aggregate_closure.csv\n?? lap_f025_analysis_receipt.json\n?? lap_f025_availability.csv\n?? lap_f025_availability_aggregates.csv\n?? lap_f025_decision.json\n?? lap_f025_direct_parity.csv\n?? lap_f025_final_integrity.json\n?? lap_f025_harmful_cumulative.csv\n?? lap_f025_harmful_cumulative.png\n?? lap_f025_native_directions.csv\n?? lap_f025_operator_vector_changes.csv\n?? lap_f025_pairwise_decomposition.csv\n?? lap_f025_pairwise_records.csv\n?? lap_f025_per_record_attribution.csv\n?? lap_f025_protocol.json\n?? lap_f025_provenance.json\n?? lap_f025_recomputation_receipt.json\n?? lap_f025_report.md\n?? lap_f025_source_provenance.json\n?? lap_f025_task_attribution.csv\n?? lap_f025_tests.json\n?? lap_f025_unchanged_database_metrics.csv\n?? lap_f025_unchanged_quality_metrics.csv\n?? lap_gauge_consistency_v1_started.txt\n?? lap_target_provenance_v1_started.txt\n?? lap_target_provenance_v2_started.txt\n?? test_full90_25update_qualification.py\n?? tests/test_lap_f025_attribution.py\n?? tests/test_publication_baselines.py\n?? tools/evaluate_publication_baselines.py\n?? tools/lap_f025_analyze.py\n?? tools/lap_f025_collect.py\n?? tools/lap_f025_report.py\n?? tools/profile_four_objective_throughput.py\n?? train_lap_four_objective.py\n",
+  "baseline_receipts": {
+    "lap_target_provenance_v2_report.md": "d4d6bf36e98db5d1755db9b17ea9bda96f2b35908c4d3614c23a804f389d4226",
+    "lap_target_provenance_v2_status_update.json": "6e615ab267b06d389b3646903bd36014d588c74532daccb8d2d91aff2a941c0b",
+    "lap_target_provenance_v2_evidence.json": "7ac28aec57ebcfb7c17ce563660a49528ad7eb18b7917ab3372e852bb467c781",
+    "lap_operator_contract_v1_report.md": "d47b6b47a07894ba6b569522a2a2ab1e9fff6b20b24a8cfa115d191ce2b6a554",
+    "lap_operator_contract_v1_protocol.json": "1c5609dbfc6976f85fc98b427a049e6eef5ad89fa59da5aa893541332ac1b8a8",
+    "lap_operator_contract_v1_provenance.json": "f52255faad7ce95b2c9892c908323e7dccb647ec6c1f914e003c7ea990fdf6cd",
+    "lap_operator_contract_v1_primary_source_availability.json": "7a4954b696b0828e652065a2bd328a7bbcf180c666f0c7dc098a016b4ecd2794",
+    "lap_operator_corpus_manifest.json": "65aab3a084eb1a5ac6eb78d3a2d04d9744524b4ea58616f5e29768f8731b1bd7"
+  },
+  "versions": {
+    "PySCF": "2.14.0",
+    "NumPy": "2.2.6",
+    "SciPy": "1.15.3",
+    "execution": "existing WSL Python3"
+  },
+  "pilot": [
+    "H2",
+    "BeH2",
+    "CO"
+  ],
+  "populations": {
+    "all90": "metadata/occupations/HOMO/i_ekt only, no new AO/DM reconstruction",
+    "SOURCE": "original NPZ coords64, weights64, vxc64; regenerated AO on exact stored coordinates",
+    "CORPUS": "actual publication dataset coords/weights/vxc/source rows and cached phi F32 widened to F64; regenerated AO F64 only to check qualified RefAO"
+  },
+  "H_KS": "hcore+J(total dm_ks)+projected vxc; no exchange,D3,nuclear repulsion or SCF",
+  "WF_counterfactual": "only if SOURCE raw eigenpair fails declared resolution and original dm1_ao_wf is finite/symmetric/same AO dimension and electron-count consistent; hcore+J(dm1_ao_wf)+same Vxc; no density mixture",
+  "criteria": {
+    "F64_relative": 1e-10,
+    "F64_absolute": 1e-10,
+    "MO_orthonormality_fro": 1e-08,
+    "DM_relative": 1e-10,
+    "DM_absolute": 1e-10,
+    "electron_count": 1e-06,
+    "eigenpair_max_orbital_resolution_ha": 0.0001,
+    "HOMO_EKT_resolution_ha": 0.0001,
+    "bands_ha": [
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001
+    ],
+    "fit_constant_report_resolution_ha": 1e-06,
+    "fit_roundoff_bound": "64eps64*nAO*cond(S)*max(1,||XFC||+||XSCeps||)/||DQ||; chunk-order fit difference also measured; does not bound unknown exporter error",
+    "RefAO_regeneratedF64": "1e-10+1e-10||XRefAOX||",
+    "RefAO_cachedF32": "1e-7+2e-6||XRefAOX||, separately reported source-precision gate",
+    "consistent_classification": "raw max orbital residual<=1e-4 Ha, MO/DM integrity PASS; report all bands, no machine-exact exporter claim",
+    "constant_classification": "raw max fails, Q or S LS-adjusted max<=1e-4 Ha and fitted |c| exceeds arithmetic/1e-6 resolution; original raw FAIL remains"
+  },
+  "criterion_basis": "existing corpus electron-count/orthogonality integrity contracts; eigenpair/EKT 1e-4 Ha is declared reporting resolution, not transferred density convergence, training threshold or exporter guarantee",
+  "IP_units": "positive raw i_ekt retained; Hartree comparison prescribed by task and NPZ energy bundle. Original exporter has no unit annotation; do not replace missing/negative values",
+  "no_training_checkpoint_optimizer_SCF": true
+}
