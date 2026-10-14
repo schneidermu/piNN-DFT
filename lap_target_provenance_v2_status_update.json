@@ -1,0 +1,73 @@
+{
+  "updates": [
+    {
+      "topic": "energy recipe",
+      "before": "primary recipe unresolved",
+      "new": "user text transmitting supplier recipe E_CBS_1\u2212E_noXC[loaded DM], no SCF",
+      "after": "DOCUMENTED_BY_PRIMARY_CORRESPONDENCE",
+      "limitation": "original screenshot not available; not exact universal E_xc[n_KS]"
+    },
+    {
+      "topic": "CBS column choice",
+      "before": "numeric support, author selection unavailable",
+      "new": "explicit supplied recommendation E_CBS_1; CSV hash identical to historical source",
+      "after": "E_CBS_1_DOCUMENTED",
+      "limitation": "author message available as user text, not original image"
+    },
+    {
+      "topic": "CBS arithmetic",
+      "before": "extrapolation formulas unresolved",
+      "new": "literal user-transmitted formulas all90 replay",
+      "after": "PASS",
+      "limitation": "original formula image absent; model-consistency check of alternative CBS2 separate"
+    },
+    {
+      "topic": "actual target linkage",
+      "before": "pilot residual/log rounding verified",
+      "new": "all90 selected CBS scalar/log noXC/H5-log residual/F32/current corpus; independent noXC components on pilot",
+      "after": "ALL90_VERIFIED",
+      "limitation": "all90 scalar/log linkage; independent DM noXC qualification only H2/BeH2/CO; original H5/export bytes missing"
+    },
+    {
+      "topic": "potential declared semantics",
+      "before": "unresolved primary label",
+      "new": "supplier via user describes final grid XC potential and converged KS dm_ks",
+      "after": "FINAL_XC_POTENTIAL_DOCUMENTED",
+      "limitation": "original screenshots absent; no independent inversion implementation qualification"
+    },
+    {
+      "topic": "gauge",
+      "before": "UNRESOLVED",
+      "new": "no gauge rule supplied",
+      "after": "UNRESOLVED",
+      "limitation": "HOMO/i_ekt approximate alignment not a gauge proof"
+    },
+    {
+      "topic": "method/basis",
+      "before": "UNRESOLVED",
+      "new": "basis metadata exists, SCF/correlation column method and exact family not specified",
+      "after": "PARTIAL",
+      "limitation": "numerical AO basis/geometry metadata authenticated previously; electronic method/CBS calculation pedigree unresolved"
+    },
+    {
+      "topic": "D3 intended convention",
+      "before": "UNRESOLVED",
+      "new": "new correspondence says nothing about pipeline-added D",
+      "after": "UNRESOLVED",
+      "limitation": "ask source of D3 addition, not presume mRKS supplier responsibility"
+    }
+  ],
+  "new_primary_evidence_incorporated": "PARTIAL",
+  "energy_recipe_documented": true,
+  "final_potential_semantics_documented": true,
+  "source_level": "USER_TEXT_TRANSMISSION; original screenshot/formula image missing",
+  "CBS_1_replay": "PASS",
+  "actual_CBS_1_usage": "ALL90",
+  "XC_target_linkage": "ALL90",
+  "independent_fixed_DM_noXC_coverage": "PILOT (3 systems), reused authenticated component receipts",
+  "alternative_CBS2_model_consistency": "FAIL",
+  "alternative_CBS2_affects_used_targets": "NO",
+  "potential_gauge": "UNRESOLVED",
+  "method_basis": "PARTIAL",
+  "D3_convention": "UNRESOLVED"
+}
