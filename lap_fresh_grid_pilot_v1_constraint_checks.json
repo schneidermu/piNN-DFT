@@ -1,0 +1,62 @@
+{
+  "t0": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "SUBSET_t16": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "FULL_SOURCE_t16": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "SUBSET_t32": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "FULL_SOURCE_t32": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  }
+}

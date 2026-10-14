@@ -1,0 +1,64 @@
+{
+  "classification": "B",
+  "updates": {
+    "SUBSET": 32,
+    "FULL_SOURCE": 32
+  },
+  "SOURCE_initial_loss": 1.268092669580413,
+  "SUBSET_endpoint_SOURCE_loss": 0.5199286445648514,
+  "FULL_endpoint_SOURCE_loss": 0.5199287840361003,
+  "B": -2.68250750062231e-07,
+  "effect_floor_PASS": false,
+  "endpoint_parameter_distance": 2.3341533994813096e-06,
+  "displacement_cosine": 0.9999999990506855,
+  "moment_norms": {
+    "SUBSET": {
+      "exp_avg": 128732.71364433767,
+      "exp_avg_sq": 407137971212.1403
+    },
+    "FULL_SOURCE": {
+      "exp_avg": 128733.3234634472,
+      "exp_avg_sq": 407141850014.4776
+    }
+  },
+  "wall_seconds": 3965.275304079056,
+  "active_run_seconds": 1839.3900757000083,
+  "budget_respected": true,
+  "old_trained_checkpoints_loaded": 0,
+  "old_optimizer_states_loaded": 0,
+  "moment_comparison": {
+    "exp_avg": {
+      "norm_SUBSET": 128732.71364433767,
+      "norm_FULL_SOURCE": 128733.3234634472,
+      "absolute_difference": 0.6158402683959519,
+      "relative_difference": 4.783845020289675e-06,
+      "cosine": 0.9999999999997773
+    },
+    "exp_avg_sq": {
+      "norm_SUBSET": 407137971212.1403,
+      "norm_FULL_SOURCE": 407141850014.4776,
+      "absolute_difference": 3883404.897784395,
+      "relative_difference": 9.538211062425306e-06,
+      "cosine": 0.9999999999998923
+    }
+  },
+  "integrity": {
+    "all_inputs_and_historical_sources_unchanged": true,
+    "buffers_unchanged": true,
+    "native_parameters_and_moments_F32": true,
+    "updates_exactly_32_per_arm": true,
+    "cross_table_2x2_at_each_milestone": true,
+    "all_architecture_constraints_PASS": true,
+    "all_finite": true,
+    "new_checkpoint_hashes_PASS": true
+  },
+  "next_step": "No automatic follow-up; if B, close selection-only intervention for this pilot and prioritize qualification of the large fresh normalization-block sensitivity rather than a full90 rebuild.",
+  "validation": {
+    "focused_and_selected_regressions": "16 PASS, 15 unrelated tests deselected",
+    "pytest_seconds": 2.66,
+    "Ruff": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "historical_tracked_files_changed": 0
+  }
+}

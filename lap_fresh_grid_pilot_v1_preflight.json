@@ -1,0 +1,14 @@
+{
+  "sources": "PASS",
+  "reference_replay": "PASS",
+  "constraints": "PASS",
+  "same_grid_gradient_gap": 0.0,
+  "matrix_adjoint_parity": {
+    "adjoint_vs_direct_gradient_gap": 2.1324573609172165e-36,
+    "bound": 1e-10,
+    "PASS": true
+  },
+  "fresh_states_unchanged": true,
+  "RNG_restored": true,
+  "GO": true
+}

@@ -1,0 +1,25 @@
+{
+  "device": "NVIDIA GeForce RTX 5070 Ti",
+  "torch_version": "2.11.0+cu128",
+  "complete_batch_seconds": {
+    "SUBSET": 25.53055340005085,
+    "FULL_SOURCE": 24.0692287000129
+  },
+  "projected_remaining_seconds": 2735.1919377023587,
+  "remaining_wall_seconds": 10246.657848358154,
+  "peak_GPU_bytes": 276895232,
+  "GO": true,
+  "prepare_seconds": 17.985501634,
+  "training_batch_seconds_total": {
+    "SUBSET": 824.9591010998702,
+    "FULL_SOURCE": 801.4604069000925
+  },
+  "training_time_ratio_FULL_over_SUBSET": 0.9715153221917933,
+  "grid_points_per_batch": {
+    "SUBSET": 191858,
+    "FULL_SOURCE": 222240
+  },
+  "grid_point_count_ratio": 1.1583567013103442,
+  "optimization_presentations_per_arm": 96,
+  "measurement_scope": "end-to-end batch durations include CPU/HDF5 transfers, CUDA computation, and native step; not isolated GPU kernel times"
+}

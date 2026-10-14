@@ -1,0 +1,65 @@
+{
+  "source_hashes_unchanged": true,
+  "pilot_checkpoint_receipts": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\initialization.pt",
+      "sha256": "58591a30cc6a7e24ee4830d7f6103d08921b605547b494ac10bc6a1990776147"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\SUBSET_t0.pt",
+      "sha256": "6f349d0797259f727bd5ccedc4eb2bb1513db333d85e5b1b7033a3e20dc3d5e6"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\FULL_SOURCE_t0.pt",
+      "sha256": "e85154a0590a1dff9c1f69862875402011d57ddc5b6716c1373298b1bcec12bb"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\SUBSET_t16.pt",
+      "sha256": "efffa37697fff1ca544c6223377808d3f0eabeeccb6d44e95bd8ad5efd92c3f1"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\FULL_SOURCE_t16.pt",
+      "sha256": "11f26e886c0d7d3ad9f82f14d98376564a8d2652251c8d5c553b5e45b91e6ce4"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\SUBSET_t32.pt",
+      "sha256": "d1ef665764d142d042b4bdf22a39fb971925b81722a42ad816b6743e291a6f97"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\FULL_SOURCE_t32.pt",
+      "sha256": "34989c4f9b8bedc9fddad07c0fa274c915dd99cea7beffb76fd37d4ef0df9983"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\resume.pt",
+      "sha256": "08e54e8c52572bd00410597d2e99ba691f5bc7edc31693c1f1e76b054c1b87d7"
+    }
+  ],
+  "fresh_checkpoint_files_created": 8,
+  "gradient_receipts": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\initial_gradients.npz",
+      "sha256": "4564c2e615512a6a8bff3c41b30b4075bc8f205f5a192e19a1fbff08dc98f664"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\endpoint_gradients.npz",
+      "sha256": "7343b7dc3892f1cf8f3b9e9516688cb1cfc7823676e2edb072d05d52b1f7941d"
+    }
+  ],
+  "driver_sha256": "c547da15fe4189c8bb418a1d034451a2602edf175dc1e0eeb1c303112a868696",
+  "representation_manifest_sha256": "8fb59fad9fe8e46f25a3c617a2a7210c4e683aa0fbc6daf55629a33a6e4838db",
+  "report_driver_sha256": "775406c6d22d784efb1dbbf5df34402e9608a5f03a8bbfeb1e90f5f4e67c8eb8",
+  "compact_result_hashes": {
+    "gradient_comparison": "73868573f0598651ca037e92ee68e7b03767f39c26776af4411d98961e2e9df1",
+    "training_log": "93f5ce7da6c9b659a247552d60e1332b12045446e870cdbae15d075d1712e3bf",
+    "cross_evaluation": "fd8a317c6e7cc71c3f99a01dced6be9928060861f4dbdcf6d98d722146b50c6c"
+  },
+  "execution_environment": {
+    "training_python": "3.13.7 | packaged by Anaconda, Inc. | (main, Sep  9 2025, 19:54:37) [MSC v.1929 64 bit (AMD64)]",
+    "training_numpy": "2.3.3",
+    "training_torch": "2.11.0+cu128",
+    "training_cuda": "12.8",
+    "preparation_PySCF": "2.14.0 (existing WSL runtime)",
+    "run_command_policy": "CUBLAS_WORKSPACE_CONFIG=:4096:8; OMP_NUM_THREADS=1; MKL_THREADING_LAYER=SEQUENTIAL",
+    "driver_policy": "deterministic_algorithms=True; TF32 disabled for CUDA matmul and cuDNN"
+  }
+}

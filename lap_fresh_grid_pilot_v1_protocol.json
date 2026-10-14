@@ -1,0 +1,78 @@
+{
+  "namespace": "lap_fresh_grid_pilot_v1_",
+  "first_action_unix": 1792006641.558,
+  "timer_note": "15s conservative reserve for initial commentary/tool initiation",
+  "wall_budget_seconds": 10800,
+  "seed": 2026,
+  "head": "a34574b03a3df615c3e221e3bebbcc2457f83db3",
+  "worktree": "?? .planning/chem_precision_trace/\n?? .planning/quick/\n?? .planning/step_globalization/lap_step_globalization_report.md\n?? .planning/step_globalization/protocol.json\n?? .planning/step_globalization/results.json\n?? baseline_validation/\n?? four_objective_throughput_diagnosis_metrics.json\n?? four_objective_throughput_diagnosis_report.md\n?? full90_25update_qualification.py\n?? full90_25update_qualification_protocol.json\n?? lap_f025_aggregate_closure.csv\n?? lap_f025_analysis_receipt.json\n?? lap_f025_availability.csv\n?? lap_f025_availability_aggregates.csv\n?? lap_f025_decision.json\n?? lap_f025_direct_parity.csv\n?? lap_f025_final_integrity.json\n?? lap_f025_harmful_cumulative.csv\n?? lap_f025_harmful_cumulative.png\n?? lap_f025_native_directions.csv\n?? lap_f025_operator_vector_changes.csv\n?? lap_f025_pairwise_decomposition.csv\n?? lap_f025_pairwise_records.csv\n?? lap_f025_per_record_attribution.csv\n?? lap_f025_protocol.json\n?? lap_f025_provenance.json\n?? lap_f025_recomputation_receipt.json\n?? lap_f025_report.md\n?? lap_f025_source_provenance.json\n?? lap_f025_task_attribution.csv\n?? lap_f025_tests.json\n?? lap_f025_unchanged_database_metrics.csv\n?? lap_f025_unchanged_quality_metrics.csv\n?? lap_fresh_grid_pilot_v1_started.txt\n?? lap_gauge_consistency_v1_started.txt\n?? lap_grid_transfer_v1_started.txt\n?? lap_target_provenance_v1_started.txt\n?? lap_target_provenance_v2_started.txt\n?? test_full90_25update_qualification.py\n?? tests/test_lap_f025_attribution.py\n?? tests/test_publication_baselines.py\n?? tools/evaluate_publication_baselines.py\n?? tools/lap_f025_analyze.py\n?? tools/lap_f025_collect.py\n?? tools/lap_f025_report.py\n?? tools/profile_four_objective_throughput.py\n?? train_lap_four_objective.py\n",
+  "source_hashes": {
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_operator_data.py": "8d411952a579728dac395e38d1255e5e5bb412ea77d4e2fb8c9f6116e55f93c9",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "tools/lap_wtmad_gradient_alignment.py": "e09fe716cb273ef9929a6cab5d2d906341e603ca693a882ec0bb77f829a85080",
+    "train_models/test_lap.py": "84de2add80cdfb71b739867aae7691141eef4a9e3d6db99823f3ce029ed23972",
+    "lap_grid_transfer_v1_report.md": "6df80a612c0c236af77a2ada2a34a845390612c1814d0b48915fc4971c1c88bf",
+    "lap_grid_transfer_v1_protocol.json": "5b63ba609d167f69cd75af1bd04873852741019effb390b02daadeb6600a5286",
+    "lap_grid_transfer_v1_provenance.json": "ded3b876a0a582a2830d82044f7253b3884422e3ec62c8dcdfef5f92cc6e20ce",
+    "lap_grid_transfer_v1_stage_definitions.json": "568155261ff5c9b19363620b21e48f4a2833d57597ff306def25545832b3905f",
+    "lap_grid_transfer_v1_matched_loss.csv": "933e5e043e780f7e9cea1ab2f6552b5c473500e3892ab40b7907cb48c3d0f94d",
+    "lap_gauge_consistency_v1_report.md": "d2a43e07607daa29995b57f6be4ae9549ea69480cc0f3b811d90dd12198aab41"
+  },
+  "constructor": {
+    "num_layers": 6,
+    "h_dim": 32,
+    "dropout": 0.0,
+    "use_g_x": true,
+    "use_g_c": true
+  },
+  "expected_trainable_coordinates": 9446,
+  "systems": [
+    "H2",
+    "BeH2",
+    "CO"
+  ],
+  "arms": [
+    "SUBSET",
+    "FULL_SOURCE"
+  ],
+  "order": "alternating SUBSET then FULL_SOURCE for each t=1..32; cross evaluation t0,t16,t32",
+  "updates_per_arm": 32,
+  "batch_reduction": "mean of three fully assembled matrix losses, not chunk losses",
+  "optimizer": {
+    "lr": 2.5e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "foreach": false
+  },
+  "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+  "gradient_method": "two-pass exact matrix-loss adjoint, validated against direct scalar-autograd fixture; no approximate local loss",
+  "milestones": [
+    0,
+    16,
+    32
+  ],
+  "effect_floor_B": 0.01,
+  "tolerances": {
+    "reference_atol": 1e-10,
+    "reference_rtol": 1e-10,
+    "F64_gradient_atol": 1e-10,
+    "F64_gradient_rtol": 1e-09,
+    "constraints_atol": 1e-12,
+    "loss_resolution_absolute": 1e-10,
+    "loss_resolution_relative": 1e-09
+  },
+  "checkpoints_loaded_old": 0,
+  "no_SCF_or_development_access": true,
+  "profile_reserve_seconds": 900
+}

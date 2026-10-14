@@ -1,0 +1,126 @@
+{
+  "records": {
+    "H2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_fresh_grid_pilot_v1_runs_20261014/H2_SOURCE.h5",
+      "sha256": "ec84118851a802370a37414d054255499add653861a87a1aeac4846765d01680",
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+        "sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95"
+      },
+      "corpus_mapping_source": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_053.h5",
+        "sha256": "71a50fe496f00ae46f378e72fe70a30252b4f55ae8358a21b5d295f880bac690",
+        "group": "mrks_9814b9a14e00568cbe7dad2c",
+        "mapping": {
+          "ao_cache_sha256": "bfc9991e8ac3a2083a0a6decc8174103d53398ae15adf814ba95aeba73584877",
+          "group": "mrks_9814b9a14e00568cbe7dad2c",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_9814b9a14e00568cbe7dad2c",
+          "n_ao": 60,
+          "n_grid": 42508,
+          "shard": "mrks/mrks_053.h5",
+          "source_id": "H2",
+          "source_record_sha256": "f38fc134620472f91f28c67f9bb966d15c30fba27fdb3ef3f9a0808bb0a14847",
+          "source_sha256": "3732c45228dc621a28bbe776cc207690b4f4397fa6f3d99806e3617fba697f59"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/H2.npz",
+          "sha256": "8a78fa03bd0f75fc7aa72453ba3f705b9c7bedd23ba8c76728846f7b85d53ab0"
+        }
+      },
+      "SOURCE_count": 47080,
+      "SUBSET_count": 42508,
+      "n_AO": 60,
+      "dtype": "F64 source inputs and all AO/descriptor arrays",
+      "reference_replay_gaps": [
+        2.304889894971429e-15,
+        2.3007720438721984e-15
+      ],
+      "selection_multiplicity_preserved": true
+    },
+    "BeH2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_fresh_grid_pilot_v1_runs_20261014/BeH2_SOURCE.h5",
+      "sha256": "222c18385261089c3fc5aa51c7c2cc9f366f5c60c6db37a15366a075b3596ead",
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+        "sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00"
+      },
+      "corpus_mapping_source": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_024.h5",
+        "sha256": "0e0bac52f99f327bd3ff69dbc24897c97707c0f4d9e5919777a64d679a4c52e7",
+        "group": "mrks_e4d282caa3eb3f8d5345b1a2",
+        "mapping": {
+          "ao_cache_sha256": "a31180ad9ab68987d379a49251998b5a6c3f8f5abba113eaeb12caaeb310e0fc",
+          "group": "mrks_e4d282caa3eb3f8d5345b1a2",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_e4d282caa3eb3f8d5345b1a2",
+          "n_ao": 144,
+          "n_grid": 77240,
+          "shard": "mrks/mrks_024.h5",
+          "source_id": "BeH2",
+          "source_record_sha256": "45b98a3f67667e6c6d105c05d4eb310d29c3569c390d4219315b592e9a182fb6",
+          "source_sha256": "e3d3ac21d5d360a6d0633ba5eb68e69977e597800e288e71b8eb7594bb3e1633"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/BeH2.npz",
+          "sha256": "fa320925c62de6cd0601038ef2aa2fa02b20b4c50452ccb6509e01b9767a6a58"
+        }
+      },
+      "SOURCE_count": 89200,
+      "SUBSET_count": 77240,
+      "n_AO": 144,
+      "dtype": "F64 source inputs and all AO/descriptor arrays",
+      "reference_replay_gaps": [
+        5.7744843302929955e-15,
+        5.792850722774291e-15
+      ],
+      "selection_multiplicity_preserved": true
+    },
+    "CO": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_fresh_grid_pilot_v1_runs_20261014/CO_SOURCE.h5",
+      "sha256": "1a3dfa5ebd11f931435ae110f4d822d2d1fcfdc46673c3a38901ba1386698934",
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+        "sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e"
+      },
+      "corpus_mapping_source": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_039.h5",
+        "sha256": "90bc5aa238a701f663a04663f520f4083a58ee463b3633ae50e52ddb51ec58a9",
+        "group": "mrks_a85d32e4db2ff39c2e5d4002",
+        "mapping": {
+          "ao_cache_sha256": "147619bb7839846a764ed51f5ec8c1b3792ae1f9235b74c1cd5213e6153967e5",
+          "group": "mrks_a85d32e4db2ff39c2e5d4002",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_a85d32e4db2ff39c2e5d4002",
+          "n_ao": 168,
+          "n_grid": 72110,
+          "shard": "mrks/mrks_039.h5",
+          "source_id": "CO",
+          "source_record_sha256": "028b56a96702ee265b8277e5109346ba217ea11054a0335426b435e631898fa3",
+          "source_sha256": "ac7eef3c2731063c4fac7249c2e8b2b31511fe275d9a9ce92150215dba9b90aa"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/CO.npz",
+          "sha256": "bbb2229cc95ce31ae02568b1191bda556bca7a4916ffbc77b58c5b0303aa3b77"
+        }
+      },
+      "SOURCE_count": 85960,
+      "SUBSET_count": 72110,
+      "n_AO": 168,
+      "dtype": "F64 source inputs and all AO/descriptor arrays",
+      "reference_replay_gaps": [
+        1.4059225195241373e-14,
+        1.4041318195992215e-14
+      ],
+      "selection_multiplicity_preserved": true
+    }
+  },
+  "prepare_seconds": 17.985501634,
+  "old_models_loaded": 0
+}
