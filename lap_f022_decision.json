@@ -1,0 +1,38 @@
+{
+  "classification": "C",
+  "cached_gradient_preflight": "FAIL",
+  "JW_dot_G": 0.7681486811742246,
+  "legacy_dot_G": -9.634383531616574,
+  "operator_dot_G": 0.39195185865232013,
+  "legacy_dot_chemistry": 0.267991213500651,
+  "legacy_dot_physics": -9.902374745117227,
+  "composite_cancellation_ratio": 0.5262326208303982,
+  "fidelity": {
+    "F010": {
+      "positive_dot_count": 61,
+      "p10_cosine": 0.21025752382696644,
+      "median_cosine": 0.8530247034168575,
+      "max_norm_ratio": 3.17646419657022,
+      "relative_gradient_MSE": 1.0625663298726495
+    },
+    "F022": {
+      "positive_dot_count": 49,
+      "p10_cosine": -0.27218189174862034,
+      "median_cosine": 0.3557348863811402,
+      "max_norm_ratio": 7.183033749897113,
+      "relative_gradient_MSE": 11.38435403509104
+    }
+  },
+  "native_step": "NOT RUN",
+  "training_launched": false,
+  "optimizer_updates": 0,
+  "Clean28": "NOT EVALUATED",
+  "active_compute_seconds": 1.9842246000189334,
+  "whole_workflow_wall_seconds": 6.276606559753418,
+  "budget_respected": true,
+  "reason": "Fixed physical contribution reverses legacy descent despite feasible chemistry-only mixture.",
+  "next_experiment": "Read-only cached affine-feasibility audit for simultaneous JW/legacy/operator descent with the original physical contribution fixed; determine necessary chemistry-contribution bounds, without choosing new coefficients or running training.",
+  "total_wall_seconds_since_protocol_freeze": 434.6969196796417,
+  "active_scientific_compute_upper_bound_seconds": 434.6969196796417,
+  "compute_accounting": "cached execute body timed; total frozen-workflow wall bounds all active work, including imports, tests and reporting"
+}

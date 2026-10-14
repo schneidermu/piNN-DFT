@@ -1,0 +1,41 @@
+{
+  "authenticated": true,
+  "checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+  "moment_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+  "parameter_order_sha256": "e90fc81cf60be0974bc4f447b0b3c9f7f67fc21e6e1795f6d181cf06de718c20",
+  "manifest_sha256": "b249964d410f0db4a59867de53bb35c6442ec23aa81eefb0b96b50242d94f6bc",
+  "dataset_logical_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "A_d_sha256": "3233a7b3194e68af447bb63edda0d154325da7d051e0df6fe60a7a788cebc73d",
+  "stream_jacobian_sha256": "9afb72e7077cbb4f71437ef90cb558202a80132d87efc28d0f7ef51dd37f9781",
+  "stream_mapping_sha256": "71de1c9aeb5b4ea0fa399764a5935f2c03eb1f957160e397806930d59f8b2bc6",
+  "evaluation_cache_sha256": "6a08dec5dc4d92a90947040c95d3110943dd389fb336defd20a1782212c165ae",
+  "physical_vector_hashes": {
+    "ae17": "2c80341c67c89c1a4aafd465f04a176fcf1404d77280b8d8391cda83bd270967",
+    "exc": "9dfe91ee56bce7788cc43bd176563764d51e392c700b55e37c555d26c0f3860a",
+    "op": "97e7447ee59fa8941ffe1b6ad1f16a4c1dec364478b08353669395e93d01efe0"
+  },
+  "source_hashes": {
+    "tools\\lap_f022_scalarization.py": "dc6a3338b4e53d8b09861b53192821476423935e19458447682cda76be00d4a2",
+    "tools\\lap_f015_audit.py": "6323cea8d024fbf2eafa401fb1e0112faac82ea12a4fba76deb12e26204847e8",
+    "tools\\lap_f013_geometry_audit.py": "1db6fdc0ab2886ac4d5ef8984fed672aed2bd0705557276f4ea0746fadf91a94",
+    "tools\\lap_f020_stream.py": "fbb96f817ec5fc6450afa92b3152b8333feb630a7dc17d17062a89c771e81675",
+    "tools\\lap_training_metric_gradient_audit.py": "97372eba80cec6fbdb8f63bb170f963e4636daec330b2a46dce369ca0ac9b8df",
+    "tools\\lap_relchem_factorial_gradient_audit.py": "04350487e9805dcfa250ea8b8360aa0217cec43fa18515b8e83df90d556cf1f5",
+    "tools\\lap_f010_uniform_normalized_chemistry.py": "899498aafc2e84d6e45e901d94289600d4024421cddb217499592f9222bd04da",
+    "tools\\lap_b8_adamw.py": "3804e214c6186108f352e3af60967c09924bba8d1f2f0d9b0cdd85fd3e97df21",
+    "train_models\\lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "train_models\\optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "train_models\\lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864"
+  },
+  "source_records_verified": 251,
+  "physical_parameter_names_match": true,
+  "optimizer_updates": 0,
+  "Clean28_accessed": false,
+  "checkpoint_preserved_after_preflight": true,
+  "constraint_receipt_reused": "lap_f021_phys4_resume_parity.json",
+  "constraint_receipt_sha256": "3d7ed38be51795fef7cf746f9d30b9d9a4ded54fe3e1d3356ea632c4b3290b0f",
+  "protocol_sha256": "ca02a834f4fe8d557c1f6ef2397a3e30af68c25b6bf5f22d840ad89c5633ee19",
+  "native_moment_restoration": "NOT RUN; no optimizer was constructed or mutated",
+  "mixed_historical_receipt": "Only checkpoint and parameter-order fields consumed; no development score used",
+  "GPU_evaluations": 0
+}

@@ -1,0 +1,18 @@
+{
+  "preflight_limit_seconds": 900,
+  "active_limit_seconds": 5400,
+  "wall_limit_seconds": 10800,
+  "active_compute_seconds": 1.9842246000189334,
+  "whole_workflow_wall_seconds": 6.276606559753418,
+  "training_projection": "NOT RUN \u2014 primary cached geometry gate failed",
+  "complete_endpoint_reserve": "Not consumed; training not authorized",
+  "max_training_updates": 64,
+  "max_arms": 1,
+  "active_scientific_compute_upper_bound_seconds": 434.6969196796417,
+  "total_wall_seconds_since_protocol_freeze": 434.6969196796417,
+  "read_only_preflight_limit_respected": true,
+  "active_limit_respected": true,
+  "wall_limit_respected": true,
+  "GPU_evaluations": 0,
+  "training_and_endpoint_projection": "NOT RUN; mandatory geometry gate failed before profiling"
+}

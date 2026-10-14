@@ -79,3 +79,8 @@ lap_unitmax_svrg_k1_10update_metrics.json -text whitespace=blank-at-eol,blank-at
 lap_f021_phys4_* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 tools/lap_f021_phys4*.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 tests/test_lap_f021_phys4.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# F022 exact-byte source and cache provenance receipts.
+lap_f022_* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tools/lap_f022*.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tests/test_lap_f022_scalarization.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

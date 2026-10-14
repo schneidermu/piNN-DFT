@@ -1,0 +1,15 @@
+{
+  "passed": 22,
+  "failed": 0,
+  "pytest_seconds": 10.17,
+  "suite": [
+    "tests/test_lap_f022_scalarization.py",
+    "tests/test_lap_fixed_adamw.py",
+    "tests/test_lap_f010_uniform_normalized_chemistry.py",
+    "train_models/test_lap_operator_unit.py"
+  ],
+  "ruff": "PASS; import bootstrap E402 excluded",
+  "compileall": "PASS",
+  "native_scientific_counterfactual": "NOT RUN; earlier mandatory geometry gate failed",
+  "constraint_receipt": "authenticated B8 F021 preflight reused; no new GPU constraint evaluation"
+}
