@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "theta": 0,
+      "gradient_relative_closure": 2.3223938506042967e-16,
+      "primal_and_density_operator_chunk_parity": "PASS",
+      "loss_parity": "PASS"
+    },
+    {
+      "theta": 1,
+      "gradient_relative_closure": 2.400643549880442e-16,
+      "primal_and_density_operator_chunk_parity": "PASS",
+      "loss_parity": "PASS"
+    },
+    {
+      "theta": 2,
+      "gradient_relative_closure": 3.233101435458634e-16,
+      "primal_and_density_operator_chunk_parity": "PASS",
+      "loss_parity": "PASS"
+    }
+  ],
+  "chunk_profile_seconds": 0.854722700023558,
+  "shared_hidden": "exchange hx contributions include all real/constraint correlation consumers; density dependencies never detached",
+  "replicas_only": true,
+  "parameter_order_verified": true,
+  "contribution_cancellation": [
+    {
+      "theta": 0,
+      "sum_individual_norms": 33745600.73530395,
+      "norm_sum_LN_contributions": 33745589.04340307,
+      "net_over_gross": 0.9999996535281449,
+      "cancelled_fraction_of_gross_norm": 3.4647185509495415e-07
+    },
+    {
+      "theta": 1,
+      "sum_individual_norms": 695.5023570362183,
+      "norm_sum_LN_contributions": 694.8698771592315,
+      "net_over_gross": 0.9990906143299326,
+      "cancelled_fraction_of_gross_norm": 0.0009093856700673753
+    },
+    {
+      "theta": 2,
+      "sum_individual_norms": 431.21365196948165,
+      "norm_sum_LN_contributions": 430.5783840448618,
+      "net_over_gross": 0.9985267907875404,
+      "cancelled_fraction_of_gross_norm": 0.0014732092124596363
+    }
+  ]
+}

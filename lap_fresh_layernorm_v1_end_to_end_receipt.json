@@ -1,0 +1,18 @@
+{
+  "checks": [
+    {
+      "theta": 0,
+      "independent_energy_matrix_relative_gap": 5.873612506683015e-09,
+      "fixed_adjoint": true,
+      "parameter_perturbations_restored": true
+    },
+    {
+      "theta": 1,
+      "independent_energy_matrix_relative_gap": 3.634464309029945e-09,
+      "fixed_adjoint": true,
+      "parameter_perturbations_restored": true
+    }
+  ],
+  "independence": "energy-first dE/dP uses no production partial/assembly helper; same PBE formula/model/source inputs; weighted F32 backward is a distinct discrete arithmetic path",
+  "FD_max_steps_per_direction_state": 7
+}

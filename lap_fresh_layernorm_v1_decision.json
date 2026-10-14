@@ -1,0 +1,79 @@
+{
+  "derivative": "UNRESOLVED",
+  "initial_spike_three_coordinates": "QUALIFIED_AT_REPORTED_FD_RESOLUTION",
+  "startup": "CONSTRAINT_LAYER_NORM_SUPPORTED",
+  "optimizer_memory": "DIRECTIONALLY_ADVERSE_AT_TESTED_STATE",
+  "FD_qualification": [
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "FD_convergence": "QUALIFIED",
+      "best_relative_gap": 2.232952046348281E-06
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "FD_convergence": "QUALIFIED",
+      "best_relative_gap": 1.569620585517872E-06
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "FD_convergence": "QUALIFIED",
+      "best_relative_gap": 2.97187038059733E-07
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "FD_convergence": "QUALIFIED",
+      "best_relative_gap": 4.347422633080721E-05
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "FD_convergence": "UNRESOLVED",
+      "best_relative_gap": 0.006505115024534602
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "FD_convergence": "QUALIFIED",
+      "best_relative_gap": 2.6501468789334217E-06
+    }
+  ],
+  "branch_sum_closure": [
+    {
+      "theta": 0,
+      "gradient_relative_closure": 2.3223938506042967E-16,
+      "primal_and_density_operator_chunk_parity": "PASS",
+      "loss_parity": "PASS"
+    },
+    {
+      "theta": 1,
+      "gradient_relative_closure": 2.400643549880442E-16,
+      "primal_and_density_operator_chunk_parity": "PASS",
+      "loss_parity": "PASS"
+    },
+    {
+      "theta": 2,
+      "gradient_relative_closure": 3.233101435458634E-16,
+      "primal_and_density_operator_chunk_parity": "PASS",
+      "loss_parity": "PASS"
+    }
+  ],
+  "native_replay_steps": 2,
+  "new_intervention_arms": 0,
+  "proposal33_applied": false,
+  "production_bug_confirmed": false,
+  "next_experiment": "One matched fresh-seed FULL_SOURCE operator-only pair: original LayerNorm eps versus one prospectively fixed larger LayerNorm eps, identical initialization/source/optimizer/update count. First qualify exact constraints and initial derivatives; do not reset moments or alter other components. No epsilon sweep. This is a recommendation only; no numerical epsilon was selected here.",
+  "limits": "theta1 secondary LN coordinate lacks a two-step FD convergence region; no additional FD steps/tolerance changes. No g17 or complete saved gradient history. No causal optimizer-without-g1 trajectory. No chemical or full90 conclusion.",
+  "scientific_wall_seconds": 1153.805,
+  "budget_respected": true,
+  "timing_note": "Wall includes all coding/diagnostics/tests. Direct replay gradient passes measured separately; total GPU-active time was not metered and is not equated to workflow wall."
+}

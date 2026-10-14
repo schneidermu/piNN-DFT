@@ -1,0 +1,228 @@
+{
+  "authenticated": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\FULL_SOURCE_t0.pt",
+      "sha256": "e85154a0590a1dff9c1f69862875402011d57ddc5b6716c1373298b1bcec12bb"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\FULL_SOURCE_t16.pt",
+      "sha256": "11f26e886c0d7d3ad9f82f14d98376564a8d2652251c8d5c553b5e45b91e6ce4"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\FULL_SOURCE_t32.pt",
+      "sha256": "34989c4f9b8bedc9fddad07c0fa274c915dd99cea7beffb76fd37d4ef0df9983"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\initial_gradients.npz",
+      "sha256": "4564c2e615512a6a8bff3c41b30b4075bc8f205f5a192e19a1fbff08dc98f664"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\endpoint_gradients.npz",
+      "sha256": "7343b7dc3892f1cf8f3b9e9516688cb1cfc7823676e2edb072d05d52b1f7941d"
+    }
+  ],
+  "representations": {
+    "H2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_fresh_grid_pilot_v1_runs_20261014/H2_SOURCE.h5",
+      "sha256": "ec84118851a802370a37414d054255499add653861a87a1aeac4846765d01680",
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+        "sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95"
+      },
+      "corpus_mapping_source": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_053.h5",
+        "sha256": "71a50fe496f00ae46f378e72fe70a30252b4f55ae8358a21b5d295f880bac690",
+        "group": "mrks_9814b9a14e00568cbe7dad2c",
+        "mapping": {
+          "ao_cache_sha256": "bfc9991e8ac3a2083a0a6decc8174103d53398ae15adf814ba95aeba73584877",
+          "group": "mrks_9814b9a14e00568cbe7dad2c",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_9814b9a14e00568cbe7dad2c",
+          "n_ao": 60,
+          "n_grid": 42508,
+          "shard": "mrks/mrks_053.h5",
+          "source_id": "H2",
+          "source_record_sha256": "f38fc134620472f91f28c67f9bb966d15c30fba27fdb3ef3f9a0808bb0a14847",
+          "source_sha256": "3732c45228dc621a28bbe776cc207690b4f4397fa6f3d99806e3617fba697f59"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/H2.npz",
+          "sha256": "8a78fa03bd0f75fc7aa72453ba3f705b9c7bedd23ba8c76728846f7b85d53ab0"
+        }
+      },
+      "SOURCE_count": 47080,
+      "SUBSET_count": 42508,
+      "n_AO": 60,
+      "dtype": "F64 source inputs and all AO/descriptor arrays",
+      "reference_replay_gaps": [
+        2.304889894971429e-15,
+        2.3007720438721984e-15
+      ],
+      "selection_multiplicity_preserved": true
+    },
+    "BeH2": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_fresh_grid_pilot_v1_runs_20261014/BeH2_SOURCE.h5",
+      "sha256": "222c18385261089c3fc5aa51c7c2cc9f366f5c60c6db37a15366a075b3596ead",
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+        "sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00"
+      },
+      "corpus_mapping_source": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_024.h5",
+        "sha256": "0e0bac52f99f327bd3ff69dbc24897c97707c0f4d9e5919777a64d679a4c52e7",
+        "group": "mrks_e4d282caa3eb3f8d5345b1a2",
+        "mapping": {
+          "ao_cache_sha256": "a31180ad9ab68987d379a49251998b5a6c3f8f5abba113eaeb12caaeb310e0fc",
+          "group": "mrks_e4d282caa3eb3f8d5345b1a2",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_e4d282caa3eb3f8d5345b1a2",
+          "n_ao": 144,
+          "n_grid": 77240,
+          "shard": "mrks/mrks_024.h5",
+          "source_id": "BeH2",
+          "source_record_sha256": "45b98a3f67667e6c6d105c05d4eb310d29c3569c390d4219315b592e9a182fb6",
+          "source_sha256": "e3d3ac21d5d360a6d0633ba5eb68e69977e597800e288e71b8eb7594bb3e1633"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/BeH2.npz",
+          "sha256": "fa320925c62de6cd0601038ef2aa2fa02b20b4c50452ccb6509e01b9767a6a58"
+        }
+      },
+      "SOURCE_count": 89200,
+      "SUBSET_count": 77240,
+      "n_AO": 144,
+      "dtype": "F64 source inputs and all AO/descriptor arrays",
+      "reference_replay_gaps": [
+        5.7744843302929955e-15,
+        5.792850722774291e-15
+      ],
+      "selection_multiplicity_preserved": true
+    },
+    "CO": {
+      "path": "/mnt/c/Dev/readWFN_share_ms/lap_fresh_grid_pilot_v1_runs_20261014/CO_SOURCE.h5",
+      "sha256": "1a3dfa5ebd11f931435ae110f4d822d2d1fcfdc46673c3a38901ba1386698934",
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+        "sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e"
+      },
+      "corpus_mapping_source": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_039.h5",
+        "sha256": "90bc5aa238a701f663a04663f520f4083a58ee463b3633ae50e52ddb51ec58a9",
+        "group": "mrks_a85d32e4db2ff39c2e5d4002",
+        "mapping": {
+          "ao_cache_sha256": "147619bb7839846a764ed51f5ec8c1b3792ae1f9235b74c1cd5213e6153967e5",
+          "group": "mrks_a85d32e4db2ff39c2e5d4002",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_a85d32e4db2ff39c2e5d4002",
+          "n_ao": 168,
+          "n_grid": 72110,
+          "shard": "mrks/mrks_039.h5",
+          "source_id": "CO",
+          "source_record_sha256": "028b56a96702ee265b8277e5109346ba217ea11054a0335426b435e631898fa3",
+          "source_sha256": "ac7eef3c2731063c4fac7249c2e8b2b31511fe275d9a9ce92150215dba9b90aa"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/CO.npz",
+          "sha256": "bbb2229cc95ce31ae02568b1191bda556bca7a4916ffbc77b58c5b0303aa3b77"
+        }
+      },
+      "SOURCE_count": 85960,
+      "SUBSET_count": 72110,
+      "n_AO": 168,
+      "dtype": "F64 source inputs and all AO/descriptor arrays",
+      "reference_replay_gaps": [
+        1.4059225195241373e-14,
+        1.4041318195992215e-14
+      ],
+      "selection_multiplicity_preserved": true
+    }
+  },
+  "source_hashes": {
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_operator_data.py": "8d411952a579728dac395e38d1255e5e5bb412ea77d4e2fb8c9f6116e55f93c9",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "train_models/test_lap.py": "84de2add80cdfb71b739867aae7691141eef4a9e3d6db99823f3ce029ed23972",
+    "tools/lap_fresh_grid_pilot_v1.py": "c547da15fe4189c8bb418a1d034451a2602edf175dc1e0eeb1c303112a868696"
+  },
+  "old_models_loaded": 0,
+  "diagnostic_array_receipts": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\authenticated_theta16.pt",
+      "sha256": "cff053ddc85a7ec0a69e2f0cf69394105c56a14604e223dcd9dc2eea48ca051e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\authenticated_theta32.pt",
+      "sha256": "de556b2632bc408ab38202de9d5f59dc6c297a5ef960489d4e26e221424aa154"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\branch_theta0.npz",
+      "sha256": "62472fde91198f1a5875a1d1ac2f029a875793b6b6604c165b327f1907e49947"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\branch_theta1.npz",
+      "sha256": "ded34f5d6995429c0817871db9ae682059d54ed0a853ec17ff72c70b858021b2"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\branch_theta2.npz",
+      "sha256": "0b20867811a3156c2eb9cdd708660c5eb88076d0d905f3111d245a5b9d45844f"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\hidden_samples.pt",
+      "sha256": "a3a1009c18627785d835cbc9eca890bbe8ffcc12802fa3ed021bdb43a421a034"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\moment_t1.npz",
+      "sha256": "9645775aab93b03a6b30ee34fa3ce07585bc7e5c2c147252203e3243b37c2d89"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\moment_t16.npz",
+      "sha256": "6d8a1c66af1f897f631be37627902f2d04d9da341af587094adfa34494f280ce"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\moment_t2.npz",
+      "sha256": "a82aba4698e8561c4531f0251f94e23ffcdcd14f2d19e18347c79dd68842d817"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\moment_t32.npz",
+      "sha256": "cc88d20aaafd8b4c2d406d51f26af63fbeb2144fcd29eb9486f7bc6f94f3d9e6"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\replay_arrays.npz",
+      "sha256": "76abc205d0dbf04cc3dd78b665c3b2529ef522558a222a6bd33690226f5a551e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\theta0.pt",
+      "sha256": "0f6b2078e7fb933afa795bc69871022df8f601a8935f3361b96b5e4e706e4070"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\theta1.pt",
+      "sha256": "6b0299ad668fd01f94702fdd79c279f17a7351cae5dea1258c7b601fe85253de"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\theta2.pt",
+      "sha256": "2de068e08595883ae15673be5ecabe420ff6230c0777879cff0649a027351e5b"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\update2_components.npz",
+      "sha256": "ba270bc794ba540babf3087e994022c3dbf6f6fdd6024d417ff066c63f751172"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\update33_components.npz",
+      "sha256": "a11977314e7c132d324c22895e14d15e4cd320072d4a035197b70e0dbf9f160a"
+    }
+  ],
+  "script_sha256": "836c3382b2a6b9ad83f7fade02dc6f7847c5a2ab4fb6abe17caf311f89535933",
+  "historical_and_production_hashes_unchanged": true
+}

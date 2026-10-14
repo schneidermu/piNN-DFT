@@ -1,0 +1,150 @@
+{
+  "states": [
+    {
+      "theta": 0,
+      "constraints": {
+        "errors": {
+          "tau": 0.0,
+          "spin": 0.0,
+          "UEG": 0.0,
+          "Gx_UEG": 0.0,
+          "high_density": 0.0,
+          "rapid_gradient": 0.0
+        },
+        "finite": true,
+        "PASS": true
+      },
+      "parameters_buffers_restored": true,
+      "RNG_restored": true,
+      "expanded_energy_density_partial_parity": "PASS"
+    },
+    {
+      "theta": 1,
+      "constraints": {
+        "errors": {
+          "tau": 0.0,
+          "spin": 0.0,
+          "UEG": 0.0,
+          "Gx_UEG": 0.0,
+          "high_density": 0.0,
+          "rapid_gradient": 0.0
+        },
+        "finite": true,
+        "PASS": true
+      },
+      "parameters_buffers_restored": true,
+      "RNG_restored": true,
+      "expanded_energy_density_partial_parity": "PASS"
+    },
+    {
+      "theta": 2,
+      "constraints": {
+        "errors": {
+          "tau": 0.0,
+          "spin": 0.0,
+          "UEG": 0.0,
+          "Gx_UEG": 0.0,
+          "high_density": 0.0,
+          "rapid_gradient": 0.0
+        },
+        "finite": true,
+        "PASS": true
+      },
+      "parameters_buffers_restored": true,
+      "RNG_restored": true,
+      "expanded_energy_density_partial_parity": "PASS"
+    },
+    {
+      "theta": 16,
+      "constraints": {
+        "errors": {
+          "tau": 0.0,
+          "spin": 0.0,
+          "UEG": 0.0,
+          "Gx_UEG": 0.0,
+          "high_density": 0.0,
+          "rapid_gradient": 0.0
+        },
+        "finite": true,
+        "PASS": true
+      },
+      "parameters_buffers_restored": true,
+      "RNG_restored": true,
+      "expanded_energy_density_partial_parity": "NOT RUN"
+    },
+    {
+      "theta": 32,
+      "constraints": {
+        "errors": {
+          "tau": 0.0,
+          "spin": 0.0,
+          "UEG": 0.0,
+          "Gx_UEG": 0.0,
+          "high_density": 0.0,
+          "rapid_gradient": 0.0
+        },
+        "finite": true,
+        "PASS": true
+      },
+      "parameters_buffers_restored": true,
+      "RNG_restored": true,
+      "expanded_energy_density_partial_parity": "NOT RUN"
+    }
+  ],
+  "downstream": [
+    {
+      "theta": 0,
+      "first_LN_bias_norm": 0.0,
+      "first_downstream_linear_weight_norm": 3.2792622401244778,
+      "first_downstream_anchor_input_norm": 0.0,
+      "first_downstream_anchor_input_variance": 0.0
+    },
+    {
+      "theta": 1,
+      "first_LN_bias_norm": 0.0001414213616682439,
+      "first_downstream_linear_weight_norm": 3.279260139463347,
+      "first_downstream_anchor_input_norm": 5.385212825360494e-05,
+      "first_downstream_anchor_input_variance": 8.995244162005498e-11
+    },
+    {
+      "theta": 2,
+      "first_LN_bias_norm": 0.0002361814551045149,
+      "first_downstream_linear_weight_norm": 3.2792547176028624,
+      "first_downstream_anchor_input_norm": 8.993635270991753e-05,
+      "first_downstream_anchor_input_variance": 2.508845594304151e-10
+    }
+  ],
+  "moment_rounding": [
+    {
+      "t": 1,
+      "negative_v_rest_count": 896,
+      "minimum_v_rest": -14129.444030761719,
+      "negative_entries_outside_F32_accumulation_bound": 0,
+      "bound": "(t+4)*F32_epsilon*max(v_first,v_total); accounting only; no clipping"
+    },
+    {
+      "t": 2,
+      "negative_v_rest_count": 10,
+      "minimum_v_rest": -5005.810607910156,
+      "negative_entries_outside_F32_accumulation_bound": 0,
+      "bound": "(t+4)*F32_epsilon*max(v_first,v_total); accounting only; no clipping"
+    },
+    {
+      "t": 16,
+      "negative_v_rest_count": 1,
+      "minimum_v_rest": -0.2787168603390455,
+      "negative_entries_outside_F32_accumulation_bound": 0,
+      "bound": "(t+4)*F32_epsilon*max(v_first,v_total); accounting only; no clipping"
+    },
+    {
+      "t": 32,
+      "negative_v_rest_count": 0,
+      "minimum_v_rest": 0.0,
+      "negative_entries_outside_F32_accumulation_bound": 0,
+      "bound": "(t+4)*F32_epsilon*max(v_first,v_total); accounting only; no clipping"
+    }
+  ],
+  "production_and_historical_files_unchanged": true,
+  "native_arithmetic_note": "Initial CPU proposal differed from actual CUDA update2 in 103 coordinates by at most 3.7252903e-9. Matching CUDA arithmetic restored byte identity; CPU attempt was diagnostic, not a production FAIL.",
+  "t1_rest_note": "No other gradient exists at t1: the reported residual is entirely native rounding. At later t, rest includes subsequent-gradient contributions and native rounding."
+}

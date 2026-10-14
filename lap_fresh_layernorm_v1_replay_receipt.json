@@ -1,0 +1,68 @@
+{
+  "native_optimizer_replay_updates_executed": 2,
+  "new_intervention_arms": 0,
+  "history": [
+    {
+      "theta": 0,
+      "loss": 1.268092669580413,
+      "gradient_index": 1,
+      "gradient_norm": 33745589.04345739,
+      "system_losses": [
+        0.29546956477841857,
+        0.5710899628571287,
+        2.937718481105691
+      ],
+      "active_seconds": 26.199117799988016
+    },
+    {
+      "theta": 1,
+      "loss": 0.5587582287886662,
+      "gradient_index": 2,
+      "gradient_norm": 694.8771866309861,
+      "system_losses": [
+        0.035614058559641226,
+        0.23703414102823384,
+        1.4036264867781234
+      ],
+      "active_seconds": 25.308623999997508
+    },
+    {
+      "theta": 2,
+      "loss": 0.5637659321967876,
+      "gradient_index": 3,
+      "gradient_norm": 430.5922970706028,
+      "system_losses": [
+        0.037990356857262285,
+        0.24050420547379264,
+        1.412803234259308
+      ],
+      "active_seconds": 25.068754700012505
+    }
+  ],
+  "diagnostic_states": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\theta0.pt",
+      "sha256": "0f6b2078e7fb933afa795bc69871022df8f601a8935f3361b96b5e4e706e4070"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\theta1.pt",
+      "sha256": "6b0299ad668fd01f94702fdd79c279f17a7351cae5dea1258c7b601fe85253de"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\theta2.pt",
+      "sha256": "2de068e08595883ae15673be5ecabe420ff6230c0777879cff0649a027351e5b"
+    }
+  ],
+  "arrays": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_layernorm_v1_runs_20261015\\replay_arrays.npz",
+    "sha256": "76abc205d0dbf04cc3dd78b665c3b2529ef522558a222a6bd33690226f5a551e"
+  },
+  "fresh_hash_reproduced": true,
+  "initial_gradient_cache_parity": "PASS",
+  "state_numbering": "g1 at theta0; g2 at theta1; g3 at theta2; g33 at theta32",
+  "read_only_pilot_states": [
+    0,
+    16,
+    32
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "states": [
+    {
+      "t": 1,
+      "m_first_norm": 3374558.8798154504,
+      "m_rest_norm": 0.11457246853590633,
+      "m_total_norm": 3374558.975744367,
+      "cosine_first_current": -0.17725923047294195,
+      "v_first_norm": 419967229994.48517,
+      "v_total_norm": 419967226669.9361,
+      "negative_v_rest_count": 896,
+      "minimum_v_rest": -14129.444030761719,
+      "beta1_power": 1.0,
+      "beta2_power": 1.0,
+      "full_history_available": false
+    },
+    {
+      "t": 2,
+      "m_first_norm": 3037102.991833904,
+      "m_rest_norm": 69.44674276347384,
+      "m_total_norm": 3037090.7516876706,
+      "cosine_first_current": -0.1976169224214876,
+      "v_first_norm": 419547262764.4907,
+      "v_total_norm": 419547269829.1622,
+      "negative_v_rest_count": 10,
+      "minimum_v_rest": -5005.810607910156,
+      "beta1_power": 0.9,
+      "beta2_power": 0.999,
+      "full_history_available": false
+    },
+    {
+      "t": 16,
+      "m_first_norm": 694791.7480852535,
+      "m_rest_norm": 213.61614627866592,
+      "m_total_norm": 694777.1264249476,
+      "cosine_first_current": null,
+      "v_first_norm": 413711627590.62384,
+      "v_total_norm": 413711697238.31067,
+      "negative_v_rest_count": 1,
+      "minimum_v_rest": -0.2787168603390455,
+      "beta1_power": 0.20589113209464907,
+      "beta2_power": 0.985104546362002,
+      "full_history_available": false
+    },
+    {
+      "t": 32,
+      "m_first_norm": 128746.31362496376,
+      "m_rest_norm": 194.62596976103296,
+      "m_total_norm": 128733.3234634472,
+      "cosine_first_current": -0.09655031519201866,
+      "v_first_norm": 407141656017.12463,
+      "v_total_norm": 407141850014.4776,
+      "negative_v_rest_count": 0,
+      "minimum_v_rest": 0.0,
+      "beta1_power": 0.038152042447694615,
+      "beta2_power": 0.9694605362958226,
+      "full_history_available": false
+    }
+  ],
+  "full_gradient_history": "not saved; first/rest accounting uses saved moments, not a replay of g3..g32",
+  "update2_native_arithmetic_parity": "byte-identical",
+  "t33_applied": false
+}

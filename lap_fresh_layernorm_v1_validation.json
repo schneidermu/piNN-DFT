@@ -1,0 +1,11 @@
+{
+  "focused_and_selected_regressions": "9 PASS, 16 deselected",
+  "Ruff": "PASS",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "historical_and_production_hashes": "UNCHANGED",
+  "scientific_wall_seconds": 1153.805,
+  "budget_seconds": 7200,
+  "budget_respected": true,
+  "synthetic_optimizer_fixtures": "Separate small fixtures; not molecular replay or intervention arms"
+}
