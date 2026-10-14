@@ -1,0 +1,16 @@
+{
+  "passed": 34,
+  "failed": 0,
+  "suite": [
+    "tests/test_lap_f021_phys4.py",
+    "tests/test_lap_fixed_adamw.py",
+    "tests/test_lap_f010_uniform_normalized_chemistry.py",
+    "train_models/test_lap_operator_unit.py",
+    "tests/test_lap_f016_descriptors.py",
+    "tests/test_lap_f018_audit.py"
+  ],
+  "pytest_seconds": 12.37,
+  "ruff": "PASS; bootstrap E402 excluded",
+  "compileall": "PASS",
+  "git_diff_check": "PASS"
+}

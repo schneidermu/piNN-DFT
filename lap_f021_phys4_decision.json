@@ -1,0 +1,62 @@
+{
+  "classification": "MECHANISM-ONLY",
+  "updates": 128,
+  "chemistry_presentations": 1024,
+  "ae17_presentations": 512,
+  "mrks_presentations": 512,
+  "physical_eligible": false,
+  "clean28": {
+    "status": "NOT EVALUATED \u2014 scientific eligibility failed",
+    "checkpoint_sha256": "e52cec159d387b2bcd6c3f4c930afa545e1ebcaeb6d6167574dbcbf0ed5e6a4a",
+    "evaluations": 0
+  },
+  "checkpoint_hashes": {
+    "checkpoint_0.pt": "321e5b78f3028a885f7495adaf0a5bb726010b46ed36ea856729707e10b76d8e",
+    "checkpoint_128.pt": "e52cec159d387b2bcd6c3f4c930afa545e1ebcaeb6d6167574dbcbf0ed5e6a4a",
+    "checkpoint_64.pt": "8b76d3d94ca8c7609ff1d762e7365adbdfb91e5fe8d79a314565d29bde5fb635"
+  },
+  "scientific_seconds": 31708.94932095529,
+  "budget": 36000,
+  "production_architecture_modified": false,
+  "scalar_objective_modified": false,
+  "optimizer_reset": false,
+  "SCF": false,
+  "total_scientific_wall_seconds": 31910.79997444153,
+  "budget_respected": true,
+  "training_seconds": 6353.873999500036,
+  "seconds_per_update": 49.63964062109403,
+  "peak_allocated_GiB": 13.121789932250977,
+  "allocator_reserved_memory": "not exported by reused training harness",
+  "final_values": {
+    "relchem": 1.3093108885760607,
+    "ae17": 2.589061847997294,
+    "exc": 5.202021924552712,
+    "op": 0.029418024645710517
+  },
+  "P536_ratios": {
+    "relchem": 1.0597665059229342,
+    "ae17": 0.10397401511600063,
+    "exc": 0.05643648417182626,
+    "op": 0.8874692961300292
+  },
+  "displacement_PHYS4": 0.10618396391147399,
+  "displacement_F010": 0.10589063110033606,
+  "displacement_cosine": 0.9999197633591187,
+  "endpoint_parameter_difference": 0.0013749136616296195,
+  "databases_better_than_F010": [
+    "DBH76",
+    "NCCE31"
+  ],
+  "databases_worse_than_F010": [
+    "ABDE4",
+    "EA13",
+    "IP13",
+    "MGAE109",
+    "PA8",
+    "pTC13"
+  ],
+  "macro_database_MAE": 5.185934376942864,
+  "next_experiment": "Read-only matched gradient-conflict audit at B8 and PHYS4 t128 on eight preregistered existing chemistry/physical groups; preserve F010 loss and sources, no training, no new architecture or loss.",
+  "census_peak_reserved_GiB": 13.232421875,
+  "census_compute_seconds": 797.6453718995035
+}

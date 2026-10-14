@@ -1,0 +1,8 @@
+{
+  "driver_sha256": "8b17d8dfcd6d2f44a03d82ee6af639b7f067a0954b48acf985e1826128cbaddd",
+  "protocol_sha256": "bd368a66366963c7e6482741d4596ae9b1709004733fbdfb8eaa35fa78a7b06f",
+  "wall_clock_origin_unix": 1791921477.2952354,
+  "budget_seconds": 36000,
+  "training_reader": "qualified TrainingBundle; no validation indices",
+  "purpose": "execution isolation only; unchanged scientific protocol and producers"
+}

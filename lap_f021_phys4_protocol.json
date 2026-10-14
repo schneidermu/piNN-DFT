@@ -1,0 +1,76 @@
+{
+  "experiment": "F021-PHYS4",
+  "parent": "b2d23f66984b7434c926cd40686df25559b7134c",
+  "budget_seconds": 36000,
+  "checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+  "moments_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+  "manifest_sha256": "b249964d410f0db4a59867de53bb35c6442ec23aa81eefb0b96b50242d94f6bc",
+  "prefix_sha256": "d84020ab7a9ec7e343c70f1e0dc6a0194bce1ec850018bb26e2b459383e65eb6",
+  "prefix_mapping_sha256": "7a2b5908f7c1dd89e1e0c9145c9b83e3b09873bda4e3643d673b8863888a3dd9",
+  "physical_modulo": 128,
+  "offsets": [
+    0,
+    31,
+    62,
+    93
+  ],
+  "updates": 128,
+  "c010": 9.974823077811354,
+  "lambdas": {
+    "relchem": 0.017015480965588553,
+    "ae17": 5.141254618347414e-05,
+    "exc": 1.5094644512009712e-05,
+    "op": 0.33597561607048215
+  },
+  "lr": 2.5e-05,
+  "betas": [
+    0.9,
+    0.999
+  ],
+  "eps": 1e-08,
+  "weight_decay": 0.01,
+  "foreach": false,
+  "scheduler": null,
+  "clipping": null,
+  "source_hashes": {
+    "train_lap_microbatch.py": "2e837c3a88ca3d4737c3c3397dcfbb98adeb7f6917adc8c693cecf205dc37e9e",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "train_models/lap_chemistry_sampling.py": "313f90bcd0fe438f3e82ca00e7625c7bee502797b772532fef16adb2adad9fad",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "tools/relchem_joint_epoch.py": "3ed79ce4591d62d6a6c22c4b9da28a932fcf13af926d95c4e843a94ee0d71c00",
+    "tools/evaluate_microbatch_endpoint.py": "b92a00bc8f51149e29be846bbadbedc74c47fd172b975f1fd0888fd4caf6da3f",
+    "tools\\lap_f021_phys4.py": "05bcf6d52b64bf8a93ede3566758cc2d0babeba8d42034262f0028569172c64b",
+    "tools\\lap_f021_phys4_run.py": "554b7b51a4142ae4c2b002eaff52050a8931ec4e429004218d73c5056399efe4",
+    "tools\\lap_f021_phys4_eval.py": "04b798b81c3998323534b25055b323634ffebd877b969228e1a74cee375f637d"
+  },
+  "dataset_sha256": "61c221a19b9987717e69cac182ad545241f8807db4126c0949a99992e4c210ef",
+  "evaluation": "one-fixed-variant-per-identity; 251/17/90",
+  "physical_gradient_storage": "F64; unchanged native singleton derivatives widened",
+  "F64_reduction_relative_tolerance": 1e-10,
+  "native_scalar_autograd_bound": "1e-10 + 16*eps32*mean(singleton_gradient_norm)",
+  "diagnostic_positions": [
+    0,
+    31
+  ],
+  "scalar_reference_positions": [
+    26,
+    2,
+    26,
+    2
+  ],
+  "checkpoints": [
+    0,
+    64,
+    128
+  ],
+  "baseline": {
+    "relchem": 1.2354710978866068,
+    "ae17": 24.901047104016875,
+    "exc": 92.17480502000551,
+    "op": 0.03314821681605566
+  },
+  "clean28": "once at t128 only if all four strict ratios <1"
+}

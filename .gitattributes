@@ -74,3 +74,8 @@ test_lap_unitmax_svrg_k1.py -text whitespace=blank-at-eol,blank-at-eof,space-bef
 lap_unitmax_svrg_k1_10update_protocol.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 lap_unitmax_svrg_k1_10update_metrics.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# F021 receipts bind exact bytes; preserve them across Windows checkouts.
+lap_f021_phys4_* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tools/lap_f021_phys4*.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tests/test_lap_f021_phys4.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

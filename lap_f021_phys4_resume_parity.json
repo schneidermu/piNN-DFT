@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "model_restored": true,
+  "optimizer_restored": true,
+  "rng_restored": true,
+  "moment_sha256": "4659e23cce1cf2c66f701b0b445b897d58838739ca15cffc9300fa0fdc1a40d0",
+  "constraints": {
+    "spin_max_abs": 0.0,
+    "passthrough_max_abs": 0.0,
+    "output_finite": true,
+    "ueg_beta_gap": 0.0,
+    "high_density_gamma_gap": 0.0,
+    "gc_anchor_gap": 0.0,
+    "tau_gap": 0.0,
+    "passed": true
+  },
+  "optimizer_updates": 0,
+  "t0_checkpoint_sha256": "321e5b78f3028a885f7495adaf0a5bb726010b46ed36ea856729707e10b76d8e"
+}

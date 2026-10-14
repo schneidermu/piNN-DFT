@@ -1,0 +1,23 @@
+{
+  "limit": 36000,
+  "used_preflight": 2875.150954194396,
+  "chemistry_batch_seconds": 17.99553499999456,
+  "physical_scalar_profiles": [
+    {
+      "position": 26,
+      "seconds": 0.9375498999725096
+    },
+    {
+      "position": 0,
+      "seconds": 3.083069999993313
+    },
+    {
+      "position": 1,
+      "seconds": 3.8590465000015683
+    }
+  ],
+  "projected_update_seconds_p90": 63.74426887988811,
+  "mandatory_evaluation_and_clean28_reserve": 3100.329214999918,
+  "projected_remaining": 11259.595631625596,
+  "fits": true
+}

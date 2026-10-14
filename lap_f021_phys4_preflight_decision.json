@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "gradient_parity": true,
+  "restoration": true,
+  "exposure_parity": true,
+  "training_authorized": true
+}

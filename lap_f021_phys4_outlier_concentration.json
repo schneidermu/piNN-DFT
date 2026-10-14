@@ -1,0 +1,9 @@
+{
+  "weighted_physical_top1_MSE_share": 0.0445832981323206,
+  "weighted_physical_top5_MSE_share": 0.16352203281015454,
+  "duplicate_group_counts": {
+    "4": 124,
+    "3": 4
+  },
+  "physical_mean_difference": 3.202324514464485e-16
+}
