@@ -1,0 +1,233 @@
+{
+  "protocol_sha256": "f205fa00055a201603c801b8c4e5e718c2fd044269c1ebd053c8c01863a9254d",
+  "current_head": "ff8c86ce8b17e7381d3c9305a22188180afd03be",
+  "driver_sha256": "c7a27782c180cc94c33236c57cf3c12f4a1d79fbc7a46855627caacf8babaaf9",
+  "candidate_sources": {
+    "H5_to_legacy_loader": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\prepare_vxc.py",
+      "sha256": "8898a34214a099cd268caa8e3b40e01267aaffe79f97e6051f3e620374d7314f"
+    },
+    "central_preservation_builder": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\build_lap_operator_data.py",
+      "sha256": "20cb445d5c926653a09a54b6e0854b6a2d170de19995eb444ba84064777696fe"
+    },
+    "D3_producer": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\compute_mrks_pbe0_d3bj.py",
+      "sha256": "4475f2f8342637ca3f2126045a48ada66c8491530e58f0384f3403d88734993c"
+    },
+    "current_energy_consumer": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\lap_moo_training.py",
+      "sha256": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113"
+    },
+    "legacy_energy_consumer": {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_full_vxc\\train_models\\reaction_energy_calculation.py",
+      "sha256": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003"
+    },
+    "historical_H5_consumer": {
+      "path": "C:\\Dev\\readWFN_share_ms\\readWFN_share_ms\\piNN-DFT\\train_models\\finetune_scf_mrks.py",
+      "sha256": "d746e71fdf9514e8f5dddf957c23efd53c5303ae38681f9e7b045fa6ac82844d"
+    },
+    "H5_sanity_log": {
+      "path": "C:\\Dev\\readWFN_share_ms\\readWFN_share_ms\\h5_vrho_from_mrks_sanity.csv",
+      "sha256": "4b39e7cf9b20d682ed6f6a90f60e89748086b5b710ffb4d462580700543b89e9"
+    },
+    "CBS_scalar_table": {
+      "path": "C:\\Users\\schne\\Downloads\\extrapolation_e.csv",
+      "sha256": "4040c5ddd21cb73edcf6f54356114ff2cf216fe47346e227c5ca83180fde7e4e"
+    },
+    "archive_H5_export_helper": {
+      "path": "C:\\Users\\schne\\Downloads\\MRKS\\bin\\gen_h5_with_vrho.py",
+      "sha256": "5bfacec7261b024f5a7d2a48cbaff8fc9c94b87d2d145f1ec891dddef19ccc8d"
+    },
+    "archive_conversion_helper": {
+      "path": "C:\\Users\\schne\\Downloads\\MRKS\\bin\\convert_vxc_data_with_wfn.py",
+      "sha256": "e3c63c5817dfc4f08ac34a9b89d765b47f524f0cb2fb4e3090f71f7061be5dfa"
+    }
+  },
+  "line_ranges": {
+    "H5_to_legacy_loader": "19-64 (F32 energy cast at 52)",
+    "central_preservation_builder": "155-194,229-242",
+    "D3_producer": "21-38,54-92,96-117",
+    "current_energy_consumer": "685-704",
+    "legacy_energy_consumer": "153-188",
+    "historical_H5_consumer": "580-599,681-705",
+    "H5_sanity_log": "header and H2.h5/BeH2.h5/CO.h5 rows"
+  },
+  "git_source_commits": {
+    "H5_F32_import": "6f91e72fb066cf894242beca60639d5a0f804873",
+    "D3_utility_created": "966ba34a8ceadafc12b5adb0a720c01bdec5d6dd",
+    "D3_artifact_and_optional_support": "4ed868e860d07b2d142d115008d25e2c7a8a3ca0"
+  },
+  "D3_historical_blob_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+  "D3_active_blob_sha256": "a2d5b556a5007fa31505c5e38a2be537d4f1755f961c31ef2c49d07605087440",
+  "D3_artifact_identity": "VERIFIED exact bytes; original calculation backend/config not authenticated",
+  "MRKS_archive_sha256": "15a49f4517c35f2159f1e66d02a817945dbf1e1e66deb46f6e612d553890ad16",
+  "MRKS_archive_sources": [
+    {
+      "member": "MRKS/bin/check_h5_sanity.py",
+      "sha256": "81d125405cc87381c6513e4ab37f1bb568d98785bf196d1de9604c73b5a47d0a",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/compare_h5.py",
+      "sha256": "8ed821a3265578515ace9d7b24e9dd86fcfcc3699467592d6cbe412eec079c46",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/convert_vxc_data_with_wfn.py",
+      "sha256": "e3c63c5817dfc4f08ac34a9b89d765b47f524f0cb2fb4e3090f71f7061be5dfa",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/gen_h5_with_vrho.py",
+      "sha256": "5bfacec7261b024f5a7d2a48cbaff8fc9c94b87d2d145f1ec891dddef19ccc8d",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/mod_NumInt.py",
+      "sha256": "2d7037da197d9982527fcab7ea92c67d3acb47c73313d243707f1bb5cfb2196e",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/plot_vrho_radial.py",
+      "sha256": "82070bf1deec57ad16677d0b2a196f1c200e9a408b2a9c214286d8ccb232aabc",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/readWFN.py",
+      "sha256": "f5aaa2447a6fb594d9ff643c3f386f6ebe2447e3e546ecfb5b2f73f67a4a6166",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/rescale_legacy_h5_units.py",
+      "sha256": "373327f7127e8c1274313aabf296ec4608dc91fec0f62d89a1cb8db5522533d0",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/bin/tutil.py",
+      "sha256": "3c4f8bd98bd262f9b2899e19750ab889d31ce4bf0479ef9fd88301d3c520837f",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/check_convergence.py",
+      "sha256": "b1b4e6a66c611d5109602f4c13eebbf5f0c2038684ab4e1a115c0a39c2f8f8d0",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/generate_wfn.py",
+      "sha256": "7836ece2737b8f871a623e527cbcedcef879162b7d3cf666e10f3dc876f6744a",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/genSbatch.py",
+      "sha256": "94f5ce9338c6fd15006538228defa73c8ffdfac45d87185abd080b63e24034ca",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/gensl.py",
+      "sha256": "78c7592baae20711a39cbfd3532f2099e4722c0c163ba4db5afd138df6180b03",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/grr.sh",
+      "sha256": "c53e47d9b1387edbf6475b8bf8b23ed2cea68d20e8bfc0d53babb01df0348168",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/run_pyques.py",
+      "sha256": "34afdff980186119bf3e6634b10f5fb333007247d40874c311143c99e71d2c6c",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/submit_geometries_sbatch.py",
+      "sha256": "ae70b43f0af647078609b75ddd024e08baf8ab721195e886566022fd87bfc4b3",
+      "producer_anchor_hits": []
+    },
+    {
+      "member": "MRKS/submit_h5_vrho_sbatch.py",
+      "sha256": "501707e8129474ad8a67913b0f9c05983d967b1757af7cf67883300e6d5c1476",
+      "producer_anchor_hits": []
+    }
+  ],
+  "sanity_log_record_count": 90,
+  "sanity_log_lineage": "unbound surviving historical CSV; no producer/config hash",
+  "metadata_gauge_evidence_reused": [
+    {
+      "system": "H2",
+      "HOMO_ha": -0.6040175699671915,
+      "i_EKT_metadata_ha": 0.6040765500788634,
+      "HOMO_plus_i_EKT_ha": 5.898011167193573e-05,
+      "converged": 1.0,
+      "delta_rho_metadata": 0.000633753634355659,
+      "delta_evir_metadata": 0.0004192022283461272,
+      "gauge_interpretation": "numeric HOMO alignment evidence only; original exporter/gauge specification missing"
+    },
+    {
+      "system": "BeH2",
+      "HOMO_ha": -0.44748967365352454,
+      "i_EKT_metadata_ha": 0.44748658471069985,
+      "HOMO_plus_i_EKT_ha": -3.0889428246916317e-06,
+      "converged": 1.0,
+      "delta_rho_metadata": 0.0058919601563807815,
+      "delta_evir_metadata": 0.004681616950215517,
+      "gauge_interpretation": "numeric HOMO alignment evidence only; original exporter/gauge specification missing"
+    },
+    {
+      "system": "CO",
+      "HOMO_ha": -0.5177025208598809,
+      "i_EKT_metadata_ha": 0.5175935783321569,
+      "HOMO_plus_i_EKT_ha": -0.00010894252772397639,
+      "converged": 1.0,
+      "delta_rho_metadata": 0.011212536310079593,
+      "delta_evir_metadata": 0.016003168015476632,
+      "gauge_interpretation": "numeric HOMO alignment evidence only; original exporter/gauge specification missing"
+    }
+  ],
+  "contracts": {
+    "energy": {
+      "SEMANTIC_DEFINITION": "UNRESOLVED",
+      "HISTORICAL_LINEAGE": "verified H5->legacy->corpus; original exporter and CBS producer unresolved",
+      "NUMERICAL_REPLAY": "PASS pilot log identity/F32 rounding; previous matrix recipe receipts reused",
+      "COVERAGE": "all90 downstream preservation from previous audit; pilot recipe only"
+    },
+    "potential": {
+      "SEMANTIC_DEFINITION": "UNRESOLVED",
+      "HISTORICAL_LINEAGE": "verified NPZ values->legacy->RefAO; inversion/export/gauge unresolved",
+      "NUMERICAL_REPLAY": "previous pilot source projection and HOMO/i_ekt differences reused, no new potential evaluation",
+      "COVERAGE": "all90 preservation, pilot alignment evidence"
+    },
+    "dispersion": {
+      "SEMANTIC_DEFINITION": "operational residual equation VERIFIED; author-intended full-XC/residual convention UNRESOLVED",
+      "HISTORICAL_LINEAGE": "artifact bytes and support commit VERIFIED; original geometry/backend run unresolved",
+      "NUMERICAL_REPLAY": "no new D3 evaluation; existing all90 arithmetic receipts reused",
+      "COVERAGE": "all90 artifact/consumer; original computation config unknown"
+    }
+  },
+  "search_closed": true,
+  "author_request_sent": false,
+  "new_NN_or_AO_evaluations": 0,
+  "previous_audit_receipts_unchanged": true,
+  "production_sources_unchanged": true,
+  "git_refs_receipt": "7bc7ee1d9e8f26e0b917859968f98e397ba0f4f9 refs/heads/backup/dbstrat-before-sync-20261009\nff8c86ce8b17e7381d3c9305a22188180afd03be refs/heads/lap_full_vxc\n39c05f25471f32da3440a2349bd3e6ac92c5cc08 refs/heads/main\nfc483a1f50d4bd6cace7b93a3860cf039b8edfea refs/heads/vxc_training\n39c05f25471f32da3440a2349bd3e6ac92c5cc08 refs/remotes/origin/HEAD\n2de1b83dc237fad70af9b7e44a6ea9f5707894ff refs/remotes/origin/docs/lap-full-vxc-agent-guide-20261009\nff8c86ce8b17e7381d3c9305a22188180afd03be refs/remotes/origin/lap_full_vxc\n39c05f25471f32da3440a2349bd3e6ac92c5cc08 refs/remotes/origin/main\nfc483a1f50d4bd6cace7b93a3860cf039b8edfea refs/remotes/origin/vxc_training\n2279917b374bff14cd3fb461361d632cc66e997b refs/stash\n",
+  "git_worktree_receipt": "worktree C:/Dev/readWFN_share_ms/readWFN_share_ms/piNN-DFT\nHEAD fc483a1f50d4bd6cace7b93a3860cf039b8edfea\nbranch refs/heads/vxc_training\n\nworktree C:/Dev/readWFN_share_ms/lap_full_vxc\nHEAD ff8c86ce8b17e7381d3c9305a22188180afd03be\nbranch refs/heads/lap_full_vxc\n\n",
+  "tags_receipt": "",
+  "validation": {
+    "focused_tests": "8 PASS (0.30 s)",
+    "ruff": "PASS; no new suppressions",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "initial_test_issues": "pytest sandbox temp location unavailable; rerun in fresh verified workspace temp. Descriptive archive count corrected from 18 to actual inventory17; no numerical gate relaxed.",
+    "wall_at_finalization_seconds": 1071.977300643921
+  },
+  "output_sha256": {
+    "lap_target_provenance_v1_decision.json": "17f3d81329046a1261ce1eeff5713f21bf93b49ef8be827eed42f22e5af410f7",
+    "lap_target_provenance_v1_dispersion_contract.md": "d5743384effe5553202b56202d0a0e2a88d8ec9502a7a2a8a4c4cf58346de331",
+    "lap_target_provenance_v1_energy_contract.md": "991398cbfb7d438324b5101e0511ba56bc5fad1e46db11a40f719396ad4fdfe7",
+    "lap_target_provenance_v1_missing_materials.md": "5b4935bae3cb2d2fd3b0f2f357fbf29efdb15dc7d930c7d24efb0ea367d7683a",
+    "lap_target_provenance_v1_potential_gauge_contract.md": "8d099cd5484e0062e5e35adca3fe5390428f51f1296bbe33ed069c25665e6172",
+    "lap_target_provenance_v1_protocol.json": "f205fa00055a201603c801b8c4e5e718c2fd044269c1ebd053c8c01863a9254d",
+    "lap_target_provenance_v1_replay.csv": "53f151f0666ad795cc9b72392a42691e85fb8525b22c2f01654c9fc7046390df",
+    "lap_target_provenance_v1_report.md": "fad7779534c9e00fee1745f56a439b0794b205736bc72adee9c500423031d6ed",
+    "lap_target_provenance_v1_search_log.csv": "c5fb3ea6bfd90315ba50aff327db61d7ab42c7e7fbb3c5af9ef445b50295365b"
+  }
+}

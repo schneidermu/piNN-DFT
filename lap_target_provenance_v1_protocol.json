@@ -1,0 +1,78 @@
+{
+  "namespace": "lap_target_provenance_v1_",
+  "first_action_unix": 1791988747.522,
+  "wall_budget_seconds": 7200,
+  "search_budget_seconds": 3600,
+  "head": "ff8c86ce8b17e7381d3c9305a22188180afd03be",
+  "branch": "lap_full_vxc",
+  "initial_worktree": "?? .planning/chem_precision_trace/\n?? .planning/quick/\n?? .planning/step_globalization/lap_step_globalization_report.md\n?? .planning/step_globalization/protocol.json\n?? .planning/step_globalization/results.json\n?? baseline_validation/\n?? four_objective_throughput_diagnosis_metrics.json\n?? four_objective_throughput_diagnosis_report.md\n?? full90_25update_qualification.py\n?? full90_25update_qualification_protocol.json\n?? lap_f025_aggregate_closure.csv\n?? lap_f025_analysis_receipt.json\n?? lap_f025_availability.csv\n?? lap_f025_availability_aggregates.csv\n?? lap_f025_decision.json\n?? lap_f025_direct_parity.csv\n?? lap_f025_final_integrity.json\n?? lap_f025_harmful_cumulative.csv\n?? lap_f025_harmful_cumulative.png\n?? lap_f025_native_directions.csv\n?? lap_f025_operator_vector_changes.csv\n?? lap_f025_pairwise_decomposition.csv\n?? lap_f025_pairwise_records.csv\n?? lap_f025_per_record_attribution.csv\n?? lap_f025_protocol.json\n?? lap_f025_provenance.json\n?? lap_f025_recomputation_receipt.json\n?? lap_f025_report.md\n?? lap_f025_source_provenance.json\n?? lap_f025_task_attribution.csv\n?? lap_f025_tests.json\n?? lap_f025_unchanged_database_metrics.csv\n?? lap_f025_unchanged_quality_metrics.csv\n?? lap_target_provenance_v1_started.txt\n?? test_full90_25update_qualification.py\n?? tests/test_lap_f025_attribution.py\n?? tests/test_publication_baselines.py\n?? tools/evaluate_publication_baselines.py\n?? tools/lap_f025_analyze.py\n?? tools/lap_f025_collect.py\n?? tools/lap_f025_report.py\n?? tools/profile_four_objective_throughput.py\n?? train_lap_four_objective.py\n",
+  "previous_audit_receipts": {
+    "lap_operator_contract_v1_decision.json": "dd520b3e7e93b4e700541790f15b41c674540d3ccb6eb00b33bf296277610a22",
+    "lap_operator_contract_v1_final_integrity.json": "cb7ef46f10ca8095d67e3743286ee874365e2921930f6ef81d62a7625f20f5e5",
+    "lap_operator_contract_v1_primary_source_availability.json": "7a4954b696b0828e652065a2bd328a7bbcf180c666f0c7dc098a016b4ecd2794",
+    "lap_operator_contract_v1_protocol.json": "1c5609dbfc6976f85fc98b427a049e6eef5ad89fa59da5aa893541332ac1b8a8",
+    "lap_operator_contract_v1_provenance.json": "f52255faad7ce95b2c9892c908323e7dccb647ec6c1f914e003c7ea990fdf6cd",
+    "lap_operator_contract_v1_supplement_protocol.json": "6ae8ec26e4e35322c8916822c7b08a2e70f4853542544e633b30ce903159b10f",
+    "lap_operator_contract_v1_supplement_receipt.json": "15af688da811cced6e3b3e04ec8805e93648252f60fe91d83df90721d9b3794b",
+    "lap_operator_contract_v1_tests.json": "09fbe94fe77875cae3fa33ec25874e8bbdc404df8ff383856ef29a597747c0ba",
+    "lap_operator_contract_v1_report.md": "d47b6b47a07894ba6b569522a2a2ab1e9fff6b20b24a8cfa115d191ce2b6a554",
+    "lap_operator_contract_v1_energy_reconstruction_checks.csv": "add68a6cf7b58afb058f7c26c364f1e1ca8b237872a437eb5175c156bb15617b",
+    "lap_operator_contract_v1_precision_component_checks.csv": "2b2e6584b224f111fe9f39b6a5707f43bc5e643086e424a45d10ff81e6fdcab0",
+    "lap_operator_contract_v1_dispersion_contract.csv": "b0375e80d46c23cee38eac7ee46709ec3a1914c287de6ea6aed2c16904a11bdc"
+  },
+  "missing_transitions": [
+    {
+      "quantity": "legacy E_xc",
+      "consumer": "lap_moo_training.make_mrks_objective_factories/batch_exc",
+      "confirmed_producer": "prepare_vxc H5 copy -> builder legacy preservation",
+      "missing": "original H5 E_xc exporter and E_CBS_1/components producer",
+      "needed": "exporter/notebook + CC/CBS config/log and dm_ks component recipe",
+      "previous_search": "current repo; Downloads/MRKS/bin; workspace source audit scripts; no original exporter located"
+    },
+    {
+      "quantity": "vxc_grid/Vrho gauge",
+      "consumer": "builder scalar projection -> RefAO -> operator_loss",
+      "confirmed_producer": "NPZ vxc_grid mapped numerically to legacy Vrho",
+      "missing": "inversion implementation/config -> saved NPZ vxc_grid assignments/gauge",
+      "needed": "npz exporter + mRKS run config/log incl EKT/HOMO and potential shift",
+      "previous_search": "current source and installed PySCF; available H5 helpers unbound to NPZ"
+    },
+    {
+      "quantity": "D3(BJ) semantics",
+      "consumer": "integrated_energy + one Name-key correction",
+      "confirmed_producer": "compute_mrks_pbe0_d3bj.py requesting PBE0/d3bj; JSON equals active dictionary",
+      "missing": "original H5 geometry/version/params/run receipt and full-XC vs residual design declaration",
+      "needed": "geometry hashes, backend parameters/config, original intended energy convention",
+      "previous_search": "producer source/JSON; D3 package not available in audited environments"
+    }
+  ],
+  "new_leads": [
+    "manifest MRKS.zip and related archives",
+    "git refs/worktree vxc_training history for exporter/convention",
+    "NPZ input_file /home/mmedvedev/lsvvt/chep/ready/{system}/inp.orca.zst",
+    "D3 producer --h5-dir default resolved relative to historical worktree and creation commit"
+  ],
+  "numerical_scope": [
+    "H2",
+    "BeH2",
+    "CO"
+  ],
+  "replay_tolerances": {
+    "F32_energy": "same rounded np.float32 source value; diagnostic absolute bound 0.5 spacing32 + saved component arithmetic uncertainty",
+    "orbital_metadata_ha": 1e-10,
+    "identity_hash": "exact SHA256",
+    "D3": "no replay until producer/backend/config authenticated"
+  },
+  "forbidden": [
+    "trained NN checkpoint or optimizer state loads",
+    "NN forward/backward",
+    "training",
+    "SCF",
+    "inversion",
+    "new reference calculations",
+    "new grid/density",
+    "full90 AO/gradient census",
+    "production changes",
+    "messages to authors"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "energy_contract": "UNRESOLVED",
+  "potential_semantics": "UNRESOLVED",
+  "potential_gauge": "UNRESOLVED",
+  "dispersion_convention": "UNRESOLVED",
+  "operative_residual_equation": "VERIFIED",
+  "dispersion_artifact_history": "VERIFIED",
+  "historical_lineage": {
+    "energy": {
+      "SEMANTIC_DEFINITION": "UNRESOLVED",
+      "HISTORICAL_LINEAGE": "verified H5->legacy->corpus; original exporter and CBS producer unresolved",
+      "NUMERICAL_REPLAY": "PASS pilot log identity/F32 rounding; previous matrix recipe receipts reused",
+      "COVERAGE": "all90 downstream preservation from previous audit; pilot recipe only"
+    },
+    "potential": {
+      "SEMANTIC_DEFINITION": "UNRESOLVED",
+      "HISTORICAL_LINEAGE": "verified NPZ values->legacy->RefAO; inversion/export/gauge unresolved",
+      "NUMERICAL_REPLAY": "previous pilot source projection and HOMO/i_ekt differences reused, no new potential evaluation",
+      "COVERAGE": "all90 preservation, pilot alignment evidence"
+    },
+    "dispersion": {
+      "SEMANTIC_DEFINITION": "operational residual equation VERIFIED; author-intended full-XC/residual convention UNRESOLVED",
+      "HISTORICAL_LINEAGE": "artifact bytes and support commit VERIFIED; original geometry/backend run unresolved",
+      "NUMERICAL_REPLAY": "no new D3 evaluation; existing all90 arithmetic receipts reused",
+      "COVERAGE": "all90 artifact/consumer; original computation config unknown"
+    }
+  },
+  "verdict": "PRIMARY_MATERIALS_REQUIRED; no confirmed target/code mismatch",
+  "next_action": "send the prepared single draft to the original data exporter only after separate explicit user authorization",
+  "required_external_materials": [
+    "NPZ inversion/export source and config/log",
+    "legacy H5 E_xc/component exporter",
+    "CBS method/basis/extrapolation and input/log",
+    "potential gauge/export assignments",
+    "original D3 geometry/backend/parameters/run receipt",
+    "author-intended full-XC/residual convention"
+  ],
+  "new_numerical_checks": "3 pilot scalar-log/F32 checks only; no new molecular evaluation",
+  "trained_checkpoints_loaded": 0,
+  "optimizer_states_loaded": 0,
+  "training_updates": 0,
+  "SCF_executed": false,
+  "targets_modified": false,
+  "production_loss_modified": false,
+  "architecture_modified": false,
+  "messages_sent": false,
+  "Clean28_future_test_accessed": false,
+  "wall_seconds": 1071.977300643921,
+  "search_closed_elapsed_seconds": 927.699,
+  "budget_respected": true,
+  "tests_passed": 8
+}
