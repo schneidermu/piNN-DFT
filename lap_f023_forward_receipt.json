@@ -1,0 +1,11 @@
+{
+  "complete": true,
+  "records": 174,
+  "driver_sha256": "94aac4c1f47ba974f761290366173558b53e35af7a72e2b8310c753fcb1112d8",
+  "source_preflight_driver_sha256": "c2a6ce7e1c51e0ca9d2e49d16cb18adf2c82e89f1cc7a3db43231eba2bf7f8e4",
+  "correction": "signed-error extraction caller keyword chunk_size mapped to qualified point_chunk_size; point,10 input given singleton axis as in original objective factory",
+  "scalar_cache_parity": true,
+  "model_unchanged": true,
+  "source_sha256": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+  "forward_values_sha256": "0c6eac8df3c5e1fc05d4ca8ff236aac36f7d838307adf5cb27dce3db0533e12d"
+}

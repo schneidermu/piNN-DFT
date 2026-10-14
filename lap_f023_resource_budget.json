@@ -1,0 +1,10 @@
+{
+  "wall_limit_seconds": 36000,
+  "wall_used_seconds": 2841.1453564167023,
+  "profile_native_and_first_physical_seconds": 24.219764200010104,
+  "profile_singleton_physical_gradients_seconds": 9.359536600008141,
+  "training_and_final_full90_projection": "NOT RUN \u2014 required mechanism gate failed",
+  "training_started": false,
+  "evaluation_reserve_consumed": false,
+  "resource_gate": "No training authorized; all read-only work within original wall limit"
+}

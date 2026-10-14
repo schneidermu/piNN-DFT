@@ -1,0 +1,18 @@
+{
+  "numerical_pass": true,
+  "mechanism_pass": false,
+  "projection_improved": false,
+  "native_H_improved": false,
+  "live_gradient_relative_gaps": {
+    "ae17": 0.0,
+    "exc": 0.0,
+    "op": 0.0
+  },
+  "live_profile_seconds": 9.359536600008141,
+  "native_probe_seconds": 24.219764200010104,
+  "native_displacement_cosine": 0.9999984676007074,
+  "native_H_error_difference_new_minus_old": 9.836605727286951e-05,
+  "training_authorized": false,
+  "resource_qualification": "NOT RUN \u2014 mechanism gate failed",
+  "optimizer_updates_retained": 0
+}

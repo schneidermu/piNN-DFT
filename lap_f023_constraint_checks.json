@@ -1,0 +1,13 @@
+{
+  "scope": "reversible original/F023 native probes, not a trained model",
+  "passed": true,
+  "restoration": {
+    "model": true,
+    "buffers": true,
+    "optimizer_moments": true,
+    "rng": true,
+    "retained_updates": 0,
+    "parent_checkpoint_unchanged": true
+  },
+  "production_operator_source_unchanged": true
+}

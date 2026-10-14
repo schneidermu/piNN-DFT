@@ -84,3 +84,8 @@ tests/test_lap_f021_phys4.py -text whitespace=blank-at-eol,blank-at-eof,space-be
 lap_f022_* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 tools/lap_f022*.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 tests/test_lap_f022_scalarization.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# F023 exact-byte source and scientific receipts.
+lap_f023_* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tools/lap_f023*.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tests/test_lap_f023_size.py -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

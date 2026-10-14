@@ -1,0 +1,16 @@
+{
+  "physical_population": "S128",
+  "chemistry_population": "S251",
+  "old": {
+    "legacy_dot_physics": -10.04829072677243,
+    "legacy_dot_joint": -12.591275784434497,
+    "max_favorable_chemistry_dot": 3.851407547629838,
+    "R_conflict": 2.6089918042966302
+  },
+  "new": {
+    "legacy_dot_physics": -10.103171268286035,
+    "legacy_dot_joint": -12.646156325948102,
+    "max_favorable_chemistry_dot": 3.851407547629838,
+    "R_conflict": 2.6232412808412193
+  }
+}

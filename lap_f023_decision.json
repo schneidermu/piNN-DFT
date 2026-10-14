@@ -1,0 +1,141 @@
+{
+  "classification": "NO-GO",
+  "numerical_qualification": "PASS",
+  "mechanism_qualification": "FAIL",
+  "training_performed": false,
+  "optimizer_updates": 0,
+  "temporary_native_counterfactuals": 2,
+  "c_A": 3.441326612374757,
+  "c_E": 4.529426361068562,
+  "electron_counts_authenticated": {
+    "ae17": 17,
+    "mrks": 90
+  },
+  "electron_distributions": {
+    "ae17": {
+      "min": 1,
+      "max": 17,
+      "median": 9.0,
+      "counts": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1,
+        "12": 1,
+        "13": 1,
+        "14": 1,
+        "15": 1,
+        "16": 1,
+        "17": 1
+      }
+    },
+    "mrks": {
+      "min": 2,
+      "max": 34,
+      "median": 18.0,
+      "counts": {
+        "2": 1,
+        "4": 1,
+        "6": 2,
+        "8": 3,
+        "10": 6,
+        "12": 5,
+        "14": 14,
+        "16": 11,
+        "18": 10,
+        "20": 4,
+        "22": 12,
+        "24": 6,
+        "26": 3,
+        "28": 2,
+        "30": 7,
+        "32": 2,
+        "34": 1
+      }
+    }
+  },
+  "legacy_conflict_bounds": {
+    "physical_population": "S128",
+    "chemistry_population": "S251",
+    "old": {
+      "legacy_dot_physics": -10.04829072677243,
+      "legacy_dot_joint": -12.591275784434497,
+      "max_favorable_chemistry_dot": 3.851407547629838,
+      "R_conflict": 2.6089918042966302
+    },
+    "new": {
+      "legacy_dot_physics": -10.103171268286035,
+      "legacy_dot_joint": -12.646156325948102,
+      "max_favorable_chemistry_dot": 3.851407547629838,
+      "R_conflict": 2.6232412808412193
+    }
+  },
+  "native_preflight": {
+    "numerical_pass": true,
+    "mechanism_pass": false,
+    "projection_improved": false,
+    "native_H_improved": false,
+    "live_gradient_relative_gaps": {
+      "ae17": 0.0,
+      "exc": 0.0,
+      "op": 0.0
+    },
+    "live_profile_seconds": 9.359536600008141,
+    "native_probe_seconds": 24.219764200010104,
+    "native_displacement_cosine": 0.9999984676007074,
+    "native_H_error_difference_new_minus_old": 9.836605727286951e-05,
+    "training_authorized": false,
+    "resource_qualification": "NOT RUN \u2014 mechanism gate failed",
+    "optimizer_updates_retained": 0
+  },
+  "stochastic_summary": [
+    {
+      "arm": "old",
+      "positive_dot_count": 128,
+      "worst_cosine": 0.7733926378843868,
+      "p05_cosine": 0.8413626594688574,
+      "p10_cosine": 0.8849822206666897,
+      "median_cosine": 0.9609811525668257,
+      "joint_vector_MSE": 0.18464974513350546,
+      "relative_gradient_MSE": 0.22680264337624118,
+      "norm_ratio_min": 0.19923784554054264,
+      "norm_ratio_max": 1.8865067162293234,
+      "top1_MSE_share": 0.028046750080903893,
+      "top5_MSE_share": 0.12463839260774466,
+      "physical_MSE": 0.1220804598214209,
+      "chemistry_physical_covariance": -0.005360956912271119,
+      "F32_representable": true
+    },
+    {
+      "arm": "new",
+      "positive_dot_count": 128,
+      "worst_cosine": 0.7999283398567272,
+      "p05_cosine": 0.8641097582337937,
+      "p10_cosine": 0.9010335061492848,
+      "median_cosine": 0.9653294415992983,
+      "joint_vector_MSE": 0.15040421758042727,
+      "relative_gradient_MSE": 0.18380160440139284,
+      "norm_ratio_min": 0.31017644003251876,
+      "norm_ratio_max": 1.7097859451022395,
+      "top1_MSE_share": 0.026434568402348924,
+      "top5_MSE_share": 0.11645396180525473,
+      "physical_MSE": 0.08374941096358256,
+      "chemistry_physical_covariance": -0.0033181962598910304,
+      "F32_representable": true
+    }
+  ],
+  "scientific_wall_seconds": 2841.1453564167023,
+  "wall_budget_seconds": 36000,
+  "budget_respected": true,
+  "Clean28": "NOT EVALUATED",
+  "physical_eligibility": "NOT RUN",
+  "hydrogen_preservation_final": "NOT RUN",
+  "next_experiment": "Read-only cached common-descent feasibility audit adding fixed-evaluation H error and legacy chemistry to JW/operator constraints at B8; no new loss, weights, architecture or training."
+}

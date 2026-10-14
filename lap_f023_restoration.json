@@ -1,0 +1,8 @@
+{
+  "model": true,
+  "buffers": true,
+  "optimizer_moments": true,
+  "rng": true,
+  "retained_updates": 0,
+  "parent_checkpoint_unchanged": true
+}

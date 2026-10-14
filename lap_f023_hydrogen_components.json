@@ -1,0 +1,15 @@
+{
+  "scope": "B8 fixed evaluation H, matched-F64 chemistry arithmetic",
+  "identity": "reaction_f2f41fe8016180daabb3d54e",
+  "variant": "level3_mura",
+  "checkpoint_sha256": "1f38f7f8ea74334ff8f5124d2a6538619323d1f453296fa9ca6b3cd7958c437b",
+  "exchange_Ha": -0.3053895837025203,
+  "correlation_Ha": -0.005830887702820334,
+  "xc_Ha": -0.3112204714053406,
+  "direct_xc_Ha": -0.3112204714053406,
+  "decomposition_parity_absolute_Ha": 0.0,
+  "Hartree_plus_XC": "UNAVAILABLE; no separately authenticated Hartree field",
+  "correlation_reference": "NOT PROVIDED; computed functional component only, not a new target",
+  "universal_one_electron_cancellation_claimed": false,
+  "model_unchanged": true
+}
