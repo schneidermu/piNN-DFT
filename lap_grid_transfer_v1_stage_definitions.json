@@ -1,0 +1,47 @@
+{
+  "stages": [
+    {
+      "id": "R0",
+      "definition": "full SOURCE, F64 descriptors/AO, repository F64 PBE"
+    },
+    {
+      "id": "R1",
+      "definition": "unique mapped SOURCE indices, original source fields"
+    },
+    {
+      "id": "R2",
+      "definition": "ordered mapping multiplicity, original source fields"
+    },
+    {
+      "id": "R3",
+      "definition": "only corpus weights"
+    },
+    {
+      "id": "R4",
+      "definition": "only corpus reference vxc; F64 RefAO thereafter FIXED"
+    },
+    {
+      "id": "R5",
+      "definition": "stored corpus descriptors F64"
+    },
+    {
+      "id": "R6",
+      "definition": "production descriptors F32 widened, same F64 formula"
+    },
+    {
+      "id": "R7",
+      "definition": "cached phi F32 widened for prediction and Q only"
+    },
+    {
+      "id": "R8",
+      "definition": "cached grad_phi/lap_phi F32 widened for prediction only"
+    },
+    {
+      "id": "R9",
+      "definition": "native production mixed local arithmetic; F64 AO assembly of widened F32 factors; stored RefAO"
+    }
+  ],
+  "order_dependent_attribution": true,
+  "reference_frozen_from": "R4",
+  "production_weights": "loader casts weights F32 then weak-form repair widens; legacy weights already exactly representable F32"
+}

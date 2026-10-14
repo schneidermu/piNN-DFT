@@ -1,0 +1,55 @@
+{
+  "namespace": "lap_grid_transfer_v1_",
+  "first_action_unix": 1792003813.161,
+  "timer_note": "conservative 60-second reserve includes initial attachment read before timer write",
+  "budget_seconds": 5400,
+  "filter_search_budget_seconds": 900,
+  "head": "8752754c1bcc04efe0763b1ffc732ab7703bb709",
+  "worktree": "?? .planning/chem_precision_trace/\n?? .planning/quick/\n?? .planning/step_globalization/lap_step_globalization_report.md\n?? .planning/step_globalization/protocol.json\n?? .planning/step_globalization/results.json\n?? baseline_validation/\n?? four_objective_throughput_diagnosis_metrics.json\n?? four_objective_throughput_diagnosis_report.md\n?? full90_25update_qualification.py\n?? full90_25update_qualification_protocol.json\n?? lap_f025_aggregate_closure.csv\n?? lap_f025_analysis_receipt.json\n?? lap_f025_availability.csv\n?? lap_f025_availability_aggregates.csv\n?? lap_f025_decision.json\n?? lap_f025_direct_parity.csv\n?? lap_f025_final_integrity.json\n?? lap_f025_harmful_cumulative.csv\n?? lap_f025_harmful_cumulative.png\n?? lap_f025_native_directions.csv\n?? lap_f025_operator_vector_changes.csv\n?? lap_f025_pairwise_decomposition.csv\n?? lap_f025_pairwise_records.csv\n?? lap_f025_per_record_attribution.csv\n?? lap_f025_protocol.json\n?? lap_f025_provenance.json\n?? lap_f025_recomputation_receipt.json\n?? lap_f025_report.md\n?? lap_f025_source_provenance.json\n?? lap_f025_task_attribution.csv\n?? lap_f025_tests.json\n?? lap_f025_unchanged_database_metrics.csv\n?? lap_f025_unchanged_quality_metrics.csv\n?? lap_gauge_consistency_v1_started.txt\n?? lap_grid_transfer_v1_started.txt\n?? lap_target_provenance_v1_started.txt\n?? lap_target_provenance_v2_started.txt\n?? test_full90_25update_qualification.py\n?? tests/test_lap_f025_attribution.py\n?? tests/test_publication_baselines.py\n?? tools/evaluate_publication_baselines.py\n?? tools/lap_f025_analyze.py\n?? tools/lap_f025_collect.py\n?? tools/lap_f025_report.py\n?? tools/profile_four_objective_throughput.py\n?? train_lap_four_objective.py\n",
+  "source_hashes": {
+    "train_models/prepare_vxc.py": "8898a34214a099cd268caa8e3b40e01267aaffe79f97e6051f3e620374d7314f",
+    "train_models/build_lap_operator_data.py": "20cb445d5c926653a09a54b6e0854b6a2d170de19995eb444ba84064777696fe",
+    "train_models/build_mrks_stencils.py": "5af240591b1b7b5c6173035e938828fa8a8fa4967aacdd1d21504b8b707669d8",
+    "train_models/lap_operator_data.py": "8d411952a579728dac395e38d1255e5e5bb412ea77d4e2fb8c9f6116e55f93c9",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "tools/lap_operator_contract_v1_audit.py": "98d117b042f2458f14d896d618b85b00008cfa319ac399adcafae0b3ddb65a5c",
+    "lap_gauge_consistency_v1_provenance.json": "e47d428ece477bd2add79d268eaffe10341b12b8715c6ff59bfeda01a6e19669",
+    "lap_gauge_consistency_v1_report.md": "d2a43e07607daa29995b57f6be4ae9549ea69480cc0f3b811d90dd12198aab41",
+    "lap_gauge_consistency_v1_grid_comparison.csv": "994e78a63b8148ed411149dfb590c0e7b2186d26539bbee1f382b0cf2083d9ef",
+    "lap_gauge_consistency_v1_eigenpair_checks.csv": "e96e524c85d1f627bfdfc2a99a7698d96f8eacc00b5f769397e5526ab9abb161",
+    "lap_operator_contract_v1_report.md": "d47b6b47a07894ba6b569522a2a2ab1e9fff6b20b24a8cfa115d191ce2b6a554",
+    "train_models/publication_data/loader.py": "27415bd43f68e64467eec21b1ddf03ac1fc540d93c077483b1585f547579bb6f",
+    "train_models/publication_data/build.py": "413beffe469e7b36c5ae3185be22c2ba68d3b15bb98213a360efee7934c1db1a"
+  },
+  "pilot": [
+    "H2",
+    "BeH2",
+    "CO"
+  ],
+  "tolerances": {
+    "algebra_atol": 1e-10,
+    "algebra_rtol": 1e-09,
+    "reference_replay_atol": 1e-10,
+    "reference_replay_rtol": 1e-10,
+    "production_replay_relative": 1e-09,
+    "F64_chunk_relative": 1e-10
+  },
+  "PBE": "repository PBE constants (stored F32 widened), floors eps_add=1e-7 eps_add_rho=1e-10 eps=1e-29 unchanged; no Libxc oracle",
+  "stages": [
+    "full SOURCE, F64 descriptors/AO, repository F64 PBE",
+    "unique mapped SOURCE indices, original source fields",
+    "ordered mapping multiplicity, original source fields",
+    "only corpus weights",
+    "only corpus reference vxc; F64 RefAO thereafter FIXED",
+    "stored corpus descriptors F64",
+    "production descriptors F32 widened, same F64 formula",
+    "cached phi F32 widened for prediction and Q only",
+    "cached grad_phi/lap_phi F32 widened for prediction only",
+    "native production mixed local arithmetic; F64 AO assembly of widened F32 factors; stored RefAO"
+  ],
+  "no_checkpoint_optimizer_SCF": true
+}

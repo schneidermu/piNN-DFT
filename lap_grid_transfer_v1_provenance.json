@@ -1,0 +1,222 @@
+{
+  "driver_sha256": "1bf291f4f3be8bf18e7adb0dbd45d6217e1790f3c5aa09f6a5627177462be756",
+  "pilots": {
+    "H2": {
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/H2/inp_mrks.npz",
+        "sha256": "4d99d3ec1f94ccbc3c9caa12d22428e03438dcbaeb07a765d3f30459d7e6df95"
+      },
+      "corpus": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_053.h5",
+        "sha256": "71a50fe496f00ae46f378e72fe70a30252b4f55ae8358a21b5d295f880bac690",
+        "group": "mrks_9814b9a14e00568cbe7dad2c",
+        "mapping": {
+          "ao_cache_sha256": "bfc9991e8ac3a2083a0a6decc8174103d53398ae15adf814ba95aeba73584877",
+          "group": "mrks_9814b9a14e00568cbe7dad2c",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_9814b9a14e00568cbe7dad2c",
+          "n_ao": 60,
+          "n_grid": 42508,
+          "shard": "mrks/mrks_053.h5",
+          "source_id": "H2",
+          "source_record_sha256": "f38fc134620472f91f28c67f9bb966d15c30fba27fdb3ef3f9a0808bb0a14847",
+          "source_sha256": "3732c45228dc621a28bbe776cc207690b4f4397fa6f3d99806e3617fba697f59"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/H2.npz",
+          "sha256": "8a78fa03bd0f75fc7aa72453ba3f705b9c7bedd23ba8c76728846f7b85d53ab0"
+        }
+      },
+      "arrays": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/lap_grid_transfer_v1_arrays_20261014/H2.npz",
+        "sha256": "d9e0b567801d11023a7f563596b77f700a6a11d041325a1d56ff8cffb4d2d250"
+      },
+      "n_SOURCE": 47080,
+      "n_CORPUS": 42508,
+      "selected_unique_indices": 42508,
+      "unselected_indices": 4572,
+      "excess_mapped_presentations": 0,
+      "F32_distinct_coordinate_collisions": 0,
+      "duplicated_SOURCE_coordinates": 0,
+      "mapping_scope": "VERIFIED bookkeeping; identical-source-coordinate candidate provenance cannot separate physical deletion/multiplicity history",
+      "delta_reference_fro": 0.0011411964466846686,
+      "delta_prediction_fro": 6.671122365786353e-05,
+      "delta_residual_fro": 0.001074485872630657,
+      "delta_ref_pred_cosine": 0.9999908318083177,
+      "L_SOURCE": 0.05066233843601176,
+      "L_CORPUS": 0.05065467668707983,
+      "delta_loss": -7.661748931929446e-06,
+      "relative_delta_loss": -0.0001512316479746882,
+      "full_cross_term": -7.680990930105382e-06,
+      "full_quadratic_term": 1.9241998174714406e-08,
+      "PBE_energy_change_ha": 1.9534885753458298e-07,
+      "time_seconds": 4.114224152
+    },
+    "BeH2": {
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/BeH2/inp_mrks.npz",
+        "sha256": "f49532fdd6b8f2b57e67c6cd9826bd83cf4a0ddb574787a6f9931dfd6abf6d00"
+      },
+      "corpus": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_024.h5",
+        "sha256": "0e0bac52f99f327bd3ff69dbc24897c97707c0f4d9e5919777a64d679a4c52e7",
+        "group": "mrks_e4d282caa3eb3f8d5345b1a2",
+        "mapping": {
+          "ao_cache_sha256": "a31180ad9ab68987d379a49251998b5a6c3f8f5abba113eaeb12caaeb310e0fc",
+          "group": "mrks_e4d282caa3eb3f8d5345b1a2",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_e4d282caa3eb3f8d5345b1a2",
+          "n_ao": 144,
+          "n_grid": 77240,
+          "shard": "mrks/mrks_024.h5",
+          "source_id": "BeH2",
+          "source_record_sha256": "45b98a3f67667e6c6d105c05d4eb310d29c3569c390d4219315b592e9a182fb6",
+          "source_sha256": "e3d3ac21d5d360a6d0633ba5eb68e69977e597800e288e71b8eb7594bb3e1633"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/BeH2.npz",
+          "sha256": "fa320925c62de6cd0601038ef2aa2fa02b20b4c50452ccb6509e01b9767a6a58"
+        }
+      },
+      "arrays": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/lap_grid_transfer_v1_arrays_20261014/BeH2.npz",
+        "sha256": "2d308fda0bff3690bcb464972d208b5281690720732afab56fc0de7728e39755"
+      },
+      "n_SOURCE": 89200,
+      "n_CORPUS": 77240,
+      "selected_unique_indices": 77235,
+      "unselected_indices": 11965,
+      "excess_mapped_presentations": 5,
+      "F32_distinct_coordinate_collisions": 0,
+      "duplicated_SOURCE_coordinates": 1,
+      "mapping_scope": "VERIFIED bookkeeping; identical-source-coordinate candidate provenance cannot separate physical deletion/multiplicity history",
+      "delta_reference_fro": 0.026338331813415772,
+      "delta_prediction_fro": 0.001734066367104985,
+      "delta_residual_fro": 0.02460427867496157,
+      "delta_ref_pred_cosine": 0.9999928735747233,
+      "L_SOURCE": 0.03322842139724135,
+      "L_CORPUS": 0.033146870488266915,
+      "delta_loss": -8.155090897443706e-05,
+      "relative_delta_loss": -0.002454251678089272,
+      "full_cross_term": -8.575487098217826e-05,
+      "full_quadratic_term": 4.203962007744227e-06,
+      "PBE_energy_change_ha": 3.2212915401785835e-07,
+      "time_seconds": 21.179619955
+    },
+    "CO": {
+      "source": {
+        "path": "/mnt/c/Users/schne/Downloads/mrks_90_ccsd_pt/mrks_90_ccsd_pt/CO/inp_mrks.npz",
+        "sha256": "b5e228068b44f4a9584385c969f514e13164c6c96b1160b5a2e549693e95f18e"
+      },
+      "corpus": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/publication_dataset_v1/mrks/mrks_039.h5",
+        "sha256": "90bc5aa238a701f663a04663f520f4083a58ee463b3633ae50e52ddb51ec58a9",
+        "group": "mrks_a85d32e4db2ff39c2e5d4002",
+        "mapping": {
+          "ao_cache_sha256": "147619bb7839846a764ed51f5ec8c1b3792ae1f9235b74c1cd5213e6153967e5",
+          "group": "mrks_a85d32e4db2ff39c2e5d4002",
+          "has_exc": true,
+          "has_operator": true,
+          "has_pointwise_vxc": true,
+          "id": "mrks_a85d32e4db2ff39c2e5d4002",
+          "n_ao": 168,
+          "n_grid": 72110,
+          "shard": "mrks/mrks_039.h5",
+          "source_id": "CO",
+          "source_record_sha256": "028b56a96702ee265b8277e5109346ba217ea11054a0335426b435e631898fa3",
+          "source_sha256": "ac7eef3c2731063c4fac7249c2e8b2b31511fe275d9a9ce92150215dba9b90aa"
+        },
+        "arrays": {
+          "path": "/mnt/c/Dev/readWFN_share_ms/lap_gauge_consistency_v1_arrays_20261014/CO.npz",
+          "sha256": "bbb2229cc95ce31ae02568b1191bda556bca7a4916ffbc77b58c5b0303aa3b77"
+        }
+      },
+      "arrays": {
+        "path": "/mnt/c/Dev/readWFN_share_ms/lap_grid_transfer_v1_arrays_20261014/CO.npz",
+        "sha256": "8cbbff8d34e013d057e63ba4acbae88e0ac605228160e6650365f96ea3a8dd96"
+      },
+      "n_SOURCE": 85960,
+      "n_CORPUS": 72110,
+      "selected_unique_indices": 72107,
+      "unselected_indices": 13853,
+      "excess_mapped_presentations": 3,
+      "F32_distinct_coordinate_collisions": 0,
+      "duplicated_SOURCE_coordinates": 1,
+      "mapping_scope": "VERIFIED bookkeeping; identical-source-coordinate candidate provenance cannot separate physical deletion/multiplicity history",
+      "delta_reference_fro": 0.0010288791359946365,
+      "delta_prediction_fro": 5.512783912076398e-05,
+      "delta_residual_fro": 0.0009740019882566861,
+      "delta_ref_pred_cosine": 0.9956956461998359,
+      "L_SOURCE": 0.048824239855463455,
+      "L_CORPUS": 0.04882099753641197,
+      "delta_loss": -3.2423190514871414e-06,
+      "relative_delta_loss": -6.640797810852808e-05,
+      "full_cross_term": -3.247965955494879e-06,
+      "full_quadratic_term": 5.646904006714152e-09,
+      "PBE_energy_change_ha": -2.7750778208712745e-07,
+      "time_seconds": 25.31320863
+    }
+  },
+  "baseline_head": "8752754c1bcc04efe0763b1ffc732ab7703bb709",
+  "versions": {
+    "PySCF": "2.14.0",
+    "NumPy": "2.2.6",
+    "SciPy": "1.15.3",
+    "execution": "existing WSL Python3"
+  },
+  "scientific_inputs_unchanged": true,
+  "active_numerical_seconds": 55.881096217,
+  "bounded_filter_search": [
+    {
+      "path": "train_models/prepare_vxc.py",
+      "lines": "19-64",
+      "finding": "H5 copy and F32 conversion, no row mask",
+      "sha256": "8898a34214a099cd268caa8e3b40e01267aaffe79f97e6051f3e620374d7314f"
+    },
+    {
+      "path": "train_models/build_lap_operator_data.py",
+      "lines": "164-206,257-270",
+      "finding": "inherits legacy rows, exact-coordinate mapping and preserved legacy weights/potential",
+      "sha256": "20cb445d5c926653a09a54b6e0854b6a2d170de19995eb444ba84064777696fe"
+    },
+    {
+      "path": "train_models/build_mrks_stencils.py",
+      "lines": "117-145",
+      "finding": "first candidate for identical F64 coordinates; distinct-coordinate F32 collisions fail closed",
+      "sha256": "5af240591b1b7b5c6173035e938828fa8a8fa4967aacdd1d21504b8b707669d8"
+    },
+    {
+      "path": "train_models/publication_data/loader.py",
+      "lines": "208-234",
+      "finding": "features/weights F32, AO factors F32, RefAO/Overlap remain F64",
+      "sha256": "27415bd43f68e64467eec21b1ddf03ac1fc540d93c077483b1585f547579bb6f"
+    },
+    {
+      "path": "C:/Users/schne/Downloads/MRKS/bin/convert_vxc_data_with_wfn.py",
+      "lines": "143-207,293-300",
+      "finding": "rho_total > rho_cutoff mask exists; default cutoff -1; no authenticated run/config connecting it to these records"
+    },
+    {
+      "path": "C:/Users/schne/Downloads/MRKS/bin/gen_h5_with_vrho.py",
+      "lines": "213-242",
+      "finding": "potential noise zeroing, not grid-row deletion; producer not authenticated"
+    },
+    {
+      "path": "C:/Dev/readWFN_share_ms/readWFN_share_ms/h5_vrho_from_mrks_sanity.csv",
+      "lines": "pilot rows",
+      "finding": "reduced counts predate prepare_vxc; log contains no filtering config"
+    }
+  ],
+  "filter_search_conclusion": "RULE_UNKNOWN. Search stopped at directly linked helpers/log; no reconstructed historical config.",
+  "report_driver_sha256": "a5e19de2003afd5ab567958733b591810fe322d0205943a73c5c762fd474f325",
+  "result_hashes": {
+    "row_inventory": "eb32c88fc8e635e71a24ef616ec6cf6a11714443ac94491056f81e5657d98592",
+    "reference_attribution": "a60a9f5c04404da7ff62f3dfc87d30855873437304563662bcfdf7aa21eb976e",
+    "prediction_attribution": "4c4bd8eb504b9ee86170b33ebd3b65bcf0f99165d07571772f1ceb9f93090c2e",
+    "matched_loss": "933e5e043e780f7e9cea1ab2f6552b5c473500e3892ab40b7907cb48c3d0f94d"
+  }
+}

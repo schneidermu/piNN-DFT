@@ -1,0 +1,25 @@
+{
+  "wall_seconds": 772.2619755268097,
+  "active_numerical_seconds": 55.881096217,
+  "budget_respected": true,
+  "closure_status": "PASS",
+  "production_endpoint_replay": "PASS",
+  "row_attribution": "PARTIAL historical equal-coordinate disambiguation; verified fixed-map arithmetic",
+  "filter_rule": "RULE_UNKNOWN; available masking helpers not authenticated as this export",
+  "trained_checkpoints_loaded": 0,
+  "optimizer_states_loaded": 0,
+  "training_updates": 0,
+  "SCF": false,
+  "primary_transfer_mechanism": "mapped selection dominates; excess multiplicity contributes exactly zero (zero weights); rounding/AO/local arithmetic subleading",
+  "PBE_loss_impact": "partial prediction/reference cancellation, with small negative loss shifts in all three pilots; not full compensation",
+  "conversion_defect": "NOT DEMONSTRATED",
+  "next_step": "separately frozen matched full-grid representation pilot, rebuilding prediction inputs and reference together; no automatic repair or training",
+  "validation": {
+    "focused_tests": "6 PASS",
+    "pytest_seconds": 4.64,
+    "Ruff": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "historical_tracked_files_changed": 0
+  }
+}

@@ -1,0 +1,338 @@
+{
+  "H2": {
+    "SOURCE_reference_replay": {
+      "absolute": 7.295972372919953e-16,
+      "bound": 8.910450573937859e-10,
+      "status": "PASS"
+    },
+    "R4_RefAO_replay": {
+      "absolute": 2.616261277180618e-15,
+      "bound": 8.91043870546282e-10,
+      "status": "PASS"
+    },
+    "selection_multiplicity_reference": {
+      "absolute": 3.752628018603422e-16,
+      "bound": 1.0011841879372661e-10,
+      "status": "PASS"
+    },
+    "selection_multiplicity_prediction": {
+      "absolute": 2.8942347987001904e-16,
+      "bound": 1.0000696751744486e-10,
+      "status": "PASS"
+    },
+    "vxc_only_does_not_change_prediction": {
+      "absolute": 0.0,
+      "bound": 5.454447715569637e-09,
+      "status": "PASS"
+    },
+    "F64_chunk_order_prediction": {
+      "absolute": 8.162613861891974e-16,
+      "bound": 5.454448238670607e-09,
+      "status": "PASS"
+    },
+    "F64_chunk_order_reference": {
+      "absolute": 1.1389256010723844e-15,
+      "bound": 8.010450573937858e-09,
+      "status": "PASS"
+    },
+    "CORPUS_cached_reference_replay": {
+      "absolute": 0.0,
+      "bound": 8.91043869513007e-10,
+      "status": "PASS"
+    },
+    "production_prediction_replay": {
+      "absolute": 0.0,
+      "bound": 5.454447714981151e-09,
+      "status": "PASS"
+    },
+    "production_reference_remains_F64": {
+      "absolute": 0.0,
+      "bound": 0.0,
+      "status": "PASS"
+    },
+    "matrix_delta_closure": {
+      "absolute": 1.5175327956386402e-13,
+      "bound": 1.0107448587262143e-10,
+      "status": "PASS"
+    },
+    "matrix_telescoping": {
+      "absolute": 1.5175326763055614e-13,
+      "bound": 1.0107448587263066e-10,
+      "status": "PASS"
+    },
+    "loss_identity": {
+      "absolute": 1.221421509940701e-18,
+      "bound": 1.0000766174893194e-10,
+      "status": "PASS"
+    },
+    "loss_telescoping": {
+      "absolute": 4.1395516571854363e-16,
+      "bound": 1.0000766174893194e-10,
+      "status": "PASS"
+    },
+    "saved_ref_telescoping": {
+      "absolute": 2.0840209049068555e-17,
+      "bound": 1.0114119644668468e-10,
+      "status": "PASS"
+    },
+    "saved_pred_telescoping": {
+      "absolute": 1.218755133486857e-18,
+      "bound": 1.0006671122365787e-10,
+      "status": "PASS"
+    },
+    "saved_residual_telescoping": {
+      "absolute": 1.5175326763055614e-13,
+      "bound": 1.0107448587263066e-10,
+      "status": "PASS"
+    },
+    "production_scalar_loss_replay": {
+      "absolute": 4.121702978920894e-15,
+      "bound": 1.5065467668707985e-10,
+      "status": "PASS"
+    },
+    "deletion_reference_separate": {
+      "absolute": 3.752628018603422e-16,
+      "bound": 1.0011841879372661e-10,
+      "status": "PASS"
+    },
+    "excess_reference_separate": {
+      "absolute": 0.0,
+      "bound": 1e-10,
+      "status": "PASS"
+    },
+    "deletion_prediction_separate": {
+      "absolute": 2.8942347987001904e-16,
+      "bound": 1.0000696751744486e-10,
+      "status": "PASS"
+    },
+    "excess_prediction_separate": {
+      "absolute": 0.0,
+      "bound": 1e-10,
+      "status": "PASS"
+    }
+  },
+  "BeH2": {
+    "SOURCE_reference_replay": {
+      "absolute": 1.2578633679722369e-15,
+      "bound": 1.619389548839932e-09,
+      "status": "PASS"
+    },
+    "R4_RefAO_replay": {
+      "absolute": 7.0984854483324505e-15,
+      "bound": 1.6193741373314026e-09,
+      "status": "PASS"
+    },
+    "selection_multiplicity_reference": {
+      "absolute": 7.550039016214726e-16,
+      "bound": 1.0514262595153346e-10,
+      "status": "PASS"
+    },
+    "selection_multiplicity_prediction": {
+      "absolute": 7.478742250348754e-16,
+      "bound": 1.0033940724829884e-10,
+      "status": "PASS"
+    },
+    "vxc_only_does_not_change_prediction": {
+      "absolute": 0.0,
+      "bound": 1.2325192110780934e-08,
+      "status": "PASS"
+    },
+    "F64_chunk_order_prediction": {
+      "absolute": 2.100350549801155e-15,
+      "bound": 1.2325197487674385e-08,
+      "status": "PASS"
+    },
+    "F64_chunk_order_reference": {
+      "absolute": 2.599618672417295e-15,
+      "bound": 1.5293895488399317e-08,
+      "status": "PASS"
+    },
+    "CORPUS_cached_reference_replay": {
+      "absolute": 0.0,
+      "bound": 1.6193741334928112e-09,
+      "status": "PASS"
+    },
+    "production_prediction_replay": {
+      "absolute": 0.0,
+      "bound": 1.2325192504508199e-08,
+      "status": "PASS"
+    },
+    "production_reference_remains_F64": {
+      "absolute": 0.0,
+      "bound": 0.0,
+      "status": "PASS"
+    },
+    "matrix_delta_closure": {
+      "absolute": 2.1159183605672004e-13,
+      "bound": 1.246042786749507e-10,
+      "status": "PASS"
+    },
+    "matrix_telescoping": {
+      "absolute": 2.115922189240892e-13,
+      "bound": 1.2460427867496158e-10,
+      "status": "PASS"
+    },
+    "loss_identity": {
+      "absolute": 3.0357660829594124e-18,
+      "bound": 1.0008155090897444e-10,
+      "status": "PASS"
+    },
+    "loss_telescoping": {
+      "absolute": 4.493611429137734e-16,
+      "bound": 1.0008155090897444e-10,
+      "status": "PASS"
+    },
+    "saved_ref_telescoping": {
+      "absolute": 2.0370935591028887e-15,
+      "bound": 1.2633833181341604e-10,
+      "status": "PASS"
+    },
+    "saved_pred_telescoping": {
+      "absolute": 1.3428254875876163e-16,
+      "bound": 1.0173406636710501e-10,
+      "status": "PASS"
+    },
+    "saved_residual_telescoping": {
+      "absolute": 2.115922189240892e-13,
+      "bound": 1.2460427867496158e-10,
+      "status": "PASS"
+    },
+    "production_scalar_loss_replay": {
+      "absolute": 4.336808689942018e-15,
+      "bound": 1.3314687048826692e-10,
+      "status": "PASS"
+    },
+    "deletion_reference_separate": {
+      "absolute": 7.550039016214726e-16,
+      "bound": 1.0514262595153346e-10,
+      "status": "PASS"
+    },
+    "excess_reference_separate": {
+      "absolute": 0.0,
+      "bound": 1e-10,
+      "status": "PASS"
+    },
+    "deletion_prediction_separate": {
+      "absolute": 7.478742250348754e-16,
+      "bound": 1.0033940724829884e-10,
+      "status": "PASS"
+    },
+    "excess_prediction_separate": {
+      "absolute": 0.0,
+      "bound": 1e-10,
+      "status": "PASS"
+    }
+  },
+  "CO": {
+    "SOURCE_reference_replay": {
+      "absolute": 2.9768870843742056e-15,
+      "bound": 3.361106831100479e-09,
+      "status": "PASS"
+    },
+    "R4_RefAO_replay": {
+      "absolute": 2.1516644081318118e-14,
+      "bound": 3.3611065493860723e-09,
+      "status": "PASS"
+    },
+    "selection_multiplicity_reference": {
+      "absolute": 7.29394255746477e-16,
+      "bound": 1.0012623866606428e-10,
+      "status": "PASS"
+    },
+    "selection_multiplicity_prediction": {
+      "absolute": 6.95698712268305e-16,
+      "bound": 1.0000696849886196e-10,
+      "status": "PASS"
+    },
+    "vxc_only_does_not_change_prediction": {
+      "absolute": 0.0,
+      "bound": 2.9173224115263897e-08,
+      "status": "PASS"
+    },
+    "F64_chunk_order_prediction": {
+      "absolute": 3.767134947396721e-15,
+      "bound": 2.9173224174674414e-08,
+      "status": "PASS"
+    },
+    "F64_chunk_order_reference": {
+      "absolute": 4.733924120477654e-15,
+      "bound": 3.271106831100478e-08,
+      "status": "PASS"
+    },
+    "CORPUS_cached_reference_replay": {
+      "absolute": 0.0,
+      "bound": 3.361106543832306e-09,
+      "status": "PASS"
+    },
+    "production_prediction_replay": {
+      "absolute": 0.0,
+      "bound": 2.9173226435505337e-08,
+      "status": "PASS"
+    },
+    "production_reference_remains_F64": {
+      "absolute": 0.0,
+      "bound": 0.0,
+      "status": "PASS"
+    },
+    "matrix_delta_closure": {
+      "absolute": 1.871362457120655e-13,
+      "bound": 1.0097400198821952e-10,
+      "status": "PASS"
+    },
+    "matrix_telescoping": {
+      "absolute": 1.871363291935595e-13,
+      "bound": 1.009740019882567e-10,
+      "status": "PASS"
+    },
+    "loss_identity": {
+      "absolute": 1.0232158002831948e-18,
+      "bound": 1.0000324231905149e-10,
+      "status": "PASS"
+    },
+    "loss_telescoping": {
+      "absolute": 2.322212822698181e-16,
+      "bound": 1.0000324231905149e-10,
+      "status": "PASS"
+    },
+    "saved_ref_telescoping": {
+      "absolute": 9.96644769628041e-16,
+      "bound": 1.0102887913599411e-10,
+      "status": "PASS"
+    },
+    "saved_pred_telescoping": {
+      "absolute": 5.221135965095673e-17,
+      "bound": 1.0005512783912074e-10,
+      "status": "PASS"
+    },
+    "saved_residual_telescoping": {
+      "absolute": 1.871363291935595e-13,
+      "bound": 1.009740019882567e-10,
+      "status": "PASS"
+    },
+    "production_scalar_loss_replay": {
+      "absolute": 1.85268467234323e-15,
+      "bound": 1.4882099753641198e-10,
+      "status": "PASS"
+    },
+    "deletion_reference_separate": {
+      "absolute": 7.29394255746477e-16,
+      "bound": 1.0012623866606428e-10,
+      "status": "PASS"
+    },
+    "excess_reference_separate": {
+      "absolute": 0.0,
+      "bound": 1e-10,
+      "status": "PASS"
+    },
+    "deletion_prediction_separate": {
+      "absolute": 6.95698712268305e-16,
+      "bound": 1.0000696849886196e-10,
+      "status": "PASS"
+    },
+    "excess_prediction_separate": {
+      "absolute": 0.0,
+      "bound": 1e-10,
+      "status": "PASS"
+    }
+  }
+}
