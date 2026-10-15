@@ -1,0 +1,8 @@
+{
+  "native_shadow_eps_assertions": "PASS",
+  "restored_theta1_full_batch_loss_gradient_parity": "PASS",
+  "restored_theta0_model_optimizer_RNG": "PASS",
+  "initial_RNG_restore_failure": "retained separately, fixed and requalified before training",
+  "actual_training_theta1_restoration": "PASS: full batch loss/gradient, counter, epsilon and moments preserved",
+  "final_theta32_restoration": "PASS: full batch loss/gradient and epsilon preserved"
+}

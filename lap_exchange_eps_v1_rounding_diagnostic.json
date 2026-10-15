@@ -1,0 +1,33 @@
+{
+  "original_relative_only_guard": "FAIL preserved",
+  "F32_minimum_normal": 1.1754943508222875e-38,
+  "findings": [
+    {
+      "t": 1,
+      "relative_bound_failure_count": 1,
+      "maximum_failure_absolute": 3.200467772116241e-46,
+      "examples": [
+        {
+          "flat_index": 322,
+          "g1_native": -1.3619584361883007e-19,
+          "v_first_F64": 1.8549307819044815e-41,
+          "v_total_native": 1.8548987772267604e-41,
+          "rest": -3.200467772116241e-46,
+          "relative_bound": 1.105624903383542e-47
+        }
+      ]
+    },
+    {
+      "t": 2,
+      "relative_bound_failure_count": 0,
+      "maximum_failure_absolute": 0,
+      "examples": []
+    },
+    {
+      "t": 32,
+      "relative_bound_failure_count": 0,
+      "maximum_failure_absolute": 0,
+      "examples": []
+    }
+  ]
+}

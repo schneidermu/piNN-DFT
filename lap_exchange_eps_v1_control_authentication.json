@@ -1,0 +1,27 @@
+{
+  "PASS": true,
+  "initial_artifact": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\initialization.pt",
+    "sha256": "58591a30cc6a7e24ee4830d7f6103d08921b605547b494ac10bc6a1990776147"
+  },
+  "control_t32": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_fresh_grid_pilot_v1_runs_20261014\\FULL_SOURCE_t32.pt",
+    "sha256": "34989c4f9b8bedc9fddad07c0fa274c915dd99cea7beffb76fd37d4ef0df9983"
+  },
+  "t0_losses": [
+    0.29546956477841857,
+    0.5710899628571287,
+    2.937718481105691
+  ],
+  "t32_losses": [
+    0.03856748731539027,
+    0.22169806625025062,
+    1.2995207985426602
+  ],
+  "t0_gradient_norm": 33745589.04345745,
+  "t0_gradient_cache_parity": "PASS",
+  "t0_empty_moments": true,
+  "t32_counter": 32,
+  "historical_epsilon_evidence": "original constructor source + original driver hashes, same Torch version/default LayerNorm eps; explicitly reconstructed both native/shadow at 1e-5; no claim eps was encoded in old state_dict",
+  "actual_t0_t32_optimizer_hyperparameters": "PASS: lr/betas/eps/weight_decay/foreach match the frozen original policy"
+}

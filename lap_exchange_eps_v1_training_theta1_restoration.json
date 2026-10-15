@@ -1,0 +1,6 @@
+{
+  "PASS": true,
+  "epsilon_and_full_batch_loss_gradient_parity": "PASS",
+  "optimizer_counter": 1,
+  "moments_preserved": true
+}

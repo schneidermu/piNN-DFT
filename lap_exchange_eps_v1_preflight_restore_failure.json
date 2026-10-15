@@ -1,0 +1,12 @@
+{
+  "initial_result": "FAIL",
+  "failure": "torch.set_rng_state rejected RNG tensor moved to CUDA by map_location=DEVICE",
+  "location": "isolated experimental restore helper",
+  "production_modified": false,
+  "scientific_training_started": false,
+  "temporary_steps_already_executed": 1,
+  "fix": "load checkpoint on CPU; construct moves parameters and optimizer.load_state_dict restores device-correct moments",
+  "existing_derivative_table_sha256": "30bd9dfd7aeb7c07eb7928b7493353552ecbb6ec1a6569b367a3435852ffcc55",
+  "saved_theta1_sha256": "7eeb526045acfeda07b9fe0c6a921676313f48c06a72a12d56efe391ef769a9b",
+  "additional_temporary_steps": 0
+}

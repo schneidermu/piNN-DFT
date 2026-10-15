@@ -1,0 +1,53 @@
+{
+  "experiment": "F026",
+  "scientific_classification": "A",
+  "technical_status": "VALID",
+  "derivative_qualifications": [
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED"
+    }
+  ],
+  "updates": 32,
+  "temporary_preflight_steps": 1,
+  "new_training_arms": 1,
+  "historical_control_retrained": false,
+  "effect_floor_pass": true,
+  "B": 0.2281405615034916,
+  "scientific_wall_seconds": 2020.0445821285248,
+  "budget_respected": true,
+  "interpretation": "Conditioning, early optimizer displacement, and absolute final loss are evaluated separately; exchange-hidden coupling can also change correlation outputs.",
+  "next_experiment": "One separately frozen second-seed matched replication of this exact eps comparison on the same three systems, with the seed fixed prospectively and no epsilon sweep, before any full90 or chemistry claim. No new seed was selected or executed here."
+}

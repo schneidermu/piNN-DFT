@@ -1,0 +1,31 @@
+{
+  "checkpoints": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_exchange_eps_v1_runs_20261015\\theta0.pt",
+      "sha256": "39410504182df7edddea51fc5fd33354723583b353d4090633246c4649e4bc64",
+      "t": 0
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_exchange_eps_v1_runs_20261015\\theta1.pt",
+      "sha256": "1c48a66be3ca96789456e3c6fd14ff9378589dc1787cfbe42e8daab8a01556b5",
+      "t": 1
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_exchange_eps_v1_runs_20261015\\theta2.pt",
+      "sha256": "3dcfded1ba44ba255ee43ec649da4f0e534f062cf83ce1ff4f7a9e88282401df",
+      "t": 2
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_exchange_eps_v1_runs_20261015\\theta16.pt",
+      "sha256": "8dc3b026c0f555a7ddcf603ba13abb4f12d264fb71cf3327842ac3b36aa2e4be",
+      "t": 16
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_exchange_eps_v1_runs_20261015\\theta32.pt",
+      "sha256": "88d71e27aa229ee254364a665763e97ef2267745df7a0f5e47da49a581435dd5",
+      "t": 32
+    }
+  ],
+  "final_restoration_full_batch_parity": "PASS",
+  "updates": 32
+}

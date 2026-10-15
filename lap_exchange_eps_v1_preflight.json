@@ -1,0 +1,72 @@
+{
+  "PASS": true,
+  "technical": "VALID",
+  "derivative": [
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED"
+    }
+  ],
+  "independent_analytical_and_operator_path_checks": "PASS",
+  "temporary_native_steps": 1,
+  "temporary_step_retained": false,
+  "recovery_extra_steps": 0,
+  "metrics": [
+    {
+      "theta": 0,
+      "mean_loss": 1.2576277358076677,
+      "losses": [
+        0.29187270990291636,
+        0.5641664350441479,
+        2.9168440624759393
+      ],
+      "gradient_norm": 3348.279624108039,
+      "batch_seconds": 26.12524300000223
+    },
+    {
+      "theta": 1,
+      "mean_loss": 0.8246506784780356,
+      "losses": [
+        0.15210050820194662,
+        0.3749064794565228,
+        1.9469450477756376
+      ],
+      "gradient_norm": 3024.026670225275,
+      "batch_seconds": 24.912899999999354
+    }
+  ],
+  "projected_training_plus_endpoint_seconds": 1736.8101088000928,
+  "wall_before_training": 845.6897029876709
+}

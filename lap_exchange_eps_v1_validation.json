@@ -1,0 +1,19 @@
+{
+  "focused_and_selected_regressions": "14 PASS, 21 deselected",
+  "Ruff": "PASS",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "scientific_wall_seconds": 2237.354,
+  "budget_seconds": 7200,
+  "budget_respected": true,
+  "retained_issues": [
+    "Preflight RNG device restore failed; experimental loader corrected and fully requalified before training; no extra temporary step",
+    "Default pytest temp directory was unwritable; tests rerun in workspace basetemp",
+    "Relative-only subnormal moment guard FAIL retained; exact nearest-F32 rounding explains the one coordinate",
+    "First subnormal fixture reference comparison used NumPy F32 weak-scalar promotion; changed reference arithmetic to F64, without changing the criterion"
+  ],
+  "intervention_native_updates": 32,
+  "temporary_preflight_native_updates": 1,
+  "total_molecular_optimizer_executions": 33,
+  "control_training_updates": 0
+}

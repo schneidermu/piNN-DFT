@@ -1,0 +1,55 @@
+# F026 — Matched exchange LayerNorm epsilon pilot
+
+Scientific classification **A**; technical **VALID**. One 32-update intervention completed. Historical FULL_SOURCE control was authenticated, never retrained. This is a single-seed, three-training-system experiment, not chemical or full90 qualification.
+
+## Configuration and control
+
+Only `x_feature_extractor.1`, `.3.fc.1`, `.3.fc.4`, `.4.fc.1`, `.4.fc.4` LayerNorm eps change from 1e-5 to 1e-3. Every module is checked by identity/type; correlation LN eps remains 1e-5. Native F32, F64 shadow, derivative copies and restored models are explicitly configured and independently asserted before every batch and after every tensor synchronization. `_model_double_operator_partials` executes the configured shadow through functional_call; eps remains a Python module attribute. Tensor identity alone is never used as scientific identity.
+
+Original initialization.pt bytes were SHA-authenticated; loaded tensor state has hash `359088b9713e532be0f811b4bd9f5f4f91b34d531a936db7548f46b2b410aedd`, original parameter order and 9446 unique coordinates. Constructor calls allocate storage only; their random values are discarded and RNG restored. No new scientific initialization was used. Weights and buffers remain exactly equal after epsilon configuration. The epsilon manifest records every LN, architecture config, order, precision and tensor/scientific hashes. Exchange hidden features feed correlation, so the intervention is not claimed to affect only exchange energy.
+
+Control t0 loss/gradient and t32 loss were recomputed once on the original grids/configuration. Values reproduce 1.268092669580413 and 0.5199287840361003; g1 cache parity passes. Old checkpoints did not store eps: reconstruction is supported by the unchanged original driver/constructor hashes and matching Torch version, not invented checkpoint metadata. New checkpoints require explicit eps metadata and reject missing configuration. Actual training theta1 and theta32 checkpoint restores reproduce full-batch losses/gradients, optimizer counters and epsilon; preflight additionally restores model/shadow/empty optimizer/RNG to t0. The first preflight restore FAIL (CPU RNG ByteTensor moved to CUDA) is retained in preflight_restore_failure.json. The isolated driver now loads payloads on CPU, restores optimizer devices, and was requalified from existing theta0/theta1 without another temporary update. Production was not repaired. An initial pytest attempt encountered an unwritable default temporary directory; the identical tests pass with a dedicated workspace basetemp.
+
+## Data, loss, precision and preflight
+
+Only original FULL_SOURCE H2/BeH2/CO caches: 47080/89200/85960 points. Original DM, source precision, overlap, targets, gauge and matrix metric remain unchanged. The original two-pass bounded-memory adjoint sums complete matrices before the squared loss. The three system losses/gradients receive equal 1/3 weight. Learned forward/gradient and AO accumulation use F64; original PBE local arithmetic stays F32; the mean gradient is cast once to native F32 AdamW. AdamW lr2.5e-5, betas .9/.999, eps1e-8, decay.01, foreach false. No chemistry/energy tasks, clipping, scheduler or moment reset.
+
+A separate reversible first preflight update was executed and discarded. It is not one of the 32 retained training updates. The intervention then restarted from the exact t0 weights, empty optimizer and saved RNG. Thus 33 molecular optimizer executions occurred: 1 temporary qualification + 32 declared intervention updates, one arm. theta0/1/2/16/32 plus an atomic resume checkpoint are saved outside Git with SHA receipts.
+
+Preflight full-batch profiles: [26.12524300000223, 24.912899999999354] seconds. Reserved training-plus-endpoint projection was 1736.810 seconds; budget was checked throughout. Final checkpoint restoration includes a repeated full-batch gradient check. Phase timings report active scientific process wall separately from total workflow wall; neither is advertised as metered GPU-active time.
+
+Fixed H2 coordinates remain `.1.bias[6]`, `.3.fc.1.bias[16]`, `.3.fc.0.weight[887]`. Before numerical results, the prior scalar-change FD rule was frozen with a prospective parameter-scale cap to limit curvature. Seven symmetric h values per coordinate/state; unchanged requirement of two adjacent FD values within 1% of AD and each other. No post-result perturbation or tolerance changes. Statuses: [{'theta': 0, 'name': 'x_feature_extractor.1.bias', 'index': 6, 'status': 'QUALIFIED'}, {'theta': 0, 'name': 'x_feature_extractor.3.fc.1.bias', 'index': 16, 'status': 'QUALIFIED'}, {'theta': 0, 'name': 'x_feature_extractor.3.fc.0.weight', 'index': 887, 'status': 'QUALIFIED'}, {'theta': 1, 'name': 'x_feature_extractor.1.bias', 'index': 6, 'status': 'QUALIFIED'}, {'theta': 1, 'name': 'x_feature_extractor.3.fc.1.bias', 'index': 16, 'status': 'QUALIFIED'}, {'theta': 1, 'name': 'x_feature_extractor.3.fc.0.weight', 'index': 887, 'status': 'QUALIFIED'}]. Independent LN formula uses actual eps and biased variance, with first/mixed derivatives at real observed zero/near-zero/ordinary inputs. Independent dE/dP path calls no production AO assembler/local-partial helper; its weighted-F32 rounding is judged by separately frozen atol1e-6/rtol1e-5 from existing operator gradcheck, not strict F64 identity. Hard constraints and numerical path checks pass. If an FD limitation is UNRESOLVED, technical status remains LIMITED under the prospectively recorded nondecisive-FD rule. The historical secondary theta1 FD limitation remains UNRESOLVED in its original report regardless of F026's result.
+
+## Absolute endpoints, not normalized progress
+
+| System | control t0 | intervention t0 | control t32 | intervention t32 | final delta |
+|---|---:|---:|---:|---:|---:|
+| H2 | 0.295469564778 | 0.291872709903 | 0.0385674873154 | 0.0373359776232 | -0.00123150969 |
+| BeH2 | 0.571089962857 | 0.564166435044 | 0.22169806625 | 0.168464276127 | -0.0532337901 |
+| CO | 2.93771848111 | 2.91684406248 | 1.29952079854 | 0.998135564162 | -0.301385234 |
+
+Mean initial: control 1.268092669580413, intervention 1.257627735807668; epsilon alone changes the initial loss by -0.0104649337727. This is a representational/numerical change at identical tensors, not evidence of better optimization. Mean final: control 0.5199287840361003, intervention 0.4013119393042768. Absolute delta32 = -0.118616844732; B = 0.228140561503. One-percent threshold 0.5147294961957393: True. Maximum final system loss: control 1.29952079854, intervention 0.998135564162.
+
+Reductions from own starts: control 0.748163885544, intervention 0.856315796503. The primary comparison remains absolute final original operator loss. Two explicitly permitted read-only fixed-weight epsilon swaps were evaluated after t32 was frozen: control t32 tensors with eps1e-3 give mean 0.483925683975; intervention t32 tensors with eps1e-5 give mean 0.442282610701. These distinguish pointwise normalization sensitivity from parameter differences, without causal attribution of the training path. Neither counterfactual selects a model or changes the predeclared classification; no optimizer update was performed.
+
+## Startup conditioning and optimizer dynamics
+
+Startup gradient norm: control 33745589.04345739, intervention 3348.27962411; reduction factor 10078.4859187. Per-module gradients, dominant coordinates, squared-norm fractions, actual ordinary/UEG hidden means/variances and inverse standard deviations at theta0/1/2/32 are in gradient_diagnostics.csv. Labels distinguish preflight and retained trajectory. LN pre-hooks only observe; native LayerNorm implementation is unchanged. Constraints at theta0/1/32 cover UEG/Gx anchors, spin, high density, rapid gradient, tau independence and finite outputs/operators.
+
+| update | first-gradient displacement dot | rest dot | total native displacement dot | applied |
+|---|---:|---:|---:|---|
+| 1 | -0.4150981257 | -6.923890957e-09 | -0.4150994344 | True |
+| 2 | -0.1726056098 | -0.1962482332 | -0.3688531208 | True |
+| 33 | -7.933011469e-05 | -0.003566797991 | -0.003646124986 | False |
+
+Negative dot predicts local descent of the true operator loss. Realized step1 loss change -0.43297705733; step2 change -0.237381233604. Historical control update2 had first/rest/total dots +0.004817969742 / -0.000605736539 / +0.004212087320 and actual loss change +0.00500770340812. Compare these directional/finite-step measurements, not just moment norms. All decompositions use the actual complete proposal's denominator and bias corrections. Native update1/2 arithmetic reproduces realized F32 parameters byte-for-byte. t33 is arithmetic only, not applied. Stored first/rest moments are accounting, not independent causal trajectories; t1 residual is rounding only. Negative v residuals are retained without clipping. No additive causal decomposition of the nonlinear second-moment denominator is claimed.
+
+An additional postprocessing relative-only moment guard initially FAILED at t1 coordinate 322: F64 v_first=1.8549307819044815e-41, native v=1.8548987772267604e-41, remainder=-3.200467772116241e-46. This subnormal difference is less than half the exact minimum F32 step (1.401298464324817e-45), and native v equals the nearest F32 rounding of v_first exactly. The original FAIL remains in rounding_diagnostic.json and per-tensor CSV counts. It is not hidden by widening the relative criterion: a separate exact subnormal-rounding check explains it; any unexplained violation still fails. Subnormal moment ratios are excluded as unresolved rather than treated as meaningful percentages. No scientific derivative, loss or constraint tolerance changed. This accounting-only issue did not alter training or its checkpoints.
+
+H1 is assessed by the measured startup reduction. H2 is assessed separately by early directional and realized changes above. H3 is assessed by absolute final loss and the declared 1% floor. One seed cannot establish general superiority. Production implementation/default architecture and all historical artifacts remain hash-unchanged. Tests, lint, compile and diff-check results are recorded separately.
+
+One next action: One separately frozen second-seed matched replication of this exact eps comparison on the same three systems, with the seed fixed prospectively and no epsilon sweep, before any full90 or chemistry claim. No new seed was selected or executed here.
+
+Scientific wall at report generation 2020.045 seconds, limit 7200, respected True. No SCF, Clean28/future-test data, new systems, production targets/loss changes, control retraining or chemistry training.
+
+Final focused/regression checks: 14 PASS, 21 deselected; Ruff, compileall and diff check PASS. The first scalar subnormal fixture comparison itself promoted its reference to F32 under NumPy weak-scalar rules; its reference arithmetic was corrected to F64 with the same criterion. Earlier failures remain recorded in validation.json. Total molecular optimizer executions: 33 = 1 discarded temporary preflight + 32 retained intervention updates; historical control training executions: 0.
