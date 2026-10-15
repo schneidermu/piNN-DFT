@@ -1,0 +1,51 @@
+{
+  "pytest": {
+    "passed": 21,
+    "deselected": 19,
+    "warnings": 1,
+    "warning": "Existing requires_grad tensor-to-scalar warning; no suppressed failures",
+    "seconds": 8.27
+  },
+  "ruff": "PASS",
+  "ruff_format": "PASS",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "tracked_historical_production_changes": [],
+  "coverage_rows": {
+    "full90_operator": 360,
+    "exc_metrics": 360,
+    "ae17_metrics": 68,
+    "chemistry_reactions": 1004,
+    "chemistry_databases": 32,
+    "gradient_geometry": 8
+  },
+  "retained_updates": 502,
+  "profiling_updates_discarded": 2,
+  "native_endpoint_moments_finite": "PASS",
+  "exact_executed_stream": "PASS",
+  "source_files_rehashed": 102,
+  "restored_constraint_checks": 20,
+  "endpoint_previous_step_projection": [
+    {
+      "arm": "CONTROL",
+      "last_realized_update_base_theta": 250,
+      "endpoint_derivative_base_theta": 251,
+      "endpoint_gradient_dot_previous_realized_displacement": 1.5754584006706647e-05,
+      "relchem_endpoint_derivative_along_previous_realized_update251": -0.004723384447728138,
+      "ae17_endpoint_derivative_along_previous_realized_update251": 1.928741160528538,
+      "exc_endpoint_derivative_along_previous_realized_update251": 1.8666822824111784,
+      "op_endpoint_derivative_along_previous_realized_update251": -9.290304354937133e-05
+    },
+    {
+      "arm": "INTERVENTION",
+      "last_realized_update_base_theta": 250,
+      "endpoint_derivative_base_theta": 251,
+      "endpoint_gradient_dot_previous_realized_displacement": 0.002487589691985342,
+      "relchem_endpoint_derivative_along_previous_realized_update251": 0.012766846923744407,
+      "ae17_endpoint_derivative_along_previous_realized_update251": 25.800646340910166,
+      "exc_endpoint_derivative_along_previous_realized_update251": 26.15618908362232,
+      "op_endpoint_derivative_along_previous_realized_update251": 0.0016342267930446698
+    }
+  ],
+  "test_sha256": "9f92ba4cf08dd6b643e109563cdc0fb5e0b52377d1d39d150aa342ef49cdd1c5"
+}

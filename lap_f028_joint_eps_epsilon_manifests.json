@@ -1,0 +1,2862 @@
+{
+  "CONTROL_t0": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "6c8a815c1190f8a6aa92486d212db9528b6dbe69c7d0a90ea272cce77b38875d",
+      "parameter_hash": "19a9a3ce4df71a698f58e1aee302388075d1cbf18ac57e72a493e86bd29c5c93",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "c9252d9e6053cc068ff4d617c588c2414693f37d77964229a3ff12c2c765abd3"
+  },
+  "CONTROL_t64": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "6c8a815c1190f8a6aa92486d212db9528b6dbe69c7d0a90ea272cce77b38875d",
+      "parameter_hash": "5f92bb8f84508468818a78f706795600e71ef1c2a4f7318abb0f68bc18b937a2",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "d705063244f1080b9b7d03765997115051857a8dcf3ae93570c25a30b68811e9"
+  },
+  "CONTROL_t128": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "6c8a815c1190f8a6aa92486d212db9528b6dbe69c7d0a90ea272cce77b38875d",
+      "parameter_hash": "053d797595125468ff7027d7ad09e6e781e95df4f0babee30ea40587eeb6b8a9",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "8714cb118bc2c11e72164ea574c956e7e0d0348cee92d248e3dfc062e961b072"
+  },
+  "CONTROL_t192": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "6c8a815c1190f8a6aa92486d212db9528b6dbe69c7d0a90ea272cce77b38875d",
+      "parameter_hash": "cb5fea7a66caabc2c1afd9a6a008cef032a046ad7776241cd376ffd297a9e245",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "51523634131dd36d736148928be55e34053867c90b0f2d2e8975c8ce5b55d3a1"
+  },
+  "CONTROL_t251": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "6c8a815c1190f8a6aa92486d212db9528b6dbe69c7d0a90ea272cce77b38875d",
+      "parameter_hash": "0323fc66b2331d9a84ac9c875fb8ae05919e2161fd5507b2d3e56e652f458c51",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "1d9b81802b12151bd379bec36061215b6626c3c9558bded8aeefbe564f1483e7"
+  },
+  "INTERVENTION_t0": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "45a6ce352fb9eba1a2d894a99b07ac50f9f522257bdc93b3756800786482d8fa",
+      "parameter_hash": "19a9a3ce4df71a698f58e1aee302388075d1cbf18ac57e72a493e86bd29c5c93",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "f5ebe5047aab2051065fe9836547838c5c5cda08055a2e91b76d18d827737344"
+  },
+  "INTERVENTION_t64": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "45a6ce352fb9eba1a2d894a99b07ac50f9f522257bdc93b3756800786482d8fa",
+      "parameter_hash": "2a60d007ab2892cb9bcc2056f8ec3198d4a9a14f565f0833140fc39b01be0742",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "85dbe9c7a6ac4abec92335ef7155e2198bf8b6aa15a8cae59a695a9764b605dd"
+  },
+  "INTERVENTION_t128": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "45a6ce352fb9eba1a2d894a99b07ac50f9f522257bdc93b3756800786482d8fa",
+      "parameter_hash": "83727661b145f5ff14164f13f9230e2abe11f8586ba7fd2549a8dccfb156d0ca",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "b89511a7de9004cf5a931ca70cfd0efaa4c912b2f14e5a026ef54431b8e4eeed"
+  },
+  "INTERVENTION_t192": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "45a6ce352fb9eba1a2d894a99b07ac50f9f522257bdc93b3756800786482d8fa",
+      "parameter_hash": "52b91b4405e9f9da3b0533d8b85215173b289d9089fa23b48a1973166d90c97e",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "acffe4b2f60369c75a40fd119259995cb9dcb9bb34f63026706519a9a1e09be2"
+  },
+  "INTERVENTION_t251": {
+    "identity": {
+      "architecture": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ]
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ]
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ]
+        }
+      ],
+      "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+      "scientific_configuration_hash": "45a6ce352fb9eba1a2d894a99b07ac50f9f522257bdc93b3756800786482d8fa",
+      "parameter_hash": "77c1a5417dbff72dcba06e1afbc7ebb892d978e7f30113964ceb523646dfd476",
+      "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "49ccd8da8194cb12a44829e524973c90a5fe11079a82c3e1938e57fb2a067d1e"
+  }
+}

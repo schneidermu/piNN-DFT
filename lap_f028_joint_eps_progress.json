@@ -1,0 +1,24 @@
+{
+  "counters": {
+    "CONTROL": 251,
+    "INTERVENTION": 251
+  },
+  "presentations": {
+    "CONTROL": {
+      "chemistry": 2008,
+      "ae17": 251,
+      "mrks": 251,
+      "exc": 251,
+      "operator": 251
+    },
+    "INTERVENTION": {
+      "chemistry": 2008,
+      "ae17": 251,
+      "mrks": 251,
+      "exc": 251,
+      "operator": 251
+    }
+  },
+  "workflow_wall": 17777.889189958572,
+  "retained_updates": 502
+}

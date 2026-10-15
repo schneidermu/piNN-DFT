@@ -1,0 +1,9 @@
+{
+  "counters": {
+    "CONTROL": 251,
+    "INTERVENTION": 251
+  },
+  "retained_updates": 502,
+  "discarded_profiling_steps": 2,
+  "no_updates_after251": true
+}

@@ -1,0 +1,116 @@
+{
+  "technical": "PASS",
+  "results": {
+    "CONTROL": {
+      "losses": {
+        "relchem": 5.8637168901211325,
+        "ae17": 710.07085144401,
+        "exc": 4242.733967323835,
+        "op": 0.3986704163568434
+      },
+      "geometry": {
+        "arm": "CONTROL",
+        "theta": 0,
+        "presentation_cursor": 0,
+        "population": "one declared original B8 training minibatch, NOT E251/full90",
+        "weighted_total_gradient_norm": 9789765.23661515,
+        "exchange_LN_gradient_norm": 9789765.236611333,
+        "non_LayerNorm_gradient_norm": 8.645101623154027,
+        "chemistry_operator_cosine": 0.9956002840074748,
+        "cancellation_ratio_norm_sum_over_sum_norms": 0.9995101446435332,
+        "first_moment_norm": 0.0,
+        "second_moment_norm": 0.0,
+        "relchem_loss": 5.8637168901211325,
+        "relchem_weighted_gradient_norm": 1907345.0377968098,
+        "relchem_raw_derivative_along_negative_joint": -1096084211043473.0,
+        "ae17_loss": 710.07085144401,
+        "ae17_weighted_gradient_norm": 2113206.0203441465,
+        "ae17_raw_derivative_along_negative_joint": -4.0238227837803814e+17,
+        "exc_loss": 4242.733967323835,
+        "exc_weighted_gradient_norm": 3597923.2433510735,
+        "exc_raw_derivative_along_negative_joint": -2.3333934697791104e+18,
+        "op_loss": 0.3986704163568434,
+        "op_weighted_gradient_norm": 2176088.854349262,
+        "op_raw_derivative_along_negative_joint": -63337515989252.53
+      },
+      "parity": {
+        "rows": [
+          0,
+          15915,
+          31831,
+          47747,
+          63662,
+          79578,
+          95494
+        ],
+        "direct_vs_adjoint_gradient_gap": 1.0399115527536965e-18,
+        "energy_first_matrix_gap": 1.3757451319299256e-11,
+        "PASS": true
+      },
+      "complete_gradient_seconds": 30.487838300003204,
+      "profile_total_seconds": 31.082197700001416,
+      "peak_allocated_GiB": 3.663100242614746,
+      "discarded_profile_optimizer_steps": 1,
+      "initial_state_optimizer_RNG_restored": true
+    },
+    "INTERVENTION": {
+      "losses": {
+        "relchem": 5.8286027286561914,
+        "ae17": 685.5801714078971,
+        "exc": 4070.4084353857834,
+        "op": 0.3963439609584547
+      },
+      "geometry": {
+        "arm": "INTERVENTION",
+        "theta": 0,
+        "presentation_cursor": 0,
+        "population": "one declared original B8 training minibatch, NOT E251/full90",
+        "weighted_total_gradient_norm": 980.5434955566989,
+        "exchange_LN_gradient_norm": 980.506092286591,
+        "non_LayerNorm_gradient_norm": 8.564424625103385,
+        "chemistry_operator_cosine": 0.9952579133861565,
+        "cancellation_ratio_norm_sum_over_sum_norms": 0.9994582650647582,
+        "first_moment_norm": 0.0,
+        "second_moment_norm": 0.0,
+        "relchem_loss": 5.8286027286561914,
+        "relchem_weighted_gradient_norm": 192.76801911665848,
+        "relchem_raw_derivative_along_negative_joint": -11095132.520246498,
+        "ae17_loss": 685.5801714078971,
+        "ae17_weighted_gradient_norm": 212.88121464646144,
+        "ae17_raw_derivative_along_negative_joint": -4059970348.991009,
+        "exc_loss": 4070.4084353857834,
+        "exc_weighted_gradient_norm": 362.7306575372957,
+        "exc_raw_derivative_along_negative_joint": -23561838973.700607,
+        "op_loss": 0.3963439609584547,
+        "op_weighted_gradient_norm": 212.69508684603676,
+        "op_raw_derivative_along_negative_joint": -619942.4127185941
+      },
+      "parity": {
+        "rows": [
+          0,
+          15915,
+          31831,
+          47747,
+          63662,
+          79578,
+          95494
+        ],
+        "direct_vs_adjoint_gradient_gap": 9.033301124618713e-23,
+        "energy_first_matrix_gap": 2.4227835024886673e-11,
+        "PASS": true
+      },
+      "complete_gradient_seconds": 28.27146399999765,
+      "profile_total_seconds": 28.820538699997996,
+      "peak_allocated_GiB": 3.663100242614746,
+      "discarded_profile_optimizer_steps": 1,
+      "initial_state_optimizer_RNG_restored": true
+    }
+  },
+  "profiles": {
+    "CONTROL": 30.487838300003204,
+    "INTERVENTION": 28.27146399999765
+  },
+  "retained_steps": 0,
+  "discarded_profiling_native_steps": 2,
+  "resource_training_authorization": "PASS"
+}

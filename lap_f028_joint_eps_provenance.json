@@ -1,0 +1,279 @@
+{
+  "source_hashes": {
+    "tools/lap_b8_adamw.py": "3804e214c6186108f352e3af60967c09924bba8d1f2f0d9b0cdd85fd3e97df21",
+    "tools/lap_f010_uniform_normalized_chemistry.py": "899498aafc2e84d6e45e901d94289600d4024421cddb217499592f9222bd04da",
+    "tools/lap_training_metric_gradient_audit.py": "97372eba80cec6fbdb8f63bb170f963e4636daec330b2a46dce369ca0ac9b8df",
+    "tools/lap_exchange_eps_v1.py": "99c4727adcab8dfcfe50bf550968675907b727cadaa68942370fa208cb9a0385",
+    "tools/lap_f027_exchange_eps.py": "110da1bb2085236e76ebe442f030ad9920086790bff1163672e600b7db6b37b5",
+    "tools/lap_fresh_grid_pilot_v1.py": "c547da15fe4189c8bb418a1d034451a2602edf175dc1e0eeb1c303112a868696",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "train_models/optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "train_models/publication_data/loader.py": "27415bd43f68e64467eec21b1ddf03ac1fc540d93c077483b1585f547579bb6f",
+    "train_models/reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf"
+  },
+  "training_manifest": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\training_manifest.json",
+    "sha256": "b249964d410f0db4a59867de53bb35c6442ec23aa81eefb0b96b50242d94f6bc"
+  },
+  "pretrained_weights_loaded": 0,
+  "inherited_moments": 0,
+  "large_artifact_receipts": [
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_endpoint_gradients_theta251.npz",
+      "sha256": "22d97b5e45664a400eb70b1d9943c5915e3b7dc1f4f21283cfb598185c6ef78a"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_initial_gradients.npz",
+      "sha256": "c359d8393ac25c9190d5b086aad0930f6bc5e9f32d1a5ce697bd718ba9a4d41c"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_last_displacement.npy",
+      "sha256": "44c05aa4974b5d6fc404443f5600e251b37c2b60a81c90b5d9f5a3185733a70f"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_resume.pt",
+      "sha256": "01f2334e674752cc78db8812e166f38554802c22e822b6bb0429362de7a6675b"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_startup_gradients_theta0.npz",
+      "sha256": "c359d8393ac25c9190d5b086aad0930f6bc5e9f32d1a5ce697bd718ba9a4d41c"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_startup_gradients_theta1.npz",
+      "sha256": "c7e9cdd8a40b9a1e63e10f874bcc44b60bd4239ca601adf0d89992c5e0d08b68"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_startup_gradients_theta2.npz",
+      "sha256": "a47df7ee3c0fb248dc41a4832295d21efd8ace6d31758d268ced7fd8a38dbfb9"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_startup_t1.pt",
+      "sha256": "bf99f4a716cdc36c5e58d723f5bd999d6f5960d4c6155d65a2470039671494a2"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_startup_t2.pt",
+      "sha256": "7b91affaaba51f9127bed59130b9b2a9d936565a4b2671d49653327e502bd261"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_t0.pt",
+      "sha256": "c9252d9e6053cc068ff4d617c588c2414693f37d77964229a3ff12c2c765abd3"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_t128.pt",
+      "sha256": "8714cb118bc2c11e72164ea574c956e7e0d0348cee92d248e3dfc062e961b072"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_t192.pt",
+      "sha256": "51523634131dd36d736148928be55e34053867c90b0f2d2e8975c8ce5b55d3a1"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_t251.pt",
+      "sha256": "1d9b81802b12151bd379bec36061215b6626c3c9558bded8aeefbe564f1483e7"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_t64.pt",
+      "sha256": "d705063244f1080b9b7d03765997115051857a8dcf3ae93570c25a30b68811e9"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\endpoint_execution.json",
+      "sha256": "3e54a5bd598ae14ac6ba41aa25d667cb90d94c3500a0b8a04ce071d668af05f2"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\finish_execution.json",
+      "sha256": "2229e41f2477d0fb7934585fcf48df931118013edc05e1e948bfabc3c60fab30"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_endpoint_gradients_theta251.npz",
+      "sha256": "6457f426901f393b1e836910b4e08a0179d83555c4a643a4c4314a8b4d5ac9e8"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_initial_gradients.npz",
+      "sha256": "d77622f056eebcaab28ac066cfbc1ae37d4f8eea243123c7bdf97d67540abe83"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_last_displacement.npy",
+      "sha256": "3aa64c901373e45343d3fbbdc625e573bd9baabd62b978742d835fc2fcc1f344"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_resume.pt",
+      "sha256": "3f4c2ad56aa8c321f92d9f7b413496529973306ad1cebecd037beeab758226f1"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_startup_gradients_theta0.npz",
+      "sha256": "d77622f056eebcaab28ac066cfbc1ae37d4f8eea243123c7bdf97d67540abe83"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_startup_gradients_theta1.npz",
+      "sha256": "935b1c7dd2b8ef4d610fa75319cfb42fb3f478d25d0661e2bedd9fc9ab1e2831"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_startup_gradients_theta2.npz",
+      "sha256": "c6e006a14f8e305ecdac36e9550f13c16114ee1e8f056bdd5f29db4a90076bf4"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_startup_t1.pt",
+      "sha256": "1c6820b50ae66e36c5d70d1ed45c96fd67d7f6b6a14e331b2b78c8ef9fc0b127"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_startup_t2.pt",
+      "sha256": "12258d870ee81bd340afdda4aa8c61bc92a64cb9461d94020848edc30ebba81f"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_t0.pt",
+      "sha256": "f5ebe5047aab2051065fe9836547838c5c5cda08055a2e91b76d18d827737344"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_t128.pt",
+      "sha256": "b89511a7de9004cf5a931ca70cfd0efaa4c912b2f14e5a026ef54431b8e4eeed"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_t192.pt",
+      "sha256": "acffe4b2f60369c75a40fd119259995cb9dcb9bb34f63026706519a9a1e09be2"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_t251.pt",
+      "sha256": "49ccd8da8194cb12a44829e524973c90a5fe11079a82c3e1938e57fb2a067d1e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_t64.pt",
+      "sha256": "85dbe9c7a6ac4abec92335ef7155e2198bf8b6aa15a8cae59a695a9764b605dd"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\seed2028_initialization.pt",
+      "sha256": "6c60751a4d0851fc8e5fd227f61a656ce6d4de0e6658e6af5381f81174f07ede"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\training_manifest.json",
+      "sha256": "b249964d410f0db4a59867de53bb35c6442ec23aa81eefb0b96b50242d94f6bc"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\train_execution.json",
+      "sha256": "b3400180a08e4607f848ebfe7b78708e5b51e1986e92ea5c61aaa15f1d514f9c"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t0\\atoms.json",
+      "sha256": "e5663f341ccbda1fba54131e06eb89112d3412e64b72a0d19e5176ba40d01aef"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t0\\contract.json",
+      "sha256": "bbb65405c539b3e9785172a5e0ab24c5eda8aaea704cd09e2ea9df205850c35a"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t0\\database_metrics.json",
+      "sha256": "3c6ce12fc71b9306865337461f9fbceaf037af613ccd89a1ffaf8242b44eef7e"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t0\\metrics.json",
+      "sha256": "77488ce8bd793b07a252ef16bcd0b979bb8e2097065323e27964dfc332b17e22"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t0\\physical.json",
+      "sha256": "f066e0bb22a78ad0f7451d820e656a0a5edd3b8f16cefe36d07d25ad59084fbb"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t0\\reactions.json",
+      "sha256": "e8c6a5f9fd4f9521e192181b7147f08f87c3f59868c5771c6dd4b1055dc2a4bf"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t0\\receipt.json",
+      "sha256": "c42f301509903a446ef910110ea1fef4fc4d94b98f9d945a993479850c2d2495"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t251\\atoms.json",
+      "sha256": "6a3b62b25acf7e7552fda208752244608d15ddf75265a7241fb76f97a4864bb5"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t251\\contract.json",
+      "sha256": "a7fc5a02763d70a59faf6fda7e0cce174e0a80b4a77c2d659ff6494d832eca99"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t251\\database_metrics.json",
+      "sha256": "ce3e397f061137e38e8af768117cbdebe9acd04096576905df41252ffdf48d29"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t251\\metrics.json",
+      "sha256": "67fcb128be90a03adb0359400fd90c57c0bf75b5fcda4eb88307ea79b9823932"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t251\\physical.json",
+      "sha256": "33f4c59005109a16037bd308bcf5b34e8aea78e1108116ff575c85b3d65ca9b4"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t251\\reactions.json",
+      "sha256": "0b47bcec76d4009369d72468272df82cb54a8eba5f561f2596368168aa17e39a"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\CONTROL_evaluation_t251\\receipt.json",
+      "sha256": "0b1877daf9eeac3fe42481832e8bf8855a03efd86a5e53763e626c041b03db59"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t0\\atoms.json",
+      "sha256": "2fe4a596be54505ca63a6459abe653a39c500c9d108d092e8b3f3f95b1d7b38a"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t0\\contract.json",
+      "sha256": "e98cf302c73abf34f5b711f40f36f20fc196a84021d9e3da7a8b688fcaea8afa"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t0\\database_metrics.json",
+      "sha256": "cbb9ec3100f8a87214690060c490cca966955b7fc4fbb02bde060ee3940460da"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t0\\metrics.json",
+      "sha256": "9c407f0276b289d0f03b94f016b5febfe737f16b8a0a34642f4a902e849707c2"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t0\\physical.json",
+      "sha256": "dbc60cffb0df4448aff6b65d8ab6f371032ac6d4789ab837749f736a5f0b4e48"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t0\\reactions.json",
+      "sha256": "bdca63e0a3e1609eef9e555ef1020b2d67ed15ccd04829c7529e3feb43da6c3b"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t0\\receipt.json",
+      "sha256": "d70395136fb6f0e3f113d649ee06f99f3558dc084234ed9c77aa73fd52b2da4f"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t251\\atoms.json",
+      "sha256": "1e194186ba61c3ac4ea1cc3fd99970cd0313baf0d98e3a3c0b04d7b983e2b265"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t251\\contract.json",
+      "sha256": "a76483d92238352bb8de77239247b2255317a92c5d5fc9a111b7d8343cf914ea"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t251\\database_metrics.json",
+      "sha256": "30681fff874a01448b6ce613e1ac92e3bdc304cbdb4af6db121f5a53ed58aece"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t251\\metrics.json",
+      "sha256": "83c626e122731d849cfce72860d6e6e370e8dd7b480879cde3ff6702ebfd101c"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t251\\physical.json",
+      "sha256": "ab56d2b6d1eac4f2a84864605de468a5730dd1dc1735c674053294323284f41c"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t251\\reactions.json",
+      "sha256": "b72ef1cd0cfa51091bc48884ab04434205d6eb54b46383409b5d593675f77e7d"
+    },
+    {
+      "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\INTERVENTION_evaluation_t251\\receipt.json",
+      "sha256": "d7a409320888290862ae40a2321148bf76004a482abf177e422a1ec4ba2da05a"
+    }
+  ],
+  "drivers": {
+    "tools/lap_f028_joint_eps.py": "dfa3dabd4d065d2597f7f66f02b5bdb886224d6b7756da4b425c1caf4b090d90",
+    "tools/lap_f028_joint_eps_run.py": "e082abb7260eab810264093da89d0e61450ec143ca215f2be01a2ecacce41c19"
+  },
+  "historical_production_sources_unchanged": true
+}

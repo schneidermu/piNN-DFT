@@ -1,0 +1,8 @@
+{
+  "initial_attempt": "NameError: missing chemistry import in new driver after first complete gradient evaluation, before optimizer.step",
+  "resolution": "restored missing import; reran technical preflight on authenticated unchanged seed2028 initial artifact",
+  "retained_updates_during_attempt": 0,
+  "native_optimizer_steps_during_failed_attempt": 0,
+  "final_preflight_status": "PASS",
+  "historical_or_production_files_changed": false
+}

@@ -1,0 +1,304 @@
+{
+  "experiment": "F028",
+  "technical": "PASS",
+  "operator_transfer_outcome": "C",
+  "promotion": "NOT ELIGIBLE",
+  "benefit": -0.06240134514622513,
+  "effect_floor_pass": false,
+  "chemistry_deltas": {
+    "JW": 0.010354400581907355,
+    "legacy": 0.09898745854098712,
+    "MAE": 0.5543110997487268,
+    "RMSE": 0.6416552958282011,
+    "macro_database_MAE": 0.4051891226787179
+  },
+  "resolved_chemistry_costs": {
+    "JW": 0.010354400581907355,
+    "legacy": 0.09898745854098712,
+    "MAE": 0.5543110997487268,
+    "RMSE": 0.6416552958282011,
+    "macro_database_MAE": 0.4051891226787179
+  },
+  "control": {
+    "arm": "CONTROL",
+    "cursor": 251,
+    "JW": 0.09998772510673656,
+    "legacy": 1.6755251272216034,
+    "MAE": 6.6210472705744685,
+    "RMSE": 9.753728839448573,
+    "median_absolute_error": 4.519419034295481,
+    "macro_database_MAE": 6.369251685869254,
+    "ae17": 26.306480396529846,
+    "exc": 93.20052668400709,
+    "op": 0.03544086893382943,
+    "operator_median": 0.0340863741857273,
+    "operator_max": 0.08239161810196732,
+    "seconds": 413.8465223000021,
+    "constraints": {
+      "errors": {
+        "tau": 0.0,
+        "spin": 0.0,
+        "UEG": 0.0,
+        "Gx_UEG": 0.0,
+        "high_density": 0.0,
+        "rapid_gradient": 0.0
+      },
+      "finite": true,
+      "PASS": true
+    },
+    "chemistry_training_scalar": 0.9973598678925336,
+    "ratios": {
+      "relchem": 1.3561831839593428,
+      "ae17": 1.0564407306504897,
+      "exc": 1.011128004705613,
+      "op": 1.0691636636292092
+    },
+    "eligible": false,
+    "hydrogen": {
+      "identity": "reaction_f2f41fe8016180daabb3d54e",
+      "variant": "level3_mura",
+      "task": "ae17",
+      "database": "AE17",
+      "species": "H_ae17",
+      "prediction_kcal": -319.71231949253746,
+      "reference_kcal": -313.7547607421875,
+      "signed_error_kcal": -5.9575587503499605,
+      "absolute_error_kcal": 5.9575587503499605,
+      "loss": 3.1468605692115634
+    }
+  },
+  "intervention": {
+    "arm": "INTERVENTION",
+    "cursor": 251,
+    "JW": 0.11034212568864392,
+    "legacy": 1.7745125857625905,
+    "MAE": 7.175358370323195,
+    "RMSE": 10.395384135276775,
+    "median_absolute_error": 4.680714867780303,
+    "macro_database_MAE": 6.774440808547972,
+    "ae17": 18.81718270530315,
+    "exc": 70.72617522910691,
+    "op": 0.03765242682845145,
+    "operator_median": 0.037622676217884024,
+    "operator_max": 0.08336770492347538,
+    "seconds": 424.72353440000006,
+    "constraints": {
+      "errors": {
+        "tau": 0.0,
+        "spin": 0.0,
+        "UEG": 0.0,
+        "Gx_UEG": 0.0,
+        "high_density": 0.0,
+        "rapid_gradient": 0.0
+      },
+      "finite": true,
+      "PASS": true
+    },
+    "chemistry_training_scalar": 1.1006431817738465,
+    "ratios": {
+      "relchem": 1.4363044095471489,
+      "ae17": 0.7556783707407905,
+      "exc": 0.7673048531402544,
+      "op": 1.135880914421138
+    },
+    "eligible": false,
+    "hydrogen": {
+      "identity": "reaction_f2f41fe8016180daabb3d54e",
+      "variant": "level3_mura",
+      "task": "ae17",
+      "database": "AE17",
+      "species": "H_ae17",
+      "prediction_kcal": -317.65633502729065,
+      "reference_kcal": -313.7547607421875,
+      "signed_error_kcal": -3.901574285103152,
+      "absolute_error_kcal": 3.901574285103152,
+      "loss": 2.0608626435987194
+    }
+  },
+  "operator_system_improved": 10,
+  "operator_system_regressed": 80,
+  "largest_improvements": [
+    {
+      "identity": "mrks_012317d17db00bc547be5b46",
+      "name": "ClH",
+      "control": 0.045064929825426966,
+      "intervention": 0.044135164157727426,
+      "delta": -0.0009297656676995406
+    },
+    {
+      "identity": "mrks_b9c78e942b69974e62ad7c06",
+      "name": "ClHS",
+      "control": 0.03516308472939054,
+      "intervention": 0.03430976462819603,
+      "delta": -0.0008533201011945088
+    },
+    {
+      "identity": "mrks_f445f96b04fe32742f29e7d9",
+      "name": "ClNa",
+      "control": 0.03108964042189085,
+      "intervention": 0.030401480664881398,
+      "delta": -0.0006881597570094523
+    },
+    {
+      "identity": "mrks_5d2ea8c39dc477f444d95e25",
+      "name": "FHS",
+      "control": 0.04603403955761874,
+      "intervention": 0.045668684541708145,
+      "delta": -0.000365355015910597
+    },
+    {
+      "identity": "mrks_bff4310ff31ddde2a2df225b",
+      "name": "ClHSi",
+      "control": 0.030820077301134775,
+      "intervention": 0.030562476679163116,
+      "delta": -0.0002576006219716584
+    },
+    {
+      "identity": "mrks_fbe324ba3bc21de2f76f0e23",
+      "name": "H2S",
+      "control": 0.0329616050360145,
+      "intervention": 0.03277611665252983,
+      "delta": -0.00018548838348467211
+    },
+    {
+      "identity": "mrks_c69fbb6d5cb608329d6a6b2c",
+      "name": "ClHMg",
+      "control": 0.03306331856740454,
+      "intervention": 0.03289153078565947,
+      "delta": -0.0001717877817450711
+    },
+    {
+      "identity": "mrks_a82ce2ebb3239b3d63464c63",
+      "name": "AlCl",
+      "control": 0.02956538464174076,
+      "intervention": 0.029417457761269965,
+      "delta": -0.00014792688047079658
+    },
+    {
+      "identity": "mrks_581443da8e676149547df0cc",
+      "name": "HNaS",
+      "control": 0.0228944056738466,
+      "intervention": 0.02276286032841553,
+      "delta": -0.00013154534543106944
+    },
+    {
+      "identity": "mrks_98d851b84f8558c7c25e3c4a",
+      "name": "SSi",
+      "control": 0.029283623220380722,
+      "intervention": 0.02927105268802634,
+      "delta": -1.257053235438274e-05
+    }
+  ],
+  "largest_regressions": [
+    {
+      "identity": "mrks_6d0f8432e3e2305a83fbca72",
+      "name": "N2",
+      "control": 0.05743161697693275,
+      "intervention": 0.06553839551611707,
+      "delta": 0.008106778539184317
+    },
+    {
+      "identity": "mrks_a4d48ed022a3df4868709816",
+      "name": "BH",
+      "control": 0.04104382414167542,
+      "intervention": 0.04792471436592163,
+      "delta": 0.0068808902242462056
+    },
+    {
+      "identity": "mrks_f3ee3af1054b5499bba6df0f",
+      "name": "CHN_iso2",
+      "control": 0.044383819316569706,
+      "intervention": 0.05109043794938444,
+      "delta": 0.006706618632814736
+    },
+    {
+      "identity": "mrks_61725564634d55b4d37a0eff",
+      "name": "CHN",
+      "control": 0.044383809525013994,
+      "intervention": 0.051090425980808866,
+      "delta": 0.006706616455794873
+    },
+    {
+      "identity": "mrks_5089ec8df2b96e0476dd037f",
+      "name": "CH2",
+      "control": 0.04317581776055175,
+      "intervention": 0.049248536912761307,
+      "delta": 0.006072719152209555
+    },
+    {
+      "identity": "mrks_a85d32e4db2ff39c2e5d4002",
+      "name": "CO",
+      "control": 0.053252815161108115,
+      "intervention": 0.05903133348007144,
+      "delta": 0.005778518318963324
+    },
+    {
+      "identity": "mrks_2dcf500d629aa67de0ef7da0",
+      "name": "C2H2",
+      "control": 0.038150827524970614,
+      "intervention": 0.0439201455570077,
+      "delta": 0.005769318032037084
+    },
+    {
+      "identity": "mrks_102d55098a6b7289c555c458",
+      "name": "C2H2_iso2",
+      "control": 0.03386292307188067,
+      "intervention": 0.039568576925002506,
+      "delta": 0.005705653853121835
+    },
+    {
+      "identity": "mrks_83b58fde2bf38334e0eb3a06",
+      "name": "HNO",
+      "control": 0.05064158500023097,
+      "intervention": 0.05596661411394259,
+      "delta": 0.0053250291137116185
+    },
+    {
+      "identity": "mrks_80306958d0118adca3be93af",
+      "name": "H2N2",
+      "control": 0.04103676825708403,
+      "intervention": 0.046300327817317875,
+      "delta": 0.005263559560233846
+    }
+  ],
+  "clean28": {
+    "gate": {
+      "CONTROL": {
+        "eligible": false,
+        "ratios": {
+          "relchem": 1.3561831839593428,
+          "ae17": 1.0564407306504897,
+          "exc": 1.011128004705613,
+          "op": 1.0691636636292092
+        },
+        "checkpoint_sha256": "1d9b81802b12151bd379bec36061215b6626c3c9558bded8aeefbe564f1483e7"
+      },
+      "INTERVENTION": {
+        "eligible": false,
+        "ratios": {
+          "relchem": 1.4363044095471489,
+          "ae17": 0.7556783707407905,
+          "exc": 0.7673048531402544,
+          "op": 1.135880914421138
+        },
+        "checkpoint_sha256": "49ccd8da8194cb12a44829e524973c90a5fe11079a82c3e1938e57fb2a067d1e"
+      }
+    },
+    "values": {
+      "CONTROL": {
+        "status": "NOT EVALUATED",
+        "reason": "original P536 eligibility failed",
+        "evaluations": 0
+      },
+      "INTERVENTION": {
+        "status": "NOT EVALUATED",
+        "reason": "original P536 eligibility failed",
+        "evaluations": 0
+      }
+    },
+    "future_test_access": false
+  },
+  "scientific_wall": 19425.7680644989,
+  "budget_respected": true,
+  "next_recommendation": "A separately authorized matched replication of this unchanged joint protocol with one prospectively fixed independent seed; distinguish seed dependence from transfer across objectives/populations. No new run is started here."
+}

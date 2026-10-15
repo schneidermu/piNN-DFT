@@ -1,0 +1,60 @@
+{
+  "limit": 72000,
+  "elapsed_before_training": 3220.3949303627014,
+  "complete_gradient_profiles": {
+    "CONTROL": 30.487838300003204,
+    "INTERVENTION": 28.27146399999765
+  },
+  "full_population_t0_evaluation_seconds": {
+    "CONTROL": 419.30961099999695,
+    "INTERVENTION": 423.11018909999984
+  },
+  "training_projection_with_margin": 19910.58958435529,
+  "endpoint_evaluation_reserve": 1137.2667301349957,
+  "integrity_startup_and_conditional_clean28_reserve": 5000,
+  "projected_remaining": 26047.856314490287,
+  "training_authorized": true,
+  "active_computation": "Per-call execution wall measured; GPU kernel-active time not separately metered",
+  "scientific_wall": 19425.7680644989,
+  "budget_respected": true,
+  "timings": {
+    "lap_f028_joint_eps_baseline_timing.json": {
+      "seconds": 844.0605140000043,
+      "workflow_wall": 3220.3976027965546
+    },
+    "lap_f028_joint_eps_endpoint_timing.json": {
+      "seconds": 840.8195587000009,
+      "workflow_wall": 18706.58441710472
+    },
+    "lap_f028_joint_eps_freeze_timing.json": {
+      "seconds": 0.16514569999708328,
+      "workflow_wall": 2054.820301294327
+    },
+    "lap_f028_joint_eps_initialize_timing.json": {
+      "seconds": 1.5835641000012401,
+      "workflow_wall": 2059.9889891147614
+    },
+    "lap_f028_joint_eps_preflight_timing.json": {
+      "seconds": 61.6132351999986,
+      "workflow_wall": 2358.6733980178833
+    },
+    "lap_f028_joint_eps_train_timing.json": {
+      "seconds": 14418.336277800001,
+      "workflow_wall": 17849.96364760399
+    }
+  },
+  "measured_training_update_wall_by_arm": {
+    "CONTROL": 7220.3571380000285,
+    "INTERVENTION": 7074.932478800016
+  },
+  "recorded_phase_wall_seconds": {
+    "lap_f028_joint_eps_baseline_timing.json": 844.0605140000043,
+    "lap_f028_joint_eps_endpoint_timing.json": 840.8195587000009,
+    "lap_f028_joint_eps_finish_timing.json": 604.8183655999965,
+    "lap_f028_joint_eps_freeze_timing.json": 0.16514569999708328,
+    "lap_f028_joint_eps_initialize_timing.json": 1.5835641000012401,
+    "lap_f028_joint_eps_preflight_timing.json": 61.6132351999986,
+    "lap_f028_joint_eps_train_timing.json": 14418.336277800001
+  },
+  "recorded_phase_wall_sum_seconds": 16771.3966611
+}

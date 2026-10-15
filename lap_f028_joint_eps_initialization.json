@@ -1,0 +1,9 @@
+{
+  "seed": 2028,
+  "scientific_initializations": 1,
+  "tensor_hash": "508f28b49ce5659015cf31d16759ca9b45e132ac2f9779605e22eef5c244b00f",
+  "artifact": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_f028_joint_eps_runs_20261015\\seed2028_initialization.pt",
+    "sha256": "6c60751a4d0851fc8e5fd227f61a656ce6d4de0e6658e6af5381f81174f07ede"
+  }
+}

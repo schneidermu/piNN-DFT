@@ -1,0 +1,105 @@
+{
+  "experiment": "F028",
+  "seed": 2028,
+  "ancestor": "86d6bdb6e85319724b134a11e216ff428dc6fbb8",
+  "head": "86d6bdb6e85319724b134a11e216ff428dc6fbb8",
+  "start_unix_ms": 1792053056891,
+  "wall_origin": "Conservative F027 last remote verification, preceding all interrupted F028 read-only actions",
+  "wall_limit": 72000,
+  "constructor": {
+    "num_layers": 6,
+    "h_dim": 32,
+    "dropout": 0.0,
+    "use_g_x": true,
+    "use_g_c": true
+  },
+  "arms": {
+    "CONTROL": 1e-05,
+    "INTERVENTION": 0.001
+  },
+  "source_hashes": {
+    "tools/lap_b8_adamw.py": "3804e214c6186108f352e3af60967c09924bba8d1f2f0d9b0cdd85fd3e97df21",
+    "tools/lap_f010_uniform_normalized_chemistry.py": "899498aafc2e84d6e45e901d94289600d4024421cddb217499592f9222bd04da",
+    "tools/lap_training_metric_gradient_audit.py": "97372eba80cec6fbdb8f63bb170f963e4636daec330b2a46dce369ca0ac9b8df",
+    "tools/lap_exchange_eps_v1.py": "99c4727adcab8dfcfe50bf550968675907b727cadaa68942370fa208cb9a0385",
+    "tools/lap_f027_exchange_eps.py": "110da1bb2085236e76ebe442f030ad9920086790bff1163672e600b7db6b37b5",
+    "tools/lap_fresh_grid_pilot_v1.py": "c547da15fe4189c8bb418a1d034451a2602edf175dc1e0eeb1c303112a868696",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_training.py": "ca789703e536f9311178ada07fd41d92ba7f79afd35b25ad240647747b3e9b77",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "train_models/optuna_joint.py": "59c66d798ed7fd74b05caba271b590cca138d53336114edc820b25c9187846f5",
+    "train_models/publication_data/loader.py": "27415bd43f68e64467eec21b1ddf03ac1fc540d93c077483b1585f547579bb6f",
+    "train_models/reaction_energy_calculation.py": "d88424489fb020d6f71c78f6eaae8913b3f8601e60c370252d55e86bcab70003",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf"
+  },
+  "precision": {
+    "native": "F32 parameters and AdamW moments",
+    "chemistry_AE17": "Unchanged F010 qualified F64 shadow, source widening, reaction integration/PBE arithmetic; not recast to native F32",
+    "Exc": "Unchanged original F32 energy/learned forward and F32-leaf derivatives widened to F64 (historical task-specific precision boundary)",
+    "operator": "Original F32 corpus AO/features widened exactly as production; F64 learned partials, original F32 PBE, F64 matrix/two-pass/shadow gradients",
+    "sum": "Four task gradients combined F64; exactly one final per-coordinate cast to native F32",
+    "point_chunks": {
+      "operator": 2048,
+      "Exc": 4096,
+      "large_reaction": 16384
+    }
+  },
+  "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+  "coefficients": {
+    "relchem": 0.017015480965588553,
+    "ae17": 5.141254618347414e-05,
+    "exc": 1.5094644512009712e-05,
+    "op": 0.33597561607048215,
+    "c010": 9.974823077811354
+  },
+  "baseline": {
+    "relchem": 1.2354710978866068,
+    "ae17": 24.901047104016875,
+    "exc": 92.17480502000551,
+    "op": 0.03314821681605566
+  },
+  "order": "CONTROL then INTERVENTION at each cursor 0..250",
+  "updates": 251,
+  "milestones": [
+    0,
+    64,
+    128,
+    192,
+    251
+  ],
+  "evaluation": "Full E251/E17/full90 t0 and t251; lightweight constraints/checkpoints intermediate; no selection",
+  "startup_diagnostics": "Actual presentations at theta0/theta1/theta2; endpoint uses last training presentation250, explicitly not full population gradients; first2 finite changes on same pre-step presentation",
+  "effect_floor": 0.01,
+  "optional_swaps": "Only frozen t251 full90 if budget permits",
+  "clean28": "Only scientifically eligible predetermined t251, after both frozen and all ratios computed; exactly once each; no future/test",
+  "tolerances": {
+    "sum_atol": 1e-10,
+    "sum_rtol": 1e-09,
+    "physical_relative": 1.9073486328125e-06,
+    "energy_kcal_absolute": 1e-06,
+    "constraints": 1e-12
+  },
+  "resource_margin": 1.35,
+  "final_reserve_seconds": 5000,
+  "optimizer": {
+    "lr": 2.5e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "foreach": false
+  },
+  "versions": {
+    "python": "3.13.7 | packaged by Anaconda, Inc. | (main, Sep  9 2025, 19:54:37) [MSC v.1929 64 bit (AMD64)]",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "numpy": "2.3.3"
+  }
+}

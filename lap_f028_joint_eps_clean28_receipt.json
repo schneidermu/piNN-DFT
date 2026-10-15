@@ -1,0 +1,37 @@
+{
+  "gate": {
+    "CONTROL": {
+      "eligible": false,
+      "ratios": {
+        "relchem": 1.3561831839593428,
+        "ae17": 1.0564407306504897,
+        "exc": 1.011128004705613,
+        "op": 1.0691636636292092
+      },
+      "checkpoint_sha256": "1d9b81802b12151bd379bec36061215b6626c3c9558bded8aeefbe564f1483e7"
+    },
+    "INTERVENTION": {
+      "eligible": false,
+      "ratios": {
+        "relchem": 1.4363044095471489,
+        "ae17": 0.7556783707407905,
+        "exc": 0.7673048531402544,
+        "op": 1.135880914421138
+      },
+      "checkpoint_sha256": "49ccd8da8194cb12a44829e524973c90a5fe11079a82c3e1938e57fb2a067d1e"
+    }
+  },
+  "values": {
+    "CONTROL": {
+      "status": "NOT EVALUATED",
+      "reason": "original P536 eligibility failed",
+      "evaluations": 0
+    },
+    "INTERVENTION": {
+      "status": "NOT EVALUATED",
+      "reason": "original P536 eligibility failed",
+      "evaluations": 0
+    }
+  },
+  "future_test_access": false
+}
