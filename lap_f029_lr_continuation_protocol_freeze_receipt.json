@@ -1,0 +1,13 @@
+{
+  "format_only_revision": {
+    "before_sha256": "333a8f5c48412acd6f7dae12f8d1454b01c5785c502c327b453430f60f964b29",
+    "after_sha256": "6f40397e63ee199f1a070c428151c1454f2c8b948dbc0f63176547019a489e8e",
+    "AST_unchanged": true,
+    "reason": "One line-wrap formatting correction before retained training; numerical code unchanged",
+    "retained_updates_before_revision": 0
+  },
+  "local0_checkpoints_rebound_to_final_protocol": true,
+  "parameters_and_moments_unchanged": true,
+  "profile_results_remain_valid": true,
+  "new_optimizer_steps": 0
+}

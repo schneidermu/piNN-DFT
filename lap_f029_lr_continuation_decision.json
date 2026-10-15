@@ -1,0 +1,221 @@
+{
+  "classification": "C",
+  "technical": "PASS",
+  "original": {
+    "arm": "INTERVENTION",
+    "cursor": 251,
+    "JW": 0.11034212568864392,
+    "legacy": 1.7745125857625905,
+    "MAE": 7.175358370323195,
+    "RMSE": 10.395384135276775,
+    "median_absolute_error": 4.680714867780303,
+    "macro_database_MAE": 6.774440808547972,
+    "ae17": 18.81718270530315,
+    "exc": 70.72617522910691,
+    "op": 0.03765242682845145,
+    "operator_median": 0.037622676217884024,
+    "operator_max": 0.08336770492347538,
+    "seconds": 419.53764070000034,
+    "constraints": {
+      "errors": {
+        "tau": 0.0,
+        "spin": 0.0,
+        "UEG": 0.0,
+        "Gx_UEG": 0.0,
+        "high_density": 0.0,
+        "rapid_gradient": 0.0
+      },
+      "finite": true,
+      "PASS": true
+    },
+    "chemistry_training_scalar": 1.1006431817738465,
+    "ratios": {
+      "relchem": 1.4363044095471489,
+      "ae17": 0.7556783707407905,
+      "exc": 0.7673048531402544,
+      "op": 1.135880914421138
+    },
+    "eligible": false,
+    "hydrogen": {
+      "identity": "reaction_f2f41fe8016180daabb3d54e",
+      "variant": "level3_mura",
+      "task": "ae17",
+      "database": "AE17",
+      "species": "H_ae17",
+      "prediction_kcal": -317.65633502729065,
+      "reference_kcal": -313.7547607421875,
+      "signed_error_kcal": -3.901574285103152,
+      "absolute_error_kcal": 3.901574285103152,
+      "loss": 2.0608626435987194
+    }
+  },
+  "control": {
+    "arm": "INTERVENTION",
+    "cursor": 283,
+    "JW": 0.1026486823961963,
+    "legacy": 1.6950566136742844,
+    "MAE": 5.583924443560531,
+    "RMSE": 8.041913201227315,
+    "median_absolute_error": 3.7856180138040827,
+    "macro_database_MAE": 6.163065536954803,
+    "ae17": 12.292227145385809,
+    "exc": 41.552555693635625,
+    "op": 0.03493217218720632,
+    "operator_median": 0.03486788989335904,
+    "operator_max": 0.0781148409002205,
+    "seconds": 438.8147226000001,
+    "constraints": {
+      "errors": {
+        "tau": 0.0,
+        "spin": 0.0,
+        "UEG": 0.0,
+        "Gx_UEG": 0.0,
+        "high_density": 0.0,
+        "rapid_gradient": 0.0
+      },
+      "finite": true,
+      "PASS": true
+    },
+    "chemistry_training_scalar": 1.023902446072507,
+    "ratios": {
+      "relchem": 1.371992122336041,
+      "ae17": 0.4936429819211461,
+      "exc": 0.4508016662971743,
+      "op": 1.0538175365827396
+    },
+    "eligible": false,
+    "hydrogen": {
+      "identity": "reaction_f2f41fe8016180daabb3d54e",
+      "variant": "level3_mura",
+      "task": "ae17",
+      "database": "AE17",
+      "species": "H_ae17",
+      "prediction_kcal": -319.1190642258148,
+      "reference_kcal": -313.7547607421875,
+      "signed_error_kcal": -5.364303483627282,
+      "absolute_error_kcal": 5.364303483627282,
+      "loss": 2.8334953663561118
+    }
+  },
+  "low_lr": {
+    "arm": "INTERVENTION",
+    "cursor": 283,
+    "JW": 0.10758443079663095,
+    "legacy": 1.7509801050279998,
+    "MAE": 6.5737475099929625,
+    "RMSE": 9.464625045862425,
+    "median_absolute_error": 4.278691978237816,
+    "macro_database_MAE": 6.567401095852681,
+    "ae17": 4.113694689488456,
+    "exc": 16.52471357326096,
+    "op": 0.036323369784161195,
+    "operator_median": 0.036421079136227844,
+    "operator_max": 0.08078421653380508,
+    "seconds": 441.0117812000026,
+    "constraints": {
+      "errors": {
+        "tau": 0.0,
+        "spin": 0.0,
+        "UEG": 0.0,
+        "Gx_UEG": 0.0,
+        "high_density": 0.0,
+        "rapid_gradient": 0.0
+      },
+      "finite": true,
+      "PASS": true
+    },
+    "chemistry_training_scalar": 1.073135663123433,
+    "ratios": {
+      "relchem": 1.417257035007311,
+      "ae17": 0.16520167494582433,
+      "exc": 0.17927581804674778,
+      "op": 1.0957865391591024
+    },
+    "eligible": false,
+    "hydrogen": {
+      "identity": "reaction_f2f41fe8016180daabb3d54e",
+      "variant": "level3_mura",
+      "task": "ae17",
+      "database": "AE17",
+      "species": "H_ae17",
+      "prediction_kcal": -318.36544653242015,
+      "reference_kcal": -313.7547607421875,
+      "signed_error_kcal": -4.610685790232651,
+      "absolute_error_kcal": 4.610685790232651,
+      "loss": 2.435424629166248
+    }
+  },
+  "joint_progress_vs_original": true,
+  "joint_progress_vs_control": false,
+  "AE17_Exc_preserved": true,
+  "clean28": {
+    "gates": {
+      "CONTROL": {
+        "ratios": {
+          "relchem": 1.371992122336041,
+          "ae17": 0.4936429819211461,
+          "exc": 0.4508016662971743,
+          "op": 1.0538175365827396
+        },
+        "eligible": false
+      },
+      "LOW_LR": {
+        "ratios": {
+          "relchem": 1.417257035007311,
+          "ae17": 0.16520167494582433,
+          "exc": 0.17927581804674778,
+          "op": 1.0957865391591024
+        },
+        "eligible": false
+      }
+    },
+    "values": {
+      "CONTROL": {
+        "status": "NOT EVALUATED",
+        "reason": "Original P536 gates failed",
+        "evaluations": 0
+      },
+      "LOW_LR": {
+        "status": "NOT EVALUATED",
+        "reason": "Original P536 gates failed",
+        "evaluations": 0
+      }
+    },
+    "future_test_access": false
+  },
+  "wall": 4959.19398522377,
+  "budget_respected": true,
+  "next_step": "One separately authorized read-only attribution of the adverse update252 direction at the common theta251: separate fresh-gradient and saved-first-moment numerator contributions under its fixed actual AdamW denominator. Do not reset moments or apply any proposal.",
+  "directional_conflict_counts_of_32": {
+    "CONTROL": {
+      "relchem": 12,
+      "op": 16
+    },
+    "LOW_LR": {
+      "relchem": 11,
+      "op": 14
+    }
+  },
+  "selected_overshoot_counts_of_3": {
+    "CONTROL": 0,
+    "LOW_LR": 0
+  },
+  "operator_system_comparisons": {
+    "LOW_LR-original": {
+      "improved": 90,
+      "regressed": 0,
+      "ties": 0
+    },
+    "LOW_LR-CONTROL": {
+      "improved": 0,
+      "regressed": 90,
+      "ties": 0
+    },
+    "CONTROL-original": {
+      "improved": 90,
+      "regressed": 0,
+      "ties": 0
+    }
+  },
+  "originals_rehashed_unchanged": 102
+}

@@ -1,0 +1,122 @@
+{
+  "CONTROL_t251": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t252": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t253": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t267": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t283": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "LOW_LR_t251": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "LOW_LR_t252": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "LOW_LR_t253": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "LOW_LR_t267": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "LOW_LR_t283": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  }
+}

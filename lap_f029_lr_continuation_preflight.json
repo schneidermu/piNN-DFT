@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "checks": {
+    "CONTROL": {
+      "losses": {
+        "relchem": 0.6562381643081451,
+        "ae17": 12.204152942645846,
+        "exc": 88.84390902231877,
+        "op": 0.012174418021343694
+      },
+      "gradient_norm": 195.6181585775127,
+      "constraints": {
+        "errors": {
+          "tau": 0.0,
+          "spin": 0.0,
+          "UEG": 0.0,
+          "Gx_UEG": 0.0,
+          "high_density": 0.0,
+          "rapid_gradient": 0.0
+        },
+        "finite": true,
+        "PASS": true
+      },
+      "optimizer_hash": "1b024203598a78bbf141aba04552e23a027d9f2ff1f2fffbfb17180b4431146e"
+    },
+    "LOW_LR": {
+      "losses": {
+        "relchem": 0.6562381643081451,
+        "ae17": 12.204152942645846,
+        "exc": 88.84390902231877,
+        "op": 0.012174418021343694
+      },
+      "gradient_norm": 195.6181585775127,
+      "constraints": {
+        "errors": {
+          "tau": 0.0,
+          "spin": 0.0,
+          "UEG": 0.0,
+          "Gx_UEG": 0.0,
+          "high_density": 0.0,
+          "rapid_gradient": 0.0
+        },
+        "finite": true,
+        "PASS": true
+      },
+      "optimizer_hash": "f3b567c133e764db03a045674a562751f45554ccc57573d3d6e14032b37dbe23"
+    }
+  },
+  "profiles": {
+    "CONTROL": 33.379535499996564,
+    "LOW_LR": 29.695346799999243
+  },
+  "initial_raw_task_gradient_parity": "PASS",
+  "molecular_optimizer_steps": 0,
+  "RNG_restored": true,
+  "F64_gradient_sum": "PASS",
+  "source_files_verified": [
+    "chemistry/chemistry_004.h5",
+    "chemistry/chemistry_001.h5",
+    "chemistry/chemistry_000.h5",
+    "chemistry/chemistry_002.h5",
+    "chemistry/chemistry_005.h5",
+    "chemistry/chemistry_010.h5",
+    "chemistry/chemistry_003.h5",
+    "mrks/mrks_069.h5",
+    "chemistry/chemistry_007.h5"
+  ]
+}

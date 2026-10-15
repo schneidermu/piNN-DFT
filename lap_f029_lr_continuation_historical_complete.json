@@ -1,0 +1,9 @@
+{
+  "states": [
+    128,
+    192,
+    251
+  ],
+  "baseline_reproduced": true,
+  "starting_state_selection": "Fixed t251 regardless of these metrics"
+}

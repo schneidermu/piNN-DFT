@@ -1,0 +1,13 @@
+{
+  "hashes": {
+    "lap_f010_normalization_receipt.json": "9a1c4b3a6240d65d6b41868c96c8ecf574c2366748fb8338f8c06d655d4b45b7",
+    "relchem_joint_epoch_evaluation_manifest.json": "132bd550161be6bc6761f8df1de8d3755c0b0debab53663208c3a9bbf56cb805"
+  },
+  "unchanged_from_required_ancestor": true,
+  "pretraining_tests": {
+    "passed": 10,
+    "pending_executed_trajectory_test": 1,
+    "precision_tolerances_relaxed": false
+  },
+  "synthetic_fixture_development_failure": "Initial toy gradient keys followed torch registration order instead of mandatory named_trainable_parameters ordering; fixture corrected, original implementation unchanged."
+}

@@ -1,0 +1,85 @@
+{
+  "experiment": "F029",
+  "ancestor": "b272860ef807fa128064722655ec6fcf79e83226",
+  "start_unix": 1792075640.0,
+  "wall_limit": 7200,
+  "wall_origin": "2026-10-15T14:47:20Z, conservative earlier bound preceding first attachment read",
+  "source_sha256": "49ccd8da8194cb12a44829e524973c90a5fe11079a82c3e1938e57fb2a067d1e",
+  "lrs": {
+    "CONTROL": 2.5e-05,
+    "LOW_LR": 2.5e-06
+  },
+  "updates_per_arm": 32,
+  "global_start": 251,
+  "global_end": 283,
+  "milestones_local": [
+    0,
+    1,
+    2,
+    16,
+    32
+  ],
+  "selected_finite_steps_global": [
+    252,
+    253,
+    283
+  ],
+  "order": "CONTROL then LOW_LR at each local cursor0..31",
+  "coefficients": {
+    "relchem": 0.017015480965588553,
+    "ae17": 5.141254618347414e-05,
+    "exc": 1.5094644512009712e-05,
+    "op": 0.33597561607048215,
+    "c010": 9.974823077811354
+  },
+  "precision": {
+    "native": "F32 parameters and AdamW moments",
+    "chemistry_AE17": "Unchanged F010 qualified F64 shadow, source widening, reaction integration/PBE arithmetic; not recast to native F32",
+    "Exc": "Unchanged original F32 energy/learned forward and F32-leaf derivatives widened to F64 (historical task-specific precision boundary)",
+    "operator": "Original F32 corpus AO/features widened exactly as production; F64 learned partials, original F32 PBE, F64 matrix/two-pass/shadow gradients",
+    "sum": "Four task gradients combined F64; exactly one final per-coordinate cast to native F32",
+    "point_chunks": {
+      "operator": 2048,
+      "Exc": 4096,
+      "large_reaction": 16384
+    }
+  },
+  "stream_sha256": "37bc6e42b33af46f7413c265a7094cb7000dc9d412780f712605e7b5737dbff1",
+  "tolerances": {
+    "sum_atol": 1e-10,
+    "sum_rtol": 1e-09,
+    "physical_relative": 1.9073486328125e-06,
+    "energy_kcal_absolute": 1e-06,
+    "constraints": 1e-12
+  },
+  "evaluation_uncertainty": {
+    "JW_absolute_per_evaluation": 4.917795149232554e-08,
+    "operator_relative_per_evaluation": 1.9073486328125e-06,
+    "operator_absolute_floor": 1e-12,
+    "pairwise": "sum of both individual bounds"
+  },
+  "history": [
+    251,
+    128,
+    192
+  ],
+  "evaluation": "Unchanged F028 evaluator E251/E17/full90; no intermediate selection",
+  "clean28": "Only t283 after both endpoints frozen and all original P536 gates pass, once per eligible arm",
+  "no_new_initialization": true,
+  "driver_sha256": "62ae14ee4387d120bd2a2dc83726a93db875fc63f8cac0c4e51be96ee60f803d",
+  "pretraining_format_revision": {
+    "before_sha256": "333a8f5c48412acd6f7dae12f8d1454b01c5785c502c327b453430f60f964b29",
+    "after_sha256": "6f40397e63ee199f1a070c428151c1454f2c8b948dbc0f63176547019a489e8e",
+    "AST_unchanged": true,
+    "reason": "One line-wrap formatting correction before retained training; numerical code unchanged",
+    "retained_updates_before_revision": 0
+  },
+  "pretraining_driver_revisions": [
+    {
+      "old_sha256": "6f40397e63ee199f1a070c428151c1454f2c8b948dbc0f63176547019a489e8e",
+      "new_sha256": "62ae14ee4387d120bd2a2dc83726a93db875fc63f8cac0c4e51be96ee60f803d",
+      "reason": "Read-only evaluator also hashes a checkpoint alias in its output folder; provide a byte-identical copy outside Git. Historical evaluation failed on absent output alias before any measurements or optimizer steps. Numerical math unchanged.",
+      "retained_updates": 0
+    }
+  ]
+}

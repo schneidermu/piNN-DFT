@@ -1,0 +1,27 @@
+{
+  "pytest": {
+    "passed": 14,
+    "skipped": 0,
+    "warnings": 1,
+    "seconds": 10.21,
+    "warning": "Existing tensor-to-scalar requires_grad warning, not suppressed"
+  },
+  "ruff": "PASS",
+  "ruff_format": "PASS",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "new_molecular_preflight_optimizer_steps": 0,
+  "new_retained_updates": 64,
+  "final_global_counters": {
+    "CONTROL": 283,
+    "LOW_LR": 283
+  },
+  "exact_stream_identity": "PASS",
+  "source_checkpoint_authentication": "PASS",
+  "restored_milestone_constraint_receipts": 10,
+  "source_data_files_rehashed": 102,
+  "historical_checkpoints_rehashed": 3,
+  "all_logged_quantities_finite": "PASS",
+  "all64_training_constraint_checks": "PASS",
+  "test_sha256": "2ef21c69a0c9ba7d105d1137e5ef2c3a4120b345ac4e650ca5102ed093239eb1"
+}

@@ -1,0 +1,42 @@
+{
+  "limit": 7200,
+  "elapsed": 1992.5490157604218,
+  "profiles": {
+    "CONTROL": 33.379535499996564,
+    "LOW_LR": 29.695346799999243
+  },
+  "evaluation_profile_source": "Authenticated F028 complete original-panel measurements; refreshed by F029 historical panels",
+  "evaluation_cost": 424.0738031000001,
+  "training_projection": 2563.548326399736,
+  "history_remaining_projection": 0.0,
+  "endpoint_reserve": 1017.7771274400002,
+  "integrity_diagnostics_clean28_reserve": 800,
+  "projected_remaining": 4381.325453839736,
+  "training_authorized": true,
+  "GPU_kernel_active_time": "NOT METERED",
+  "scientific_wall": 4959.2104704380035,
+  "budget_respected": true,
+  "recorded_phase_wall": {
+    "lap_f029_lr_continuation_finish_timing.json": {
+      "seconds": 883.225457499997,
+      "workflow_wall": 4809.913113355637
+    },
+    "lap_f029_lr_continuation_history_timing.json": {
+      "seconds": 1246.4918036000017,
+      "workflow_wall": 1963.698395729065
+    },
+    "lap_f029_lr_continuation_prepare_timing.json": {
+      "seconds": 66.19611689999874,
+      "workflow_wall": 619.1205742359161
+    },
+    "lap_f029_lr_continuation_train_timing.json": {
+      "seconds": 1919.039680199996,
+      "workflow_wall": 3909.7187237739563
+    }
+  },
+  "training_update_wall_by_arm": {
+    "CONTROL": 944.4815816000191,
+    "LOW_LR": 928.8886782000263
+  },
+  "recorded_phase_wall_sum": 4114.953058199993
+}

@@ -1,0 +1,11 @@
+{
+  "local_counters": {
+    "CONTROL": 32,
+    "LOW_LR": 32
+  },
+  "global_counters": {
+    "CONTROL": 283,
+    "LOW_LR": 283
+  },
+  "wall": 3909.6933529376984
+}

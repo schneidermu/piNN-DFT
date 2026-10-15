@@ -1,0 +1,18 @@
+{
+  "initial_history_driver_error": {
+    "phase": "history",
+    "error": "FileNotFoundError(2, 'No such file or directory')",
+    "elapsed": 647.1354646682739
+  },
+  "resolution": [
+    {
+      "old_sha256": "6f40397e63ee199f1a070c428151c1454f2c8b948dbc0f63176547019a489e8e",
+      "new_sha256": "62ae14ee4387d120bd2a2dc83726a93db875fc63f8cac0c4e51be96ee60f803d",
+      "reason": "Read-only evaluator also hashes a checkpoint alias in its output folder; provide a byte-identical copy outside Git. Historical evaluation failed on absent output alias before any measurements or optimizer steps. Numerical math unchanged.",
+      "retained_updates": 0
+    }
+  ],
+  "checkpoint_bytes_modified": false,
+  "new_optimizer_steps": 0,
+  "original_gradient_profile_reused": true
+}

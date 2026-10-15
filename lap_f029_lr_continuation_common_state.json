@@ -1,0 +1,294 @@
+{
+  "source_sha256": "49ccd8da8194cb12a44829e524973c90a5fe11079a82c3e1938e57fb2a067d1e",
+  "identity": {
+    "architecture": {
+      "num_layers": 6,
+      "h_dim": 32,
+      "dropout": 0.0,
+      "use_g_x": true,
+      "use_g_c": true
+    },
+    "epsilon": [
+      {
+        "name": "c_input_layers.1",
+        "epsilon": 1e-05,
+        "owner": "correlation"
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.1",
+        "epsilon": 1e-05,
+        "owner": "correlation"
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.4",
+        "epsilon": 1e-05,
+        "owner": "correlation"
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.1",
+        "epsilon": 1e-05,
+        "owner": "correlation"
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.4",
+        "epsilon": 1e-05,
+        "owner": "correlation"
+      },
+      {
+        "name": "x_feature_extractor.1",
+        "epsilon": 0.001,
+        "owner": "exchange"
+      },
+      {
+        "name": "x_feature_extractor.3.fc.1",
+        "epsilon": 0.001,
+        "owner": "exchange"
+      },
+      {
+        "name": "x_feature_extractor.3.fc.4",
+        "epsilon": 0.001,
+        "owner": "exchange"
+      },
+      {
+        "name": "x_feature_extractor.4.fc.1",
+        "epsilon": 0.001,
+        "owner": "exchange"
+      },
+      {
+        "name": "x_feature_extractor.4.fc.4",
+        "epsilon": 0.001,
+        "owner": "exchange"
+      }
+    ],
+    "order": [
+      {
+        "name": "c_input_layers.0.weight",
+        "shape": [
+          32,
+          8
+        ]
+      },
+      {
+        "name": "c_input_layers.1.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_input_layers.1.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_output_layer.bias",
+        "shape": [
+          3
+        ]
+      },
+      {
+        "name": "c_output_layer.weight",
+        "shape": [
+          3,
+          64
+        ]
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.0.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.1.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.1.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.3.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.4.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_post_symm_blocks.0.fc.4.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.0.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.1.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.1.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.3.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.4.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "c_symmetrization_blocks.0.fc.4.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.0.weight",
+        "shape": [
+          32,
+          2
+        ]
+      },
+      {
+        "name": "x_feature_extractor.1.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.1.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.3.fc.0.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.3.fc.1.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.3.fc.1.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.3.fc.3.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.3.fc.4.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.3.fc.4.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.4.fc.0.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.4.fc.1.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.4.fc.1.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.4.fc.3.weight",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.4.fc.4.bias",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_feature_extractor.4.fc.4.weight",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "x_output_layer.bias",
+        "shape": [
+          3
+        ]
+      },
+      {
+        "name": "x_output_layer.weight",
+        "shape": [
+          3,
+          32
+        ]
+      }
+    ],
+    "precision_hash": "ba2ecc541c4c71a4ff3ad18b239fcd614ea876ce9b43206617d3f283df8e4543",
+    "scientific_configuration_hash": "45a6ce352fb9eba1a2d894a99b07ac50f9f522257bdc93b3756800786482d8fa",
+    "parameter_hash": "77c1a5417dbff72dcba06e1afbc7ebb892d978e7f30113964ceb523646dfd476",
+    "buffer_hash": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+  },
+  "optimizer_without_lr_hash": "1190711612d910982bb5feeee5a80ff31c64a278bc401f4277b2b45523931099",
+  "original_optimizer_hash": "1b024203598a78bbf141aba04552e23a027d9f2ff1f2fffbfb17180b4431146e",
+  "RNG_hash": "d2a6fb8a3a14d0f211ad58c657b0512d7935ec69607710569d209d8547d96da8",
+  "counter": 251,
+  "starting_parameter_identity": "PASS",
+  "starting_moment_identity": "PASS",
+  "independent_storage": "PASS",
+  "optimizer_only_difference": "lr"
+}

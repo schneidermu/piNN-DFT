@@ -1,0 +1,62 @@
+{
+  "ORIGINAL_t128": {
+    "identity": "reaction_f2f41fe8016180daabb3d54e",
+    "variant": "level3_mura",
+    "task": "ae17",
+    "database": "AE17",
+    "species": "H_ae17",
+    "prediction_kcal": -319.90948108338586,
+    "reference_kcal": -313.7547607421875,
+    "signed_error_kcal": -6.154720341198356,
+    "absolute_error_kcal": 6.154720341198356,
+    "loss": 3.2510039040913736
+  },
+  "ORIGINAL_t192": {
+    "identity": "reaction_f2f41fe8016180daabb3d54e",
+    "variant": "level3_mura",
+    "task": "ae17",
+    "database": "AE17",
+    "species": "H_ae17",
+    "prediction_kcal": -315.75235335195106,
+    "reference_kcal": -313.7547607421875,
+    "signed_error_kcal": -1.997592609763558,
+    "absolute_error_kcal": 1.997592609763558,
+    "loss": 1.0551545826793736
+  },
+  "ORIGINAL_t251": {
+    "identity": "reaction_f2f41fe8016180daabb3d54e",
+    "variant": "level3_mura",
+    "task": "ae17",
+    "database": "AE17",
+    "species": "H_ae17",
+    "prediction_kcal": -317.65633502729065,
+    "reference_kcal": -313.7547607421875,
+    "signed_error_kcal": -3.901574285103152,
+    "absolute_error_kcal": 3.901574285103152,
+    "loss": 2.0608626435987194
+  },
+  "CONTROL": {
+    "identity": "reaction_f2f41fe8016180daabb3d54e",
+    "variant": "level3_mura",
+    "task": "ae17",
+    "database": "AE17",
+    "species": "H_ae17",
+    "prediction_kcal": -319.1190642258148,
+    "reference_kcal": -313.7547607421875,
+    "signed_error_kcal": -5.364303483627282,
+    "absolute_error_kcal": 5.364303483627282,
+    "loss": 2.8334953663561118
+  },
+  "LOW_LR": {
+    "identity": "reaction_f2f41fe8016180daabb3d54e",
+    "variant": "level3_mura",
+    "task": "ae17",
+    "database": "AE17",
+    "species": "H_ae17",
+    "prediction_kcal": -318.36544653242015,
+    "reference_kcal": -313.7547607421875,
+    "signed_error_kcal": -4.610685790232651,
+    "absolute_error_kcal": 4.610685790232651,
+    "loss": 2.435424629166248
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "phase": "history",
+  "error": "FileNotFoundError(2, 'No such file or directory')",
+  "elapsed": 647.1354646682739,
+  "resolved_before_retained_training": true,
+  "resolution_receipt": "lap_f029_lr_continuation_pretraining_development_receipt.json",
+  "subsequent_historical_evaluations": "PASS"
+}
