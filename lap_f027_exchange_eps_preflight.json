@@ -1,0 +1,68 @@
+{
+  "PASS": true,
+  "derivatives": [
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED",
+      "arm": "CONTROL"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED",
+      "arm": "CONTROL"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED",
+      "arm": "CONTROL"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED",
+      "arm": "INTERVENTION"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED",
+      "arm": "INTERVENTION"
+    },
+    {
+      "theta": 0,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED",
+      "arm": "INTERVENTION"
+    }
+  ],
+  "batch_seconds": {
+    "CONTROL": 25.58625519999987,
+    "INTERVENTION": 25.27329770000142
+  },
+  "small_fixture_parity": {
+    "CONTROL": {
+      "adjoint_vs_direct_gradient_gap": 2.5862678301517743e-37,
+      "bound": 1e-10,
+      "PASS": true
+    },
+    "INTERVENTION": {
+      "adjoint_vs_direct_gradient_gap": 3.8212801956034465e-41,
+      "bound": 1e-10,
+      "PASS": true
+    }
+  },
+  "projected_remaining_seconds": 3334.3821160000516,
+  "remaining_wall_seconds": 10146.673449993134,
+  "extra_molecular_optimizer_updates": 0,
+  "t1_policy": "qualify both retained t1 states before any update2",
+  "technical": "VALID"
+}

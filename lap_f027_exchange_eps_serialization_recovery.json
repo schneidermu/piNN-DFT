@@ -1,0 +1,9 @@
+{
+  "stage": "Markdown output only",
+  "initial_error": "Windows CP1251 UnicodeEncodeError for U+2212",
+  "resolution": "explicit UTF-8 output; cached optional swaps reused",
+  "scientific_arrays_unchanged": true,
+  "additional_optimizer_updates": 0,
+  "additional_swap_evaluations": 0,
+  "scientific_qualification_failure": false
+}

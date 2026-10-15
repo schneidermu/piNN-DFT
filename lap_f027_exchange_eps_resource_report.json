@@ -1,0 +1,32 @@
+{
+  "scientific_workflow_wall_seconds": 2846.9114072322845,
+  "limit_seconds": 10800,
+  "recorded_phase_process_wall": {
+    "lap_f027_exchange_eps_finish_timing": {
+      "process_wall_seconds": 2.3401234000011755,
+      "scientific_wall_seconds": 2846.913727760315
+    },
+    "lap_f027_exchange_eps_freeze_timing": {
+      "process_wall_seconds": 0.09221339999930933,
+      "scientific_wall_seconds": 384.43588399887085
+    },
+    "lap_f027_exchange_eps_initialize_timing": {
+      "process_wall_seconds": 2.3337578999999096,
+      "scientific_wall_seconds": 389.4406979084015
+    },
+    "lap_f027_exchange_eps_preflight_timing": {
+      "process_wall_seconds": 254.15551419999974,
+      "scientific_wall_seconds": 653.3273985385895
+    },
+    "lap_f027_exchange_eps_train_timing": {
+      "process_wall_seconds": 2053.3876834000002,
+      "scientific_wall_seconds": 2772.0612411499023
+    }
+  },
+  "GPU_active_time": "NOT METERED; execution/process wall is not a GPU-active-time measurement",
+  "budget_respected": true,
+  "final_validation_wall_seconds": 2938.440873861313,
+  "measured_preflight_and_training_execution_wall_seconds": 2307.5431976,
+  "retained_training_batch_wall_seconds": 1603.994579299997,
+  "unmetered_first_finish_attempt": "Completed optional swaps and integrity checks, failed Markdown encoding; included in workflow wall but no separate phase timer. Retry reused swaps."
+}

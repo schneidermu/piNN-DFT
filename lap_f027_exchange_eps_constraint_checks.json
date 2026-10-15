@@ -1,0 +1,242 @@
+{
+  "CONTROL_t0": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_t0": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t1": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_t1": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t2": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_t2": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t16": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_t16": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_t32": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_t32": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_restored_t0": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_restored_t1": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_restored_t2": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_restored_t16": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "CONTROL_restored_t32": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_restored_t0": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_restored_t1": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_restored_t2": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_restored_t16": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  },
+  "INTERVENTION_restored_t32": {
+    "errors": {
+      "tau": 0.0,
+      "spin": 0.0,
+      "UEG": 0.0,
+      "Gx_UEG": 0.0,
+      "high_density": 0.0,
+      "rapid_gradient": 0.0
+    },
+    "finite": true,
+    "PASS": true
+  }
+}

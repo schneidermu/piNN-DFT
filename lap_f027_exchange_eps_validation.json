@@ -1,0 +1,23 @@
+{
+  "tests": "14 passed, 19 deselected",
+  "test_files": [
+    "tests/test_lap_f027_exchange_eps.py",
+    "train_models/test_lap.py",
+    "train_models/test_lap_operator_unit.py"
+  ],
+  "selection": "f027 or tau_exactly or every_exact_anchor or scalar_projection_and_overlap_metric or operator_loss_is_congruence or spin_assembly_matches or rks_spin_factors",
+  "existing_warning": "qualified constraints helper converts requires-grad scalar; not suppressed",
+  "ruff": "PASS",
+  "compileall": "PASS",
+  "git_diff_check": "PASS",
+  "historical_production_hashes_unchanged": true,
+  "ancestor": "9a013ffa9bb76111c5cb1fe93fdf5e3d67da9d2c",
+  "ancestry": "PASS",
+  "interleaving_and_64_retained_steps": "PASS",
+  "required_derivative_coordinates_qualified": 12,
+  "restored_and_original_constraint_checks": 20,
+  "driver_sha256": "110da1bb2085236e76ebe442f030ad9920086790bff1163672e600b7db6b37b5",
+  "tests_sha256": "70ee88041385155d7ff28bf0a3d75267838ee6c1e5bb5c5635ec08a53c505a00",
+  "scientific_wall_seconds": 2938.440873861313,
+  "budget_respected": true
+}

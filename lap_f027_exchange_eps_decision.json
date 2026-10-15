@@ -1,0 +1,25 @@
+{
+  "experiment": "F027",
+  "classification": "A",
+  "technical": "VALID",
+  "seed": 2027,
+  "benefit": 0.18799924781114233,
+  "effect_floor_pass": true,
+  "control_initial": 0.906519217270033,
+  "intervention_initial": 0.9006528368630952,
+  "control_final": 0.19676574666530522,
+  "intervention_final": 0.15977393429723005,
+  "control_initial_gradient": 1907748.2765120268,
+  "intervention_initial_gradient": 202.58429037670322,
+  "startup_reduction": 9417.05930388082,
+  "seed2026_matched_benefit": 0.2281405615034916,
+  "counters": {
+    "CONTROL": 32,
+    "INTERVENTION": 32
+  },
+  "retained_updates": 64,
+  "extra_molecular_preflight_updates": 0,
+  "scientific_wall_seconds": 2846.9085595607758,
+  "budget_respected": true,
+  "next_action": "One separately designed broader matched qualification covering full90 operator, original AE17/Exc/relative-chemistry metrics and H accuracy; no automatic full90 training or curriculum."
+}

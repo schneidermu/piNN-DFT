@@ -1,0 +1,3864 @@
+{
+  "initial": {
+    "CONTROL": {
+      "tensor_hash": "775c6b796018b762b232e3a613b8561f335808224d518112832666d5680ff94c",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "fb3aeaa80b830dc0d0ce56bcac45c318602c5c4ed54e53d6c278a7a616a62051",
+      "parameters_sha256": "43e7d914fcfe6935752a9c1d0d8c774d2a1f1eca629c248ea4cf5cb3ad465331",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "INTERVENTION": {
+      "tensor_hash": "775c6b796018b762b232e3a613b8561f335808224d518112832666d5680ff94c",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "32e9ac7345ac0bff776db37859e6f9cda31224a2aab36433455cdf50586c12b1",
+      "parameters_sha256": "43e7d914fcfe6935752a9c1d0d8c774d2a1f1eca629c248ea4cf5cb3ad465331",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    }
+  },
+  "initial_tensor_identity": "PASS",
+  "independent_storage": "PASS",
+  "CONTROL_t0": {
+    "identity": {
+      "tensor_hash": "775c6b796018b762b232e3a613b8561f335808224d518112832666d5680ff94c",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "fb3aeaa80b830dc0d0ce56bcac45c318602c5c4ed54e53d6c278a7a616a62051",
+      "parameters_sha256": "43e7d914fcfe6935752a9c1d0d8c774d2a1f1eca629c248ea4cf5cb3ad465331",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "5ccb32ff5a5a628be1c02e195c821a59c1caa5efba215586b071b0b0caca2a45"
+  },
+  "CONTROL_t1": {
+    "identity": {
+      "tensor_hash": "bb31e1fa1c8ab51e87114eba2ded686f20e5b173e052354b589ecbf8f28c7bb8",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "08e5379c86063c634219a82141517a7bfc3b0041c1a21fdf6de87d0542073e0b",
+      "parameters_sha256": "658edca493f261e7df07918fc9100a15f21f9d0bdc7a43f284fee544f7123c1d",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "f11b3567943ac399f0ce70eabc9b583186b0c5c943ba8d2d758bdc7e8b3e1b1b"
+  },
+  "CONTROL_t2": {
+    "identity": {
+      "tensor_hash": "be68f51535572b6bda22051f5585f21f041b8bdf907110a384b534340eefa0e0",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "e78b74a885b9c220683d5f70565db100e1f7b73af72ae7e1994224b3d38a555d",
+      "parameters_sha256": "0a83770505825f54f56184f7ebab72d575c1e3fdd708d8a445159178355e00cd",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "f4367c44623e2304f7a3c760b44f685c0a7ac94a374dd4bfce2ec05f25dca3b0"
+  },
+  "CONTROL_t16": {
+    "identity": {
+      "tensor_hash": "ba773074133c7dbfa2f9991b0c0b293817160c98cab7ae905027258d04553e1a",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "df0960fc4cff3c85bffb45deb4d78c7c4b2b7235db240315566e445bb4d4d24d",
+      "parameters_sha256": "be551b3850ab34815968081aab4b3962e582aa63a8a6380c1e328062c434588a",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "29ddc44b8dabeb8b4230b80756eb206d946f99c8830dea2fde83d4c0d1fe10de"
+  },
+  "CONTROL_t32": {
+    "identity": {
+      "tensor_hash": "cc975417e3e2e80e249004eedd1c23f0d6cf9138d8625daeb7cff8967f4c8e85",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 1e-05,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "ed7f73d2487ee73c9f244fcc338ba4fec66e269404652025d14db73cca17b9b2",
+      "parameters_sha256": "721e93899689576117545b31692e924d3acbb2bc82a92c05d03e1a9842f2da04",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "2fa5d72b741a39735072e765abbed657f77da80802042d987310827dcdd3b173"
+  },
+  "INTERVENTION_t0": {
+    "identity": {
+      "tensor_hash": "775c6b796018b762b232e3a613b8561f335808224d518112832666d5680ff94c",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "32e9ac7345ac0bff776db37859e6f9cda31224a2aab36433455cdf50586c12b1",
+      "parameters_sha256": "43e7d914fcfe6935752a9c1d0d8c774d2a1f1eca629c248ea4cf5cb3ad465331",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "40b67eb0a820ffae308f99183a9fabf98f123efa60ace35073b1f3f5131cda02"
+  },
+  "INTERVENTION_t1": {
+    "identity": {
+      "tensor_hash": "73d7c50498e5537e42e8986b0254ec8a1e7cdc6e5c01118a3ac9a87f75ddd0d3",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "3b24bb197a5f9ae5041cde66268c5e09de870f79cb4971c68ddd482fec12a397",
+      "parameters_sha256": "e568ff5b610ec1c2a27a08dac827350014fd74860a1bb5e845202bff6a19dea5",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "e904c5c7e3d733a3efbac9388994d7c5784070b640e2d5f0615972e71aa26387"
+  },
+  "INTERVENTION_t2": {
+    "identity": {
+      "tensor_hash": "3c795fe23e4e9cb6a743defd505a5671c90e30d56eed5778af415cabf50fe3c5",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "b3de98e571a45b11b62360fa3f8a5a92b52bc7b98d3fdb5743b08397326cc207",
+      "parameters_sha256": "025b4a341cad8b55e0ac9e2a5a6f29912b6bf0186a239e7a79d174fc5aabb6a5",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "bc69d6ef498e80a6e9bb1b5ff7b6a2a560d1e8dfa5c799413f00db838299d9ef"
+  },
+  "INTERVENTION_t16": {
+    "identity": {
+      "tensor_hash": "021fa5963780be6117de35dd794bbba818f9725f51a59ddeb9169a507def5e41",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "4344f9ffcae1fea14fc00c5b85e2c59d3c11ca8ca6f57b79c55c7c7aee2e0b96",
+      "parameters_sha256": "e0904e2c0751d8cb44efb306e638e9c15679fc496fa7ce325d18df881423e825",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "881b262d70e5c6795c0e86a91a6292c2825d5a36fd717d988617d2fcbd31bf02"
+  },
+  "INTERVENTION_t32": {
+    "identity": {
+      "tensor_hash": "1bcb365e3d78f78ee89b504a321eeb6dba6f435d594febaa779440891db2c1f0",
+      "epsilon": [
+        {
+          "name": "c_input_layers.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4",
+          "epsilon": 1e-05,
+          "owner": "correlation"
+        },
+        {
+          "name": "x_feature_extractor.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4",
+          "epsilon": 0.001,
+          "owner": "exchange"
+        }
+      ],
+      "config": {
+        "num_layers": 6,
+        "h_dim": 32,
+        "dropout": 0.0,
+        "use_g_x": true,
+        "use_g_c": true
+      },
+      "order": [
+        {
+          "name": "c_input_layers.0.weight",
+          "shape": [
+            32,
+            8
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_input_layers.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_output_layer.weight",
+          "shape": [
+            3,
+            64
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_post_symm_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "c_symmetrization_blocks.0.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.0.weight",
+          "shape": [
+            32,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.3.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.0.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.1.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.3.weight",
+          "shape": [
+            32,
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.bias",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_feature_extractor.4.fc.4.weight",
+          "shape": [
+            32
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.bias",
+          "shape": [
+            3
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "name": "x_output_layer.weight",
+          "shape": [
+            3,
+            32
+          ],
+          "dtype": "torch.float32"
+        }
+      ],
+      "coordinates": 9446,
+      "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+      "scientific_hash": "b6cf576e33dbc542ab5ba8bc0a8625fadc3da1a6f9eb83d9f6d240fcaea7b7ce",
+      "parameters_sha256": "195a6671d855fc6f8a0b2e890d3156dcfaa76b46689f4c6249fa6a75f4f63e7e",
+      "buffers_sha256": "d9df597d84cc43f5f4e4dfefff23eb8f979f4e03c86f3d2b691a7e23ffa8626d"
+    },
+    "checkpoint_sha256": "21838031427f835e617c4b7d500c592d14edcdd894eb5f3aea2de6afeb4ea641"
+  }
+}

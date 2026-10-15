@@ -1,0 +1,28 @@
+{
+  "status": "PERFORMED",
+  "values": [
+    {
+      "weights": "CONTROL_t32",
+      "epsilon": 0.001,
+      "mean_loss": 0.33651556446423686,
+      "system_losses": [
+        0.13165926900394126,
+        0.19986329341037953,
+        0.6780241309783899
+      ],
+      "read_only": true
+    },
+    {
+      "weights": "INTERVENTION_t32",
+      "epsilon": 1e-05,
+      "mean_loss": 0.3527239965356929,
+      "system_losses": [
+        0.1322227714477409,
+        0.20856528649502262,
+        0.7173839316643152
+      ],
+      "read_only": true
+    }
+  ],
+  "used_for_selection": false
+}

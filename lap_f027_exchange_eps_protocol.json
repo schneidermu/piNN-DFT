@@ -1,0 +1,79 @@
+{
+  "experiment": "F027",
+  "namespace": "lap_f027_exchange_eps_",
+  "seed": 2027,
+  "scientific_wall_limit": 10800,
+  "start_unix_ms": 1792050042954,
+  "head": "9a013ffa9bb76111c5cb1fe93fdf5e3d67da9d2c",
+  "worktree": "?? .planning/chem_precision_trace/\n?? .planning/quick/\n?? .planning/step_globalization/lap_step_globalization_report.md\n?? .planning/step_globalization/protocol.json\n?? .planning/step_globalization/results.json\n?? baseline_validation/\n?? four_objective_throughput_diagnosis_metrics.json\n?? four_objective_throughput_diagnosis_report.md\n?? full90_25update_qualification.py\n?? full90_25update_qualification_protocol.json\n?? lap_f025_aggregate_closure.csv\n?? lap_f025_analysis_receipt.json\n?? lap_f025_availability.csv\n?? lap_f025_availability_aggregates.csv\n?? lap_f025_decision.json\n?? lap_f025_direct_parity.csv\n?? lap_f025_final_integrity.json\n?? lap_f025_harmful_cumulative.csv\n?? lap_f025_harmful_cumulative.png\n?? lap_f025_native_directions.csv\n?? lap_f025_operator_vector_changes.csv\n?? lap_f025_pairwise_decomposition.csv\n?? lap_f025_pairwise_records.csv\n?? lap_f025_per_record_attribution.csv\n?? lap_f025_protocol.json\n?? lap_f025_provenance.json\n?? lap_f025_recomputation_receipt.json\n?? lap_f025_report.md\n?? lap_f025_source_provenance.json\n?? lap_f025_task_attribution.csv\n?? lap_f025_tests.json\n?? lap_f025_unchanged_database_metrics.csv\n?? lap_f025_unchanged_quality_metrics.csv\n?? lap_f027_exchange_eps_started.txt\n?? lap_fresh_grid_pilot_v1_started.txt\n?? lap_gauge_consistency_v1_started.txt\n?? lap_grid_transfer_v1_started.txt\n?? lap_target_provenance_v1_started.txt\n?? lap_target_provenance_v2_started.txt\n?? test_full90_25update_qualification.py\n?? tests/test_lap_f025_attribution.py\n?? tests/test_publication_baselines.py\n?? tools/evaluate_publication_baselines.py\n?? tools/lap_f025_analyze.py\n?? tools/lap_f025_collect.py\n?? tools/lap_f025_report.py\n?? tools/lap_f027_exchange_eps.py\n?? tools/profile_four_objective_throughput.py\n?? train_lap_four_objective.py\n",
+  "source_hashes": {
+    "train_models/NN_models_lap.py": "862f1a0989b188a9543a49947550521541c7012179ebda0929c92ed824c09cb0",
+    "train_models/NN_models.py": "05a95145e3b7ce3b27b0a0cdc93c070e40681fecdeeb577bba80c1f5e590468f",
+    "train_models/lap_vxc.py": "ca22ac54ae9ffe4d2593f1e7072b11210277b0a321701d5240f564803711c287",
+    "train_models/lap_operator.py": "7fae09c0857187875377fbf5c1c7c8d19b1afc869942310f75f5462f7bd2e864",
+    "train_models/lap_operator_data.py": "8d411952a579728dac395e38d1255e5e5bb412ea77d4e2fb8c9f6116e55f93c9",
+    "train_models/lap_moo_training.py": "e3dafbe76279e13b73f2a6dd5f2547294902387d21fc1b78b4ce917430495113",
+    "train_models/lap_fixed_adamw.py": "9effc074bd18236ad7af4c4e05fa04be1754d35e228b9a0567163c4b0bd5eb0a",
+    "dft_functionals/PBE.py": "dec1148bae48d6d69a1df3ef56ba4808a315227e2a25e04792a02a784cf8401f",
+    "dft_functionals/constants.py": "6994951b1f9a68a139091fd6eda32485f4415b7afd00e27ac73787f7ee48debf",
+    "train_models/test_lap.py": "84de2add80cdfb71b739867aae7691141eef4a9e3d6db99823f3ce029ed23972",
+    "tools/lap_exchange_eps_v1.py": "99c4727adcab8dfcfe50bf550968675907b727cadaa68942370fa208cb9a0385",
+    "tools/lap_fresh_grid_pilot_v1.py": "c547da15fe4189c8bb418a1d034451a2602edf175dc1e0eeb1c303112a868696",
+    "tools/lap_fresh_layernorm_v1.py": "836c3382b2a6b9ad83f7fade02dc6f7847c5a2ab4fb6abe17caf311f89535933"
+  },
+  "historical_hashes": {
+    "lap_exchange_eps_v1_report.md": "b07a0d523012146be64f82d5be8fe892f231e169d69fe19310c51476ac8bf59e",
+    "lap_exchange_eps_v1_protocol.json": "63a45d21731f75431cfd8e2194d73cf4c93a8809dce6af7cd7c6b5c4f00104dc",
+    "lap_exchange_eps_v1_epsilon_manifest.json": "760aa6ef8fdba5a81d6cf2beb168a206901f1dd06bb4df901b5630a45c722930",
+    "lap_exchange_eps_v1_final_comparison.json": "408045476b46d7a0f2a74799c7573b20c312ef2d9e8383d7d7fcf73939d604c4",
+    "lap_exchange_eps_v1_derivative_checks.csv": "30bd9dfd7aeb7c07eb7928b7493353552ecbb6ec1a6569b367a3435852ffcc55",
+    "lap_exchange_eps_v1_training_log.csv": "723c1e95c95ea3cefeb950269e19a5459724da793b4d4248bfd3824b6ad5ac3f",
+    "lap_exchange_eps_v1_validation.json": "20b1db35986ede437d065ee742bee6ac0ef2f3bd61196087ffe6a01f692b77e5",
+    "lap_fresh_layernorm_v1_report.md": "82e99f7834704e93108f4d3928f5c4a1c552b59796406f73f5b2b71f96f77d4e",
+    "lap_fresh_grid_pilot_v1_report.md": "1eff079dd33f3ea315eb7ec280cd881d667f84c3a8e09552918deb1bff89cf3e",
+    "lap_fresh_grid_pilot_v1_representations.json": "8fb59fad9fe8e46f25a3c617a2a7210c4e683aa0fbc6daf55629a33a6e4838db"
+  },
+  "constructor": {
+    "num_layers": 6,
+    "h_dim": 32,
+    "dropout": 0.0,
+    "use_g_x": true,
+    "use_g_c": true
+  },
+  "arms": {
+    "CONTROL": 1e-05,
+    "INTERVENTION": 0.001
+  },
+  "updates_per_arm": 32,
+  "order": "CONTROL then INTERVENTION for t=1..32; no extra molecular preflight updates",
+  "t1_qualification": "After both retained update1 steps, qualify actual t1 for both arms before any update2. No reversible extra molecular step.",
+  "effect_floor": 0.01,
+  "optimizer": {
+    "lr": 2.5e-05,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "foreach": false
+  },
+  "precision": "SOURCE F64 AO/descriptors/weights/vxc for both arms; F64 shadow learned forward, existing F32 PBE partials, F64 matrix/gradient; one cast to native F32 AdamW",
+  "derivative_procedure": "Reuse unchanged F026 independent LN, independent dE/dP, fixed H2 coordinates and prospective seven-step curvature-aware FD schedule; per-arm helper namespaces specialize paths and epsilon defaults only",
+  "tolerances": {
+    "F64_atol": 1e-10,
+    "F64_rtol": 1e-09,
+    "constraints_atol": 1e-12,
+    "FD_adjacent_relative": 0.01,
+    "independent_weighted_F32_energy_atol": 1e-06,
+    "independent_weighted_F32_energy_rtol": 1e-05
+  },
+  "qualification_gate": "Confirmed analytical discrepancy, source/config/constraint failure stops both arms. Unresolved FD with passed independent analytical/path checks may finish as technically LIMITED, classified D regardless of observed benefit. No tolerance changes.",
+  "reserve": "Profile both full gradient batches before retained steps; reserve 1300s for t1 derivatives, milestones, final qualification/tests and swaps, plus 25% training-time margin",
+  "versions": {
+    "python": "3.13.7 | packaged by Anaconda, Inc. | (main, Sep  9 2025, 19:54:37) [MSC v.1929 64 bit (AMD64)]",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.3.3",
+    "cuda": "12.8"
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "seed": 2027,
+  "scientific_initializations": 1,
+  "tensor_hash": "775c6b796018b762b232e3a613b8561f335808224d518112832666d5680ff94c",
+  "config": {
+    "num_layers": 6,
+    "h_dim": 32,
+    "dropout": 0.0,
+    "use_g_x": true,
+    "use_g_c": true
+  },
+  "coordinates": 9446,
+  "parameter_order": [
+    {
+      "name": "c_input_layers.0.weight",
+      "shape": [
+        32,
+        8
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_input_layers.1.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_input_layers.1.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_output_layer.bias",
+      "shape": [
+        3
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_output_layer.weight",
+      "shape": [
+        3,
+        64
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_post_symm_blocks.0.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "c_symmetrization_blocks.0.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.0.weight",
+      "shape": [
+        32,
+        2
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.1.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.1.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.3.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.0.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.1.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.1.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.3.weight",
+      "shape": [
+        32,
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.4.bias",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_feature_extractor.4.fc.4.weight",
+      "shape": [
+        32
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_output_layer.bias",
+      "shape": [
+        3
+      ],
+      "dtype": "torch.float32"
+    },
+    {
+      "name": "x_output_layer.weight",
+      "shape": [
+        3,
+        32
+      ],
+      "dtype": "torch.float32"
+    }
+  ],
+  "artifact": {
+    "path": "C:\\Dev\\readWFN_share_ms\\lap_f027_exchange_eps_runs_20261015\\seed2027_initialization.pt",
+    "sha256": "d218e3ff58ff9fd1cc6fc578e4d64ec564674a10cf4e83baec02dcd637538ca9"
+  },
+  "seed2026_weights_or_moments_loaded": 0
+}

@@ -1,0 +1,48 @@
+{
+  "derivatives": [
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED",
+      "arm": "CONTROL"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED",
+      "arm": "CONTROL"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED",
+      "arm": "CONTROL"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.1.bias",
+      "index": 6,
+      "status": "QUALIFIED",
+      "arm": "INTERVENTION"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.1.bias",
+      "index": 16,
+      "status": "QUALIFIED",
+      "arm": "INTERVENTION"
+    },
+    {
+      "theta": 1,
+      "name": "x_feature_extractor.3.fc.0.weight",
+      "index": 887,
+      "status": "QUALIFIED",
+      "arm": "INTERVENTION"
+    }
+  ],
+  "extra_molecular_updates": 0,
+  "both_qualified_before_update2": true
+}
